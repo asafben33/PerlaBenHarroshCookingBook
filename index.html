@@ -833,6 +833,8 @@ ul, ol { list-style: none; }
 
 
 
+
+
 const G = {
   /* ── מרקים ── */
   harira:              ['https://loremflickr.com/600/400/moroccan,soup?lock=11','https://loremflickr.com/600/400/harira,bowl?lock=12'],
@@ -19133,8 +19135,56 @@ const MENU_STRUCTURE = [
 
 
 
+
+
 </script>
 <script>
+/* ═══ HEBREW MORPHOLOGICAL SEARCH ═══════════════════════════
+   Normalises final-letters, strips prefixes, matches root+suffixes.
+   "פול" matches פולים/פולות/פולי — NOT פולנטה/פולו
+═══════════════════════════════════════════════════════════ */
+var _HFM = {'ך':'כ','ם':'מ','ן':'נ','ף':'פ','ץ':'צ'};
+var _HSFX_SET = null;
+var _HPFX = new Set(['ה','ו','ב','כ','ל','מ','ש']);
+
+function _hn(s) { return s.replace(/[ךםןףץ]/g, function(c){ return _HFM[c]||c; }); }
+
+function _initHsfx() {
+  if (_HSFX_SET) return;
+  _HSFX_SET = new Set(['יהנ','יהמ','יכנ','יכמ','ינו','יכ','יו','כנ','כמ','נו',
+                        'ימ','ות','ה','ת','י','כ',''].map(function(x){return x;}));
+  /* Note: suffixes are already normalised (final-forms converted). */
+}
+
+function hebrewMorphSearch(text, term) {
+  if (!text || !term) return false;
+  _initHsfx();
+  var nterm = _hn(term.toLowerCase().trim());
+  var roots = [nterm];
+  if (nterm.length > 2 && nterm[nterm.length-1] === 'ה') roots.push(nterm.slice(0,-1));
+  var tokens = text.toLowerCase()
+    .replace(/[,.'":;!?()\[\]{}\/|–—׳\-]/g,' ')
+    .split(/\s+/);
+  for (var ti=0; ti<tokens.length; ti++) {
+    var raw = tokens[ti];
+    if (!raw) continue;
+    var w0 = _hn(raw);
+    var cands = [w0];
+    if (w0.length>0 && _HPFX.has(w0[0])) cands.push(w0.slice(1));
+    for (var ci=0; ci<cands.length; ci++) {
+      var w = cands[ci];
+      for (var ri=0; ri<roots.length; ri++) {
+        var r = roots[ri];
+        if (w.indexOf(r)!==0) continue;
+        if (_HSFX_SET.has(w.slice(r.length))) return true;
+      }
+    }
+  }
+  return false;
+}
+
+
+
 
 
 /* ═══════════════════════════════════════════════
@@ -19234,15 +19284,12 @@ function filtered() {
 
     // Search — strict whole-word
     if (SEARCH) {
-      const raw = [r.title, r.desc, r.mem || '', catLbl(r.cat),
-        (r.ingr || []).map(function(i) { return i.i + ' ' + i.q; }).join(' '),
-        r.tip || ''].join(' ').toLowerCase();
-      const haystack = ' ' + raw.replace(/[,.'":;!?()\[\]{}\\/|]/g, ' ') + ' ';
-      const needle   = ' ' + SEARCH.trim().toLowerCase() + ' ';
-      if (haystack.indexOf(needle) < 0) return false;
-    }
-
-    return true;
+    var _srchFields = [r.title, r.desc || '', r.mem || '', catLbl(r.cat),
+      (r.ingr || []).map(function(i) { return i.i + ' ' + i.q; }).join(' '),
+      r.tip || ''].join(' ');
+    if (!hebrewMorphSearch(_srchFields, SEARCH)) return false;
+  }
+  return true;
   });
 }
 
@@ -20007,6 +20054,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (r) setTimeout(function() { openM(id); }, 300);
   }
 });
+
+
 
 
 
