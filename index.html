@@ -3,286 +3,667 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="ספר הבישול של פרלה בן ארוש ז״ל – מטבח מרוקאי וספרדי מסורתי. קזבלנקה, מרקש ומורשת ספרד.">
-<title>ספר הבישול של פרלה בן ארוש ז"ל | מרוקו · ספרד · ישראל</title>
-<meta property="og:title" content="ספר הבישול של פרלה בן ארוש ז&quot;ל">
-<meta property="og:description" content="113 מתכונים מרוקאיים וספרדיים מסורתיים — קזבלנקה, מרקש ומורשת ספרד">
+<meta name="description" content="ספר הבישול של פרלה בן ארוש ז״ל — 1,014 מתכונים אותנטיים מהמטבח המרוקאי, הספרדי-יהודי ומטבחי יהדות המזרח">
+<!-- Security headers via meta -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Content-Security-Policy"
+  content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src * data: blob:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self';">
+<meta name="referrer" content="no-referrer">
+<meta property="og:title" content="ספר הבישול של פרלה בן ארוש ז״ל">
+<meta property="og:description" content="1,014 מתכונים מרוקאיים וספרדיים אותנטיים">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://perla-cooking.netlify.app">
-<meta name="theme-color" content="#1c0f08">
+<title>ספר הבישול של פרלה בן ארוש ז"ל</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --wood-d:#1c0f08;--wood-m:#3d1a0a;--wood-l:#6b3520;
-  --clay:#b84223;--clay-d:#8c2e14;--clay-l:#d4603a;
-  --saffron:#c49a0c;--saffron-l:#e8bb2a;--saffron-d:#9a7808;
-  --parch:#faf3e0;--parch-2:#f3e8c8;--parch-3:#ece0b8;
-  --cream:#fffdf6;--bdr:rgba(155,95,45,.2);
-  --ink:#1a0c06;--ink-m:#4a2a14;--ink-l:#8a6044;
-  --sh-sm:0 2px 8px rgba(28,15,8,.1);
-  --sh-md:0 8px 28px rgba(28,15,8,.18);
-  --sh-lg:0 20px 60px rgba(28,15,8,.28);
-  --tr:.22s cubic-bezier(.4,0,.2,1);
-  --r:10px;
-}
-html{font-size:16px;scroll-behavior:smooth}
-body{font-family:'Frank Ruhl Libre',serif;background:var(--parch);color:var(--ink);direction:rtl;text-align:right}
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════ */
+:root {
+  /* Palette */
+  --c-bg:        #fdf8ee;
+  --c-bg2:       #f5ecd7;
+  --c-bg3:       #ede0c4;
+  --c-deep:      #130c05;
+  --c-dark:      #2a1508;
+  --c-mid:       #4e2010;
+  --c-wood:      #7a3a18;
+  --c-gold:      #c4930a;
+  --c-gold-l:    #e5b020;
+  --c-gold-d:    #9a7208;
+  --c-spice:     #b84223;
+  --c-spice-d:   #8c2e14;
+  --c-spice-l:   #d4603a;
+  --c-herb:      #3d6e3a;
+  --c-ink:       #1c1008;
+  --c-ink-m:     #4a2a14;
+  --c-ink-l:     #8a6040;
+  --c-bdr:       rgba(196,147,10,.18);
+  --c-bdr2:      rgba(196,147,10,.08);
 
-.skip-link{position:absolute;top:-44px;right:0;background:var(--clay);color:#fff;padding:.5rem 1rem;border-radius:0 0 8px 0;z-index:9999;font-size:.88rem;transition:top .2s}
-.skip-link:focus{top:0}
+  /* Shadows */
+  --sh-xs:  0 1px 3px  rgba(20,8,2,.08);
+  --sh-sm:  0 2px 8px  rgba(20,8,2,.10);
+  --sh-md:  0 6px 24px rgba(20,8,2,.15);
+  --sh-lg:  0 16px 48px rgba(20,8,2,.22);
+  --sh-xl:  0 32px 80px rgba(20,8,2,.30);
 
-/* ── HEADER ── */
-.site-hdr{
-  position:sticky;top:0;z-index:500;
-  background:var(--wood-d);border-bottom:2px solid var(--saffron-d);
-  box-shadow:0 2px 12px rgba(0,0,0,.4);
-}
-.hdr-inner{max-width:1400px;margin:0 auto;padding:.6rem 1.5rem;display:flex;align-items:center;gap:1.2rem}
-.hdr-brand{flex:1}
-.hdr-title{font-size:1.05rem;font-weight:700;color:var(--saffron-l);line-height:1.2}
-.hdr-sub{font-size:.7rem;color:var(--saffron-d);margin-top:.1rem}
-.hdr-search{
-  display:flex;align-items:center;gap:.45rem;
-  background:rgba(255,255,255,.07);border:1px solid rgba(196,154,12,.25);
-  border-radius:100px;padding:.38rem .9rem;
-  transition:border-color var(--tr),background var(--tr);min-width:220px;
-}
-.hdr-search:focus-within{background:rgba(255,255,255,.11);border-color:var(--saffron)}
-.srch-ic{width:15px;height:15px;color:var(--saffron-d);flex-shrink:0}
-#srch{background:transparent;border:none;outline:none;font-family:inherit;font-size:.86rem;color:var(--parch);flex:1;min-width:0}
-#srch::placeholder{color:rgba(250,243,224,.38)}
-.srch-clr{background:transparent;border:none;color:var(--saffron-d);font-size:1rem;line-height:1;cursor:pointer}
+  /* Radii */
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 18px;
+  --r-xl: 24px;
 
-/* ── TOP NAV ── */
-.top-nav{
-  position:sticky;top:52px;z-index:400;
-  background:var(--wood-m);
-  border-bottom:1px solid rgba(196,154,12,.2);
-  box-shadow:0 4px 16px rgba(0,0,0,.25);
-}
-.top-nav-inner{max-width:1400px;margin:0 auto;padding:0 1.5rem;overflow-x:auto;scrollbar-width:none}
-.top-nav-inner::-webkit-scrollbar{display:none}
-.top-nav-bar{display:flex;align-items:stretch;gap:0;min-width:max-content}
+  /* Motion */
+  --ease: cubic-bezier(.4,0,.2,1);
+  --t-fast: .15s;
+  --t-med:  .25s;
+  --t-slow: .4s;
 
-/* Top-level nav buttons */
-.nav-top-btn{
-  display:flex;align-items:center;gap:.4rem;
-  padding:.65rem 1rem;
-  background:transparent;border:none;border-bottom:2px solid transparent;
-  color:var(--parch-2);font-family:inherit;font-size:.84rem;font-weight:600;
-  cursor:pointer;white-space:nowrap;
-  transition:color var(--tr),border-color var(--tr),background var(--tr);
-  position:relative;
+  /* Nav */
+  --hdr-h: 58px;
+  --nav-h: 48px;
 }
-.nav-top-btn:hover{color:var(--saffron-l);background:rgba(255,255,255,.04)}
-.nav-top-btn.active{color:var(--saffron-l);border-bottom-color:var(--saffron)}
-.nav-top-btn .nav-cnt{font-size:.68rem;opacity:.55;background:rgba(196,154,12,.18);border-radius:100px;padding:.1rem .38rem;flex-shrink:0}
-.nav-top-btn .nav-arr{font-size:.65rem;opacity:.6;transition:transform var(--tr)}
-.nav-top-btn.panel-open .nav-arr{transform:rotate(180deg)}
+
+/* ═══════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Frank Ruhl Libre', 'David Libre', serif;
+  background: var(--c-bg);
+  color: var(--c-ink);
+  direction: rtl;
+  text-align: right;
+  line-height: 1.6;
+  min-height: 100dvh;
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+[hidden] { display: none !important; }
+
+/* ═══════════════════════════════════════════════
+   ACCESSIBILITY
+═══════════════════════════════════════════════ */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+.skip-link {
+  position: absolute; top: -60px; right: 1rem; z-index: 9999;
+  background: var(--c-spice); color: #fff;
+  padding: .5rem 1.2rem; border-radius: 0 0 var(--r-md) var(--r-md);
+  font-size: .9rem; font-weight: 600; transition: top var(--t-med);
+}
+.skip-link:focus { top: 0; }
+:focus-visible {
+  outline: 2px solid var(--c-gold);
+  outline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════ */
+.hdr {
+  position: sticky; top: 0; z-index: 600;
+  height: var(--hdr-h);
+  background: var(--c-deep);
+  border-bottom: 1px solid var(--c-bdr);
+  box-shadow: 0 2px 20px rgba(0,0,0,.45);
+}
+.hdr-inner {
+  max-width: 1440px; margin: 0 auto; height: 100%;
+  padding: 0 1.5rem;
+  display: flex; align-items: center; gap: 1.2rem;
+}
+.hdr-brand { flex: 1; min-width: 0; }
+.hdr-title {
+  font-size: 1.05rem; font-weight: 700;
+  color: var(--c-gold-l);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.hdr-subtitle {
+  font-size: .68rem; color: var(--c-gold-d); margin-top: .05rem; opacity: .8;
+}
+.hdr-search {
+  display: flex; align-items: center; gap: .5rem;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(196,147,10,.22);
+  border-radius: 100px;
+  padding: .4rem 1rem;
+  transition: background var(--t-med), border-color var(--t-med);
+  max-width: 280px; flex: 1;
+}
+.hdr-search:focus-within {
+  background: rgba(255,255,255,.1);
+  border-color: var(--c-gold);
+  box-shadow: 0 0 0 3px rgba(196,147,10,.15);
+}
+.hdr-search svg { flex-shrink: 0; color: var(--c-gold-d); }
+#srch {
+  flex: 1; min-width: 0; background: transparent; border: none; outline: none;
+  font-family: inherit; font-size: .86rem; color: var(--c-bg);
+}
+#srch::placeholder { color: rgba(253,248,238,.32); }
+#srch-clr {
+  color: var(--c-gold-d); font-size: 1.1rem; line-height: 1;
+  padding: 0 .1rem; opacity: .7; transition: opacity var(--t-fast);
+}
+#srch-clr:hover { opacity: 1; }
+
+/* ═══════════════════════════════════════════════
+   TOP NAV
+═══════════════════════════════════════════════ */
+.top-nav {
+  position: sticky; top: var(--hdr-h); z-index: 500;
+  height: var(--nav-h);
+  background: var(--c-dark);
+  border-bottom: 2px solid var(--c-gold-d);
+  box-shadow: 0 4px 16px rgba(0,0,0,.3);
+}
+.top-nav-inner {
+  max-width: 1440px; margin: 0 auto; height: 100%;
+  padding: 0 1.5rem;
+  display: flex; align-items: stretch;
+  overflow-x: auto; scrollbar-width: none;
+}
+.top-nav-inner::-webkit-scrollbar { display: none; }
+
+/* Nav buttons */
+.nb {
+  display: flex; align-items: center; gap: .4rem;
+  padding: 0 1rem;
+  color: rgba(253,248,238,.7);
+  font-size: .84rem; font-weight: 600;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+  position: relative;
+}
+.nb:hover { color: var(--c-gold-l); background: rgba(255,255,255,.04); }
+.nb.active { color: var(--c-gold-l); border-bottom-color: var(--c-gold); }
+.nb.panel-open { color: var(--c-gold-l); background: rgba(196,147,10,.1); }
+.nb-cnt {
+  font-size: .65rem; font-weight: 500;
+  background: rgba(196,147,10,.2); border-radius: 100px;
+  padding: .1rem .4rem; color: var(--c-gold);
+}
+.nb-arr { font-size: .6rem; opacity: .6; transition: transform var(--t-med); }
+.nb.panel-open .nb-arr { transform: rotate(180deg); }
 
 /* Dropdown panel */
-.nav-panel{
-  background:var(--wood-d);
-  border-bottom:2px solid var(--saffron-d);
-  box-shadow:0 8px 24px rgba(0,0,0,.4);
-  max-height:0;overflow:hidden;
-  transition:max-height .32s cubic-bezier(.4,0,.2,1);
+.nav-panel {
+  position: absolute; top: calc(var(--hdr-h) + var(--nav-h)); right: 0; left: 0; z-index: 499;
+  background: var(--c-deep);
+  border-bottom: 1px solid var(--c-bdr);
+  box-shadow: 0 12px 32px rgba(0,0,0,.4);
+  max-height: 0; overflow: hidden;
+  transition: max-height var(--t-slow) var(--ease);
 }
-.nav-panel.open{max-height:400px}
-.nav-panel-inner{
-  max-width:1400px;margin:0 auto;
-  padding:.8rem 1.5rem 1rem;
+.nav-panel.open { max-height: 360px; }
+.nav-panel-inner {
+  max-width: 1440px; margin: 0 auto;
+  padding: 1rem 1.5rem 1.2rem;
 }
+.panel-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: flex-start; }
 
-/* Sub-category chips in panel */
-.panel-row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;padding:.2rem 0}
-.panel-label{font-size:.7rem;font-weight:700;letter-spacing:.06em;color:var(--saffron-d);margin-left:.3rem;opacity:.8}
-.panel-btn{
-  display:flex;align-items:center;gap:.35rem;
-  background:rgba(255,255,255,.06);border:1px solid rgba(196,154,12,.2);
-  border-radius:100px;padding:.32rem .8rem;
-  color:var(--parch-2);font-family:inherit;font-size:.8rem;cursor:pointer;
-  transition:background var(--tr),border-color var(--tr),color var(--tr);white-space:nowrap;
+/* Panel chips */
+.pc {
+  display: inline-flex; align-items: center; gap: .3rem;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(196,147,10,.2);
+  border-radius: 100px;
+  padding: .3rem .85rem;
+  color: rgba(253,248,238,.72);
+  font-size: .8rem; cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
 }
-.panel-btn:hover{background:rgba(196,154,12,.15);border-color:var(--saffron-d);color:var(--saffron-l)}
-.panel-btn.active{background:rgba(196,154,12,.22);border-color:var(--saffron);color:var(--saffron-l);font-weight:600}
-.panel-cnt{font-size:.68rem;opacity:.5}
-.panel-sep{width:1px;height:20px;background:rgba(196,154,12,.2);margin:0 .2rem;flex-shrink:0}
+.pc:hover { background: rgba(196,147,10,.18); border-color: var(--c-gold-d); color: var(--c-gold-l); }
+.pc.active { background: rgba(196,147,10,.28); border-color: var(--c-gold); color: var(--c-gold-l); font-weight: 600; }
+.pc-cnt { font-size: .66rem; opacity: .5; }
 
-/* Accordion within panel */
-.panel-acc-hdr{
-  display:flex;align-items:center;gap:.4rem;
-  background:rgba(255,255,255,.04);border:1px solid rgba(196,154,12,.15);
-  border-radius:100px;padding:.32rem .8rem;
-  color:var(--parch-2);font-family:inherit;font-size:.8rem;cursor:pointer;
-  transition:background var(--tr),border-color var(--tr),color var(--tr);white-space:nowrap;
+/* Panel accordion */
+.acc-wrap { display: contents; }
+.acc-hdr {
+  display: inline-flex; align-items: center; gap: .3rem;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(196,147,10,.15);
+  border-radius: var(--r-md);
+  padding: .3rem .85rem;
+  color: rgba(253,248,238,.7);
+  font-size: .8rem; cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
 }
-.panel-acc-hdr:hover,.panel-acc-hdr.open{background:rgba(196,154,12,.15);border-color:var(--saffron-d);color:var(--saffron-l)}
-.panel-acc-hdr .acc-arr{font-size:.62rem;transition:transform var(--tr)}
-.panel-acc-hdr.open .acc-arr{transform:rotate(180deg)}
-.panel-acc-body{
-  display:none;flex-wrap:wrap;gap:.4rem;
-  background:rgba(0,0,0,.15);border-radius:var(--r);
-  padding:.5rem .7rem;margin-top:.3rem;
-  width:100%;
+.acc-hdr:hover, .acc-hdr.open {
+  background: rgba(196,147,10,.15); border-color: var(--c-gold-d); color: var(--c-gold-l);
 }
-.panel-acc-body.open{display:flex}
-
-/* ── HERO ── */
-.hero{
-  background:linear-gradient(155deg,var(--wood-d) 0%,var(--wood-m) 55%,var(--clay-d) 100%);
-  padding:2.5rem 1.5rem 2rem;border-bottom:2px solid var(--saffron-d);
-  position:relative;overflow:hidden;
+.acc-hdr .acc-a { font-size: .6rem; transition: transform var(--t-med); }
+.acc-hdr.open .acc-a { transform: rotate(180deg); }
+.acc-body {
+  display: none; width: 100%;
+  flex-wrap: wrap; gap: .4rem;
+  background: rgba(0,0,0,.2);
+  border-radius: var(--r-md); padding: .6rem .8rem;
+  margin-top: .3rem;
 }
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 75% 50%,rgba(196,154,12,.07) 0%,transparent 65%)}
-.hero-inner{max-width:700px;position:relative;z-index:1}
-.hero-orn{font-size:1rem;color:var(--saffron-d);letter-spacing:.8em;margin-bottom:.8rem}
-.hero-h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;color:var(--parch);line-height:1.2;margin-bottom:.4rem}
-.hero-h1 em{color:var(--saffron-l);font-style:normal}
-.hero-sub{font-size:.92rem;color:var(--saffron-d);margin-bottom:.7rem;letter-spacing:.03em}
-.hero-desc{font-size:.88rem;color:rgba(250,243,224,.68);line-height:1.75;max-width:540px;margin-bottom:1rem}
-.hero-pills{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1rem}
-.h-pill{background:rgba(196,154,12,.14);border:1px solid rgba(196,154,12,.28);color:var(--saffron-l);border-radius:100px;padding:.22rem .75rem;font-size:.76rem}
-.about-toggle{background:transparent;border:1px solid rgba(196,154,12,.28);color:var(--saffron-d);border-radius:100px;padding:.32rem .9rem;font-size:.8rem;cursor:pointer;transition:border-color var(--tr),color var(--tr)}
-.about-toggle:hover{border-color:var(--saffron);color:var(--saffron-l)}
+.acc-body.open { display: flex; }
+.acc-sep { width: 100%; height: 1px; background: rgba(196,147,10,.12); margin: .1rem 0; }
 
-/* ── ABOUT ── */
-.about-section{background:var(--cream);border-bottom:1px solid var(--parch-3);max-height:0;overflow:hidden;visibility:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1),visibility 0s .45s}.about-section.open{visibility:visible;transition:max-height .45s cubic-bezier(.4,0,.2,1),visibility 0s 0s}
-.about-inner{max-width:760px;margin:0 auto;padding:1.8rem 1.5rem;display:flex;gap:1.8rem;align-items:flex-start}
-.about-img{width:72px;height:72px;border-radius:50%;flex-shrink:0;background:var(--clay);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:rgba(255,255,255,.55);border:3px solid var(--saffron-d)}
-.about-text{flex:1}
-.about-h2{font-size:1.05rem;color:var(--clay);margin-bottom:.5rem}
-.about-text p{font-size:.87rem;line-height:1.78;color:var(--ink-m);margin-bottom:.7rem}
-.about-tags{display:flex;flex-wrap:wrap;gap:.35rem}
-.a-tag{background:var(--parch-2);border:1px solid var(--bdr);color:var(--ink-m);border-radius:100px;padding:.18rem .65rem;font-size:.73rem}
-
-/* ── RECIPE GRID ── */
-.main-grid{max-width:1400px;margin:0 auto;padding:1.5rem}
-.grid-hdr{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;border-bottom:1px solid var(--bdr);padding-bottom:.7rem}
-.grid-title{font-size:1.1rem;color:var(--clay)}
-.grid-cnt{font-size:.8rem;color:var(--ink-l)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:1.1rem}
-.no-res{grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--ink-l)}
-
-/* ── CARD ── */
-.card{background:var(--cream);border-radius:var(--r);border:1px solid var(--bdr);box-shadow:var(--sh-sm);overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:transform var(--tr),box-shadow var(--tr);animation:cIn .28s ease both}
-.card:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
-@keyframes cIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.c-img{position:relative;height:145px;overflow:hidden;background:var(--parch-2);flex-shrink:0}
-.c-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
-.card:hover .c-img img{transform:scale(1.05)}
-.c-body{padding:.65rem .75rem;flex:1;display:flex;flex-direction:column;gap:.22rem}
-.c-badge{font-size:.63rem;font-weight:700;color:var(--saffron-d);text-transform:uppercase;letter-spacing:.05em}
-.c-title{font-size:.85rem;font-weight:700;color:var(--ink);line-height:1.3;flex:1}
-.c-meta{display:flex;gap:.4rem;flex-wrap:wrap;font-size:.7rem;color:var(--ink-l)}
-.c-diff{padding:.08rem .4rem;border-radius:100px;font-size:.66rem;font-weight:600}
-.c-diff.קל{background:rgba(61,110,58,.14);color:#3d6e3a}
-.c-diff.בינוני{background:rgba(196,154,12,.14);color:var(--saffron-d)}
-.c-diff.מתקדם{background:rgba(184,66,35,.14);color:var(--clay-d)}
-
-/* ── MODAL ── */
-.ovl{position:fixed;inset:0;z-index:800;background:rgba(28,15,8,.72);backdrop-filter:blur(3px);display:none;overflow-y:auto;padding:2rem 1rem}
-.ovl.open{display:flex;align-items:flex-start;justify-content:center}
-.mbox{background:var(--cream);border-radius:var(--r);max-width:660px;width:100%;position:relative;box-shadow:var(--sh-lg);overflow:hidden;animation:slideUp .28s cubic-bezier(.4,0,.2,1)}
-@keyframes slideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
-.m-progress{position:absolute;top:0;left:0;right:0;height:3px;z-index:2;background:linear-gradient(to left,var(--saffron),var(--clay));transform-origin:right;transform:scaleX(0);transition:transform .3s}
-.m-hero{position:relative;height:230px;overflow:hidden;background:linear-gradient(135deg,var(--wood-d),var(--wood-m))}
-.m-hero img{width:100%;height:100%;object-fit:cover}
-.m-cls,.m-nav-btn{position:absolute;top:.8rem;z-index:3;width:32px;height:32px;border-radius:50%;background:rgba(28,15,8,.65);border:1px solid rgba(255,255,255,.18);color:#fff;font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background var(--tr)}
-.m-cls{left:.8rem}.m-cls:hover{background:var(--clay)}
-.m-prev{left:3rem}.m-next{left:5.4rem}
-.m-nav-btn:hover{background:var(--clay-d)}
-.m-hero-grad{position:absolute;bottom:0;right:0;left:0;background:linear-gradient(transparent,rgba(28,15,8,.9));padding:1.8rem 1.1rem .8rem}
-.m-badge{display:inline-block;background:var(--clay);color:#fff;font-size:.62rem;font-weight:700;letter-spacing:.05em;padding:.18rem .5rem;border-radius:100px;margin-bottom:.25rem}
-.m-title{color:var(--parch);font-size:1.28rem;font-weight:900;line-height:1.25}
-.m-subdesc{color:rgba(250,243,224,.65);font-size:.82rem;margin-top:.25rem}
-.m-body{padding:1.1rem}
-.m-mem{background:linear-gradient(to left,rgba(196,154,12,.1),rgba(196,154,12,.03));border-right:3px solid var(--saffron-d);padding:.65rem .9rem;border-radius:0 var(--r) var(--r) 0;margin-bottom:.9rem}
-.m-mem-lbl{font-size:.7rem;font-weight:700;color:var(--saffron-d);margin-bottom:.25rem;letter-spacing:.04em}
-#m-mem-txt{font-size:.86rem;line-height:1.68;color:var(--ink-m)}
-.m-meta{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:.9rem;font-size:.78rem}
-.m-meta-item{background:var(--parch-2);border:1px solid var(--bdr);border-radius:100px;padding:.22rem .65rem;color:var(--ink-m)}
-.m-st{font-size:.9rem;font-weight:700;color:var(--clay);margin:.75rem 0 .45rem;padding-bottom:.28rem;border-bottom:1px solid var(--bdr)}
-.m-ingr-item{display:flex;align-items:baseline;gap:.55rem;padding:.35rem 0;border-bottom:1px dotted var(--bdr);font-size:.86rem}
-.m-ingr-q{color:var(--saffron-d);font-weight:600;min-width:75px;flex-shrink:0}
-.m-ingr-i{color:var(--ink-m)}
-.m-steps{padding-right:1.1rem}
-.m-step{margin-bottom:.65rem;font-size:.86rem;line-height:1.65;color:var(--ink-m)}
-.m-step-t{color:var(--clay-d);font-weight:600;font-size:.78rem;margin-right:.35rem}
-.m-tip{background:var(--parch-2);border-right:3px solid var(--saffron);border-radius:0 var(--r) var(--r) 0;padding:.65rem .9rem;margin:.4rem 0}
-.m-tip-lbl{font-size:.68rem;font-weight:700;color:var(--saffron-d);margin-bottom:.22rem}
-#m-tip-txt{font-size:.86rem;line-height:1.65;color:var(--ink-m)}
-.m-src-wrap{margin-top:.5rem;padding:.4rem .75rem;background:rgba(196,154,12,.07);border-right:3px solid var(--saffron);border-radius:0 8px 8px 0;font-size:.8rem}
-.m-src-lbl{color:var(--ink-l);font-weight:600}
-.m-src-link{color:var(--saffron);text-decoration:none}.m-src-link:hover{text-decoration:underline}
-.m-actions{display:flex;gap:.55rem;margin:.9rem 0;flex-wrap:wrap}
-.m-act-btn{display:flex;align-items:center;gap:.38rem;background:var(--parch-2);border:1px solid var(--bdr);border-radius:100px;padding:.38rem .9rem;font-size:.8rem;color:var(--ink-m);cursor:pointer;transition:background var(--tr),color var(--tr)}
-.m-act-btn:hover{background:var(--parch-3);color:var(--clay)}
-.m-vbtn{display:inline-flex;align-items:center;gap:.45rem;background:var(--clay);color:#fff;border-radius:100px;padding:.45rem 1.1rem;font-size:.82rem;margin-top:.25rem;transition:background var(--tr)}
-.m-vbtn:hover{background:var(--clay-d)}
-
-/* ── FOOTER ── */
-.site-footer{background:var(--wood-d);color:rgba(250,243,224,.58);text-align:center;padding:2rem 1rem;border-top:1px solid rgba(196,154,12,.18)}
-.ft-memorial{color:var(--saffron-l);font-size:.98rem;margin-bottom:.35rem;font-weight:600}
-.ft-sub{font-size:.76rem;margin-bottom:.55rem;opacity:.7}
-.ft-quote{font-style:italic;font-size:.82rem;color:var(--saffron-d);margin-bottom:.75rem}
-.ft-orn{color:var(--saffron-d);letter-spacing:.8em;font-size:.85rem}
-
-/* ── BACK TO TOP & TOAST ── */
-.back-top{position:fixed;bottom:1.4rem;left:1.4rem;z-index:400;width:40px;height:40px;border-radius:50%;background:var(--clay);border:none;color:#fff;font-size:1.05rem;box-shadow:var(--sh-md);opacity:0;pointer-events:none;cursor:pointer;transition:opacity var(--tr),transform var(--tr)}
-.back-top.on{opacity:1;pointer-events:auto}.back-top:hover{transform:translateY(-2px)}
-.toast{position:fixed;bottom:4.5rem;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--parch);padding:.45rem 1.1rem;border-radius:100px;font-size:.83rem;opacity:0;pointer-events:none;transition:opacity .28s;z-index:900}
-.toast.show{opacity:1}
-
-/* ── RESPONSIVE ── */
-@media(max-width:900px){
-  .hdr-sub{display:none}
-  .hdr-search{min-width:0;flex:1}
-  .top-nav-inner{padding:0 .8rem}
-  .nav-top-btn{padding:.55rem .7rem;font-size:.78rem}
-  .main-grid{padding:1rem .8rem}
-  .grid{grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:.85rem}
+/* ═══════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════ */
+.hero {
+  background:
+    linear-gradient(165deg, rgba(19,12,5,.95) 0%, rgba(42,21,8,.88) 45%, rgba(92,50,20,.8) 100%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c4930a' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  padding: 3.5rem 1.5rem 2.8rem;
+  border-bottom: 2px solid var(--c-gold-d);
+  position: relative; overflow: hidden;
 }
-@media(max-width:600px){
-  .hdr-inner{padding:.5rem .8rem;gap:.6rem}
-  .hdr-title{font-size:.9rem}
-  .hero{padding:1.8rem .9rem 1.5rem}
-  .hero-h1{font-size:1.7rem}
-  .hero-desc{display:none}
-  .about-inner{flex-direction:column;padding:1.2rem .9rem;gap:.9rem}
-  .main-grid{padding:.8rem}
-  .grid{grid-template-columns:1fr 1fr;gap:.65rem}
-  .c-img{height:120px}
-  .ovl{padding:1.5rem 0 0;align-items:flex-end}
-  .mbox{border-radius:var(--r) var(--r) 0 0}
+.hero::after {
+  content: '';
+  position: absolute; bottom: 0; right: 0; left: 0; height: 1px;
+  background: linear-gradient(to left, transparent, var(--c-gold-d), transparent);
 }
-@media(max-width:380px){
-  .grid{grid-template-columns:1fr 1fr}
-  .c-img{height:105px}
+.hero-inner { max-width: 760px; position: relative; }
+.hero-orn {
+  font-size: .95rem; color: var(--c-gold-d);
+  letter-spacing: 1em; margin-bottom: 1.2rem;
+  opacity: .8;
+}
+.hero-h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 900; color: var(--c-bg);
+  line-height: 1.15; margin-bottom: .6rem;
+  text-shadow: 0 2px 16px rgba(0,0,0,.3);
+}
+.hero-h1 em { color: var(--c-gold-l); font-style: normal; }
+.hero-tagline { font-size: .96rem; color: var(--c-gold-d); margin-bottom: .9rem; letter-spacing: .04em; }
+.hero-desc {
+  font-size: .9rem; color: rgba(253,248,238,.62);
+  line-height: 1.8; max-width: 560px; margin-bottom: 1.3rem;
+}
+.hero-pills { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.3rem; }
+.hp {
+  background: rgba(196,147,10,.12);
+  border: 1px solid rgba(196,147,10,.25);
+  color: var(--c-gold-l); border-radius: 100px;
+  padding: .25rem .8rem; font-size: .75rem;
+  backdrop-filter: blur(4px);
+}
+.hero-about-btn {
+  display: inline-flex; align-items: center; gap: .4rem;
+  color: var(--c-gold-d); font-size: .82rem;
+  border: 1px solid rgba(196,147,10,.25); border-radius: 100px;
+  padding: .35rem 1rem; transition: all var(--t-med);
+}
+.hero-about-btn:hover { border-color: var(--c-gold); color: var(--c-gold-l); background: rgba(196,147,10,.08); }
+
+/* ═══════════════════════════════════════════════
+   ABOUT SECTION (collapsed by default)
+═══════════════════════════════════════════════ */
+.about {
+  background: var(--c-bg);
+  border-bottom: 1px solid var(--c-bg3);
+  max-height: 0; overflow: hidden; visibility: hidden;
+  transition: max-height var(--t-slow) var(--ease), visibility 0s var(--t-slow);
+}
+.about.open {
+  max-height: 600px; visibility: visible;
+  transition: max-height var(--t-slow) var(--ease), visibility 0s 0s;
+}
+.about-inner {
+  max-width: 800px; margin: 0 auto;
+  padding: 2rem 1.5rem 2.2rem;
+  display: flex; gap: 2rem; align-items: flex-start;
+}
+.about-avatar {
+  width: 80px; height: 80px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--c-spice), var(--c-mid));
+  border: 3px solid var(--c-gold-d);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.2rem; color: rgba(255,255,255,.5);
+  box-shadow: var(--sh-md);
+}
+.about-body { flex: 1; min-width: 0; }
+.about-h { font-size: 1.12rem; font-weight: 700; color: var(--c-spice); margin-bottom: .6rem; }
+.about-p { font-size: .9rem; line-height: 1.8; color: var(--c-ink-m); margin-bottom: .8rem; }
+.about-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+.at {
+  background: var(--c-bg2); border: 1px solid var(--c-bdr);
+  color: var(--c-ink-m); border-radius: 100px;
+  padding: .18rem .65rem; font-size: .73rem;
 }
 
-.panel-acc-wrap{width:100%}
-.panel-acc-body{display:none;flex-wrap:wrap;gap:.4rem;background:rgba(0,0,0,.18);
-  border-radius:8px;padding:.5rem .65rem;margin-top:.28rem;width:100%}
-.panel-acc-body.open{display:flex}
-.panel-sep-hr{border:none;border-top:1px solid rgba(196,154,12,.2);width:100%;margin:.15rem 0}
+/* ═══════════════════════════════════════════════
+   MAIN CONTENT AREA
+═══════════════════════════════════════════════ */
+.main {
+  max-width: 1440px; margin: 0 auto;
+  padding: 1.5rem 1.5rem 3rem;
+}
+.grid-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; margin-bottom: 1.2rem;
+  padding-bottom: .8rem;
+  border-bottom: 1px solid var(--c-bdr);
+}
+.grid-title { font-size: 1.15rem; font-weight: 700; color: var(--c-spice); }
+.grid-meta { font-size: .8rem; color: var(--c-ink-l); }
 
-/* ── No image / upload ── */
-.c-img.no-img{background:var(--parch-2);display:flex;align-items:center;justify-content:center}
-.c-upload-btn{background:transparent;border:1.5px dashed var(--bdr);border-radius:8px;
-  padding:.4rem .7rem;color:var(--ink-l);font-size:.8rem;cursor:pointer;transition:border-color var(--tr)}
-.c-upload-btn:hover{border-color:var(--saffron-d);color:var(--saffron-d)}
-.m-upload-wrap{position:absolute;inset:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:.4rem;
-  background:linear-gradient(135deg,var(--wood-d),var(--wood-m))}
-.m-upload-btn{background:rgba(196,154,12,.2);border:1.5px dashed var(--saffron-d);
-  border-radius:var(--r);padding:.55rem 1.2rem;color:var(--saffron-l);
-  font-family:inherit;font-size:.88rem;cursor:pointer;transition:background var(--tr)}
-.m-upload-btn:hover{background:rgba(196,154,12,.32)}
-.m-upload-hint{font-size:.72rem;color:rgba(250,243,224,.4)}
+/* ═══════════════════════════════════════════════
+   RECIPE GRID
+═══════════════════════════════════════════════ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 1.1rem;
+}
+.no-res {
+  grid-column: 1/-1; text-align: center;
+  padding: 4rem 1rem; color: var(--c-ink-l);
+}
+.no-res-icon { font-size: 3rem; margin-bottom: .8rem; opacity: .3; }
+
+/* ═══════════════════════════════════════════════
+   RECIPE CARD
+═══════════════════════════════════════════════ */
+.card {
+  background: #fff;
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-bdr);
+  box-shadow: var(--sh-sm);
+  overflow: hidden; cursor: pointer;
+  display: flex; flex-direction: column;
+  transition: transform var(--t-med) var(--ease), box-shadow var(--t-med) var(--ease);
+  animation: cardIn .3s var(--ease) both;
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+.card:hover { transform: translateY(-4px); box-shadow: var(--sh-md); }
+.card:focus-visible { box-shadow: 0 0 0 3px var(--c-gold); }
+
+.c-img {
+  height: 148px; position: relative; overflow: hidden;
+  background: var(--c-bg2); flex-shrink: 0;
+}
+.c-img img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0;
+  transition: opacity var(--t-med), transform .5s var(--ease);
+}
+.c-img img.loaded { opacity: 1; }
+.card:hover .c-img img { transform: scale(1.06); }
+.c-img.no-img {
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--c-bg2), var(--c-bg3));
+}
+.c-upload-btn {
+  background: transparent; border: 1.5px dashed var(--c-bdr);
+  border-radius: var(--r-sm); padding: .4rem .7rem;
+  color: var(--c-ink-l); font-size: .78rem;
+  transition: border-color var(--t-fast), color var(--t-fast);
+}
+.c-upload-btn:hover { border-color: var(--c-gold-d); color: var(--c-gold-d); }
+
+.c-body { padding: .7rem .85rem; flex: 1; display: flex; flex-direction: column; gap: .22rem; }
+.c-badge { font-size: .63rem; font-weight: 700; color: var(--c-gold-d); text-transform: uppercase; letter-spacing: .05em; }
+.c-title { font-size: .88rem; font-weight: 700; color: var(--c-ink); line-height: 1.35; flex: 1; }
+.c-foot { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; margin-top: .1rem; }
+.c-time { font-size: .7rem; color: var(--c-ink-l); }
+.c-diff {
+  font-size: .66rem; font-weight: 600; padding: .1rem .42rem; border-radius: 100px;
+}
+.c-diff.קל    { background: rgba(61,110,58,.12); color: #2d5c2a; }
+.c-diff.בינוני { background: rgba(196,147,10,.12); color: var(--c-gold-d); }
+.c-diff.מתקדם { background: rgba(184,66,35,.12); color: var(--c-spice-d); }
+
+/* ═══════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════ */
+.ovl {
+  position: fixed; inset: 0; z-index: 800;
+  background: rgba(19,12,5,.78);
+  backdrop-filter: blur(4px) saturate(.8);
+  display: none; overflow-y: auto;
+  padding: 2rem 1rem;
+  -webkit-overflow-scrolling: touch;
+}
+.ovl.open { display: flex; align-items: flex-start; justify-content: center; }
+
+.mbox {
+  background: var(--c-bg);
+  border-radius: var(--r-xl);
+  max-width: 680px; width: 100%;
+  position: relative;
+  box-shadow: var(--sh-xl);
+  overflow: hidden;
+  animation: modalIn .3s var(--ease);
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(24px) scale(.98); }
+  to   { opacity: 1; transform: none; }
+}
+.m-progress {
+  position: absolute; top: 0; left: 0; right: 0; height: 3px; z-index: 2;
+  background: linear-gradient(to left, var(--c-gold), var(--c-spice));
+  transform-origin: right; transform: scaleX(0);
+  transition: transform .3s var(--ease);
+}
+.m-hero {
+  position: relative; height: 240px; overflow: hidden;
+  background: linear-gradient(135deg, var(--c-deep), var(--c-dark));
+}
+.m-hero img {
+  width: 100%; height: 100%; object-fit: cover; opacity: 0;
+  transition: opacity var(--t-med);
+}
+.m-hero img.loaded { opacity: 1; }
+.m-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(19,12,5,.92) 0%, transparent 55%);
+}
+.m-hero-content {
+  position: absolute; bottom: 0; right: 0; left: 0;
+  padding: 1.8rem 1.4rem .9rem;
+}
+.m-badge {
+  display: inline-block; background: var(--c-spice); color: #fff;
+  font-size: .64rem; font-weight: 700; letter-spacing: .06em;
+  padding: .2rem .55rem; border-radius: 100px; margin-bottom: .3rem;
+}
+.m-title { color: var(--c-bg); font-size: 1.35rem; font-weight: 900; line-height: 1.2; }
+.m-subdesc { color: rgba(253,248,238,.6); font-size: .84rem; margin-top: .25rem; }
+
+/* Modal nav buttons */
+.m-btn-close, .m-btn-nav {
+  position: absolute; top: .85rem; z-index: 3;
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(19,12,5,.65);
+  border: 1px solid rgba(255,255,255,.15);
+  color: #fff; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--t-fast);
+}
+.m-btn-close { left: .85rem; }
+.m-btn-close:hover { background: var(--c-spice); }
+.m-btn-nav { }
+.m-btn-prev { left: 3.2rem; }
+.m-btn-next { left: 5.5rem; }
+.m-btn-nav:hover { background: var(--c-spice-d); }
+
+/* Modal upload wrap */
+.m-upload-wrap {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: .5rem;
+  background: linear-gradient(135deg, var(--c-deep), var(--c-dark));
+}
+.m-upload-btn {
+  background: rgba(196,147,10,.18);
+  border: 1.5px dashed var(--c-gold-d);
+  border-radius: var(--r-md); padding: .6rem 1.4rem;
+  color: var(--c-gold-l); font-family: inherit; font-size: .9rem;
+  cursor: pointer; transition: background var(--t-fast);
+}
+.m-upload-btn:hover { background: rgba(196,147,10,.3); }
+.m-upload-hint { font-size: .72rem; color: rgba(253,248,238,.35); }
+
+/* Modal body */
+.m-body { padding: 1.2rem 1.4rem 1.5rem; }
+
+.m-mem {
+  background: linear-gradient(to left, rgba(196,147,10,.1), rgba(196,147,10,.03));
+  border-right: 3px solid var(--c-gold-d);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  padding: .7rem 1rem; margin-bottom: 1rem;
+}
+.m-mem-label { font-size: .7rem; font-weight: 700; color: var(--c-gold-d); letter-spacing: .05em; margin-bottom: .25rem; }
+.m-mem-text { font-size: .88rem; line-height: 1.7; color: var(--c-ink-m); }
+
+.m-meta { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: 1rem; }
+.m-chip {
+  background: var(--c-bg2); border: 1px solid var(--c-bdr);
+  border-radius: 100px; padding: .22rem .7rem;
+  font-size: .78rem; color: var(--c-ink-m);
+}
+.m-section-title {
+  font-size: .9rem; font-weight: 700; color: var(--c-spice);
+  margin: 1rem 0 .5rem;
+  padding-bottom: .3rem; border-bottom: 1px solid var(--c-bdr);
+}
+.m-ingr { }
+.m-ingr-item {
+  display: flex; align-items: baseline; gap: .6rem;
+  padding: .38rem 0; border-bottom: 1px dotted var(--c-bdr2);
+  font-size: .88rem;
+}
+.m-ingr-q { color: var(--c-gold-d); font-weight: 600; min-width: 80px; flex-shrink: 0; }
+.m-ingr-i { color: var(--c-ink-m); }
+.m-steps { padding-right: 1.3rem; }
+.m-step { margin-bottom: .7rem; font-size: .88rem; line-height: 1.7; color: var(--c-ink-m); }
+.m-step-t { color: var(--c-spice-d); font-weight: 600; font-size: .78rem; margin-right: .35rem; }
+
+.m-tip-box {
+  background: var(--c-bg2); border-right: 3px solid var(--c-gold);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  padding: .7rem 1rem; margin: .5rem 0;
+}
+.m-tip-label { font-size: .7rem; font-weight: 700; color: var(--c-gold-d); margin-bottom: .25rem; }
+.m-tip-text { font-size: .88rem; line-height: 1.7; color: var(--c-ink-m); }
+
+.m-src-box {
+  margin-top: .6rem; padding: .42rem .8rem;
+  background: rgba(196,147,10,.07);
+  border-right: 3px solid var(--c-gold);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  font-size: .8rem;
+}
+.m-src-label { color: var(--c-ink-l); font-weight: 600; }
+.m-src-link { color: var(--c-gold); }
+.m-src-link:hover { text-decoration: underline; }
+
+.m-actions { display: flex; gap: .6rem; flex-wrap: wrap; margin: 1rem 0; }
+.m-act {
+  display: flex; align-items: center; gap: .4rem;
+  background: var(--c-bg2); border: 1px solid var(--c-bdr);
+  border-radius: 100px; padding: .38rem .95rem;
+  font-size: .8rem; color: var(--c-ink-m);
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.m-act:hover { background: var(--c-bg3); color: var(--c-spice); }
+
+.m-yt {
+  display: inline-flex; align-items: center; gap: .5rem;
+  background: var(--c-spice); color: #fff; border-radius: 100px;
+  padding: .45rem 1.2rem; font-size: .84rem; margin-top: .3rem;
+  transition: background var(--t-fast);
+}
+.m-yt:hover { background: var(--c-spice-d); }
+
+/* ═══════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════ */
+.footer {
+  background: var(--c-deep);
+  border-top: 1px solid var(--c-bdr);
+  text-align: center; padding: 2.5rem 1rem;
+  color: rgba(253,248,238,.55);
+}
+.footer-memorial { color: var(--c-gold-l); font-size: 1rem; font-weight: 700; margin-bottom: .4rem; }
+.footer-sub { font-size: .76rem; margin-bottom: .6rem; opacity: .7; }
+.footer-quote { font-style: italic; color: var(--c-gold-d); font-size: .85rem; margin-bottom: .9rem; }
+.footer-orn { color: var(--c-gold-d); letter-spacing: .9em; font-size: .85rem; }
+
+/* ═══════════════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════════════ */
+.back-top {
+  position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 400;
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--c-spice);
+  color: #fff; font-size: 1.05rem;
+  box-shadow: var(--sh-md);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--t-med), transform var(--t-med);
+}
+.back-top.on { opacity: 1; pointer-events: auto; }
+.back-top:hover { transform: translateY(-2px); }
+
+.toast {
+  position: fixed; bottom: 5rem; left: 50%;
+  transform: translateX(-50%);
+  background: var(--c-ink); color: var(--c-bg);
+  padding: .5rem 1.2rem; border-radius: 100px;
+  font-size: .84rem; pointer-events: none;
+  opacity: 0; transition: opacity .28s; z-index: 900;
+}
+.toast.show { opacity: 1; }
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+@media (max-width: 960px) {
+  :root { --hdr-h: 52px; }
+  .hdr-subtitle { display: none; }
+  .hdr-search { max-width: 200px; }
+}
+@media (max-width: 640px) {
+  .hdr-inner { padding: 0 .8rem; gap: .6rem; }
+  .hdr-title { font-size: .88rem; }
+  .hdr-search { max-width: 160px; }
+  .hero { padding: 2rem .9rem 1.8rem; }
+  .hero-h1 { font-size: 1.75rem; }
+  .hero-desc { display: none; }
+  .top-nav-inner { padding: 0 .8rem; }
+  .nb { padding: 0 .65rem; font-size: .78rem; }
+  .main { padding: 1rem .8rem 2rem; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: .75rem; }
+  .c-img { height: 125px; }
+  .about-inner { flex-direction: column; padding: 1.2rem .9rem; gap: 1rem; }
+  .ovl { padding: 3rem 0 0; align-items: flex-end; }
+  .mbox { border-radius: var(--r-xl) var(--r-xl) 0 0; max-height: 93dvh; }
+  .m-hero { height: 200px; }
+}
+@media (max-width: 380px) {
+  .grid { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 1200px) {
+  .grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+}
+/* Print */
+@media print {
+  .hdr, .top-nav, .nav-panel, .back-top, .ovl, .footer { display: none !important; }
+  .hero { background: none !important; color: #000 !important; }
+}
 </style>
 <script type="application/ld+json">
 {
@@ -302,150 +683,152 @@ body{font-family:'Frank Ruhl Libre',serif;background:var(--parch);color:var(--in
 </script>
 </head>
 <body>
-
-<a href="#main-content" class="skip-link">דלג לתוכן</a>
+<a href="#main" class="skip-link">דלג לתוכן</a>
 
 <!-- HEADER -->
-<header class="site-hdr" role="banner">
+<header class="hdr" role="banner">
   <div class="hdr-inner">
     <div class="hdr-brand">
       <div class="hdr-title">ספר הבישול של פרלה בן ארוש ז"ל</div>
-      <div class="hdr-sub">קזבלנקה · מרקש · מורשת ספרד | מטבח מרוקאי-ספרדי</div>
+      <div class="hdr-subtitle">קזבלנקה · מרקש · מורשת ספרד</div>
     </div>
     <div class="hdr-search" role="search">
-      <svg class="srch-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input type="text" id="srch" placeholder="חפשו מתכון, מרכיב..." autocomplete="off"
-             aria-label="חיפוש מתכון" oninput="doSearch(this.value)">
-      <button id="srch-clr" class="srch-clr" onclick="clearSearch()" aria-label="נקה חיפוש" style="display:none">✕</button>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="search" id="srch" placeholder="חפשו מתכון, מרכיב..." autocomplete="off" aria-label="חיפוש מתכון">
+      <button id="srch-clr" aria-label="נקה חיפוש" hidden>✕</button>
     </div>
   </div>
 </header>
 
-<!-- HORIZONTAL NAV -->
-<nav class="top-nav" role="navigation" aria-label="קטגוריות מתכונים">
-  <div class="top-nav-inner">
-    <div class="top-nav-bar" id="cat-inner" role="menubar"></div>
-  </div>
-  <!-- Dropdown panel (shared, populated dynamically) -->
-  <div class="nav-panel" id="nav-panel" aria-hidden="true">
-    <div class="nav-panel-inner" id="nav-panel-inner"></div>
-  </div>
+<!-- TOP NAV -->
+<nav class="top-nav" aria-label="קטגוריות" role="navigation">
+  <div class="top-nav-inner" id="cat-inner" role="menubar"></div>
 </nav>
+<div class="nav-panel" id="nav-panel" aria-hidden="true" role="region" aria-label="תת-קטגוריות">
+  <div class="nav-panel-inner" id="nav-panel-inner"></div>
+</div>
 
 <!-- HERO -->
-<section class="hero" aria-labelledby="hero-title">
+<section class="hero" aria-labelledby="hero-h1">
   <div class="hero-inner">
     <p class="hero-orn" aria-hidden="true">✦ ✦ ✦</p>
-    <h1 class="hero-h1" id="hero-title">המטבח של <em>אמא פרלה</em></h1>
-    <p class="hero-sub">מרוקו · ספרד · ישראל — טעמים שנולדו מאהבה</p>
-    <p class="hero-desc">פרלה בן ארוש ז"ל נולדה בקזבלנקה וגדלה על ריחות השוק של מרוקו.
-      נישאה לאיש ממשפחת קארו — צאצאי מגורשי ספרד — ולמדה את המטבח האנדלוסי מחמותה לבל.
-      מטבחה הפך לפסיפס עשיר: מרוקאי וספרדי, שני עולמות בסיר אחד.</p>
+    <h1 class="hero-h1" id="hero-h1">המטבח של <em>אמא פרלה</em></h1>
+    <p class="hero-tagline">מרוקו · ספרד · ישראל — טעמים שנולדו מאהבה</p>
+    <p class="hero-desc">פרלה בן ארוש ז"ל נולדה בקזבלנקה וגדלה על ריחות השוק של מרוקו. נישאה לאיש ממשפחת קארו — צאצאי מגורשי ספרד — ולמדה את המטבח האנדלוסי מחמותה לבל. מטבחה הפך לפסיפס עשיר: שני עולמות בסיר אחד.</p>
     <div class="hero-pills" role="list">
-      <span class="h-pill" role="listitem" id="pill-cnt">טוען...</span>
-      <span class="h-pill" role="listitem">18 עדות ומטבחים</span>
-      <span class="h-pill" role="listitem">קזבלנקה · מרקש</span>
-      <span class="h-pill" role="listitem">מסורת של דורות</span>
+      <span class="hp" role="listitem" id="pill-cnt">טוען...</span>
+      <span class="hp" role="listitem">18 עדות</span>
+      <span class="hp" role="listitem">קזבלנקה · מרקש</span>
+      <span class="hp" role="listitem">מסורת של דורות</span>
     </div>
-    <button class="about-toggle" onclick="toggleAbout()" aria-expanded="false" aria-controls="about-section">
-      קרא עוד על פרלה ז"ל ▾
+    <button class="hero-about-btn" id="about-toggle" aria-expanded="false" aria-controls="about">
+      <span>קרא עוד על פרלה ז"ל</span>
+      <span aria-hidden="true" id="about-arrow">▾</span>
     </button>
   </div>
 </section>
 
-<!-- ABOUT (collapsible) -->
-<section class="about-section" id="about-section" aria-hidden="true">
+<!-- ABOUT (hidden by default) -->
+<section class="about" id="about" aria-hidden="true">
   <div class="about-inner">
-    <div class="about-img" aria-hidden="true">☺</div>
-    <div class="about-text">
-      <h2 class="about-h2">פרלה בן ארוש ז"ל — מי הייתה?</h2>
-      <p>נולדה בקזבלנקה, גדלה בין ריחות השוק המרוקאי ואהבה לבשל עוד לפני שלמדה לקרוא.
-         נישאה לאיש ממשפחת קארו — צאצאי מגורשי ספרד בשנת 1492 — ולמדה את המטבח
-         האנדלוסי מחמותה לבל. שני עולמות, שתי מסורות, סיר אחד מלא אהבה.</p>
+    <div class="about-avatar" aria-hidden="true">☺</div>
+    <div class="about-body">
+      <h2 class="about-h">פרלה בן ארוש ז"ל — מי הייתה?</h2>
+      <p class="about-p">נולדה בקזבלנקה, גדלה בין ריחות השוק המרוקאי ואהבה לבשל עוד לפני שלמדה לקרוא. נישאה לאיש ממשפחת קארו — צאצאי מגורשי ספרד בשנת 1492 — ולמדה את המטבח האנדלוסי מחמותה לבל. שני עולמות, שתי מסורות, סיר אחד מלא אהבה. מתכוניה לא נכתבו — הם חיו בראשה ובידיה, ומובאים כאן ממה שסיפרה לילדיה.</p>
       <div class="about-tags" role="list">
-        <span class="a-tag" role="listitem">קזבלנקה</span>
-        <span class="a-tag" role="listitem">מרקש</span>
-        <span class="a-tag" role="listitem">מורשת ספרד</span>
-        <span class="a-tag" role="listitem">משפחת קארו</span>
-        <span class="a-tag" role="listitem">מגורשי ספרד 1492</span>
-        <span class="a-tag" role="listitem">מטבח מרוקאי</span>
-        <span class="a-tag" role="listitem">מטבח אנדלוסי</span>
+        <span class="at" role="listitem">קזבלנקה</span>
+        <span class="at" role="listitem">מרקש</span>
+        <span class="at" role="listitem">מורשת ספרד</span>
+        <span class="at" role="listitem">משפחת קארו</span>
+        <span class="at" role="listitem">מגורשי ספרד 1492</span>
+        <span class="at" role="listitem">מטבח מרוקאי</span>
+        <span class="at" role="listitem">מטבח אנדלוסי</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- RECIPE GRID -->
-<main class="main-grid" id="main-content" role="main">
-  <div class="grid-hdr">
+<!-- MAIN / GRID -->
+<main class="main" id="main" tabindex="-1">
+  <div class="grid-head">
     <h2 class="grid-title" id="sec-title">כל המתכונים</h2>
-    <span class="grid-cnt" id="sec-cnt" aria-live="polite"></span>
+    <span class="grid-meta" id="sec-cnt" aria-live="polite" aria-atomic="true"></span>
   </div>
-  <div class="grid" id="grid" role="list" aria-label="רשימת מתכונים"></div>
+  <div class="grid" id="grid" role="list" aria-label="רשימת מתכונים" aria-live="polite" aria-busy="true"></div>
 </main>
 
 <!-- FOOTER -->
-<footer class="site-footer" role="contentinfo">
-  <p class="ft-memorial">לזכר נשמת פרלה בן ארוש ז"ל</p>
-  <p class="ft-sub">קזבלנקה · מרקש · ישראל | משפחת קארו — צאצאי מגורשי ספרד 1492</p>
-  <p class="ft-quote">"הטעם הכי טוב בעולם הוא הטעם שזוכרים" — פרלה</p>
-  <p class="ft-orn" aria-hidden="true">✦ ✦ ✦</p>
+<footer class="footer" role="contentinfo">
+  <p class="footer-memorial">לזכר נשמת פרלה בן ארוש ז"ל</p>
+  <p class="footer-sub">קזבלנקה · מרקש · ישראל | משפחת קארו — צאצאי מגורשי ספרד 1492</p>
+  <p class="footer-quote">"הטעם הכי טוב בעולם הוא הטעם שזוכרים" — פרלה</p>
+  <p class="footer-orn" aria-hidden="true">✦ ✦ ✦</p>
 </footer>
 
-<button id="stb" class="back-top" aria-label="חזרה לראש הדף"
-        onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<button class="back-top" id="back-top" aria-label="חזרה לראש הדף">↑</button>
 
 <!-- MODAL -->
-<div class="ovl" id="ovl" role="dialog" aria-modal="true" aria-labelledby="m-title"
-     onclick="ovlClose(event)">
+<div class="ovl" id="ovl" role="dialog" aria-modal="true" aria-labelledby="m-title">
   <div class="mbox" id="mbox">
-    <div class="m-progress" id="m-progress"></div>
+    <div class="m-progress" id="m-progress" aria-hidden="true"></div>
     <div class="m-hero" id="m-hero">
-      <button class="m-cls" onclick="closeM()" aria-label="סגור מתכון">✕</button>
-      <button class="m-nav-btn m-prev" onclick="navRecipe(-1)" aria-label="מתכון קודם">‹</button>
-      <button class="m-nav-btn m-next" onclick="navRecipe(1)" aria-label="מתכון הבא">›</button>
-      <div class="m-hero-grad">
-        <div class="m-badge" id="m-badge" style="display:none"></div>
+      <div class="m-hero-overlay" aria-hidden="true"></div>
+      <button class="m-btn-close" id="m-close" aria-label="סגור מתכון">✕</button>
+      <button class="m-btn-nav m-btn-prev" id="m-prev" aria-label="מתכון קודם">‹</button>
+      <button class="m-btn-nav m-btn-next" id="m-next" aria-label="מתכון הבא">›</button>
+      <div class="m-hero-content">
+        <div class="m-badge" id="m-badge" aria-hidden="true"></div>
         <h2 class="m-title" id="m-title"></h2>
         <p class="m-subdesc" id="m-subdesc"></p>
       </div>
     </div>
-    <div class="m-body">
-      <div class="m-mem"><div class="m-mem-lbl">זיכרון ממרוקו ✦</div><div id="m-mem-txt"></div></div>
+    <div class="m-body" id="m-body">
+      <div class="m-mem" id="m-mem">
+        <div class="m-mem-label">זיכרון ממרוקו ✦</div>
+        <div class="m-mem-text" id="m-mem-txt"></div>
+      </div>
       <div class="m-meta" id="m-meta"></div>
-      <h3 class="m-st">רכיבים</h3>
-      <div class="m-ingr" id="m-ingr"></div>
-      <h3 class="m-st">שלבי ההכנה</h3>
+      <h3 class="m-section-title">רכיבים</h3>
+      <div class="m-ingr" id="m-ingr" role="list"></div>
+      <h3 class="m-section-title">שלבי ההכנה</h3>
       <ol class="m-steps" id="m-steps"></ol>
       <div id="m-tip-wrap">
-        <h3 class="m-st">הטיפ של אמא פרלה</h3>
-        <div class="m-tip"><div class="m-tip-lbl">סוד הבישול</div><div id="m-tip-txt"></div></div>
-        <div id="m-src-wrap" class="m-src-wrap" style="display:none">
-          <span class="m-src-lbl">מקור המתכון: </span>
-          <a id="m-src-link" href="#" target="_blank" rel="noopener" class="m-src-link">קישור למתכון מקורי ↗</a>
+        <h3 class="m-section-title">הטיפ של אמא פרלה</h3>
+        <div class="m-tip-box">
+          <div class="m-tip-label">סוד הבישול</div>
+          <div class="m-tip-text" id="m-tip-txt"></div>
+        </div>
+        <div class="m-src-box" id="m-src-box" hidden>
+          <span class="m-src-label">מקור: </span>
+          <a class="m-src-link" id="m-src-link" href="#" target="_blank" rel="noopener noreferrer">קישור למתכון מקורי ↗</a>
         </div>
       </div>
       <div class="m-actions">
-        <button class="m-act-btn" onclick="printRecipe()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>הדפס
+        <button class="m-act" id="m-print" aria-label="הדפס מתכון">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          הדפס
         </button>
-        <button class="m-act-btn" onclick="shareRecipe()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>שתף
+        <button class="m-act" id="m-share" aria-label="שתף מתכון">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          שתף
         </button>
+        <button class="m-act" id="m-upload-act">📷 הוסף תמונה</button>
       </div>
-      <div id="m-vid-wrap" style="display:none">
-        <h3 class="m-st">צפייה בהכנה</h3>
-        <a class="m-vbtn" id="m-vid-link" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="18"><path d="M21.543 6.498C22 8.28 22 12 22 12s0 3.72-.457 5.502c-.254.985-.997 1.76-1.938 2.022C17.896 20 12 20 12 20s-5.893 0-7.605-.476c-.945-.266-1.687-1.04-1.938-2.022C2 15.72 2 12 2 12s0-3.72.457-5.502c.254-.985.997-1.76 1.938-2.022C6.107 4 12 4 12 4s5.896 0 7.605.476c.945.266 1.687 1.04 1.938 2.022zM10 15.5l6-3.5-6-3.5v7z"/></svg>
+      <div id="m-vid-wrap" hidden>
+        <h3 class="m-section-title">צפייה בהכנה</h3>
+        <a class="m-yt" id="m-vid-link" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" aria-hidden="true"><path d="M21.543 6.498C22 8.28 22 12 22 12s0 3.72-.457 5.502c-.254.985-.997 1.76-1.938 2.022C17.896 20 12 20 12 20s-5.893 0-7.605-.476c-.945-.266-1.687-1.04-1.938-2.022C2 15.72 2 12 2 12s0-3.72.457-5.502c.254-.985.997-1.76 1.938-2.022C6.107 4 12 4 12 4s5.896 0 7.605.476c.945.266 1.687 1.04 1.938 2.022zM10 15.5l6-3.5-6-3.5v7z"/></svg>
           צפייה ביוטיוב
         </a>
       </div>
     </div>
   </div>
 </div>
-<div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+<div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <script>
+
 const G = {
   /* ── מרקים ── */
   harira:              ['https://loremflickr.com/600/400/moroccan,soup?lock=11','https://loremflickr.com/600/400/harira,bowl?lock=12'],
@@ -18776,844 +19159,861 @@ const MENU_STRUCTURE = [
   {id:'turk', lbl:'יהדות טורקיה'},
 ];
 
+
 </script>
 
 <script>
+/* ═══════════════════════════════════════════════
+   GLOBAL STATE
+═══════════════════════════════════════════════ */
+let ACT_CAT     = 'all';
+let ACT_CATS    = [];
+let ACT_HOLIDAY = null;
+let ACT_DIFF    = 'all';
+let SEARCH      = '';
+let SHOW_FAVS   = false;
+let FAV         = new Set();
+let ING_TAGS    = new Set();
+let CUR_REC     = null;
+let CUR_IDX     = -1;
 
-
-
-
-
-
-
-
-
-function toggleAbout(){
-  const sec = document.getElementById('about-section');
-  const btn = document.querySelector('.about-toggle');
-  const open = sec.classList.toggle('open');
-  sec.setAttribute('aria-hidden', !open);
-  if(btn){ btn.textContent = open ? 'סגור ▲' : 'קרא עוד על פרלה ז"ל ▾'; btn.setAttribute('aria-expanded', open); }
-}
-/* ── Global State ── */
-let ACT_CAT='all', ACT_CATS=[], ACT_HOLIDAY=null, ACT_DIFF='all';
-let SEARCH='', SHOW_FAVS=false;
-let FAV; try{FAV=new Set(JSON.parse(localStorage.getItem('perla_favs')||'[]'));}catch(e){FAV=new Set();}
-
-/* ══════════════════════════════════════
-   CATEGORIES
-══════════════════════════════════════ */
-const CATS=[
-  {id:'all',   lbl:'כל המתכונים'},
-  {id:'soups', lbl:'מרקים'},
-  {id:'salads',lbl:'סלטים'},
-  {id:'veg',   lbl:'תבשילי ירקות'},
-  {id:'fish',  lbl:'דגים'},
-  {id:'meat',  lbl:'בשר וקציצות'},
-  {id:'chick', lbl:'עוף ושבת'},
-  {id:'hol',   lbl:'חגים וחינה'},
-  {id:'des',   lbl:'מימונה וקינוחים'},
-  {id:'span',  lbl:'מורשת ספרד'},
-];
-const PH={soups:'ph-s',salads:'ph-sa',veg:'ph-v',fish:'ph-f',meat:'ph-m',chick:'ph-c',hol:'ph-h',des:'ph-d',span:'ph-sp'};
-
-/* ══════════════════════════════════════
-   IMAGES (Wikipedia commons, free)
-══════════════════════════════════════ */
-
-
-
-
-/* ── nav state ── */
-var _navOpenKey = null;
-
-function closeNavPanel(){
-  var panel = document.getElementById('nav-panel');
-  if(panel) panel.classList.remove('open');
-  document.querySelectorAll('.nav-top-btn').forEach(function(b){ b.classList.remove('panel-open'); });
-  _navOpenKey = null;
-}
-
-function openNavPanel(key, btn, buildFn){
-  if(_navOpenKey === key){ closeNavPanel(); return; }
-  closeNavPanel();
-  _navOpenKey = key;
-  btn.classList.add('panel-open');
-  var pi = document.getElementById('nav-panel-inner');
-  if(pi){ pi.innerHTML = ''; buildFn(pi); }
-  var panel = document.getElementById('nav-panel');
-  if(panel) panel.classList.add('open');
-}
-
-/* Add document close-listener once */
-if(!window._navListenerAdded){
-  window._navListenerAdded = true;
-  document.addEventListener('click', function(e){
-    if(!e.target.closest('#cat-inner') && !e.target.closest('#nav-panel')){
-      closeNavPanel();
+/* Safe localStorage access */
+(function() {
+  try {
+    const raw = localStorage.getItem('perla_favs');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) FAV = new Set(parsed);
     }
+  } catch (_) { FAV = new Set(); }
+})();
+
+/* ═══════════════════════════════════════════════
+   SECURITY: Safe DOM helpers (no XSS)
+═══════════════════════════════════════════════ */
+function esc(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val != null ? String(val) : '';
+}
+function setHTML(id, html) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = html; // only trusted internal HTML
+}
+function show(id) { const el = document.getElementById(id); if (el) el.hidden = false; }
+function hide(id) { const el = document.getElementById(id); if (el) el.hidden = true; }
+
+/* ═══════════════════════════════════════════════
+   IMAGES
+═══════════════════════════════════════════════ */
+function getRecipeImg(r) {
+  if (!r) return null;
+  try {
+    const custom = localStorage.getItem('perla_img_' + r.id);
+    if (custom && custom.startsWith('data:image/')) return custom;
+  } catch (_) {}
+  return 'images/r-' + r.id + '.jpg';
+}
+
+/* ═══════════════════════════════════════════════
+   FILTERING
+═══════════════════════════════════════════════ */
+function filtered() {
+  return R.filter(function(r) {
+    // Category
+    let cok;
+    if (ACT_CATS.length) {
+      cok = ACT_CATS.indexOf(r.cat) >= 0;
+    } else if (ACT_CAT === 'all') {
+      cok = true;
+    } else if (ACT_CAT === 'hol' && ACT_HOLIDAY) {
+      cok = (HOLIDAY_TAGS[ACT_HOLIDAY] || []).indexOf(r.id) >= 0;
+    } else {
+      cok = r.cat === ACT_CAT;
+    }
+    if (!cok) return false;
+
+    // Difficulty
+    if (ACT_DIFF !== 'all' && r.diff !== ACT_DIFF) return false;
+
+    // Favourites
+    if (SHOW_FAVS && !FAV.has(r.id)) return false;
+
+    // Ingredient tags
+    if (ING_TAGS.size) {
+      const ingrText = (r.ingr || []).map(function(i) { return i.i + ' ' + i.q; }).join(' ').toLowerCase();
+      const hasAll = Array.from(ING_TAGS).every(function(tag) { return ingrText.indexOf(tag) >= 0; });
+      if (!hasAll) return false;
+    }
+
+    // Search — strict whole-word
+    if (SEARCH) {
+      const raw = [r.title, r.desc, r.mem || '', catLbl(r.cat),
+        (r.ingr || []).map(function(i) { return i.i + ' ' + i.q; }).join(' '),
+        r.tip || ''].join(' ').toLowerCase();
+      const haystack = ' ' + raw.replace(/[,.'":;!?()\[\]{}\\/|]/g, ' ') + ' ';
+      const needle   = ' ' + SEARCH.trim().toLowerCase() + ' ';
+      if (haystack.indexOf(needle) < 0) return false;
+    }
+
+    return true;
   });
 }
 
-function buildNav(){
-  var bar = document.getElementById('cat-inner');
-  if(!bar) return;
-  bar.innerHTML = '';
+/* ═══════════════════════════════════════════════
+   RENDER GRID
+═══════════════════════════════════════════════ */
+function renderGrid() {
+  const list = filtered();
+  const grid = document.getElementById('grid');
+  const cnt  = document.getElementById('sec-cnt');
+  if (!grid) return;
 
-  function cnt(ids){
-    if(!ids) return 0;
-    if(typeof ids === 'string') return ids==='all' ? R.length : R.filter(function(r){ return r.cat===ids; }).length;
-    return R.filter(function(r){ return ids.indexOf(r.cat) >= 0; }).length;
+  if (cnt) cnt.textContent = list.length + ' מתכונים';
+  grid.setAttribute('aria-busy', 'false');
+
+  if (!list.length) {
+    grid.innerHTML = '<div class="no-res"><div class="no-res-icon">🔍</div>'
+      + (SEARCH ? 'לא נמצאו מתכונים עבור "' + esc(SEARCH) + '"'
+                : SHOW_FAVS ? 'אין מועדפים שמורים' : 'לא נמצאו מתכונים') + '</div>';
+    return;
   }
 
-  function chip(lbl, c, clickFn, isAct){
+  const fragment = document.createDocumentFragment();
+  list.forEach(function(r, i) {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.setAttribute('role', 'listitem');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', r.title);
+    card.style.animationDelay = Math.min(i * 20, 300) + 'ms';
+
+    const imgSrc = getRecipeImg(r);
+    const imgDiv = document.createElement('div');
+    imgDiv.className = 'c-img' + (imgSrc ? '' : ' no-img');
+
+    if (imgSrc) {
+      const img = document.createElement('img');
+      img.setAttribute('data-src', imgSrc);
+      img.alt = r.title;
+      img.loading = 'lazy';
+      img.onload  = function() { this.classList.add('loaded'); };
+      img.onerror = function() {
+        this.parentElement.classList.add('no-img');
+        this.remove();
+        const btn = document.createElement('button');
+        btn.className = 'c-upload-btn';
+        btn.textContent = '📷 הוסף תמונה';
+        btn.setAttribute('aria-label', 'הוסף תמונה למתכון ' + r.title);
+        btn.addEventListener('click', function(e) { e.stopPropagation(); uploadImg(r.id); });
+        imgDiv.appendChild(btn);
+      };
+      imgDiv.appendChild(img);
+    } else {
+      const btn = document.createElement('button');
+      btn.className = 'c-upload-btn';
+      btn.textContent = '📷 הוסף תמונה';
+      btn.setAttribute('aria-label', 'הוסף תמונה למתכון ' + r.title);
+      btn.addEventListener('click', function(e) { e.stopPropagation(); uploadImg(r.id); });
+      imgDiv.appendChild(btn);
+    }
+
+    const body = document.createElement('div');
+    body.className = 'c-body';
+
+    const badge = document.createElement('div');
+    badge.className = 'c-badge';
+    badge.textContent = r.badge || '';
+
+    const title = document.createElement('div');
+    title.className = 'c-title';
+    title.textContent = r.title;
+
+    const foot = document.createElement('div');
+    foot.className = 'c-foot';
+    if (r.time) {
+      const t = document.createElement('span');
+      t.className = 'c-time';
+      t.textContent = r.time;
+      foot.appendChild(t);
+    }
+    if (r.diff) {
+      const d = document.createElement('span');
+      d.className = 'c-diff ' + r.diff;
+      d.textContent = r.diff;
+      foot.appendChild(d);
+    }
+
+    body.appendChild(badge);
+    body.appendChild(title);
+    body.appendChild(foot);
+    card.appendChild(imgDiv);
+    card.appendChild(body);
+
+    card.addEventListener('click', function() { openM(r.id); });
+    card.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openM(r.id); } });
+
+    fragment.appendChild(card);
+  });
+
+  grid.innerHTML = '';
+  grid.appendChild(fragment);
+  observeLazy();
+}
+
+/* Lazy image loading */
+let _lazyObs = null;
+function observeLazy() {
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('img[data-src]').forEach(function(img) {
+      img.src = img.dataset.src;
+    });
+    return;
+  }
+  if (!_lazyObs) {
+    _lazyObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          const img = e.target;
+          img.src = img.dataset.src;
+          _lazyObs.unobserve(img);
+        }
+      });
+    }, { rootMargin: '200px' });
+  }
+  document.querySelectorAll('img[data-src]').forEach(function(img) { _lazyObs.observe(img); });
+}
+
+/* ═══════════════════════════════════════════════
+   NAVIGATION BUILD
+═══════════════════════════════════════════════ */
+var _navKey = null;
+
+function closePanel() {
+  var panel = document.getElementById('nav-panel');
+  if (panel) { panel.classList.remove('open'); panel.setAttribute('aria-hidden', 'true'); }
+  document.querySelectorAll('.nb').forEach(function(b) { b.classList.remove('panel-open'); });
+  _navKey = null;
+}
+
+function openPanel(key, btn, buildFn) {
+  if (_navKey === key) { closePanel(); return; }
+  closePanel();
+  _navKey = key;
+  btn.classList.add('panel-open');
+  var pi = document.getElementById('nav-panel-inner');
+  if (pi) { pi.innerHTML = ''; buildFn(pi); }
+  var panel = document.getElementById('nav-panel');
+  if (panel) { panel.classList.add('open'); panel.removeAttribute('aria-hidden'); }
+}
+
+/* Single document listener */
+if (!window._navInit) {
+  window._navInit = true;
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#cat-inner') && !e.target.closest('#nav-panel')) closePanel();
+  });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePanel(); });
+}
+
+function buildNav() {
+  var bar = document.getElementById('cat-inner');
+  if (!bar) return;
+  bar.innerHTML = '';
+
+  function catCnt(id) {
+    if (typeof id === 'string') return id === 'all' ? R.length : R.filter(function(r) { return r.cat === id; }).length;
+    return R.filter(function(r) { return id.indexOf(r.cat) >= 0; }).length;
+  }
+
+  function isActiveLeaf(catId, hol, ids) {
+    if (ids) return ids.length && ids.every(function(id) { return ACT_CATS.indexOf(id) >= 0; });
+    if (hol)  return ACT_CAT === catId && ACT_HOLIDAY === hol;
+    return ACT_CAT === catId && !ACT_HOLIDAY && !ACT_CATS.length;
+  }
+
+  function makeChip(lbl, c, onClick, active) {
     var b = document.createElement('button');
-    b.className = 'panel-btn' + (isAct?' active':'');
-    b.innerHTML = lbl + (c!=null ? ' <span class="panel-cnt">('+c+')</span>' : '');
-    b.onclick = function(e){ e.stopPropagation(); clickFn(); };
+    b.className = 'pc' + (active ? ' active' : '');
+    b.setAttribute('role', 'menuitem');
+    var cnt = c != null ? ' <span class="pc-cnt">(' + c + ')</span>' : '';
+    b.innerHTML = esc(lbl) + cnt;
+    b.addEventListener('click', function(e) { e.stopPropagation(); onClick(); });
     return b;
   }
 
-  MENU_STRUCTURE.forEach(function(node, idx){
-    var key = node.id || node.key || ('grp'+idx);
+  function selectCat(catId, hol) {
+    ACT_CATS    = [];
+    ACT_CAT     = catId;
+    ACT_HOLIDAY = hol || null;
+    SEARCH      = '';
+    var si = document.getElementById('srch');
+    if (si) si.value = '';
+    hide('srch-clr');
+    closePanel();
+    updateNavActive();
+    renderGrid();
+    var ttl = document.getElementById('sec-title');
+    if (ttl) ttl.textContent = hol ? 'חגים: ' + (holName(hol) || hol) : catLbl(catId);
+  }
 
-    /* simple leaf */
-    if(node.id && !node.items){
-      var c = cnt(node.id);
+  function selectMulti(ids, label) {
+    ACT_CATS    = ids.slice();
+    ACT_CAT     = '';
+    ACT_HOLIDAY = null;
+    SEARCH      = '';
+    var si = document.getElementById('srch');
+    if (si) si.value = '';
+    hide('srch-clr');
+    closePanel();
+    updateNavActive();
+    renderGrid();
+    var ttl = document.getElementById('sec-title');
+    if (ttl) ttl.textContent = label || 'מתכונים';
+  }
+
+  function buildPanel(node, pi) {
+    var row = document.createElement('div');
+    row.className = 'panel-row';
+
+    (node.items || []).forEach(function(item) {
+      // Accordion group (has sub-items)
+      if (item.items || item.sub) {
+        var subItems = item.items || item.sub || [];
+        var ic = item.ids ? catCnt(item.ids) : catCnt(item.id);
+        var accWrap = document.createElement('div');
+        accWrap.style.cssText = 'display:contents';
+
+        var hdr = document.createElement('button');
+        hdr.className = 'acc-hdr';
+        hdr.setAttribute('aria-expanded', 'false');
+        hdr.innerHTML = esc(item.lbl)
+          + (ic ? ' <span class="pc-cnt">(' + ic + ')</span>' : '')
+          + '<span class="acc-a" aria-hidden="true">▾</span>';
+
+        var body = document.createElement('div');
+        body.className = 'acc-body';
+
+        if (item.ids) {
+          body.appendChild(makeChip('הכל ב' + item.lbl, catCnt(item.ids),
+            function() { selectMulti(item.ids, item.lbl); },
+            isActiveLeaf(null, null, item.ids)));
+        }
+
+        subItems.forEach(function(s) {
+          if (s.sep) {
+            var hr = document.createElement('div');
+            hr.className = 'acc-sep';
+            body.appendChild(hr); return;
+          }
+          var sc = s.h ? (HOLIDAY_TAGS[s.h] || []).length : catCnt(s.id);
+          body.appendChild(makeChip(s.lbl, sc || null,
+            function() { selectCat(s.id, s.h || null); },
+            isActiveLeaf(s.id, s.h || null, null)));
+        });
+
+        // Auto-open if child active
+        var childActive = (item.id && ACT_CAT === item.id)
+          || (item.sub && item.sub.some(function(s) { return s.h && ACT_HOLIDAY === s.h; }));
+        if (childActive) { body.classList.add('open'); hdr.classList.add('open'); hdr.setAttribute('aria-expanded', 'true'); }
+
+        hdr.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var open = body.classList.toggle('open');
+          hdr.classList.toggle('open', open);
+          hdr.setAttribute('aria-expanded', open);
+        });
+
+        row.appendChild(hdr);
+        row.appendChild(body);
+        return;
+      }
+
+      // Multi-cat leaf (הכל)
+      if (item.ids && !item.items) {
+        row.appendChild(makeChip(item.lbl, catCnt(item.ids),
+          function() { selectMulti(item.ids, item.lbl); },
+          isActiveLeaf(null, null, item.ids)));
+        return;
+      }
+
+      // Simple chip
+      row.appendChild(makeChip(item.lbl, catCnt(item.id),
+        function() { selectCat(item.id, null); },
+        isActiveLeaf(item.id, null, null)));
+    });
+
+    pi.appendChild(row);
+  }
+
+  MENU_STRUCTURE.forEach(function(node, idx) {
+    var key = node.id || ('g' + idx);
+
+    // Simple leaf
+    if (node.id && !node.items) {
+      var c = catCnt(node.id);
       var btn = document.createElement('button');
-      btn.className = 'nav-top-btn' + (ACT_CAT===node.id && !ACT_HOLIDAY && !ACT_CATS.length ? ' active' : '');
-      btn.setAttribute('role','menuitem');
-      btn.innerHTML = node.lbl + (c?'<span class="nav-cnt">'+c+'</span>':'');
-      btn.onclick = function(e){
+      btn.className = 'nb' + (isActiveLeaf(node.id, null, null) ? ' active' : '');
+      btn.setAttribute('role', 'menuitem');
+      btn.innerHTML = esc(node.lbl) + (c ? '<span class="nb-cnt">' + c + '</span>' : '');
+      btn.addEventListener('click', function(e) {
         e.stopPropagation();
-        closeNavPanel();
-        document.querySelectorAll('.nav-top-btn').forEach(function(b){ b.classList.remove('active'); });
-        btn.classList.add('active');
-        selCatHol(node.id, null, null);
-      };
+        closePanel();
+        selectCat(node.id, null);
+      });
       bar.appendChild(btn);
       return;
     }
 
-    /* group */
-    var total = (node.items||[]).reduce(function(a,it){
-      return a + (it.ids ? cnt(it.ids) : it.id ? cnt(it.id) : 0);
+    // Group with dropdown
+    var total = (node.items || []).reduce(function(a, it) {
+      return a + (it.ids ? catCnt(it.ids) : it.id ? catCnt(it.id) : 0);
     }, 0);
 
-    var hasActive = (node.items||[]).some(function(it){
-      if(it.ids) return it.ids.some(function(id){ return ACT_CATS.indexOf(id)>=0 || ACT_CAT===id; });
-      return it.id && ACT_CAT===it.id;
+    var grpActive = (node.items || []).some(function(it) {
+      return (it.ids && it.ids.some(function(id) { return ACT_CATS.indexOf(id) >= 0 || ACT_CAT === id; }))
+          || (it.id && ACT_CAT === it.id);
     });
 
     var btn = document.createElement('button');
-    btn.className = 'nav-top-btn' + (hasActive?' active':'');
-    btn.setAttribute('role','menuitem');
-    btn.setAttribute('aria-haspopup','true');
-    btn.innerHTML = node.lbl
-      + (total?'<span class="nav-cnt">'+total+'</span>':'')
-      + '<span class="nav-arr">▾</span>';
-    btn.onclick = function(e){
+    btn.className = 'nb' + (grpActive ? ' active' : '');
+    btn.setAttribute('role', 'menuitem');
+    btn.setAttribute('aria-haspopup', 'true');
+    btn.innerHTML = esc(node.lbl)
+      + (total ? '<span class="nb-cnt">' + total + '</span>' : '')
+      + '<span class="nb-arr" aria-hidden="true">▾</span>';
+
+    var _k = key;
+    var _n = node;
+    btn.addEventListener('click', function(e) {
       e.stopPropagation();
-      openNavPanel(key, btn, function(pi){ buildPanel(node, pi); });
-    };
+      openPanel(_k, btn, function(pi) { buildPanel(_n, pi); });
+    });
+
     bar.appendChild(btn);
   });
 }
 
-function buildPanel(node, pi){
-  var row = document.createElement('div');
-  row.className = 'panel-row';
-
-  function cnt(ids){
-    if(!ids) return 0;
-    if(typeof ids === 'string') return ids==='all' ? R.length : R.filter(function(r){ return r.cat===ids; }).length;
-    return R.filter(function(r){ return ids.indexOf(r.cat) >= 0; }).length;
-  }
-  function sel(catId, hol){
-    document.querySelectorAll('.nav-top-btn').forEach(function(b){ b.classList.remove('active'); });
-    selCatHol(catId, hol||null, null);
-    closeNavPanel();
-  }
-  function selM(ids){
-    document.querySelectorAll('.nav-top-btn').forEach(function(b){ b.classList.remove('active'); });
-    selMultiCat(ids);
-    closeNavPanel();
-  }
-
-  (node.items||[]).forEach(function(item){
-
-    /* accordion sub-group */
-    if(item.items || item.sub){
-      var subItems = item.items || item.sub || [];
-      var ic = item.ids ? cnt(item.ids) : cnt(item.id);
-      var accWrap = document.createElement('div');
-      accWrap.className = 'panel-acc-wrap';
-
-      var hdr = document.createElement('button');
-      hdr.className = 'panel-acc-hdr';
-      hdr.innerHTML = item.lbl
-        + (ic?'<span class="panel-cnt">('+ic+')</span>':'')
-        + '<span class="acc-arr">▾</span>';
-
-      var body = document.createElement('div');
-      body.className = 'panel-acc-body';
-
-      if(item.ids){
-        var allIsAct = item.ids.every(function(id){ return ACT_CATS.indexOf(id)>=0; });
-        body.appendChild(chip('הכל ב'+item.lbl, cnt(item.ids), function(){ selM(item.ids); }, allIsAct));
-      }
-
-      subItems.forEach(function(s){
-        if(s.sep){ var hr=document.createElement('hr');hr.className='panel-sep-hr';body.appendChild(hr);return; }
-        var sc = s.h ? (HOLIDAY_TAGS[s.h]||[]).length : cnt(s.id);
-        var isAct = s.h ? (ACT_CAT===s.id && ACT_HOLIDAY===s.h) : (ACT_CAT===s.id && !ACT_HOLIDAY && !ACT_CATS.length);
-        body.appendChild(chip(s.lbl, sc||null, function(){ sel(s.id, s.h||null); }, isAct));
-      });
-
-      /* auto-open if relevant child active */
-      var shouldOpen = (item.id && ACT_CAT===item.id) ||
-        (item.sub && item.sub.some(function(s){ return s.h && ACT_CAT==='hol' && ACT_HOLIDAY===s.h; }));
-      if(shouldOpen){ body.classList.add('open'); hdr.classList.add('open'); }
-
-      hdr.onclick = function(e){
-        e.stopPropagation();
-        var open = body.classList.toggle('open');
-        hdr.classList.toggle('open', open);
-      };
-
-      accWrap.appendChild(hdr);
-      accWrap.appendChild(body);
-      row.appendChild(accWrap);
-      return;
-    }
-
-    /* multi-cat "all" */
-    if(item.ids && !item.items){
-      var isAct = item.ids.every(function(id){ return ACT_CATS.indexOf(id)>=0; });
-      row.appendChild(chip(item.lbl, cnt(item.ids), function(){ selM(item.ids); }, isAct));
-      return;
-    }
-
-    /* simple chip */
-    var ic2 = cnt(item.id);
-    var isAct2 = ACT_CAT===item.id && !ACT_HOLIDAY && !ACT_CATS.length;
-    row.appendChild(chip(item.lbl, ic2, function(){ sel(item.id, null); }, isAct2));
-  });
-
-  pi.appendChild(row);
+function updateNavActive() {
+  var bar = document.getElementById('cat-inner');
+  if (!bar) return;
+  // Rebuild is the simplest way to refresh active states
+  buildNav();
 }
 
-function selCat(id,btn){
-  ACT_CAT=id;SEARCH='';
-  document.getElementById('srch').value='';
-  document.getElementById('srch-clr').classList.remove('show');
-  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('sec-title').textContent=id==='all'?'כל המתכונים':catLbl(id);
-  SHOW_FAVS = false;
-  const fb = document.getElementById('fav-filter-btn');
-  if (fb) fb.classList.remove('active');
-  renderGrid();
-}
-
-/* ══════════════════════════════════════
-   SEARCH
-══════════════════════════════════════ */
-function doSearch(v){
-  SEARCH=v.trim().toLowerCase();
-  document.getElementById('srch-clr').classList.toggle('show',v.length>0);
-  ACT_CAT='all';
-  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelector('.cat-btn').classList.add('active');
-  document.getElementById('sec-title').textContent=SEARCH?'תוצאות חיפוש':'כל המתכונים';
-  renderGrid();
-}
-function clearSearch(){document.getElementById('srch').value='';doSearch('');}
-
-/* ══════════════════════════════════════
-   FILTER & RENDER
-══════════════════════════════════════ */
-
-
-function renderGrid(){
-  const list=filtered();
-  const g=document.getElementById('grid');
-  document.getElementById('sec-cnt').textContent=list.length+' מתכונים';
-  if(!list.length){
-    const msg = SHOW_FAVS
-      ? 'עוד לא שמרת מועדפים — לחצו על ♡ בכל כרטיס מתכון'
-      : 'לא נמצאו מתכונים — נסו חיפוש אחר';
-    g.innerHTML = `<div class="no-res">${msg}</div>`;
-    return;
-  }
-  g.innerHTML=list.map(r=>{
-    const ph=PH[r.cat]||'';
-    const imgs=getImages(r);
-    const imgSrc=imgs[0]||'';
-    const imgH=imgSrc
-      ?`<div class="c-img"><img data-src="${imgSrc}" alt="${r.title}" loading="lazy"
-          onload="this.classList.add('loaded')"
-          onerror="this.parentElement.classList.add('no-img')"></div>`
-      :`<div class="c-img no-img"><button class="c-upload-btn" onclick="event.stopPropagation();uploadImg('${r.id}')" title="הוסף תמונה">📷</button></div>`;
-          :'';
-    const phD=r.img?'style="display:none"':'';
-    return`<article class="card" role="listitem" tabindex="0"
-      onclick="openM('${r.id}')" onkeydown="if(event.key==='Enter')openM('${r.id}')">
-      <div class="c-img">
-        ${imgH}
-        <button class="fav-btn${FAV.has(r.id)?' fav-active':''}" onclick="event.stopPropagation();toggleFav('${r.id}',this)" aria-label="שמור מועדף">
-          <span id="fi-${r.id}">${FAV.has(r.id)?'♥':'♡'}</span>
-        </button>
-        <div class="c-ph ${ph}" ${phD}></div>
-        ${r.badge?`<span class="c-badge">${r.badge}</span>`:''}
-        <div class="c-arch"><svg viewBox="0 0 400 22" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,22 C100,0 300,0 400,22 Z" fill="var(--parch)"/></svg></div>
-      </div>
-      <div class="c-body">
-        <h3 class="c-title">${r.title}</h3>
-        <p class="c-desc">${r.desc}</p>
-        <div class="c-foot">
-          <span class="c-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>${r.time}</span>
-          <span class="c-diff">${r.diff}</span>
-        </div>
-      </div>
-    </article>`;
-  }).join('');
-}
-
-/* ══════════════════════════════════════
+/* ═══════════════════════════════════════════════
    MODAL
-══════════════════════════════════════ */
-function getImages(r){
-  if(!r) return [];
-  // Check localStorage for manually uploaded image first
-  const custom = localStorage.getItem('perla_img_' + r.id);
-  if(custom) return [custom, custom];
-  // Use per-recipe file: images/r-{id}.jpg
-  return ['images/r-' + r.id + '.jpg'];
+═══════════════════════════════════════════════ */
+function openM(id) {
+  var r = R.find(function(x) { return x.id === id; });
+  if (!r) return;
+  CUR_REC = r;
+  CUR_IDX = filtered().findIndex(function(x) { return x.id === id; });
+
+  var ovl = document.getElementById('ovl');
+  if (!ovl) return;
+
+  // Hero image
+  var hero = document.getElementById('m-hero');
+  hero.querySelectorAll('img, .m-upload-wrap').forEach(function(el) { el.remove(); });
+  var imgSrc = getRecipeImg(r);
+  if (imgSrc) {
+    var img = document.createElement('img');
+    img.alt = r.title;
+    img.onload  = function() { this.classList.add('loaded'); };
+    img.onerror = function() { this.remove(); appendUploadWrap(hero, r.id); };
+    img.src = imgSrc;
+    hero.insertBefore(img, hero.firstChild);
+  } else {
+    appendUploadWrap(hero, r.id);
+  }
+
+  // Badge, title, subdesc
+  var badge = document.getElementById('m-badge');
+  if (badge) { badge.textContent = r.badge || ''; badge.hidden = !r.badge; }
+  setText('m-title', r.title);
+  setText('m-subdesc', r.desc || '');
+
+  // Memory
+  setText('m-mem-txt', r.mem || '');
+  var memEl = document.getElementById('m-mem');
+  if (memEl) memEl.hidden = !r.mem;
+
+  // Meta
+  var meta = document.getElementById('m-meta');
+  if (meta) {
+    meta.innerHTML = '';
+    [['⏱', r.time], ['🍽', r.serv], ['📊', r.diff]].forEach(function(pair) {
+      if (pair[1]) {
+        var span = document.createElement('span');
+        span.className = 'm-chip';
+        span.textContent = pair[0] + ' ' + pair[1];
+        meta.appendChild(span);
+      }
+    });
+  }
+
+  // Ingredients
+  var ingrEl = document.getElementById('m-ingr');
+  if (ingrEl) {
+    ingrEl.innerHTML = '';
+    (r.ingr || []).forEach(function(item) {
+      var row = document.createElement('div');
+      row.className = 'm-ingr-item';
+      row.setAttribute('role', 'listitem');
+      var q = document.createElement('span');
+      q.className = 'm-ingr-q';
+      q.textContent = item.q || '';
+      var i = document.createElement('span');
+      i.className = 'm-ingr-i';
+      i.textContent = item.i || '';
+      row.appendChild(q);
+      row.appendChild(i);
+      ingrEl.appendChild(row);
+    });
+  }
+
+  // Steps
+  var stepsEl = document.getElementById('m-steps');
+  if (stepsEl) {
+    stepsEl.innerHTML = '';
+    (r.steps || []).forEach(function(s) {
+      var li = document.createElement('li');
+      li.className = 'm-step';
+      if (s.t) {
+        var tSpan = document.createElement('span');
+        tSpan.className = 'm-step-t';
+        tSpan.textContent = s.t + ' — ';
+        li.appendChild(tSpan);
+      }
+      li.appendChild(document.createTextNode(s.s || ''));
+      stepsEl.appendChild(li);
+    });
+  }
+
+  // Tip
+  var tipWrap = document.getElementById('m-tip-wrap');
+  if (tipWrap) tipWrap.hidden = !r.tip;
+  if (r.tip) setText('m-tip-txt', r.tip);
+
+  // Source
+  var srcBox = document.getElementById('m-src-box');
+  if (srcBox) {
+    srcBox.hidden = !r.src;
+    if (r.src) {
+      var srcLink = document.getElementById('m-src-link');
+      if (srcLink) srcLink.href = r.src;
+    }
+  }
+
+  // Video
+  var vidWrap = document.getElementById('m-vid-wrap');
+  if (vidWrap) {
+    vidWrap.hidden = !r.vid;
+    if (r.vid) {
+      var vidLink = document.getElementById('m-vid-link');
+      if (vidLink) vidLink.href = r.vid;
+    }
+  }
+
+  // Nav buttons
+  var prev = document.getElementById('m-prev');
+  var next = document.getElementById('m-next');
+  var list = filtered();
+  if (prev) prev.hidden = CUR_IDX <= 0;
+  if (next) next.hidden = CUR_IDX >= list.length - 1;
+
+  // Progress bar
+  var prog = document.getElementById('m-progress');
+  if (prog && list.length > 0) prog.style.transform = 'scaleX(' + (CUR_IDX + 1) / list.length + ')';
+
+  ovl.classList.add('open');
+  ovl.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+
+  // Focus management
+  var closeBtn = document.getElementById('m-close');
+  if (closeBtn) setTimeout(function() { closeBtn.focus(); }, 50);
 }
 
-/* ── Manual image upload ── */
-function showUploadBtn(container, recipeId){
-  const wrap = document.createElement('div');
+function appendUploadWrap(hero, recipeId) {
+  var wrap = document.createElement('div');
   wrap.className = 'm-upload-wrap';
-  wrap.innerHTML = '<button class="m-upload-btn" onclick="uploadImg('' + recipeId + '')">📷 הוסף תמונה</button>'
-    + '<p class="m-upload-hint">תמונה תישמר בדפדפן זה</p>';
-  container.appendChild(wrap);
+  var btn = document.createElement('button');
+  btn.className = 'm-upload-btn';
+  btn.textContent = '📷 הוסף תמונה';
+  btn.addEventListener('click', function() { uploadImg(recipeId); });
+  var hint = document.createElement('p');
+  hint.className = 'm-upload-hint';
+  hint.textContent = 'תמונה תישמר בדפדפן זה';
+  wrap.appendChild(btn);
+  wrap.appendChild(hint);
+  hero.appendChild(wrap);
 }
 
-function uploadImg(recipeId){
-  const input = document.createElement('input');
+function closeM() {
+  var ovl = document.getElementById('ovl');
+  if (!ovl) return;
+  ovl.classList.remove('open');
+  ovl.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  CUR_REC = null;
+  CUR_IDX = -1;
+}
+
+function ovlClose(e) {
+  if (e.target === e.currentTarget) closeM();
+}
+
+function navRecipe(dir) {
+  var list = filtered();
+  var newIdx = CUR_IDX + dir;
+  if (newIdx < 0 || newIdx >= list.length) return;
+  openM(list[newIdx].id);
+}
+
+/* ═══════════════════════════════════════════════
+   SEARCH
+═══════════════════════════════════════════════ */
+function doSearch(val) {
+  SEARCH = (val || '').trim().toLowerCase();
+  var clr = document.getElementById('srch-clr');
+  if (clr) clr.hidden = !SEARCH;
+  updateTitle();
+  renderGrid();
+}
+
+function clearSearch() {
+  SEARCH = '';
+  var si = document.getElementById('srch');
+  if (si) si.value = '';
+  hide('srch-clr');
+  updateTitle();
+  renderGrid();
+}
+
+/* ═══════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════ */
+function catLbl(id) {
+  var c = CATS.find(function(x) { return x.id === id; });
+  return c ? c.lbl : id;
+}
+
+var HOL_NAMES = {
+  shabbat:'שבת', rosh:'ראש השנה', kippur:'יום כיפור',
+  pesach:'פסח', mimouna:'מימונה', hanukkah:'חנוכה',
+  purim:'פורים', shavuot:'שבועות', sukkot:'סוכות', henna:'חינה'
+};
+function holName(h) { return HOL_NAMES[h] || h; }
+
+function updateTitle() {
+  var ttl = document.getElementById('sec-title');
+  if (!ttl) return;
+  if (SEARCH)            ttl.textContent = 'תוצאות חיפוש: "' + SEARCH + '"';
+  else if (ACT_CATS.length) ttl.textContent = 'מתכונים נבחרים';
+  else if (ACT_HOLIDAY)  ttl.textContent = 'חגים: ' + holName(ACT_HOLIDAY);
+  else if (ACT_CAT === 'all') ttl.textContent = 'כל המתכונים';
+  else                   ttl.textContent = catLbl(ACT_CAT);
+}
+
+/* ═══════════════════════════════════════════════
+   PRINT & SHARE
+═══════════════════════════════════════════════ */
+function printRecipe() {
+  var r = CUR_REC;
+  if (!r) return;
+  var w = window.open('', '_blank', 'noopener,noreferrer');
+  if (!w) return;
+  var ingrs = (r.ingr || []).map(function(i) {
+    return '<li><strong>' + esc(i.q) + '</strong> ' + esc(i.i) + '</li>';
+  }).join('');
+  var steps = (r.steps || []).map(function(s, i) {
+    return '<li>' + (s.t ? '<strong>' + esc(s.t) + ':</strong> ' : '') + esc(s.s) + '</li>';
+  }).join('');
+  w.document.write('<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8">'
+    + '<title>' + esc(r.title) + '</title>'
+    + '<style>body{font-family:serif;max-width:700px;margin:2rem auto;direction:rtl;text-align:right}'
+    + 'h1{color:#b84223}ul,ol{padding-right:1.5rem}li{margin:.3rem 0}</style></head><body>'
+    + '<h1>' + esc(r.title) + '</h1>'
+    + (r.desc ? '<p>' + esc(r.desc) + '</p>' : '')
+    + (r.mem  ? '<blockquote><em>' + esc(r.mem) + '</em></blockquote>' : '')
+    + '<h2>רכיבים</h2><ul>' + ingrs + '</ul>'
+    + '<h2>הכנה</h2><ol>' + steps + '</ol>'
+    + (r.tip  ? '<p><strong>טיפ:</strong> ' + esc(r.tip) + '</p>' : '')
+    + '</body></html>');
+  w.document.close();
+  setTimeout(function() { w.print(); }, 400);
+}
+
+function shareRecipe() {
+  var r = CUR_REC;
+  if (!r) return;
+  var url  = location.href.split('#')[0] + '#' + r.id;
+  var text = 'מתכון: ' + r.title + ' | ספר הבישול של פרלה בן ארוש ז"ל';
+  if (navigator.share) {
+    navigator.share({ title: r.title, text: text, url: url })
+      .catch(function() {});
+  } else {
+    navigator.clipboard.writeText(url).then(function() {
+      showToast('הקישור הועתק!');
+    }).catch(function() {
+      showToast('העתיקו: ' + url);
+    });
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   MANUAL IMAGE UPLOAD
+═══════════════════════════════════════════════ */
+function uploadImg(recipeId) {
+  var input = document.createElement('input');
   input.type = 'file';
-  input.accept = 'image/*';
-  input.onchange = function(){
-    const file = input.files[0];
-    if(!file) return;
-    if(file.size > 3 * 1024 * 1024){ showToast('התמונה גדולה מדי (מקסימום 3MB)'); return; }
-    const reader = new FileReader();
-    reader.onload = function(e){
-      const b64 = e.target.result;
+  input.accept = 'image/jpeg,image/png,image/webp,image/gif';
+  input.addEventListener('change', function() {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    if (file.size > 3 * 1024 * 1024) { showToast('התמונה גדולה מדי — מקסימום 3MB'); return; }
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var b64 = ev.target.result;
+      if (!b64 || !b64.startsWith('data:image/')) { showToast('קובץ לא תקין'); return; }
       try {
         localStorage.setItem('perla_img_' + recipeId, b64);
         showToast('התמונה נשמרה');
-        // Refresh modal image
-        const r = R.find(x=>x.id===recipeId);
-        if(r){ closeM(); setTimeout(()=>openM(recipeId), 100); }
-      } catch(err) {
+        if (CUR_REC && CUR_REC.id === recipeId) {
+          var r = R.find(function(x) { return x.id === recipeId; });
+          if (r) { closeM(); setTimeout(function() { openM(recipeId); }, 80); }
+        }
+      } catch (err) {
         showToast('שגיאה: נסה תמונה קטנה יותר');
       }
     };
     reader.readAsDataURL(file);
-  };
+  });
   input.click();
 }
 
-function removeCustomImg(recipeId){
-  localStorage.removeItem('perla_img_' + recipeId);
-  showToast('התמונה הוסרה');
-  const r = R.find(x=>x.id===recipeId);
-  if(r){ closeM(); setTimeout(()=>openM(recipeId), 100); }
+/* ═══════════════════════════════════════════════
+   ABOUT TOGGLE
+═══════════════════════════════════════════════ */
+function toggleAbout() {
+  var sec = document.getElementById('about');
+  var btn = document.getElementById('about-toggle');
+  var arr = document.getElementById('about-arrow');
+  if (!sec) return;
+  var open = sec.classList.toggle('open');
+  sec.setAttribute('aria-hidden', !open);
+  if (btn) btn.setAttribute('aria-expanded', open);
+  if (arr) arr.textContent = open ? '▲' : '▾';
 }
 
-
-function openM(id){
-  const r=R.find(x=>x.id===id);if(!r)return;
-  // Store current recipe and init servings scaler
-  CUR_RECIPE = r;
-  const sm = (r.serv||'4').match(/\d+/);
-  BASE_SERVINGS = sm ? parseInt(sm[0]) : 4;
-  CUR_SERVINGS = BASE_SERVINGS;
-  const snEl = document.getElementById('m-scale-num');
-  const siEl = document.getElementById('m-scale-info');
-  if(snEl) snEl.textContent = BASE_SERVINGS;
-  if(siEl) siEl.textContent = '';
-  const hz=document.getElementById('m-hero');
-  hz.querySelectorAll('img,.m-hero-ph').forEach(e=>e.remove());
-  if(r.img){
-    const img=document.createElement('img');
-    img.src=r.img;img.alt=r.title;
-    img.onerror=()=>{img.remove();addPh()};
-    hz.insertBefore(img,hz.firstChild);
-  } else addPh();
-  function addPh(){const d=document.createElement('div');d.className='m-hero-ph '+(PH[r.cat]||'');hz.insertBefore(d,hz.firstChild);}
-  const b=document.getElementById('m-badge');
-  if(r.badge){b.textContent=r.badge;b.style.display='';}else b.style.display='none';
-  document.getElementById('m-title').textContent=r.title;
-  document.getElementById('m-subdesc').textContent=r.desc;
-  document.getElementById('m-mem-txt').textContent=r.mem||'';
-  document.getElementById('m-meta').innerHTML=[['קטגוריה',catLbl(r.cat)],['זמן',r.time],['קושי',r.diff],['מנות',r.serv]]
-    .map(([k,v])=>`<span class="m-chip"><strong>${k}:</strong> ${v}</span>`).join('');
-  document.getElementById('m-ingr').innerHTML=(r.ingr||[]).map(item=>{
-    if(!item.i)return`<div class="m-sep">${item.q}</div>`;
-    return`<div class="m-ing"><div class="m-dot"></div><div><span class="m-qty">${item.q}</span> ${item.i}</div></div>`;
-  }).join('');
-  document.getElementById('m-steps').innerHTML=(r.steps||[]).map((s,i)=>{
-    // Parse duration for timer button
-    const durMatch = s.t.match(/(\d+)\s*דק/);
-    const durSec = durMatch ? parseInt(durMatch[1])*60 : 0;
-    const timerBtn = durSec > 0
-      ? `<button class="step-timer-btn" onclick="startTimer(${durSec},'${s.t} — ${s.s.substring(0,25)}...',this)" title="הפעל טיימר">⏱ ${s.t}</button>`
-      : `<span class="m-sdur">${s.t}</span>`;
-    return `<li class="m-step"><div class="m-snum">${i+1}</div><div class="m-sbody">${timerBtn} ${s.s}</div></li>`;
-  }).join('');
-  const tw=document.getElementById('m-tip-wrap');
-  if(r.tip){document.getElementById('m-tip-txt').textContent=r.tip;tw.style.display='';}else tw.style.display='none';
-  // Source attribution link
-  const srcWrap = document.getElementById('m-src-wrap');
-  if(srcWrap){
-    if(r.src){
-      srcWrap.style.display='';
-      const srcLink = document.getElementById('m-src-link');
-      if(srcLink){ srcLink.href=r.src; }
-    } else srcWrap.style.display='none';
-  }
-  const vw=document.getElementById('m-vid-wrap');
-  if(r.vid){document.getElementById('m-vid-link').href=r.vid;vw.style.display='';}else vw.style.display='none';
-  document.getElementById('ovl').classList.add('open');
-  document.body.style.overflow='hidden';
-  document.getElementById('ovl').scrollTop=0;
-  const pb = document.getElementById('m-progress');
-  if(pb) pb.style.transform='scaleX(0)';
-  // Set navigation index
-  const navList = getNavList();
-  CURRENT_RECIPE_IDX = navList.findIndex(x => x.id === r.id);
-  // Render related recipes
-  renderRelated(r);
-}
-
-/* ══════════════════════════════
-   COOKING TIMER
-══════════════════════════════ */
-let timerInterval = null;
-let timerRemaining = 0;
-let timerPaused = false;
-let timerStepLabel = '';
-let timerActiveBtn = null;
-
-function startTimer(seconds, label, btn) {
-  // If clicking same button, pause/resume
-  if (timerActiveBtn === btn && timerInterval) {
-    timerPaused ? timerResume() : timerPauseFunc();
-    return;
-  }
-  // Stop any existing timer
-  timerStop();
-  timerRemaining = seconds;
-  timerStepLabel = label;
-  timerActiveBtn = btn;
-  timerPaused = false;
-  if (btn) btn.classList.add('running');
-  document.getElementById('timer-step-lbl').textContent = label;
-  document.getElementById('timer-pause-btn').textContent = 'השהה';
-  document.getElementById('timer-widget').classList.add('show');
-  updateTimerDisplay();
-  timerInterval = setInterval(() => {
-    if (!timerPaused) {
-      timerRemaining--;
-      updateTimerDisplay();
-      if (timerRemaining <= 0) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        document.getElementById('timer-display').textContent = '00:00';
-        if (timerActiveBtn) timerActiveBtn.classList.remove('running');
-        // Play alert sound via Web Audio
-        try {
-          const ctx = new AudioContext();
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.connect(gain); gain.connect(ctx.destination);
-          osc.frequency.setValueAtTime(880, ctx.currentTime);
-          gain.gain.setValueAtTime(0.3, ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
-          osc.start(); osc.stop(ctx.currentTime + 1);
-        } catch(e) {}
-        showToast('הטיימר הסתיים! ' + timerStepLabel.substring(0,20));
-      }
-    }
-  }, 1000);
-}
-
-function updateTimerDisplay() {
-  const m = Math.floor(timerRemaining / 60);
-  const s = timerRemaining % 60;
-  document.getElementById('timer-display').textContent =
-    String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
-}
-
-function timerPauseFunc() {
-  timerPaused = true;
-  document.getElementById('timer-pause-btn').textContent = 'המשך';
-}
-function timerResume() {
-  timerPaused = false;
-  document.getElementById('timer-pause-btn').textContent = 'השהה';
-}
-function timerPause() { timerPaused ? timerResume() : timerPauseFunc(); }
-function timerStop() {
-  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-  if (timerActiveBtn) timerActiveBtn.classList.remove('running');
-  timerActiveBtn = null; timerPaused = false;
-  document.getElementById('timer-widget').classList.remove('show');
-}
-
-/* ══════════════════════════════
-   INGREDIENT SEARCH
-══════════════════════════════ */
-let ING_TAGS = new Set();
-
-function toggleIngSearch(btn) {
-  const wrap = document.getElementById('ing-search-wrap');
-  const isOpen = wrap.classList.toggle('show');
-  btn.classList.toggle('active', isOpen);
-  if (isOpen) document.getElementById('ing-input').focus();
-  else clearIngSearch();
-}
-
-function ingSearchInput(val) {
-  if (val.endsWith(',') || val.endsWith(' ')) {
-    const tag = val.replace(/[, ]+$/, '').trim();
-    if (tag.length > 1) {
-      ING_TAGS.add(tag);
-      document.getElementById('ing-input').value = '';
-      renderIngTags();
-      renderGrid();
-    }
-  }
-}
-
-function renderIngTags() {
-  document.getElementById('ing-tags').innerHTML = [...ING_TAGS].map(t =>
-    `<span class="ing-tag">${t}<button onclick="removeIngTag('${t}')" aria-label="הסר">×</button></span>`
-  ).join('');
-}
-
-function removeIngTag(tag) {
-  ING_TAGS.delete(tag);
-  renderIngTags();
-  renderGrid();
-}
-
-function clearIngSearch() {
-  ING_TAGS.clear();
-  document.getElementById('ing-input').value = '';
-  renderIngTags();
-  renderGrid();
-}
-
-// Update filtered() to include ingredient tags
-const _origFiltered = filtered;
-
-/* ══════════════════════════════
-   RANDOM RECIPE
-══════════════════════════════ */
-function openRandomRecipe() {
-  const list = filtered();
-  if (!list.length) { showToast('אין מתכונים להצגה'); return; }
-  const r = list[Math.floor(Math.random() * list.length)];
-  openM(r.id);
-  showToast('מתכון אקראי: ' + r.title);
-}
-
-/* ══════════════════════════════
-   UPDATE FILTERED TO INCLUDE ING TAGS
-══════════════════════════════ */
-
-function filtered(){
-  return R.filter(r=>{
-    // Category filter
-    let cok;
-    if(ACT_CATS && ACT_CATS.length) cok = ACT_CATS.includes(r.cat);
-    else if(ACT_CAT==='all' || ACT_CAT==='multi') cok = true;
-    else if(ACT_CAT==='hol' && ACT_HOLIDAY){ cok = new Set(HOLIDAY_TAGS[ACT_HOLIDAY]||[]).has(r.id); }
-    else cok = r.cat===ACT_CAT;
-
-    const dok = ACT_DIFF==='all' || r.diff===ACT_DIFF;
-    const fok = !SHOW_FAVS || FAV.has(r.id);
-    const iok = ING_TAGS.size===0 || [...ING_TAGS].every(tag=>{
-      const allIngr=(r.ingr||[]).map(i=>i.i+' '+i.q).join(' ').toLowerCase();
-      return allIngr.includes(tag.toLowerCase());
-    });
-
-    if(!SEARCH) return cok && dok && fok && iok;
-
-    // Strict whole-word search: normalize punctuation → spaces, pad, match exact word
-    const rawText = [r.title, r.desc, r.mem||'', catLbl(r.cat),
-      (r.ingr||[]).map(i=>i.i+' '+i.q).join(' '), r.tip||''].join(' ').toLowerCase();
-    const haystack = ' ' + rawText.replace(/[,.'":;!?()\[\]{}\/|]/g,' ') + ' ';
-    const needle   = ' ' + SEARCH.trim().toLowerCase() + ' ';
-    const sok = haystack.includes(needle);
-
-    return cok && dok && fok && iok && sok;
-  });
-}
-
-function renderRelated(r) {
-  const wrap = document.getElementById('m-related-wrap');
-  const container = document.getElementById('m-related');
-  if (!wrap || !container) return;
-
-  // Find recipes in same category, excluding current
-  const same = R.filter(x => x.cat === r.cat && x.id !== r.id);
-  // Shuffle and take 4
-  const shuffled = same.sort(() => 0.5 - Math.random()).slice(0, 4);
-
-  if (!shuffled.length) { wrap.style.display = 'none'; return; }
-  wrap.style.display = '';
-
-  container.innerHTML = shuffled.map(rel => `
-    <div class="related-card" onclick="openM('${rel.id}')" tabindex="0"
-         onkeydown="if(event.key==='Enter')openM('${rel.id}')">
-      <div class="related-cat">${catLbl(rel.cat)}</div>
-      <div class="related-title">${rel.title}</div>
-      <div class="related-time">${rel.time}</div>
-    </div>`).join('');
-}
-
-/* ══════════════════════
-   PREV / NEXT RECIPE NAVIGATION
-══════════════════════ */
-let CURRENT_RECIPE_IDX = -1;
-
-function getNavList() {
-  return filtered();
-}
-
-function navRecipe(dir) {
-  const list = getNavList();
-  if (!list.length) return;
-  CURRENT_RECIPE_IDX = Math.max(0, Math.min(list.length - 1, CURRENT_RECIPE_IDX + dir));
-  openM(list[CURRENT_RECIPE_IDX].id);
-}
-
-// Keyboard left/right inside modal
-document.addEventListener('keydown', e => {
-  if (!document.getElementById('ovl').classList.contains('open')) return;
-  if (e.key === 'ArrowRight') navRecipe(-1);
-  if (e.key === 'ArrowLeft')  navRecipe(1);
-});
-
-function closeM(){document.getElementById('ovl').classList.remove('open');document.body.style.overflow='';}
-function ovlClose(e){if(e.target===document.getElementById('ovl'))closeM();}
-
-/* ── SERVINGS SCALER ── */
-let BASE_SERVINGS = 4;
-let CUR_SERVINGS = 4;
-let CUR_RECIPE = null;
-
-function parseNum(str) {
-  if (!str) return null;
-  str = str.toString().trim();
-  // Handle fractions like ½ ¼ ¾
-  const frac = {'½':0.5,'¼':0.25,'¾':0.75,'⅓':0.333,'⅔':0.667,'⅛':0.125,'⅜':0.375};
-  for (const [k,v] of Object.entries(frac)) str = str.replace(k, v + ' ');
-  // Handle ranges like 4–6
-  const range = str.match(/(\d+\.?\d*)\s*[–-]\s*(\d+\.?\d*)/);
-  if (range) return (parseFloat(range[1]) + parseFloat(range[2])) / 2;
-  const num = parseFloat(str.match(/(\d+\.?\d*)/)?.[1]);
-  return isNaN(num) ? null : num;
-}
-
-function fmtNum(n) {
-  if (n === Math.round(n)) return n.toString();
-  const fracs = [[0.5,'½'],[0.25,'¼'],[0.75,'¾'],[0.333,'⅓'],[0.667,'⅔'],[0.125,'⅛']];
-  const whole = Math.floor(n);
-  const frac = n - whole;
-  for (const [v,s] of fracs) {
-    if (Math.abs(frac - v) < 0.05) return (whole > 0 ? whole + ' ' : '') + s;
-  }
-  return n.toFixed(1).replace(/\.0$/, '');
-}
-
-function scaleServings(delta) {
-  CUR_SERVINGS = Math.max(1, Math.min(20, CUR_SERVINGS + delta));
-  document.getElementById('m-scale-num').textContent = CUR_SERVINGS;
-  const ratio = CUR_SERVINGS / BASE_SERVINGS;
-  document.getElementById('m-scale-info').textContent =
-    ratio === 1 ? '' : `(×${ratio.toFixed(1).replace(/\.0$/, '')})`;
-  // Re-render ingredients with scaled amounts
-  if (!CUR_RECIPE) return;
-  document.getElementById('m-ingr').innerHTML = (CUR_RECIPE.ingr || []).map(item => {
-    if (!item.i) return `<div class="m-sep">${item.q}</div>`;
-    const num = parseNum(item.q);
-    let display = item.q;
-    if (num !== null && ratio !== 1) {
-      const scaled = num * ratio;
-      const orig = item.q.toString();
-      display = orig.replace(/(\d+\.?\d*[½¼¾⅓⅔⅛]?|\d*[½¼¾⅓⅔⅛])/, fmtNum(scaled));
-    }
-    return `<div class="m-ing"><div class="m-dot"></div><div><span class="m-qty">${display}</span> ${item.i}</div></div>`;
-  }).join('');
-}
-
-/* ── PRINT RECIPE ── */
-function printRecipe() {
-  const r = CUR_RECIPE;
-  if (!r) return;
-  const w = window.open('', '_blank');
-  w.document.write(`<!DOCTYPE html>
-<html dir="rtl" lang="he">
-<head>
-<meta charset="UTF-8">
-<title>${r.title} — ספר הבישול של פרלה בן ארוש ז"ל</title>
-<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&family=Heebo:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  body{font-family:'Heebo',sans-serif;direction:rtl;text-align:right;max-width:750px;margin:2rem auto;padding:1rem 2rem;color:#1a0c06;line-height:1.7}
-  h1{font-family:'Frank Ruhl Libre',serif;font-size:2rem;margin-bottom:.3rem}
-  h2{font-family:'Frank Ruhl Libre',serif;font-size:1.2rem;color:#b84223;margin:1.5rem 0 .6rem;border-bottom:2px solid #f3e8c8;padding-bottom:.3rem}
-  .meta{display:flex;gap:1rem;flex-wrap:wrap;margin:.5rem 0 1.5rem;font-size:.85rem;color:#8a6044}
-  .chip{background:#f3e8c8;padding:.2rem .7rem;border-radius:10px}
-  .mem{background:#f9edce;border-right:4px solid #c49a0c;padding:.8rem 1rem;margin:1rem 0;font-style:italic;font-size:.9rem;color:#4a2a14;border-radius:0 8px 8px 0}
-  .ingr-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}
-  .ing{background:#fffdf6;border:1px solid rgba(155,95,45,.2);border-radius:8px;padding:.4rem .7rem;font-size:.88rem;display:flex;gap:.5rem;align-items:flex-start}
-  .dot{width:8px;height:8px;border-radius:50%;background:#c49a0c;margin-top:.4rem;flex-shrink:0}
-  .qty{font-weight:700;color:#b84223}
-  .steps{list-style:none;padding:0}
-  .step{display:flex;gap:.8rem;padding:.7rem 0;border-bottom:1px solid #f3e8c8}
-  .step-n{width:28px;height:28px;border-radius:50%;background:#b84223;color:#fff;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .step-t{color:#9a7808;font-size:.72rem;font-weight:700;background:#f3e8c8;padding:.05rem .45rem;border-radius:5px;margin-left:.3rem}
-  .tip{background:#fffde8;border-right:5px solid #c49a0c;padding:.8rem 1rem;font-size:.88rem;color:#4a2a14;border-radius:0 8px 8px 0;margin:1rem 0}
-  .footer{margin-top:2rem;text-align:center;font-size:.75rem;color:#9a6040;border-top:1px solid #f3e8c8;padding-top:1rem}
-  .sep{grid-column:1/-1;font-weight:700;color:#b84223;font-size:.78rem;padding:.25rem 0;border-bottom:1px dashed rgba(155,95,45,.2)}
-  @media print{body{margin:.5rem;padding:.5rem 1rem}h1{font-size:1.5rem}}
-
-/* RELATED RECIPES */
-.related-card{background:var(--cream);border:1.5px solid var(--bdr);
-  border-radius:10px;padding:.65rem .9rem;cursor:pointer;
-  transition:var(--tr);min-width:150px;max-width:200px}
-.related-card:hover{background:var(--parch-2);transform:translateY(-2px);box-shadow:var(--sh-sm)}
-.related-cat{font-size:.65rem;color:var(--saffron-d);font-weight:600;
-  text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem}
-.related-title{font-family:'Frank Ruhl Libre',serif;font-size:.88rem;
-  font-weight:700;color:var(--ink);line-height:1.3}
-.related-time{font-size:.72rem;color:var(--ink-l);margin-top:.2rem}
-</style>
-</head>
-<body>
-<h1>${r.title}</h1>
-<div class="meta">
-  <span class="chip">זמן: ${r.time}</span>
-  <span class="chip">קושי: ${r.diff}</span>
-  <span class="chip">מנות: ${CUR_SERVINGS !== BASE_SERVINGS ? CUR_SERVINGS + ' (מותאם)' : r.serv}</span>
-</div>
-<div class="mem"><strong>זיכרון ממרוקו:</strong> ${r.mem || ''}</div>
-<h2>רכיבים</h2>
-<div class="ingr-grid">
-${(r.ingr||[]).map(i => !i.i ? `<div class="sep">${i.q}</div>` :
-  `<div class="ing"><div class="dot"></div><div><span class="qty">${i.q}</span> ${i.i}</div></div>`).join('')}
-</div>
-<h2>שלבי ההכנה</h2>
-<ol class="steps">
-${(r.steps||[]).map((s,n) => `<li class="step"><div class="step-n">${n+1}</div><div><span class="step-t">${s.t}</span>${s.s}</div></li>`).join('')}
-</ol>
-${r.tip ? `<h2>הטיפ של אמא פרלה</h2><div class="tip">${r.tip}</div>` : ''}
-<div class="footer">ספר הבישול של פרלה בן ארוש ז"ל | perla-cooking.netlify.app</div>
-</body></html>`);
-  w.document.close();
-  setTimeout(() => { w.print(); }, 600);
-}
-
-/* ── SHARE RECIPE ── */
-function shareRecipe() {
-  const r = CUR_RECIPE;
-  if (!r) return;
-  const text = `מתכון: ${r.title}
-מתוך ספר הבישול של פרלה בן ארוש ז"ל
-https://perla-cooking.netlify.app`;
-  if (navigator.share) {
-    navigator.share({ title: r.title, text: text, url: 'https://perla-cooking.netlify.app' })
-      .catch(() => {});
-  } else {
-    navigator.clipboard.writeText(text).then(() => showToast('הקישור הועתק!'));
-  }
-}
-
-/* ── TOAST ── */
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+var _toastTimer = null;
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  var el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2800);
 }
 
-/* ── SWIPE TO CLOSE MODAL (mobile) ── */
-(function(){
-  let startY = 0;
-  const ovl = document.getElementById('modal-overlay');
-  if (!ovl) return;
-  ovl.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, {passive:true});
-  ovl.addEventListener('touchend', e => {
-    const dy = e.changedTouches[0].clientY - startY;
-    const box = document.getElementById('mbox');
-    if (box && !box.contains(e.target) && dy > 60) closeM();
-  }, {passive:true});
-})();
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', function() {
 
-/* ── KEYBOARD NAVIGATION ── */
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeM();
-  if (e.key === 'f' && (e.ctrlKey || e.metaKey)) {
-    e.preventDefault();
-    document.getElementById('srch').focus();
+  // Pill counter
+  var pill = document.getElementById('pill-cnt');
+  if (pill) pill.textContent = R.length + ' מתכונים';
+
+  // Search input
+  var srch = document.getElementById('srch');
+  if (srch) {
+    srch.addEventListener('input', function() { doSearch(this.value); });
+    srch.addEventListener('keydown', function(e) { if (e.key === 'Escape') clearSearch(); });
   }
-});
+  var clr = document.getElementById('srch-clr');
+  if (clr) clr.addEventListener('click', clearSearch);
 
-/* ── SMOOTH SCROLL TOP IN MODAL ── */
-document.addEventListener('DOMContentLoaded', () => {
-  const ovl = document.getElementById('modal-overlay');
-  if (ovl) {
-    ovl.addEventListener('scroll', () => {
-      const pct = ovl.scrollTop / (ovl.scrollHeight - ovl.clientHeight);
-      const bar = document.getElementById('m-progress');
-      if (bar) bar.style.transform = 'scaleX(' + Math.min(1, pct || 0) + ')';
-    }, {passive:true});
-  }
-});
+  // About toggle
+  var aboutBtn = document.getElementById('about-toggle');
+  if (aboutBtn) aboutBtn.addEventListener('click', toggleAbout);
 
-/* ── PAGE INIT ── */
-document.addEventListener('DOMContentLoaded', () => {
-  // Close sidebar on escape
-  document.addEventListener('keydown', e => {
-    if(e.key === 'Escape'){
+  // Modal close
+  var closeBtn = document.getElementById('m-close');
+  if (closeBtn) closeBtn.addEventListener('click', closeM);
+
+  var ovl = document.getElementById('ovl');
+  if (ovl) ovl.addEventListener('click', ovlClose);
+
+  // Modal nav
+  var prev = document.getElementById('m-prev');
+  var next = document.getElementById('m-next');
+  if (prev) prev.addEventListener('click', function() { navRecipe(-1); });
+  if (next) next.addEventListener('click', function() { navRecipe(1); });
+
+  // Modal actions
+  var printBtn = document.getElementById('m-print');
+  if (printBtn) printBtn.addEventListener('click', printRecipe);
+  var shareBtn = document.getElementById('m-share');
+  if (shareBtn) shareBtn.addEventListener('click', shareRecipe);
+  var upBtn = document.getElementById('m-upload-act');
+  if (upBtn) upBtn.addEventListener('click', function() { if (CUR_REC) uploadImg(CUR_REC.id); });
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
       closeM();
-      if(document.getElementById('sidebar')?.classList.contains('open')) toggleSidebar();
+      closePanel();
+    }
+    if (ovl && ovl.classList.contains('open')) {
+      if (e.key === 'ArrowRight') navRecipe(-1);
+      if (e.key === 'ArrowLeft')  navRecipe(1);
     }
   });
-  // Update pill counter
-  const pill = document.getElementById('pill-cnt');
-  if(pill) pill.textContent = R.length + ' מתכונים';
-  // Initialise
+
+  // Back to top
+  var backTop = document.getElementById('back-top');
+  if (backTop) {
+    backTop.addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    window.addEventListener('scroll', function() {
+      backTop.classList.toggle('on', window.scrollY > 450);
+    }, { passive: true });
+  }
+
+  // Modal scroll progress
+  if (ovl) {
+    ovl.addEventListener('scroll', function() {
+      var prog = document.getElementById('m-progress');
+      if (!prog) return;
+      var pct = ovl.scrollTop / Math.max(1, ovl.scrollHeight - ovl.clientHeight);
+      prog.style.transform = 'scaleX(' + Math.min(1, pct) + ')';
+    }, { passive: true });
+  }
+
+  // Build and render
   buildNav();
   renderGrid();
-  // Back to top
-  window.addEventListener('scroll', () => {
-    const btn = document.getElementById('stb');
-    if(btn) btn.classList.toggle('on', scrollY > 400);
-  }, {passive:true});
-  // Fav counter
-  if(typeof updateFavCounter === 'function') updateFavCounter();
-});;
 
-
-
-
+  // Handle URL hash deep-link
+  if (location.hash && location.hash.length > 1) {
+    var id = location.hash.slice(1);
+    var r = R.find(function(x) { return x.id === id; });
+    if (r) setTimeout(function() { openM(id); }, 300);
+  }
+});
 
 </script>
 </body>
