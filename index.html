@@ -685,6 +685,88 @@ ul, ol { list-style: none; }
 
 /* Print */
 /* ═══ Accessibility: Respect reduced-motion preference ═══ */
+
+/* ─── Card media overlay ─────────────────────────────── */
+.c-img { position: relative; }
+.c-media-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: .25rem .35rem;
+  background: linear-gradient(to top, rgba(19,12,5,.82) 0%, transparent 100%);
+  opacity: 0; transition: opacity var(--t-med);
+  pointer-events: none;
+}
+.c-img:hover .c-media-bar,
+.c-img:focus-within .c-media-bar { opacity: 1; pointer-events: auto; }
+.c-media-btn {
+  display: inline-flex; align-items: center; gap: .2rem;
+  background: rgba(196,147,10,.22); border: 1px solid rgba(196,147,10,.4);
+  border-radius: 100px; padding: .18rem .5rem;
+  color: var(--c-gold-l); font-size: .68rem;
+  cursor: pointer; transition: background var(--t-fast);
+  font-family: inherit;
+}
+.c-media-btn:hover { background: rgba(196,147,10,.45); }
+.c-media-btn.del { border-color: rgba(220,50,50,.5); color: #f88; }
+.c-media-btn.del:hover { background: rgba(220,50,50,.3); }
+
+/* ─── Modal hero media controls ─────────────────────── */
+.m-hero-media {
+  position: absolute; top: .5rem; left: .5rem;
+  display: flex; gap: .35rem; z-index: 10;
+}
+.m-hero-btn {
+  display: inline-flex; align-items: center; gap: .22rem;
+  background: rgba(19,12,5,.72); backdrop-filter: blur(4px);
+  border: 1px solid rgba(196,147,10,.35);
+  border-radius: 100px; padding: .28rem .65rem;
+  color: var(--c-ink-l); font-size: .72rem;
+  cursor: pointer; transition: background var(--t-fast);
+  font-family: inherit;
+}
+.m-hero-btn:hover { background: rgba(42,21,8,.92); border-color: var(--c-gold-d); }
+.m-hero-btn.del { border-color: rgba(220,50,50,.4); color: #f88; }
+.m-hero-btn.del:hover { background: rgba(80,10,10,.85); }
+
+/* ─── Video section ──────────────────────────────────── */
+#m-vid-wrap { margin-top: .3rem; }
+.m-vid-list { display: flex; flex-direction: column; gap: .4rem; margin-top: .4rem; }
+.m-vid-item {
+  display: flex; align-items: center; gap: .5rem;
+  background: var(--c-bg2); border: 1px solid var(--c-bdr);
+  border-radius: var(--r-md); padding: .35rem .6rem;
+}
+.m-vid-link {
+  display: flex; align-items: center; gap: .4rem;
+  flex: 1; min-width: 0;
+  color: var(--c-ink-l); font-size: .82rem; text-decoration: none;
+  overflow: hidden;
+}
+.m-vid-link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.m-vid-link svg { flex-shrink: 0; color: var(--c-spice); }
+.m-vid-link:hover { color: var(--c-gold-l); }
+.m-vid-del {
+  flex-shrink: 0; background: transparent;
+  border: 1px solid rgba(220,50,50,.3); border-radius: 100px;
+  padding: .15rem .45rem; color: #f88; font-size: .72rem;
+  cursor: pointer; transition: background var(--t-fast);
+  font-family: inherit;
+}
+.m-vid-del:hover { background: rgba(220,50,50,.2); }
+.m-vid-add {
+  display: inline-flex; align-items: center; gap: .35rem;
+  background: rgba(196,147,10,.1); border: 1.5px dashed rgba(196,147,10,.35);
+  border-radius: var(--r-md); padding: .38rem 1rem;
+  color: var(--c-gold-d); font-size: .8rem;
+  cursor: pointer; margin-top: .25rem; width: 100%;
+  justify-content: center; transition: background var(--t-fast);
+  font-family: inherit;
+}
+.m-vid-add:hover { background: rgba(196,147,10,.2); border-style: solid; }
+
+/* ─── Modal action: manage images ───────────────────── */
+#m-upload-act { position: relative; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: .01ms !important;
@@ -811,6 +893,10 @@ ul, ol { list-style: none; }
     <div class="m-progress" id="m-progress" aria-hidden="true"></div>
     <div class="m-hero" id="m-hero">
       <div class="m-hero-overlay" aria-hidden="true"></div>
+      <div class="m-hero-media" id="m-hero-media">
+        <button class="m-hero-btn" id="m-hero-change" aria-label="שנה תמונה">📷 שנה</button>
+        <button class="m-hero-btn del" id="m-hero-del" aria-label="מחק תמונה" style="display:none">🗑 מחק</button>
+      </div>
       <button class="m-btn-close" id="m-close" aria-label="סגור מתכון">✕</button>
       <button class="m-btn-nav m-btn-prev" id="m-prev" aria-label="מתכון קודם">‹</button>
       <button class="m-btn-nav m-btn-next" id="m-next" aria-label="מתכון הבא">›</button>
@@ -850,14 +936,16 @@ ul, ol { list-style: none; }
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
           שתף
         </button>
-        <button class="m-act" id="m-upload-act">📷 הוסף תמונה</button>
+        <button class="m-act" id="m-upload-act" aria-label="ניהול תמונות">📷 תמונה</button>
+        <button class="m-act" id="m-img-del-act" aria-label="מחק תמונה" style="display:none">🗑 מחק תמונה</button>
       </div>
-      <div id="m-vid-wrap" hidden>
+      <div id="m-vid-wrap">
         <h3 class="m-section-title">צפייה בהכנה</h3>
-        <a class="m-yt" id="m-vid-link" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="18" aria-hidden="true"><path d="M21.543 6.498C22 8.28 22 12 22 12s0 3.72-.457 5.502c-.254.985-.997 1.76-1.938 2.022C17.896 20 12 20 12 20s-5.893 0-7.605-.476c-.945-.266-1.687-1.04-1.938-2.022C2 15.72 2 12 2 12s0-3.72.457-5.502c.254-.985.997-1.76 1.938-2.022C6.107 4 12 4 12 4s5.896 0 7.605.476c.945.266 1.687 1.04 1.938 2.022zM10 15.5l6-3.5-6-3.5v7z"/></svg>
-          צפייה ביוטיוב
-        </a>
+        <div class="m-vid-list" id="m-vid-list"></div>
+        <button class="m-vid-add" id="m-vid-add" aria-label="הוסף סרטון למתכון">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          הוסף סרטון
+        </button>
       </div>
     </div>
   </div>
@@ -866,6 +954,7 @@ ul, ol { list-style: none; }
 <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <script>
+
 
 
 
@@ -19207,8 +19296,10 @@ const MENU_STRUCTURE = [
 
 
 
+
 </script>
 <script>
+
 
 
 
@@ -19321,10 +19412,8 @@ function hide(id) { const el = document.getElementById(id); if (el) el.hidden = 
 ═══════════════════════════════════════════════ */
 function getRecipeImg(r) {
   if (!r) return null;
-  try {
-    const custom = localStorage.getItem('perla_img_' + r.id);
-    if (custom && custom.startsWith('data:image/')) return custom;
-  } catch (_) {}
+  var media = getMedia(r.id);
+  if (media.imgs.length) return media.imgs[0];
   return 'images/r-' + r.id + '.jpg';
 }
 
@@ -19409,27 +19498,39 @@ function renderGrid() {
       img.setAttribute('data-src', imgSrc);
       img.loading = 'lazy';
       img.alt = r.title;
-      img.loading = 'lazy';
       img.onload  = function() { this.classList.add('loaded'); };
       img.onerror = function() {
         this.parentElement.classList.add('no-img');
         this.remove();
-        const btn = document.createElement('button');
-        btn.className = 'c-upload-btn';
-        btn.textContent = '📷 הוסף תמונה';
-        btn.setAttribute('aria-label', 'הוסף תמונה למתכון ' + r.title);
-        btn.addEventListener('click', function(e) { e.stopPropagation(); uploadImg(r.id); });
-        imgDiv.appendChild(btn);
+        _addCardUploadBtn(imgDiv, r.id, r.title);
       };
       imgDiv.appendChild(img);
     } else {
-      const btn = document.createElement('button');
-      btn.className = 'c-upload-btn';
-      btn.textContent = '📷 הוסף תמונה';
-      btn.setAttribute('aria-label', 'הוסף תמונה למתכון ' + r.title);
-      btn.addEventListener('click', function(e) { e.stopPropagation(); uploadImg(r.id); });
-      imgDiv.appendChild(btn);
+      _addCardUploadBtn(imgDiv, r.id, r.title);
     }
+    // Media control bar (hover-revealed)
+    const mediaBar = document.createElement('div');
+    mediaBar.className = 'c-media-bar';
+    const mAddBtn = document.createElement('button');
+    mAddBtn.className = 'c-media-btn';
+    mAddBtn.textContent = '📷';
+    mAddBtn.title = 'שנה תמונה';
+    mAddBtn.setAttribute('aria-label', 'שנה תמונה');
+    mAddBtn.addEventListener('click', function(e) { e.stopPropagation(); addImg(r.id); });
+    mediaBar.appendChild(mAddBtn);
+    const hasCustomImg = getMedia(r.id).imgs.length > 0;
+    if (hasCustomImg) {
+      const mDelBtn = document.createElement('button');
+      mDelBtn.className = 'c-media-btn del';
+      mDelBtn.textContent = '🗑';
+      mDelBtn.title = 'מחק תמונה';
+      mDelBtn.setAttribute('aria-label', 'מחק תמונה');
+      (function(rid) {
+        mDelBtn.addEventListener('click', function(e) { e.stopPropagation(); deleteImg(rid, 0); });
+      })(r.id);
+      mediaBar.appendChild(mDelBtn);
+    }
+    imgDiv.appendChild(mediaBar);
 
     const body = document.createElement('div');
     body.className = 'c-body';
@@ -19726,20 +19827,8 @@ function openM(id) {
   var ovl = document.getElementById('ovl');
   if (!ovl) return;
 
-  // Hero image
-  var hero = document.getElementById('m-hero');
-  hero.querySelectorAll('img, .m-upload-wrap').forEach(function(el) { el.remove(); });
-  var imgSrc = getRecipeImg(r);
-  if (imgSrc) {
-    var img = document.createElement('img');
-    img.alt = r.title;
-    img.onload  = function() { this.classList.add('loaded'); };
-    img.onerror = function() { this.remove(); appendUploadWrap(hero, r.id); };
-    img.src = imgSrc;
-    hero.insertBefore(img, hero.firstChild);
-  } else {
-    appendUploadWrap(hero, r.id);
-  }
+  // Hero image + video — managed via refreshModalMedia
+  refreshModalMedia(r);
 
   // Badge, title, subdesc
   var badge = document.getElementById('m-badge');
@@ -19819,15 +19908,7 @@ function openM(id) {
     }
   }
 
-  // Video
-  var vidWrap = document.getElementById('m-vid-wrap');
-  if (vidWrap) {
-    vidWrap.hidden = !r.vid;
-    if (r.vid) {
-      var vidLink = document.getElementById('m-vid-link');
-      if (vidLink) vidLink.href = r.vid;
-    }
-  }
+  // Video section handled in refreshModalMedia
 
   // Nav buttons
   var prev = document.getElementById('m-prev');
@@ -19863,7 +19944,7 @@ function appendUploadWrap(hero, recipeId) {
   var btn = document.createElement('button');
   btn.className = 'm-upload-btn';
   btn.textContent = '📷 הוסף תמונה';
-  btn.addEventListener('click', function() { uploadImg(recipeId); });
+  btn.addEventListener('click', function() { addImg(recipeId); });
   var hint = document.createElement('p');
   hint.className = 'm-upload-hint';
   hint.textContent = 'תמונה תישמר בדפדפן זה';
@@ -19871,7 +19952,6 @@ function appendUploadWrap(hero, recipeId) {
   wrap.appendChild(hint);
   hero.appendChild(wrap);
 }
-
 function closeM() {
   var ovl = document.getElementById('ovl');
   if (!ovl) return;
@@ -20016,39 +20096,278 @@ function shareRecipe() {
 /* ═══════════════════════════════════════════════
    MANUAL IMAGE UPLOAD
 ═══════════════════════════════════════════════ */
-function uploadImg(recipeId) {
+
+/* ═══════════════════════════════════════════════
+   MEDIA MANAGEMENT — תמונות וסרטונים לכל מתכון
+   localStorage key: 'perla_media_' + recipeId
+   Schema: { imgs: [dataURI,...], vids: [url,...] }
+═══════════════════════════════════════════════ */
+
+// ── helpers ──────────────────────────────────────────────────────
+function getMedia(rid) {
+  try {
+    var raw = localStorage.getItem('perla_media_' + rid);
+    if (raw) return JSON.parse(raw);
+    // Migrate old single-image key
+    var old = localStorage.getItem('perla_img_' + rid);
+    if (old && old.startsWith('data:image/')) {
+      var m = { imgs: [old], vids: [] };
+      saveMedia(rid, m);
+      localStorage.removeItem('perla_img_' + rid);
+      return m;
+    }
+  } catch (_) {}
+  return { imgs: [], vids: [] };
+}
+
+function saveMedia(rid, media) {
+  try {
+    localStorage.setItem('perla_media_' + rid, JSON.stringify(media));
+  } catch (e) {
+    showToast('שגיאת שמירה — נסה תמונה קטנה יותר');
+  }
+}
+
+function deleteMedia(rid) {
+  try {
+    localStorage.removeItem('perla_media_' + rid);
+    localStorage.removeItem('perla_img_' + rid);
+  } catch (_) {}
+}
+
+// ── IMAGE ─────────────────────────────────────────────────────────
+function addImg(recipeId) {
   var input = document.createElement('input');
   input.type = 'file';
   input.accept = 'image/jpeg,image/png,image/webp,image/gif';
   input.addEventListener('change', function() {
     var file = input.files && input.files[0];
     if (!file) return;
-    if (file.size > 3 * 1024 * 1024) { showToast('התמונה גדולה מדי — מקסימום 3MB'); return; }
+    if (file.size > 4 * 1024 * 1024) { showToast('התמונה גדולה מדי — עד 4MB'); return; }
+    var allowed = ['image/jpeg','image/png','image/webp','image/gif'];
+    if (!allowed.includes(file.type)) { showToast('סוג קובץ לא נתמך'); return; }
     var reader = new FileReader();
     reader.onload = function(ev) {
       var b64 = ev.target.result;
       if (!b64 || !b64.startsWith('data:image/')) { showToast('קובץ לא תקין'); return; }
-      var _allowed = ['data:image/jpeg;base64,','data:image/png;base64,','data:image/webp;base64,','data:image/gif;base64,'];
-      if (!_allowed.some(function(t) { return b64.startsWith(t); })) { showToast('סוג קובץ לא נתמך'); return; }
-      try {
-        localStorage.setItem('perla_img_' + recipeId, b64);
-        showToast('התמונה נשמרה');
-        if (CUR_REC && CUR_REC.id === recipeId) {
-          var r = R.find(function(x) { return x.id === recipeId; });
-          if (r) { closeM(); setTimeout(function() { openM(recipeId); }, 80); }
-        }
-      } catch (err) {
-        showToast('שגיאה: נסה תמונה קטנה יותר');
-      }
+      var media = getMedia(recipeId);
+      if (media.imgs.length >= 3) media.imgs[0] = b64; // replace first if at max
+      else media.imgs.unshift(b64);                     // add to front
+      saveMedia(recipeId, media);
+      showToast('התמונה נשמרה');
+      refreshCardImg(recipeId);
+      if (CUR_REC && CUR_REC.id === recipeId) refreshModalMedia(CUR_REC);
     };
     reader.readAsDataURL(file);
   });
   input.click();
 }
 
-/* ═══════════════════════════════════════════════
-   ABOUT TOGGLE
-═══════════════════════════════════════════════ */
+function deleteImg(recipeId, idx) {
+  var media = getMedia(recipeId);
+  if (!media.imgs.length) return;
+  media.imgs.splice(idx || 0, 1);
+  saveMedia(recipeId, media);
+  showToast('התמונה נמחקה');
+  refreshCardImg(recipeId);
+  if (CUR_REC && CUR_REC.id === recipeId) refreshModalMedia(CUR_REC);
+}
+
+// ── VIDEO ─────────────────────────────────────────────────────────
+function addVideo(recipeId) {
+  var url = (prompt('הדבק קישור לסרטון (YouTube, Vimeo, ...):') || '').trim();
+  if (!url) return;
+  // Validate: must start with http
+  if (!url.startsWith('http')) { showToast('כתובת לא תקינה — צריך להתחיל ב-http'); return; }
+  var media = getMedia(recipeId);
+  if (media.vids.length >= 5) { showToast('מקסימום 5 סרטונים למתכון'); return; }
+  if (media.vids.includes(url)) { showToast('הסרטון כבר קיים'); return; }
+  media.vids.push(url);
+  saveMedia(recipeId, media);
+  showToast('הסרטון נוסף');
+  if (CUR_REC && CUR_REC.id === recipeId) refreshModalMedia(CUR_REC);
+}
+
+function deleteVideo(recipeId, idx) {
+  var media = getMedia(recipeId);
+  if (idx < 0 || idx >= media.vids.length) return;
+  media.vids.splice(idx, 1);
+  saveMedia(recipeId, media);
+  showToast('הסרטון נמחק');
+  if (CUR_REC && CUR_REC.id === recipeId) refreshModalMedia(CUR_REC);
+}
+
+// ── CARD IMAGE REFRESH ───────────────────────────────────────────
+function refreshCardImg(recipeId) {
+  var card = document.querySelector('[data-rid="' + recipeId + '"]');
+  if (!card) return;
+  var imgDiv = card.querySelector('.c-img');
+  if (!imgDiv) return;
+  var media  = getMedia(recipeId);
+  var r      = R.find(function(x) { return x && x.id === recipeId; });
+  var imgSrc = media.imgs.length ? media.imgs[0] : (r ? 'images/r-' + r.id + '.jpg' : null);
+  var hasCustom = media.imgs.length > 0;
+
+  // Rebuild img element
+  imgDiv.innerHTML = '';
+  imgDiv.className = 'c-img' + (imgSrc ? '' : ' no-img');
+
+  if (imgSrc) {
+    var img = document.createElement('img');
+    img.src = imgSrc;
+    img.alt = r ? r.title : '';
+    img.onload  = function() { this.classList.add('loaded'); };
+    img.onerror = function() {
+      this.remove();
+      imgDiv.classList.add('no-img');
+      _addCardUploadBtn(imgDiv, recipeId, r ? r.title : '');
+    };
+    imgDiv.appendChild(img);
+  } else {
+    _addCardUploadBtn(imgDiv, recipeId, r ? r.title : '');
+  }
+
+  // Media control bar
+  var bar = document.createElement('div');
+  bar.className = 'c-media-bar';
+  var addBtn = document.createElement('button');
+  addBtn.className = 'c-media-btn';
+  addBtn.textContent = '📷 שנה';
+  addBtn.setAttribute('aria-label', 'שנה תמונה');
+  addBtn.addEventListener('click', function(e) { e.stopPropagation(); addImg(recipeId); });
+  bar.appendChild(addBtn);
+  if (hasCustom) {
+    var delBtn = document.createElement('button');
+    delBtn.className = 'c-media-btn del';
+    delBtn.textContent = '🗑 מחק';
+    delBtn.setAttribute('aria-label', 'מחק תמונה');
+    delBtn.addEventListener('click', function(e) { e.stopPropagation(); deleteImg(recipeId, 0); });
+    bar.appendChild(delBtn);
+  }
+  imgDiv.appendChild(bar);
+}
+
+function _addCardUploadBtn(imgDiv, recipeId, title) {
+  var btn = document.createElement('button');
+  btn.className = 'c-upload-btn';
+  btn.textContent = '📷 הוסף תמונה';
+  btn.setAttribute('aria-label', 'הוסף תמונה למתכון ' + title);
+  btn.addEventListener('click', function(e) { e.stopPropagation(); addImg(recipeId); });
+  imgDiv.appendChild(btn);
+}
+
+// ── MODAL MEDIA REFRESH ──────────────────────────────────────────
+function refreshModalMedia(r) {
+  if (!r) return;
+  var hero    = document.getElementById('m-hero');
+  var media   = getMedia(r.id);
+  var hasCustom = media.imgs.length > 0;
+
+  // ── Hero image ────────────────────────────────────────────────
+  // Remove all existing img and upload-wrap elements
+  hero.querySelectorAll('img, .m-upload-wrap').forEach(function(el) { el.remove(); });
+
+  var imgSrc = hasCustom ? media.imgs[0] : 'images/r-' + r.id + '.jpg';
+
+  if (imgSrc) {
+    var img = document.createElement('img');
+    img.alt = r.title;
+    img.onload  = function() { this.classList.add('loaded'); };
+    img.onerror = function() {
+      this.remove();
+      if (!hasCustom) appendUploadWrap(hero, r.id);
+    };
+    img.src = imgSrc;
+    hero.insertBefore(img, hero.firstChild);
+  } else {
+    appendUploadWrap(hero, r.id);
+  }
+
+  // ── Hero media controls ───────────────────────────────────────
+  var delBtn   = document.getElementById('m-hero-del');
+  var chgBtn   = document.getElementById('m-hero-change');
+  if (delBtn) delBtn.style.display = hasCustom ? '' : 'none';
+  if (chgBtn) {
+    chgBtn.onclick = null;
+    chgBtn.addEventListener('click', function() { addImg(r.id); });
+  }
+  if (delBtn) {
+    delBtn.onclick = null;
+    delBtn.addEventListener('click', function() { deleteImg(r.id, 0); });
+  }
+
+  // ── Bottom action bar: delete image button ────────────────────
+  var delAct = document.getElementById('m-img-del-act');
+  if (delAct) {
+    delAct.style.display = hasCustom ? '' : 'none';
+    delAct.onclick = null;
+    delAct.addEventListener('click', function() { deleteImg(r.id, 0); });
+  }
+
+  // ── Video section ─────────────────────────────────────────────
+  var vidWrap = document.getElementById('m-vid-wrap');
+  var vidList = document.getElementById('m-vid-list');
+  var addVidBtn = document.getElementById('m-vid-add');
+
+  if (!vidWrap || !vidList) return;
+
+  // Combine recipe data video + custom videos
+  var allVids = [];
+  if (r.vid) allVids.push({ url: r.vid, custom: false, idx: -1 });
+  media.vids.forEach(function(url, i) {
+    if (url !== r.vid) allVids.push({ url: url, custom: true, idx: i });
+  });
+
+  var hasVids = allVids.length > 0;
+  vidWrap.hidden = !hasVids && !addVidBtn;
+
+  vidList.innerHTML = '';
+  allVids.forEach(function(v) {
+    var item = document.createElement('div');
+    item.className = 'm-vid-item';
+
+    var link = document.createElement('a');
+    link.className = 'm-vid-link';
+    link.href = v.url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.setAttribute('aria-label', 'פתח סרטון בחלון חדש');
+
+    var ytSvg = document.createElement('span');
+    ytSvg.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="16" aria-hidden="true"><path d="M21.543 6.498C22 8.28 22 12 22 12s0 3.72-.457 5.502c-.254.985-.997 1.76-1.938 2.022C17.896 20 12 20 12 20s-5.893 0-7.605-.476c-.945-.266-1.687-1.04-1.938-2.022C2 15.72 2 12 2 12s0-3.72.457-5.502c.254-.985.997-1.76 1.938-2.022C6.107 4 12 4 12 4s5.896 0 7.605.476c.945.266 1.687 1.04 1.938 2.022zM10 15.5l6-3.5-6-3.5v7z"/></svg>';
+    var span = document.createElement('span');
+    // Show domain or shortened URL
+    try {
+      var domain = new URL(v.url).hostname.replace('www.','');
+      span.textContent = domain + ' ↗';
+    } catch(_) { span.textContent = v.url.slice(0, 40) + '…'; }
+
+    link.appendChild(ytSvg);
+    link.appendChild(span);
+    item.appendChild(link);
+
+    if (v.custom) {
+      var delBtn2 = document.createElement('button');
+      delBtn2.className = 'm-vid-del';
+      delBtn2.textContent = '🗑';
+      delBtn2.setAttribute('aria-label', 'מחק סרטון');
+      (function(idx) {
+        delBtn2.addEventListener('click', function() { deleteVideo(r.id, idx); });
+      })(v.idx);
+      item.appendChild(delBtn2);
+    }
+    vidList.appendChild(item);
+  });
+
+  // Always show section with "add" button
+  vidWrap.hidden = false;
+  if (addVidBtn) {
+    addVidBtn.onclick = null;
+    addVidBtn.addEventListener('click', function() { addVideo(r.id); });
+  }
+}
+
+function uploadImg(recipeId) { addImg(recipeId); }
 function toggleAbout() {
   var sec = document.getElementById('about');
   var btn = document.getElementById('about-toggle');
@@ -20119,7 +20438,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var shareBtn = document.getElementById('m-share');
   if (shareBtn) shareBtn.addEventListener('click', shareRecipe);
   var upBtn = document.getElementById('m-upload-act');
-  if (upBtn) upBtn.addEventListener('click', function() { if (CUR_REC) uploadImg(CUR_REC.id); });
+  if (upBtn) upBtn.addEventListener('click', function() { if (CUR_REC) addImg(CUR_REC.id); });
 
   // Keyboard shortcuts + modal focus trap
   document.addEventListener('keydown', function(e) {
@@ -20176,6 +20495,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (r) setTimeout(function() { openM(id); }, 300);
   }
 });
+
 
 
 
