@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="ספר הבישול של פרלה בן ארוש ז״ל — 1,014 מתכונים אותנטיים מהמטבח המרוקאי, הספרדי-יהודי ומטבחי יהדות המזרח">
+<meta name="description" content="ספר הבישול של פרלה בן ארוש ז״ל — 1,014 מתכונים מרוקאיים, ספרדיים ויהודיים אותנטיים: מרקים, תגינים, קציצות, קוסקוס, קינוחים ועוד. מורשת קזבלנקה ומרקש לדורות.">
 <!-- Security headers via meta -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="Content-Security-Policy"
@@ -12,8 +12,12 @@
 <meta name="referrer" content="no-referrer">
 <meta property="og:title" content="ספר הבישול של פרלה בן ארוש ז״ל">
 <meta property="og:description" content="1,014 מתכונים מרוקאיים וספרדיים אותנטיים">
-<meta property="og:type" content="website">
+<meta property="og:type"  content="website">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/320px-Tajine_mix.jpg">
+<meta property="og:image:width"  content="320">
+<meta property="og:image:height" content="240">
 <title>ספר הבישול של פרלה בן ארוש ז"ל</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍲</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&display=swap" rel="stylesheet">
@@ -230,7 +234,7 @@ ul, ol { list-style: none; }
 .pc-cnt { font-size: .66rem; opacity: .5; }
 
 /* Panel accordion */
-.acc-wrap { display: contents; }
+/* .acc-wrap removed — display:contents set inline in JS */
 .acc-hdr {
   display: inline-flex; align-items: center; gap: .3rem;
   background: rgba(255,255,255,.04);
@@ -660,28 +664,60 @@ ul, ol { list-style: none; }
 @media (min-width: 1200px) {
   .grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
 }
+
+/* ═══ Mobile hamburger (nav overflow) ═══ */
+.hbg {
+  display: none; flex-direction: column; justify-content: center;
+  gap: 4px; padding: .4rem; cursor: pointer;
+  background: transparent; border: none;
+  flex-shrink: 0;
+}
+.hbg span {
+  display: block; width: 20px; height: 2px;
+  background: var(--c-gold-d); border-radius: 2px;
+  transition: all var(--t-med);
+}
+@media (max-width: 640px) {
+  .hbg { display: flex; }
+  .top-nav-inner { overflow-x: hidden; }
+  .top-nav-inner.expanded { overflow-x: auto; }
+}
+
 /* Print */
+/* ═══ Accessibility: Respect reduced-motion preference ═══ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .card { animation: none; }
+}
+
+/* ═══ Print ═══ */
 @media print {
   .hdr, .top-nav, .nav-panel, .back-top, .ovl, .footer { display: none !important; }
   .hero { background: none !important; color: #000 !important; }
 }
 </style>
-<script type="application/ld+json">
-{
+<script type="application/ld+json">{
   "@context": "https://schema.org",
-  "@type": "Cookbook",
+  "@type": "WebSite",
   "name": "ספר הבישול של פרלה בן ארוש ז\"ל",
-  "description": "101 מתכונים מרוקאיים וספרדיים מסורתיים מקזבלנקה, מרקש ומורשת ספרד",
+  "description": "1,014 מתכונים אותנטיים מהמטבח המרוקאי, הספרדי-יהודי ומטבחי יהדות המזרח — לזכרה של פרלה בן ארוש ז\"ל",
+  "url": "https://asafben33.github.io/PerlaBenHarroshCookingBook/",
+  "inLanguage": "he",
+  "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/320px-Tajine_mix.jpg",
   "author": {
     "@type": "Person",
-    "name": "פרלה בן ארוש ז\"ל",
-    "birthPlace": "קזבלנקה, מרוקו"
+    "name": "אסף בן ארוש"
   },
-  "inLanguage": "he",
-  "url": "https://perla-cooking.netlify.app",
-  "genre": ["מטבח מרוקאי", "מטבח ספרדי-אנדלוסי"]
-}
-</script>
+  "about": {
+    "@type": "Thing",
+    "name": "מטבח מרוקאי-ספרדי-יהודי"
+  }
+}</script>
 </head>
 <body>
 <noscript><style>body::before{content:"JavaScript נדרש";display:block;padding:1rem;background:#fff8ee;border-bottom:2px solid #c4930a;text-align:center;font-family:serif}</style></noscript>
@@ -830,6 +866,8 @@ ul, ol { list-style: none; }
 <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <script>
+
+
 
 const CATS = [
   {id:'all',    lbl:'כל המתכונים'},
@@ -19163,8 +19201,12 @@ const MENU_STRUCTURE = [
 
 
 
+
+
 </script>
 <script>
+
+
 
 
 /* ═══ HEBREW MORPHOLOGICAL SEARCH ═══════════════════════════
@@ -19347,6 +19389,7 @@ function renderGrid() {
     card.setAttribute('role', 'listitem');
     card.setAttribute('tabindex', '0');
     card.setAttribute('aria-label', r.title);
+    card.setAttribute('data-rid', r.id);
     card.style.animationDelay = Math.min(i * 20, 300) + 'ms';
 
     const imgSrc = getRecipeImg(r);
@@ -19792,6 +19835,7 @@ function openM(id) {
   ovl.classList.add('open');
   ovl.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+  ovl.scrollTop = 0;   // reset scroll position on each open
 
   // Focus management
   var closeBtn = document.getElementById('m-close');
@@ -19823,11 +19867,24 @@ function appendUploadWrap(hero, recipeId) {
 function closeM() {
   var ovl = document.getElementById('ovl');
   if (!ovl) return;
+  var lastId = CUR_REC ? CUR_REC.id : null;
   ovl.classList.remove('open');
   ovl.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
   CUR_REC = null;
   CUR_IDX = -1;
+  // Return focus to the card that was clicked (keyboard accessibility)
+  if (lastId) {
+    var card = document.querySelector('[aria-label]');
+    // Find the card that matches this recipe
+    var cards = document.querySelectorAll('.card');
+    for (var i = 0; i < cards.length; i++) {
+      if (cards[i].dataset && cards[i].dataset.rid === lastId) {
+        cards[i].focus();
+        break;
+      }
+    }
+  }
 }
 
 function ovlClose(e) {
@@ -19835,10 +19892,15 @@ function ovlClose(e) {
 }
 
 function navRecipe(dir) {
-  var list = filtered();
+  var list   = filtered();
   var newIdx = CUR_IDX + dir;
   if (newIdx < 0 || newIdx >= list.length) return;
   openM(list[newIdx].id);
+  // Sync progress bar with position in filtered list
+  var prog = document.getElementById('m-progress');
+  if (prog && list.length > 0) {
+    prog.style.transform = 'scaleX(' + (newIdx + 1) / list.length + ')';
+  }
 }
 
 /* ═══════════════════════════════════════════════
@@ -19853,6 +19915,7 @@ function doSearch(val) {
 }
 
 function clearSearch() {
+  clearTimeout(_srchTimer);   // cancel any pending debounce
   SEARCH = '';
   var si = document.getElementById('srch');
   if (si) si.value = '';
@@ -19882,11 +19945,18 @@ function holName(h) { return HOL_NAMES[h] || h; }
 function updateTitle() {
   var ttl = document.getElementById('sec-title');
   if (!ttl) return;
-  if (SEARCH)            ttl.textContent = 'תוצאות חיפוש: "' + SEARCH + '"';
-  else if (ACT_CATS.length) ttl.textContent = 'מתכונים נבחרים';
-  else if (ACT_HOLIDAY)  ttl.textContent = 'חגים: ' + holName(ACT_HOLIDAY);
-  else if (ACT_CAT === 'all') ttl.textContent = 'כל המתכונים';
-  else                   ttl.textContent = catLbl(ACT_CAT);
+  if (SEARCH) {
+    var ctx = ACT_CAT !== 'all' ? ' ב' + catLbl(ACT_CAT) : '';
+    ttl.textContent = 'תוצאות חיפוש: "' + SEARCH + '"' + ctx;
+  } else if (ACT_CATS.length) {
+    ttl.textContent = 'מתכונים נבחרים';
+  } else if (ACT_HOLIDAY) {
+    ttl.textContent = 'חגים: ' + holName(ACT_HOLIDAY);
+  } else if (ACT_CAT === 'all') {
+    ttl.textContent = 'כל המתכונים';
+  } else {
+    ttl.textContent = catLbl(ACT_CAT);
+  }
 }
 
 /* ═══════════════════════════════════════════════
@@ -19986,13 +20056,14 @@ function toggleAbout() {
    TOAST
 ═══════════════════════════════════════════════ */
 var _toastTimer = null;
-function showToast(msg) {
+var _srchTimer   = null;  // debounce for search input
+function showToast(msg, duration) {
   var el = document.getElementById('toast');
   if (!el) return;
-  el.textContent = msg;
+  el.textContent = String(msg || '');
   el.classList.add('show');
   clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2800);
+  _toastTimer = setTimeout(function() { el.classList.remove('show'); }, duration || 2800);
 }
 
 /* ═══════════════════════════════════════════════
@@ -20007,7 +20078,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // Search input
   var srch = document.getElementById('srch');
   if (srch) {
-    var _srchTimer = null;
     srch.addEventListener('input', function() {
       clearTimeout(_srchTimer);
       var val = this.value;
@@ -20043,15 +20113,28 @@ document.addEventListener('DOMContentLoaded', function() {
   var upBtn = document.getElementById('m-upload-act');
   if (upBtn) upBtn.addEventListener('click', function() { if (CUR_REC) uploadImg(CUR_REC.id); });
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts + modal focus trap
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      closeM();
-      closePanel();
-    }
+    if (e.key === 'Escape') { closeM(); closePanel(); }
     if (ovl && ovl.classList.contains('open')) {
       if (e.key === 'ArrowRight') navRecipe(-1);
       if (e.key === 'ArrowLeft')  navRecipe(1);
+      // Focus trap: keep Tab inside modal (WCAG 2.1)
+      if (e.key === 'Tab') {
+        var mbox = document.getElementById('mbox');
+        if (!mbox) return;
+        var focusable = mbox.querySelectorAll(
+          'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        var first = focusable[0];
+        var last  = focusable[focusable.length - 1];
+        if (!focusable.length) { e.preventDefault(); return; }
+        if (e.shiftKey) {
+          if (document.activeElement === first) { last.focus(); e.preventDefault(); }
+        } else {
+          if (document.activeElement === last)  { first.focus(); e.preventDefault(); }
+        }
+      }
     }
   });
 
@@ -20085,6 +20168,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (r) setTimeout(function() { openM(id); }, 300);
   }
 });
+
+
 
 
 
