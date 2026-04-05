@@ -269,6 +269,20 @@ body{font-family:'Frank Ruhl Libre',serif;background:var(--parch);color:var(--in
   border-radius:8px;padding:.5rem .65rem;margin-top:.28rem;width:100%}
 .panel-acc-body.open{display:flex}
 .panel-sep-hr{border:none;border-top:1px solid rgba(196,154,12,.2);width:100%;margin:.15rem 0}
+
+/* ── No image / upload ── */
+.c-img.no-img{background:var(--parch-2);display:flex;align-items:center;justify-content:center}
+.c-upload-btn{background:transparent;border:1.5px dashed var(--bdr);border-radius:8px;
+  padding:.4rem .7rem;color:var(--ink-l);font-size:.8rem;cursor:pointer;transition:border-color var(--tr)}
+.c-upload-btn:hover{border-color:var(--saffron-d);color:var(--saffron-d)}
+.m-upload-wrap{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:.4rem;
+  background:linear-gradient(135deg,var(--wood-d),var(--wood-m))}
+.m-upload-btn{background:rgba(196,154,12,.2);border:1.5px dashed var(--saffron-d);
+  border-radius:var(--r);padding:.55rem 1.2rem;color:var(--saffron-l);
+  font-family:inherit;font-size:.88rem;cursor:pointer;transition:background var(--tr)}
+.m-upload-btn:hover{background:rgba(196,154,12,.32)}
+.m-upload-hint{font-size:.72rem;color:rgba(250,243,224,.4)}
 </style>
 <script type="application/ld+json">
 {
@@ -18772,6 +18786,7 @@ const MENU_STRUCTURE = [
 
 
 
+
 function toggleAbout(){
   const sec = document.getElementById('about-section');
   const btn = document.querySelector('.about-toggle');
@@ -19032,9 +19047,14 @@ function renderGrid(){
   }
   g.innerHTML=list.map(r=>{
     const ph=PH[r.cat]||'';
-    const imgH=r.img
-      ?`<img src="${r.img}" alt="${r.title}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-      :'';
+    const imgs=getImages(r);
+    const imgSrc=imgs[0]||'';
+    const imgH=imgSrc
+      ?`<div class="c-img"><img data-src="${imgSrc}" alt="${r.title}" loading="lazy"
+          onload="this.classList.add('loaded')"
+          onerror="this.parentElement.classList.add('no-img')"></div>`
+      :`<div class="c-img no-img"><button class="c-upload-btn" onclick="event.stopPropagation();uploadImg('${r.id}')" title="הוסף תמונה">📷</button></div>`;
+          :'';
     const phD=r.img?'style="display:none"':'';
     return`<article class="card" role="listitem" tabindex="0"
       onclick="openM('${r.id}')" onkeydown="if(event.key==='Enter')openM('${r.id}')">
@@ -19064,12 +19084,55 @@ function renderGrid(){
 ══════════════════════════════════════ */
 function getImages(r){
   if(!r) return [];
-  // Build category image filename from G key in r.img
-  const imgStr = r.img ? r.img.toString() : '';
-  const gk = imgStr.replace('G.','').replace('[0]','').replace(/_/g,'-');
-  const f = `images/${gk}-1.jpg`;
-  return [f, f];   // same file for both gallery slots — no duplicate download
+  // Check localStorage for manually uploaded image first
+  const custom = localStorage.getItem('perla_img_' + r.id);
+  if(custom) return [custom, custom];
+  // Use per-recipe file: images/r-{id}.jpg
+  return ['images/r-' + r.id + '.jpg'];
 }
+
+/* ── Manual image upload ── */
+function showUploadBtn(container, recipeId){
+  const wrap = document.createElement('div');
+  wrap.className = 'm-upload-wrap';
+  wrap.innerHTML = '<button class="m-upload-btn" onclick="uploadImg('' + recipeId + '')">📷 הוסף תמונה</button>'
+    + '<p class="m-upload-hint">תמונה תישמר בדפדפן זה</p>';
+  container.appendChild(wrap);
+}
+
+function uploadImg(recipeId){
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = function(){
+    const file = input.files[0];
+    if(!file) return;
+    if(file.size > 3 * 1024 * 1024){ showToast('התמונה גדולה מדי (מקסימום 3MB)'); return; }
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const b64 = e.target.result;
+      try {
+        localStorage.setItem('perla_img_' + recipeId, b64);
+        showToast('התמונה נשמרה');
+        // Refresh modal image
+        const r = R.find(x=>x.id===recipeId);
+        if(r){ closeM(); setTimeout(()=>openM(recipeId), 100); }
+      } catch(err) {
+        showToast('שגיאה: נסה תמונה קטנה יותר');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+function removeCustomImg(recipeId){
+  localStorage.removeItem('perla_img_' + recipeId);
+  showToast('התמונה הוסרה');
+  const r = R.find(x=>x.id===recipeId);
+  if(r){ closeM(); setTimeout(()=>openM(recipeId), 100); }
+}
+
 
 function openM(id){
   const r=R.find(x=>x.id===id);if(!r)return;
@@ -19553,6 +19616,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fav counter
   if(typeof updateFavCounter === 'function') updateFavCounter();
 });;
+
 
 
 
