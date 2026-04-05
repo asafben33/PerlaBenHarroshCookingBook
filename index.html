@@ -335,6 +335,12 @@ footer{background:var(--wood-d);border-top:3px solid var(--saffron);color:rgba(1
 .m-src-lbl{color:var(--ink-m);font-weight:600}
 .m-src-link{color:var(--saffron);text-decoration:none}
 .m-src-link:hover{text-decoration:underline;color:var(--saffron-l)}
+
+/* Navigation dropdown styles */
+.nav-group { display:inline-block; position:relative; }
+.nav-grp-btn { }
+.nav-drop-item:hover { background:rgba(255,255,255,.08) !important; color:var(--saffron-l) !important; }
+.nav-drop { box-shadow: 0 8px 24px rgba(0,0,0,.4); }
 </style>
 <script type="application/ld+json">
 {
@@ -18790,12 +18796,149 @@ const PH={soups:'ph-s',salads:'ph-sa',veg:'ph-v',fish:'ph-f',meat:'ph-m',chick:'
 ══════════════════════════════════════ */
 
 function buildNav(){
-  document.getElementById('cat-inner').innerHTML=CATS.map((c,i)=>{
-    const cnt = c.id==='all' ? R.length : R.filter(r=>r.cat===c.id).length;
-    const badge = c.id!=='all' ? `<span style="font-size:.62rem;opacity:.55;margin-right:.2rem">(${cnt})</span>` : '';
-    return `<button class="cat-btn${i===0?' active':''}" onclick="selCat('${c.id}',this)">${c.lbl}${badge}</button>`;
-  }).join('');
+  const inner = document.getElementById('cat-inner');
+  if(!inner) return;
+  inner.innerHTML = '';
+
+  function makeBtn(lbl, cnt, isActive, onclick){
+    const b = document.createElement('button');
+    b.className = 'cat-btn' + (isActive ? ' active' : '');
+    b.innerHTML = cnt != null
+      ? lbl + '<span style="font-size:.62rem;opacity:.55;margin-right:.3rem"> (' + cnt + ')</span>'
+      : lbl;
+    b.onclick = onclick;
+    return b;
+  }
+
+  MENU_STRUCTURE.forEach(node => {
+    // ── Simple leaf ──────────────────────────────────────────────
+    if(node.id && !node.items && !node.sub){
+      const cnt = node.id==='all' ? R.length : R.filter(r=>r.cat===node.id).length;
+      const active = ACT_CAT===node.id && !ACT_HOLIDAY && !ACT_CATS.length;
+      inner.appendChild(makeBtn(node.lbl, node.cnt ? cnt : null, active,
+        () => selCatHol(node.id, null, null)));
+      return;
+    }
+
+    // ── Group with dropdown ───────────────────────────────────────
+    const wrap = document.createElement('div');
+    wrap.className = 'nav-group';
+    wrap.style.cssText = 'position:relative;display:inline-block';
+
+    // Group header button
+    const grpBtn = document.createElement('button');
+    grpBtn.className = 'cat-btn nav-grp-btn';
+
+    // If group has ids[] → multi-cat (מנות עיקריות)
+    if(node.ids){
+      const active = node.ids.every(c => ACT_CATS.includes(c));
+      if(active) grpBtn.classList.add('active');
+      grpBtn.innerHTML = node.lbl + ' <span style="font-size:.7rem">▾</span>';
+      grpBtn.onclick = e => { e.stopPropagation(); selMultiCat(node.ids); };
+    } else {
+      const childActive = (node.items||[]).some(it =>
+        it.id === ACT_CAT || (it.sub && it.sub.some(s => s.id === ACT_CAT && s.h === ACT_HOLIDAY))
+      );
+      if(childActive) grpBtn.classList.add('active');
+      grpBtn.innerHTML = node.lbl + ' <span style="font-size:.7rem">▾</span>';
+    }
+
+    // Dropdown panel
+    const drop = document.createElement('div');
+    drop.className = 'nav-drop';
+    drop.style.cssText = 'display:none;position:absolute;right:0;top:100%;background:var(--wood-d);'
+      + 'border:1px solid var(--bdr);border-radius:0 0 8px 8px;min-width:180px;z-index:200;padding:.3rem 0';
+
+    // Toggle on header click (if no ids[])
+    if(!node.ids){
+      grpBtn.onclick = e => {
+        e.stopPropagation();
+        const open = drop.style.display === 'block';
+        // Close all other dropdowns
+        document.querySelectorAll('.nav-drop').forEach(d => d.style.display='none');
+        drop.style.display = open ? 'none' : 'block';
+      };
+    } else {
+      // Also show dropdown on hover/arrow
+      const arrowBtn = document.createElement('button');
+      arrowBtn.innerHTML = '▾';
+      arrowBtn.className = 'cat-btn';
+      arrowBtn.style.cssText = 'padding:0 .4rem;font-size:.75rem';
+      arrowBtn.onclick = e => {
+        e.stopPropagation();
+        const open = drop.style.display==='block';
+        document.querySelectorAll('.nav-drop').forEach(d=>d.style.display='none');
+        drop.style.display = open ? 'none' : 'block';
+      };
+      wrap.appendChild(grpBtn);
+      wrap.appendChild(arrowBtn);
+    }
+
+    // Build dropdown items
+    (node.items||[]).forEach(item => {
+      if(item.sub){
+        // Item with sub-dropdown (חגים)
+        const subWrap = document.createElement('div');
+        subWrap.style.cssText = 'position:relative';
+        const subBtn = document.createElement('button');
+        subBtn.className = 'nav-drop-item';
+        const hCnt = R.filter(r=>r.cat===item.id).length;
+        subBtn.innerHTML = item.lbl + ' <span style="opacity:.5;font-size:.7rem">▸</span>';
+        subBtn.style.cssText = 'width:100%;text-align:right;padding:.5rem 1rem;background:transparent;'
+          + 'border:none;color:var(--ink);cursor:pointer;display:block';
+        subBtn.onmouseenter = () => subdrop.style.display='block';
+        subBtn.onmouseleave = () => setTimeout(()=>{if(!subdrop.matches(':hover'))subdrop.style.display='none'},150);
+
+        const subdrop = document.createElement('div');
+        subdrop.style.cssText = 'display:none;position:absolute;right:100%;top:0;background:var(--wood-d);'
+          + 'border:1px solid var(--bdr);border-radius:8px;min-width:160px;z-index:300;padding:.3rem 0';
+        subdrop.onmouseenter = () => subdrop.style.display='block';
+        subdrop.onmouseleave = () => subdrop.style.display='none';
+
+        item.sub.forEach(s => {
+          const sb = document.createElement('button');
+          sb.className = 'nav-drop-item';
+          const sc = s.h ? (HOLIDAY_TAGS[s.h]||[]).length : R.filter(r=>r.cat===s.id).length;
+          sb.innerHTML = s.lbl + (sc ? '<span style="opacity:.5;font-size:.7rem"> ('+sc+')</span>' : '');
+          sb.style.cssText = 'width:100%;text-align:right;padding:.45rem 1rem;background:transparent;'
+            + 'border:none;color:var(--ink-l);cursor:pointer;display:block;font-size:.85rem';
+          sb.onclick = () => { selCatHol(s.id, s.h||null, null); closeDrops(); };
+          if(s.div){ const d=document.createElement('hr');d.style.cssText='border-color:var(--bdr);margin:.2rem 0';subdrop.appendChild(d);return; }
+          subdrop.appendChild(sb);
+        });
+        subWrap.appendChild(subBtn);
+        subWrap.appendChild(subdrop);
+        drop.appendChild(subWrap);
+      } else {
+        // Simple dropdown item
+        const db = document.createElement('button');
+        db.className = 'nav-drop-item';
+        const ic = item.ids ? null : (item.id ? R.filter(r=>r.cat===item.id).length : null);
+        db.innerHTML = item.lbl + (ic!=null ? '<span style="opacity:.5;font-size:.7rem"> ('+ic+')</span>' : '');
+        db.style.cssText = 'width:100%;text-align:right;padding:.5rem 1rem;background:transparent;'
+          + 'border:none;color:var(--ink-l);cursor:pointer;display:block;font-size:.85rem';
+        if(item.ids){
+          db.onclick = () => { selMultiCat(item.ids); closeDrops(); };
+        } else {
+          db.onclick = () => { selCatHol(item.id, null, null); closeDrops(); };
+        }
+        drop.appendChild(db);
+      }
+    });
+
+    if(!node.ids) wrap.appendChild(grpBtn);
+    wrap.appendChild(drop);
+    inner.appendChild(wrap);
+  });
+
+  // Close dropdowns on outside click
+  document.onclick = () => closeDrops();
 }
+
+function closeDrops(){
+  document.querySelectorAll('.nav-drop').forEach(d => d.style.display='none');
+}
+
 function selMultiCat(ids,btn){
   ACT_CATS=ids||[]; ACT_CAT='multi'; ACT_HOLIDAY=null; ACT_DIFF='all';
   SEARCH='';
@@ -19093,7 +19236,11 @@ function openRandomRecipe() {
 ══════════════════════════════ */
 function filtered(){
   return R.filter(r=>{
-    const cok = ACT_CAT==='all' || r.cat===ACT_CAT;
+    let cok;
+    if(ACT_CATS && ACT_CATS.length) cok = ACT_CATS.includes(r.cat);
+    else if(ACT_CAT==='all') cok = true;
+    else if(ACT_CAT==='hol' && ACT_HOLIDAY){ cok = new Set(HOLIDAY_TAGS[ACT_HOLIDAY]||[]).has(r.id); }
+    else cok = r.cat===ACT_CAT;
     const dok = ACT_DIFF==='all' || r.diff===ACT_DIFF;
     const fok = !SHOW_FAVS || FAV.has(r.id);
     // Ingredient tags filter
@@ -19330,6 +19477,31 @@ document.addEventListener('DOMContentLoaded', () => {
       if (bar) bar.style.transform = 'scaleX(' + Math.min(1, pct || 0) + ')';
     }, {passive:true});
   }
+});
+
+/* ── PAGE INIT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  // Update pill counters
+  const pillCnt = document.getElementById('pill-cnt');
+  if (pillCnt) pillCnt.textContent = R.length + ' מתכונים';
+
+  // Build navigation and render recipe grid
+  buildNav();
+  renderGrid();
+
+  // Sticky back-to-top button
+  window.addEventListener('scroll', () => {
+    const stb = document.getElementById('stb');
+    if (stb) stb.classList.toggle('on', scrollY > 450);
+  }, {passive: true});
+
+  // Favourites counter
+  if (typeof updateFavCounter === 'function') updateFavCounter();
+
+  // Close modal on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeM();
+  });
 });
 </script>
 </body>
