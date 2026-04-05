@@ -18787,6 +18787,7 @@ const MENU_STRUCTURE = [
 
 
 
+
 function toggleAbout(){
   const sec = document.getElementById('about-section');
   const btn = document.querySelector('.about-toggle');
@@ -19338,6 +19339,7 @@ function openRandomRecipe() {
 
 function filtered(){
   return R.filter(r=>{
+    // Category filter
     let cok;
     if(ACT_CATS && ACT_CATS.length) cok = ACT_CATS.includes(r.cat);
     else if(ACT_CAT==='all' || ACT_CAT==='multi') cok = true;
@@ -19353,21 +19355,13 @@ function filtered(){
 
     if(!SEARCH) return cok && dok && fok && iok;
 
-    // Whole-word search for Hebrew: term must be surrounded by
-    // word boundaries (space, punctuation, or string edges)
-    const src = [r.title, r.desc, r.mem||'', catLbl(r.cat),
-      (r.ingr||[]).map(i=>i.i+' '+i.q).join(' '),
-      (r.tip||'')].join(' ').toLowerCase();
-    const term = SEARCH.trim().toLowerCase();
-    // Check if term exists as a standalone word
-    // Strict whole-word search for Hebrew
-    // Normalize all punctuation to spaces, pad with spaces, then check for ' word '
-    const rawSrc = [r.title, r.desc, r.mem||'', catLbl(r.cat),
-      (r.ingr||[]).map(i=>i.i+' '+i.q).join(' '),
-      (r.tip||'')].join(' ').toLowerCase();
-    const src = ' ' + rawSrc.replace(/[,.'":;!?()\[\]{}\/\\|]/g,' ') + ' ';
-    const term = ' ' + SEARCH.trim().toLowerCase() + ' ';
-    const sok = src.includes(term);
+    // Strict whole-word search: normalize punctuation → spaces, pad, match exact word
+    const rawText = [r.title, r.desc, r.mem||'', catLbl(r.cat),
+      (r.ingr||[]).map(i=>i.i+' '+i.q).join(' '), r.tip||''].join(' ').toLowerCase();
+    const haystack = ' ' + rawText.replace(/[,.'":;!?()\[\]{}\/|]/g,' ') + ' ';
+    const needle   = ' ' + SEARCH.trim().toLowerCase() + ' ';
+    const sok = haystack.includes(needle);
+
     return cok && dok && fok && iok && sok;
   });
 }
@@ -19616,6 +19610,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fav counter
   if(typeof updateFavCounter === 'function') updateFavCounter();
 });;
+
 
 
 
