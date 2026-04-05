@@ -871,6 +871,7 @@ ul, ol { list-style: none; }
 
 
 
+
 const CATS = [
   {id:'all',    lbl:'כל המתכונים'},
   {id:'soups',  lbl:'מרקים'},
@@ -19120,16 +19121,16 @@ const R=[
 
 /* ── Holiday tag mapping (recipe IDs per holiday) ── */
 const HOLIDAY_TAGS = {
-  shabbat:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  rosh:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  kippur:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  pesach:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  mimouna:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  hanukkah:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  purim:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  shavuot:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  sukkot:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  henna:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7']
+  hanukkah:['as30','as5','bu1','d2','dn9','dne2','ex22','ex41','ex45','fe9','hn13','ku11','ku5','sn20','spx5','sv8','tn19','tr13','tr24','tr4','tr5','ye14','ye2','ye6'],
+  henna:['add46','as3','ce15','cne4','dn11','dw5','ex21','ex26','ex37','ex38','fin14','fin23','h2','hle1','hn21','hne3','hne4','holf2','hv1','hw2','is13','is21','is23','is7','is8','me12','me17','me19','pe6','san12','sane1','slf5','slv2','slv6','spn3','ve10','ve19','vn2','ye14','ye24'],
+  kippur:['as8','bu5','hn22','ku9','rare12','s1','s2','s7','s8','se1','sw2','tr29'],
+  mimouna:['add45','add54','d1','d2','def5','ex48','fin13','hn11','hn12','hn20','hn9','holf5','holfx5','hv4','rare12','rare9','rer6','tn4'],
+  pesach:['add19','add37','as18','fin27','hle2','hn23','hn24','holf4','holf5','holfx1','holfx4','me11','mn1','mx1','pe2','rare2','sle21','sp5','spf1','var6','ve15'],
+  purim:['add19','as22','d4','d5','dn12','dn13','dn5','dn7','dn8','dx2','ex45','hle4','hn19','hn22','sp9','spe7','spn3','tn4'],
+  rosh:['add17','add26','add27','add35','add55','add56','as11','as12','as14','as18','as19','as27','as28','bu28','bu7','ce1','ce9','chf2','chf5','chfx3','chfx5','d3','d6','def1','def10','def8','dle4','dle5','dn12','dn14','dn17','dn18','dn4','dn5','dn6','dn8','dne4','dne5','dv2','dv3','dv4','dw3','dx1','dx3','ex15','ex27','ex36','ex37','ex39','ex42','ex8','fin17','fin28','h3','hle3','hn2','hne3','holf1','hv5','hx3','hx4','iq30','ku22','m3','me12','mne3','pe11','pe27','pe6','pe8','rare6','rer7','s6','san13','se6','sle2','slv6','sne3','sv6','sw3','tr20','tr22','tr29','tr4','ve6','ye28'],
+  shabbat:['add14','add15','add45','add56','as1','as10','as12','as13','as14','as15','as17','as19','as23','as26','as4','as6','bu12','bu18','bu5','c1','c3','c5','ce8','cx1','cx2','cx5','def5','dn15','dn16','dn3','ex33','ex36','f1','f3','fe11','fe12','fe15','fe6','fin22','fin24','fin30','hn12','hn16','hn17','hn20','hn23','hne2','hne4','holf3','holfx1','holfx3','hv2','iq1','iq10','iq21','iq5','is19','is28','ku24','m1','me11','me13','me15','mef6','rare6','rare9','rer4','sa3','sle16','sle23','sn21','sn25','sn8','sp4','sp6','spe1','spn1','spv1','spx1','spx4','spx5','sv2','sw2','tr12','tr2','tr22','tr30','tr6','tr9','v4','var3','ve13','ve16','ve18','ve20','ve7','vn8','vx1','ye1','ye11','ye12','ye17','ye21','ye27','ye5','ye8'],
+  shavuot:['add7','add8','as14','as17','as22','as24','as26','as7','bu2','fin1','fin22','fn2','hle1','hle5','hn14','holf2','hw4','is21','is24','is27','is6','ku27','ku28','pe22','sle16','spe4','spn2','spnx5','spx4','spx7','tn25','tn29','tr1','tr15','tr16','tr18','tr19','tr21','tr5','tr6','ve11','vef6','vef9','vne1','vw1','vw3','ye2'],
+  sukkot:['add20','add7','add8','as11','as24','as8','bu15','bu17','bu2','bu21','bu4','d3','ex18','ex21','ex26','ex34','ex35','f4','fif5','fin14','fin15','fin17','fin6','fn3','fw1','fx1','hle4','hn13','hn15','hne3','hne4','holf2','hw5','iq15','iq19','iq29','iq4','is21','ku24','ku3','ku9','me17','me5','mef9','mx3','mx4','pe16','pe4','rare4','sf8','tn1','tn23','tn29','tr1','tr13','tr16','tr19','tr27','tr8','tr9','ve19','vef9','vn3','vn4','vn5','vn6','vne3','vne4','vne5','vv2','vv4','vw3','ye14'],
 };
 
 /* ── Category label helper ── */
@@ -19205,8 +19206,10 @@ const MENU_STRUCTURE = [
 
 
 
+
 </script>
 <script>
+
 
 
 
@@ -20173,6 +20176,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (r) setTimeout(function() { openM(id); }, 300);
   }
 });
+
 
 
 
