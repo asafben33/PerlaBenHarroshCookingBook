@@ -683,6 +683,7 @@ ul, ol { list-style: none; }
 </script>
 </head>
 <body>
+<noscript><style>body::before{content:"JavaScript נדרש";display:block;padding:1rem;background:#fff8ee;border-bottom:2px solid #c4930a;text-align:center;font-family:serif}</style></noscript>
 <a href="#main" class="skip-link">דלג לתוכן</a>
 
 <!-- HEADER -->
@@ -828,6 +829,7 @@ ul, ol { list-style: none; }
 <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <script>
+
 
 const G = {
   /* ── מרקים ── */
@@ -1936,7 +1938,7 @@ const R=[
 
 {id:'c3',cat:'chick',badge:'שבת',title:'סקינה — חמין מרוקאי',
  desc:'תבשיל שבת שמתבשל כל הלילה על אש נמוכה. מוגש בשבת בצהריים.',
- time:'12 שעות',serv:'6–8 מנות',diff:'מאתגר',img:G.dafina[0],
+ time:'12 שעות',serv:'6–8 מנות',diff:'מתקדם',img:G.dafina[0],
  src:'https://www.jewishfoodsociety.org/recipes/dafina',
  vid:'https://www.youtube.com/results?search_query=skhina+moroccan+shabbat+overnight',
  mem:'בכל ליל שישי, אמא סידרה את הסקינה בסיר הגדול ושמה אותה על הפלטה. בבוקר שבת — הבית היה מלא בריח עמוק שלא דומה לשום דבר אחר. "לא פותחים את הסיר בלילה," היא אמרה. "הסקינה ישנה."',
@@ -1984,7 +1986,7 @@ const R=[
 
 {id:'c5',cat:'chick',badge:'שבת מלכה',title:'קוסקוס חגיגי של שבת',
  desc:'קוסקוס מרוקאי אמיתי עם מרק עוף, ירקות וחומוס — מנת שבת מלכה.',
- time:'90 דקות',serv:'6–8 מנות',diff:'מאתגר',img:G.couscous[0],
+ time:'90 דקות',serv:'6–8 מנות',diff:'מתקדם',img:G.couscous[0],
  src:'https://www.taste-of-maroc.com/moroccan-couscous-recipe/',
  vid:'https://www.youtube.com/results?search_query=moroccan+couscous+shabbat+traditional',
  mem:'הקוסקוס היה מנת השבת המרכזית. אמא הכינה אותו בקוסקוסיירה — סיר מיוחד. "קוסקוס לא מבשלים — מאדים אותו," היא תמיד הסבירה.',
@@ -2091,7 +2093,7 @@ const R=[
 /* ── DESSERT ── */
 {id:'d1',cat:'des',badge:'מימונה',title:'מופלטה מסורתית',
  desc:'הלביבה המרוקאית האייקונית — מוגשת בחג המימונה. סמל שמחה וחידוש.',
- time:'80 דקות',serv:'20 יח׳',diff:'מאתגר',img:G.mofletah[0],
+ time:'80 דקות',serv:'20 יח׳',diff:'מתקדם',img:G.mofletah[0],
  src:'https://www.myjewishlearning.com/the-nosher/mofleta-recipe/',
  vid:'https://www.youtube.com/results?search_query=mofletta+moroccan+mimouna+recipe',
  mem:'ליל המימונה בבית אמא: שולחן לבן עם חיטה, ביצים, ריבות ועלי מנתא. ריח המופלטות שנאפות על מחבת — אחת אחרי השנייה. "המופלטה צריכה לרצות להיסחט," אמרה, "לא לרוץ."',
@@ -2139,7 +2141,7 @@ const R=[
 
 {id:'d3',cat:'des',title:'מקרוד תמרים',
  desc:'עוגיות סולת ממולאות תמרים, מטוגנות וטבולות בדבש — קינוח מרוקאי קלאסי.',
- time:'60 דקות',serv:'25–30 יח׳',diff:'מאתגר',img:G.dates[0],
+ time:'60 דקות',serv:'25–30 יח׳',diff:'מתקדם',img:G.dates[0],
  src:'https://www.themediterraneandish.com/moroccan-dates/',
  mem:'ריח הדבש הרותח — אמא הכינה עשרות מקרודים לחגים. מהר מאוד היו נעלמים.',
  ingr:[
@@ -2617,7 +2619,7 @@ const R=[
 /* ── FISH: חסרים 5 ── */
 {id:'fx1',cat:'fish',title:'מז׳אוז׳ין דגים',
  desc:'שני דגים "נשואים" — ממולאים בשום וכוסברה ומבושלים ברוטב עגבניות.',
- time:'35 דקות',serv:'4 מנות',diff:'מאתגר',img:G.fish_tagine[0],
+ time:'35 דקות',serv:'4 מנות',diff:'מתקדם',img:G.fish_tagine[0],
  src:'https://www.themediterraneandish.com/moroccan-fish-tagine/',
  mem:'"מז׳אוז׳ין" פירושו "נשואים" — שני דגים ממולאים ומחוברים זה לזה. מנה שאמא הכינה רק לאורחים מיוחדים.',
  ingr:[
@@ -2764,7 +2766,7 @@ const R=[
 
 {id:'mx3',cat:'meat',title:'טחול ממולא',
  desc:'טחול ממולא בבשר טחון, שום ופטרוזיליה — מנה חגיגית נדירה.',
- time:'100 דקות',serv:'4 מנות',diff:'מאתגר',img:G.offal_dish[0],
+ time:'100 דקות',serv:'4 מנות',diff:'מתקדם',img:G.offal_dish[0],
  src:'https://www.taste-of-maroc.com/moroccan-offal/',
  mem:'טחול ממולא היה "המנה של הברצה" — אמא הכינה אותו רק לאורחים מיוחדים.',
  ingr:[
@@ -2784,7 +2786,7 @@ const R=[
 
 {id:'mx4',cat:'meat',title:'קיבה ממולאת',
  desc:'קיבה ממולאת באורז, בשר ותבלינים — מנה חגיגית ישנה.',
- time:'3 שעות',serv:'4 מנות',diff:'מאתגר',img:G.offal_dish[0],
+ time:'3 שעות',serv:'4 מנות',diff:'מתקדם',img:G.offal_dish[0],
  src:'https://www.taste-of-maroc.com/moroccan-offal/',
  mem:'קיבה ממולאת הייתה "המנה של החג" של אמא — לילה של בישול, ערב שלם של שמחה.',
  ingr:[
@@ -3110,7 +3112,7 @@ const R=[
 /* ── DESSERT: חסרים 3 ── */
 {id:'dx1',cat:'des',title:'שבקיה',
  desc:'עוגיות מטוגנות עם שומשום וטבולות בדבש — מסורת מרוקאית לחגים.',
- time:'50 דקות',serv:'20–25 יח׳',diff:'מאתגר',img:G.shebakia[0],
+ time:'50 דקות',serv:'20–25 יח׳',diff:'מתקדם',img:G.shebakia[0],
  src:'https://www.taste-of-maroc.com/chebakia-recipe/',
  mem:'השבקיה היא אחד הקינוחים המרוקאיים היפים ביותר. אמא הכינה אותה בחגים — וריח הדבש מילא את כל הבית.',
  ingr:[
@@ -3942,7 +3944,7 @@ const R=[
 
 {id:'vn3',cat:'veg',title:'ארטישוק ממולא מרוקאי',
  desc:'ארטישוק ממולא בבשר טחון ועשבי תיבול — מנה חגיגית.',
- time:'70 דקות',serv:'4 מנות',diff:'מאתגר',img:G.veg_soup[0],
+ time:'70 דקות',serv:'4 מנות',diff:'מתקדם',img:G.veg_soup[0],
  src:'https://www.themediterraneandish.com/moroccan-vegetable-soup/',
  mem:'"ארטישוק ממולא — לחג בלבד," אמרה לבל. "יקר, קשה להכנה, ומדהים."',
  ingr:[
@@ -3965,7 +3967,7 @@ const R=[
 
 {id:'vn4',cat:'veg',title:'ממולאי כרוב מרוקאי',
  desc:'עלי כרוב ממולאים בבשר טחון ואורז, מבושלים ברוטב עגבניות.',
- time:'90 דקות',serv:'4–6 מנות',diff:'מאתגר',img:G.stuffed_veg[0],
+ time:'90 דקות',serv:'4–6 מנות',diff:'מתקדם',img:G.stuffed_veg[0],
  src:'https://www.themediterraneandish.com/stuffed-peppers/',
  mem:'"ממולאי כרוב לוקחים זמן — אבל כשמוציאים אותם מהסיר, מבינים למה," אמרה אמא.',
  ingr:[
@@ -4345,7 +4347,7 @@ const R=[
 
 {id:'fn3',cat:'fish',title:'קלמארי ממולא מרוקאי',
  desc:'קלמארי ממולא בבשר טחון ואורז, מבושל ברוטב עגבניות.',
- time:'60 דקות',serv:'4 מנות',diff:'מאתגר',img:G.fish_grilled[0],
+ time:'60 דקות',serv:'4 מנות',diff:'מתקדם',img:G.fish_grilled[0],
  src:'https://www.themediterraneandish.com/grilled-fish/',
  mem:'"קלמארי ממולא — נדיר במרוקו," אמרה אמא. "אבל כשהיה — כולם קפצו."',
  ingr:[
@@ -4441,7 +4443,7 @@ const R=[
 /* ── MEAT NEW ── */
 {id:'mn1',cat:'meat',title:'כבש צלוי שלם — מחוי',
  desc:'כבש שלם צלוי בתנור עם תבלינים מרוקאיים — מנת החגים המפוארת.',
- time:'4 שעות',serv:'8–10 מנות',diff:'מאתגר',img:G.lamb_roasted[0],
+ time:'4 שעות',serv:'8–10 מנות',diff:'מתקדם',img:G.lamb_roasted[0],
  src:'https://www.themediterraneandish.com/roast-leg-of-lamb-recipe/',
  mem:'"מחוי — כבש שלם לחגים," אמרה אמא. "פעם בשנה, לפסח, אבא היה שוחט ואמא הייתה מכינה."',
  ingr:[
@@ -4490,7 +4492,7 @@ const R=[
 
 {id:'mn3',cat:'meat',title:'מרגז מרוקאי ביתי',
  desc:'נקניקיות כבש/בקר תבלינים מרוקאיים — עצמאי ומרגש.',
- time:'30 דקות + 2 שעות',serv:'4–6 מנות',diff:'מאתגר',img:G.merguez[0],
+ time:'30 דקות + 2 שעות',serv:'4–6 מנות',diff:'מתקדם',img:G.merguez[0],
  src:'https://www.themediterraneandish.com/merguez-sausage/',
  mem:'"מרגז ביתי — לא קנו בחנות," אמרה אמא. "ידענו מה יש בפנים."',
  ingr:[
@@ -4771,7 +4773,7 @@ const R=[
 
 {id:'hn15',cat:'hol',badge:'מאפה',title:'פסטייה עוף — בסטלה',
  desc:'מעטפת פילו דקה ממולאת עוף, שקדים, קינמון וביצה — מנת מלכים מרוקאית.',
- time:'120 דקות',serv:'6–8 מנות',diff:'מאתגר',img:G.pastilla[0],
+ time:'120 דקות',serv:'6–8 מנות',diff:'מתקדם',img:G.pastilla[0],
  src:'https://www.myjewishlearning.com/the-nosher/moroccan-chicken-bastilla/',
  vid:'https://www.youtube.com/results?search_query=bastilla+pastilla+moroccan+chicken',
  mem:'"בסטלה — מנה שמדפיקה שולחן," אמרה אמא. "כשהיא מגיעה — כולם שותקים ואוכלים."',
@@ -4801,7 +4803,7 @@ const R=[
 
 {id:'hn16',cat:'hol',badge:'מאפה',title:'קוסקוס שבעה ירקות',
  desc:'קוסקוס מאודה עם שבעה ירקות שונים — מנת שבת המלכה המרוקאית.',
- time:'100 דקות',serv:'6–8 מנות',diff:'מאתגר',img:G.couscous[0],
+ time:'100 דקות',serv:'6–8 מנות',diff:'מתקדם',img:G.couscous[0],
  src:'https://www.taste-of-maroc.com/moroccan-couscous-recipe/',
  vid:'https://www.youtube.com/results?search_query=moroccan+couscous+seven+vegetables+traditional',
  mem:'"שבעה ירקות — לא פחות, לא יותר," אמרה אמא. "מי שנכנס לבית ומריח קוסקוס — יודע שיש שבת."',
@@ -4879,7 +4881,7 @@ const R=[
 
 {id:'dn2',cat:'des',title:'קעב אל-ע׳זאל — קרני עזים',
  desc:'עוגיות שקדים בצורת קרן — הקינוח המרוקאי האייקוני לחגיגות.',
- time:'60 דקות',serv:'25 יח׳',diff:'מאתגר',img:G.gazelle_horns[0],
+ time:'60 דקות',serv:'25 יח׳',diff:'מתקדם',img:G.gazelle_horns[0],
  src:'https://www.taste-of-maroc.com/kaab-el-ghzal-recipe/',
  vid:'https://www.youtube.com/results?search_query=kaab+el+ghzal+moroccan+gazelle+horns',
  mem:'"קעב אל-ע׳זאל — ״קרני הצבי״," אמרה אמא. "הצורה הזו — לא קל לעשות, אבל מי שעשה אותה — יודע שזה האמנות."',
@@ -5005,7 +5007,7 @@ const R=[
 
 {id:'dn8',cat:'des',title:'בקלווה מרוקאית',
  desc:'שכבות פילו עם שקדים ודבש — הבקלווה המרוקאית, עשירה יותר מהיוונית.',
- time:'60 דקות',serv:'24 יח׳',diff:'מאתגר',img:G.baklava[0],
+ time:'60 דקות',serv:'24 יח׳',diff:'מתקדם',img:G.baklava[0],
  src:'https://www.themediterraneandish.com/baklava-recipe/',
  mem:'"בקלווה מרוקאית שונה מהיוונית," אמרה אמא. "יש לנו מי ורדים. הריח שונה."',
  ingr:[
@@ -5070,7 +5072,7 @@ const R=[
 /* ── SPANISH-MOROCCAN NEW ── */
 {id:'spn1',cat:'span',badge:'מורשת ספרד',title:'אדאפינה — חמין יהודי-ספרדי',
  desc:'גרסה ספרדית-מרוקאית של חמין שבת — מעוף, בשר, ביצים ואורז.',
- time:'12 שעות',serv:'6–8 מנות',diff:'מאתגר',img:G.dafina[0],
+ time:'12 שעות',serv:'6–8 מנות',diff:'מתקדם',img:G.dafina[0],
  src:'https://www.jewishfoodsociety.org/recipes/dafina',
  vid:'https://www.youtube.com/results?search_query=adafina+moroccan+jewish+shabbat',
  mem:'"אדאפינה — ה-Cocido שלנו," אמרה לבל. "מגורשי ספרד הביאו. אנחנו הוספנו מרוקו."',
@@ -5499,7 +5501,7 @@ const R=[
 
 {id:'vne3',cat:'veg',title:'כרוב ממולא מרוקאי',
  desc:'ראש כרוב שלם ממולא באורז ובשר — מנה חגיגית נדירה.',
- time:'100 דקות',serv:'6 מנות',diff:'מאתגר',img:G.stuffed_veg[0],
+ time:'100 דקות',serv:'6 מנות',diff:'מתקדם',img:G.stuffed_veg[0],
  src:'https://www.themediterraneandish.com/stuffed-peppers/',
  mem:'"כרוב שלם ממולא — פעם בשנה," אמרה אמא. "לוקח זמן. שווה כל דקה."',
  ingr:[
@@ -5545,7 +5547,7 @@ const R=[
 
 {id:'vne5',cat:'veg',title:'בצלים ממולאים מרוקאיים',
  desc:'בצלים גדולים ממולאים בבשר ואורז — מנה נדירה ומיוחדת.',
- time:'70 דקות',serv:'4 מנות',diff:'מאתגר',img:G.stuffed_veg[0],
+ time:'70 דקות',serv:'4 מנות',diff:'מתקדם',img:G.stuffed_veg[0],
  src:'https://www.themediterraneandish.com/stuffed-peppers/',
  mem:'"בצלים ממולאים — רעיון ספרדי," אמרה לבל. "Cebollas rellenas. אנחנו הוספנו כמון."',
  ingr:[
@@ -5704,7 +5706,7 @@ const R=[
 
 {id:'cne4',cat:'chick',title:'סנה — עוף עם קוסקוס ועוף',
  desc:'עוף עם קוסקוס פנימה — מנה חינאווית מסורתית.',
- time:'100 דקות',serv:'6 מנות',diff:'מאתגר',img:G.couscous[0],
+ time:'100 דקות',serv:'6 מנות',diff:'מתקדם',img:G.couscous[0],
  src:'https://www.taste-of-maroc.com/moroccan-couscous-recipe/',
  mem:'"סנה — עוף שאוכל קוסקוס בפנים," אמרה אמא. "לחינה הכינו. מדהים."',
  ingr:[
@@ -5891,7 +5893,7 @@ const R=[
 ══════════════════════════════════════════════ */
 {id:'hne1',cat:'hol',badge:'טאג׳ין',title:'טאג׳ין תרנגול הודי עם ירקות',
  desc:'הודו עם ירקות שורש, זעפרן ותבלינים — לחגים הגדולים.',
- time:'150 דקות',serv:'8 מנות',diff:'מאתגר',img:G.tagine[0],
+ time:'150 דקות',serv:'8 מנות',diff:'מתקדם',img:G.tagine[0],
  src:'https://www.themediterraneandish.com/moroccan-vegetable-tagine-recipe/',
  mem:'"תרנגול הודו לחגים — מנת הגדול," אמרה אמא. "פעם בשנה. ריח הזעפרן — ממרחק."',
  ingr:[
@@ -5916,7 +5918,7 @@ const R=[
 
 {id:'hne2',cat:'hol',badge:'מאפה',title:'שטיחה — פשטידת בשר מרוקאית',
  desc:'בצק שמרים מרודד עם בשר מתובל — מאפה שבת ספרדי-מרוקאי.',
- time:'90 דקות',serv:'8 מנות',diff:'מאתגר',img:G.stuffed_meat[0],
+ time:'90 דקות',serv:'8 מנות',diff:'מתקדם',img:G.stuffed_meat[0],
  src:'https://www.themediterraneandish.com/stuffed-peppers/',
  mem:'"שטיחה — ריח הבצק עם הבשר," אמרה אמא. "שישי בבוקר בקזבלנקה — כל הבית ריח כך."',
  ingr:[
@@ -5939,7 +5941,7 @@ const R=[
 
 {id:'hne3',cat:'hol',badge:'מאפה',title:'מחנצ׳ה — ספירלת עוף',
  desc:'בצק ממולא עוף ומגולגל לספירלה — מאפה חינאווי מסורתי.',
- time:'90 דקות',serv:'6 מנות',diff:'מאתגר',img:G.chicken_roast[0],
+ time:'90 דקות',serv:'6 מנות',diff:'מתקדם',img:G.chicken_roast[0],
  src:'https://www.themediterraneandish.com/roasted-chicken/',
  mem:'"מחנצ׳ה — ספירלת הכבוד," אמרה אמא. "לחינה — מניחים אותה על השולחן ראשונה."',
  ingr:[
@@ -6516,7 +6518,7 @@ const R=[
 
 {id:'rare7',cat:'hol',badge:'נדיר',title:'טאג׳ין חמאם — יונה מרוקאית',
  desc:'יונה מבושלת עם זיתים ולימון כבוש — מנת יוקרה מרוקאית עתיקה.',
- time:'90 דקות',serv:'2 מנות',diff:'מאתגר',img:G.tagine[0],
+ time:'90 דקות',serv:'2 מנות',diff:'מתקדם',img:G.tagine[0],
  src:'https://www.themediterraneandish.com/moroccan-vegetable-tagine-recipe/',
  mem:'"חמאם — יונה," אמרה אמא. "פעם גידלו על הגג. מנת מלכות שהתמעטה."',
  ingr:[
@@ -6540,7 +6542,7 @@ const R=[
 
 {id:'rare8',cat:'meat',title:'כרעיין — רגלי כבש מרוקאיות',
  desc:'רגלי כבש מבושלות לאיטן עם חומוס ותבלינים — מנה עתיקה.',
- time:'180 דקות',serv:'4 מנות',diff:'מאתגר',img:G.offal_dish[0],
+ time:'180 דקות',serv:'4 מנות',diff:'מתקדם',img:G.offal_dish[0],
  src:'https://www.taste-of-maroc.com/moroccan-offal/',
  mem:'"כרעיין — רגלי כבש," אמרה אמא. "מה שלא אוכלים בחוץ — מבשלים בבית. מדהים."',
  ingr:[
@@ -7008,7 +7010,7 @@ const R=[
 
 {id:'me5',cat:'meat',title:'בשר ממולא בבצק',
  desc:'בצק שמרים עם בשר ממולא — פשטידת יום שישי.',
- time:'90 דקות',serv:'6 מנות',diff:'מאתגר',img:G.stuffed_meat[0],
+ time:'90 דקות',serv:'6 מנות',diff:'מתקדם',img:G.stuffed_meat[0],
  src:'https://www.themediterraneandish.com/stuffed-peppers/',
  mem:'"בצק עם בשר — ריח יום שישי," אמרה אמא.',
  ingr:[{q:'לבצק:',i:'2.5 כוסות קמח, 1 כף שמרים, 200 מ"ל מים, 3 כפות שמן, מלח'},{q:'למילוי:',i:'300 גרם בשר טחון, בצל, פפריקה, כמון, פטרוזיליה, מלח'},],
@@ -7082,7 +7084,7 @@ const R=[
 
 {id:'hle3',cat:'hol',badge:'ראש השנה',title:'ראש כבש ברוטב',
  desc:'ראש כבש מבושל לאיטו — מנת ראש השנה המסורתית.',
- time:'180 דקות',serv:'4 מנות',diff:'מאתגר',img:G.lamb_roasted[0],
+ time:'180 דקות',serv:'4 מנות',diff:'מתקדם',img:G.lamb_roasted[0],
  src:'https://www.themediterraneandish.com/roast-leg-of-lamb-recipe/',
  mem:'"ראש לא זנב — ראש השנה," אמרה אמא. "גם לשולחן."',
  ingr:[{q:'1',i:'ראש כבש — נקוי ומוכשר'},{q:'6 שיני',i:'שום'},{q:'1 כפית',i:'כמון'},{q:'1 כפית',i:'פפריקה'},{q:'½ כפית',i:'כורכום'},{q:'3 כפות',i:'שמן זית'},{q:'2 ליטר',i:'מים'},{q:'לפי הטעם',i:'מלח'},],
@@ -7156,7 +7158,7 @@ const R=[
 /* ── SPANISH EXTRA ── */
 {id:'spe1',cat:'span',badge:'מורשת ספרד',title:'ח׳מין ירושלמי — עדאפינה',
  desc:'גרסה מסורתית יהודית-ספרדית של החמין עם ספרדית.',
- time:'12 שעות',serv:'6–8 מנות',diff:'מאתגר',img:G.dafina[0],
+ time:'12 שעות',serv:'6–8 מנות',diff:'מתקדם',img:G.dafina[0],
  src:'https://www.jewishfoodsociety.org/recipes/dafina',
  mem:'"עדאפינה ספרדית — שנגמרות שמות," אמרה לבל. "בשמות ספרד — אנחנו שמנו."',
  ingr:[{q:'500 גרם',i:'בשר כבש — קוביות'},{q:'1 כוס',i:'חומוס — מושרה'},{q:'4',i:'ביצים — בקליפתן'},{q:'3',i:'תפוחי אדמה — שלמים'},{q:'½ כוס',i:'אורז'},{q:'1 כפית',i:'פפריקה מעושנת'},{q:'עלי דפנה',i:'2'},{q:'3 כפות',i:'שמן זית'},{q:'לפי הטעם',i:'מלח'},],
@@ -7247,7 +7249,7 @@ const R=[
 
 {id:'rer6',cat:'hol',badge:'נדיר',title:'ח׳ובז — לחם תנור בגחלים',
  desc:'לחם מסורתי שנאפה ישירות בגחלים — טעם שאין דומה לו.',
- time:'60 דקות',serv:'8 פרוסות',diff:'מאתגר',img:G.moroccan_bread[0],
+ time:'60 דקות',serv:'8 פרוסות',diff:'מתקדם',img:G.moroccan_bread[0],
  src:'https://www.taste-of-maroc.com/moroccan-bread-recipe/',
  mem:'"ח׳ובז — לחם הגחלים," אמרה אמא. "אמא שלי אפתה בתנור מהגחלים. הקרום — שחור ואחרי קילוף — טעם שאין."',
  ingr:[{q:'500 גרם',i:'קמח'},{q:'1 כף',i:'שמרים'},{q:'1 כפית',i:'מלח'},{q:'300 מ"ל',i:'מים פושרים'},{q:'2 כפות',i:'שמן זית'},],
@@ -8450,7 +8452,7 @@ const R=[
 /* ── MEAT ── */
 {id:'ex21',cat:'meat',title:'מחנשה — בשר ממולא בתבלינים',
  desc:'קציצה גדולה ממולאת ביצה קשה ועשבים — נדיר.',
- time:'60 דקות',serv:'4 מנות',diff:'מאתגר',img:G.stuffed_meat[0],
+ time:'60 דקות',serv:'4 מנות',diff:'מתקדם',img:G.stuffed_meat[0],
  src:'https://www.themediterraneandish.com/stuffed-peppers/',
  mem:'"מחנשה — ביצה בתוך בשר," אמרה אמא. "כשחותכים — הפתעה בפנים."',
  ingr:[{q:'500 גרם',i:'בשר בקר טחון'},{q:'4 ביצים',i:'קשות — קלופות'},{q:'1 בצל קטן',i:'מגורר'},{q:'20 גרם (חופן)',i:'פטרוזיליה קצוצה'},{q:'1 כפית',i:'פפריקה'},{q:'½ כפית',i:'כמון'},{q:'3 עגבניות',i:'לרוטב'},{q:'3 כפות',i:'שמן זית'},{q:'לפי הטעם',i:'מלח'},],
@@ -8496,7 +8498,7 @@ const R=[
 /* ── CHICKEN ── */
 {id:'ex26',cat:'chick',title:'עוף ממולא לחינה — דארג',
  desc:'דארג — עוף ממולא שבדים וסמבוסק לחינה מרוקאית.',
- time:'120 דקות',serv:'6 מנות',diff:'מאתגר',img:G.chicken_roast[0],
+ time:'120 דקות',serv:'6 מנות',diff:'מתקדם',img:G.chicken_roast[0],
  src:'https://www.themediterraneandish.com/roasted-chicken/',
  mem:'"דארג — עוף לחינה," אמרה אמא. "כל הקהל מחכה. כשמוציאים — מחיאות כפיים."',
  ingr:[{q:'1 גדול',i:'עוף שלם'},{q:'לממולא:',i:''},{q:'1 כוס',i:'שקדים קלויים'},{q:'½ כוס',i:'צימוקים'},{q:'½ כוס',i:'אורז מבושל'},{q:'1 כפית',i:'קינמון'},{q:'2 כפות',i:'חמאה'},{q:'לציפוי:',i:'פפריקה+שמן+שום+מלח'},],
@@ -8560,7 +8562,7 @@ const R=[
 
 {id:'ex33',cat:'hol',badge:'שבת',title:'שבת של בשר — שולחן',
  desc:'תיאום שולחן שבת: מרק + דג + תבשיל עיקרי.',
- time:'180 דקות',serv:'6–8 מנות',diff:'מאתגר',img:G.lamb_roasted[0],
+ time:'180 דקות',serv:'6–8 מנות',diff:'מתקדם',img:G.lamb_roasted[0],
  src:'https://www.themediterraneandish.com/roast-leg-of-lamb-recipe/',
  mem:'"שבת אמיתית — שלוש מנות," אמרה אמא. "מרק, דג, בשר. הסדר חשוב."',
  ingr:[{q:'למרק:',i:'עוף+ירקות+כורכום+מים'},{q:'לדג:',i:'דג חריף (ראו מתכון f1)'},{q:'לתבשיל:',i:'עוף עם זיתים (ראו מתכון c1)'},{q:'לסלטים:',i:'מטבוחה+זאלוק+גזר (ראו מתכונים)'},],
@@ -8770,7 +8772,7 @@ const R=[
 
 {id:'fin6',cat:'veg',title:'ממולאי עלי גפן מרוקאי',
  desc:'עלי גפן ממולאים אורז ובשר — מסורת מרוקאית.',
- time:'90 דקות',serv:'4 מנות',diff:'מאתגר',img:G.dolma[0],
+ time:'90 דקות',serv:'4 מנות',diff:'מתקדם',img:G.dolma[0],
  src:'https://www.themediterraneandish.com/stuffed-grape-leaves-recipe/',
  mem:'"עלי גפן — עבודה," אמרה אמא. "אבל כשפותחים סיר — שוכחים הכל."',
  ingr:[{q:'30 עלים',i:'עלי גפן — מושרים אם משומרים'},{q:'250 גרם',i:'בשר בקר טחון'},{q:'½ כוס',i:'אורז — שטוף'},{q:'30 גרם',i:'פטרוזיליה וכוסברה קצוצות'},{q:'1 כפית',i:'פפריקה'},{q:'½ כפית',i:'כמון'},{q:'3 כפות',i:'מיץ לימון'},{q:'3 כפות',i:'שמן זית'},{q:'לפי הטעם',i:'מלח'},],
@@ -8842,7 +8844,7 @@ const R=[
 
 {id:'fin14',cat:'hol',badge:'חינה',title:'מחנשה חינה',
  desc:'בשר ממולא ביצה קשה לחינה — מנה מרשימה.',
- time:'60 דקות',serv:'4 מנות',diff:'מאתגר',img:G.moroccan_bread[0],
+ time:'60 דקות',serv:'4 מנות',diff:'מתקדם',img:G.moroccan_bread[0],
  src:'https://www.taste-of-maroc.com/moroccan-bread-recipe/',
  mem:'"מחנשה לחינה — כולם שואלים מה בפנים," אמרה אמא.',
  ingr:[{q:'600 גרם',i:'בשר בקר טחון'},{q:'4 ביצים',i:'קשות — קלופות'},{q:'1 בצל קטן',i:'מגורר'},{q:'20 גרם (חופן)',i:'כוסברה טרייה קצוצה'},{q:'1 כפית',i:'פפריקה'},{q:'½ כפית',i:'ג׳ינג׳ר'},{q:'3 עגבניות',i:'לרוטב'},{q:'3 כפות',i:'שמן זית'},{q:'לפי הטעם',i:'מלח'},],
@@ -9405,7 +9407,7 @@ const R=[
 
 {id:'hv5',cat:'hol',badge:'ראש השנה',title:'ראש שנה מרוקאי — שולחן',
  desc:'שולחן ראש השנה המרוקאי: ירקות מתוקים, דגים, בשר.',
- time:'240 דקות',serv:'8 מנות',diff:'מאתגר',img:G.moroccan_bread[0],
+ time:'240 דקות',serv:'8 מנות',diff:'מתקדם',img:G.moroccan_bread[0],
  src:'https://www.taste-of-maroc.com/moroccan-bread-recipe/',
  mem:'"ראש השנה מרוקאי — שולחן של סמלים," אמרה אמא. "כל דבר מסמל משהו."',
  ingr:[{q:'ראש כבש:',i:'לסמל ראש ולא זנב'},{q:'גזר ודבש',i:'לסמל מתיקות'},{q:'רימונים:',i:'לזכויות'},{q:'תמרים:',i:'לשלום'},{q:'תפוח ודבש:',i:'לשנה מתוקה'},{q:'דג שלם',i:'לסמל פרייה ורבייה'},{q:'חרוסת',i:'לזכר המצרים'},],
@@ -9621,7 +9623,7 @@ const R=[
 
 {id:'vw3',cat:'veg',title:'ממולאי כרישה',
  desc:'כרישה ממולאת בגבינה ואורז — נדיר ויפה.',
- time:'55 דקות',serv:'4 מנות',diff:'מאתגר',img:G.leek_dish[0],
+ time:'55 דקות',serv:'4 מנות',diff:'מתקדם',img:G.leek_dish[0],
  src:'https://www.themediterraneandish.com/leek-recipe/',
  mem:'"כרישה ממולאת — רעיון שבא מספרד," אמרה לבל.',
  ingr:[{q:'6 גדולות',i:'כרישה'},{q:'150 גרם',i:'גבינת ריקוטה'},{q:'¼ כוס',i:'אורז מבושל'},{q:'30 גרם',i:'פטרוזיליה קצוצה'},{q:'1 כפית',i:'פפריקה'},{q:'2 כפות',i:'שמן זית'},{q:'לפי הטעם',i:'מלח'},],
@@ -9695,7 +9697,7 @@ const R=[
 /* ── MEAT ── */
 {id:'mw1',cat:'meat',title:'לשון בוויניגרט',
  desc:'לשון עגל בוויניגרט שמן זית וחומץ — ספרדי.',
- time:'180 דקות',serv:'6 מנות',diff:'מאתגר',img:G.offal_dish[0],
+ time:'180 דקות',serv:'6 מנות',diff:'מתקדם',img:G.offal_dish[0],
  src:'https://www.taste-of-maroc.com/moroccan-offal/',
  mem:'"לשון — Lengua," אמרה לבל. "ספרד. אנחנו הכנסנו כמון."',
  ingr:[{q:'1',i:'לשון עגל'},{q:'לנוזל:',i:'בצל, גזר, עלי דפנה, מלח'},{q:'לוויניגרט:',i:''},{q:'3 כפות',i:'שמן זית'},{q:'2 כפות',i:'חומץ יין'},{q:'1 כפית',i:'כמון'},{q:'4 שיני',i:'שום — כתוש'},{q:'30 גרם',i:'פטרוזיליה קצוצה'},{q:'לפי הטעם',i:'מלח ופלפל'},],
@@ -9787,7 +9789,7 @@ const R=[
 /* ── HOLIDAY ── */
 {id:'hw1',cat:'hol',badge:'חגיגי',title:'כבש צלוי מלא — עיד',
  desc:'כבש שלם צלוי לחג — Méchoui מסורתי.',
- time:'4–5 שעות',serv:'10+ מנות',diff:'מאתגר',img:G.lamb_roasted[0],
+ time:'4–5 שעות',serv:'10+ מנות',diff:'מתקדם',img:G.lamb_roasted[0],
  src:'https://www.themediterraneandish.com/roast-leg-of-lamb-recipe/',
  mem:'"מכווי — מחוי," אמרה אמא. "פעם בשנה. כולם מסביב לאש."',
  ingr:[{q:'כבש שלם (5–6 ק"ג)',i:'מוכשר ונקוי'},{q:'20 שיני',i:'שום — שיניים שלמות'},{q:'½ כוס',i:'שמן זית'},{q:'3 כפות',i:'פפריקה מתוקה'},{q:'1 כף',i:'כמון'},{q:'1 כפית',i:'ג׳ינג׳ר'},{q:'1 כפית',i:'כורכום'},{q:'מיץ',i:'מ-1 לימון'},{q:'לפי הטעם',i:'מלח'},],
@@ -10137,7 +10139,7 @@ const R=[
 
 {id:'mef9',cat:'meat',title:'לחמה — בשר בצק ספרדי',
  desc:'Empanada — בצק ממולא בשר מרוקאי-ספרדי.',
- time:'70 דקות',serv:'6 מנות',diff:'מאתגר',img:G.stuffed_meat[0],
+ time:'70 דקות',serv:'6 מנות',diff:'מתקדם',img:G.stuffed_meat[0],
  src:'https://www.themediterraneandish.com/stuffed-peppers/',
  mem:'"אמפנדה — Empanada," אמרה לבל. "ספרד. בצק+בשר."',
  ingr:[{q:'לבצק:',i:'2 כוסות קמח, ½ כוס שמן, ½ כוס מים, 1 כפית מלח'},{q:'למילוי:',i:''},{q:'350 גרם',i:'בשר בקר טחון'},{q:'1 בצל גדול',i:'קצוץ ומטוגן'},{q:'1 כפית',i:'פפריקה מעושנת'},{q:'½ כפית',i:'כמון'},{q:'20 גרם',i:'פטרוזיליה קצוצה'},{q:'לפי הטעם',i:'מלח'},],
@@ -10614,7 +10616,7 @@ const R=[
 
 {id:'hn19',cat:'hol',badge:'מאפה',title:'כאב אל-ע׳זאל ורד',
  desc:'קרני עזים עם מילוי ורד ומי ורדים — חגיגי.',
- time:'60 דקות',serv:'20 יח׳',diff:'מאתגר',img:G.gazelle_horns[0],
+ time:'60 דקות',serv:'20 יח׳',diff:'מתקדם',img:G.gazelle_horns[0],
  src:'https://www.taste-of-maroc.com/kaab-el-ghzal-recipe/',
  mem:'"קרני עזים עם ורד — לחתונות," אמרה אמא.',
  ingr:[{q:'לבצק:',i:'250 גרם קמח, 2 כפות חמאה, מים, מלח'},{q:'למילוי:',i:''},{q:'200 גרם',i:'שקדים טחונים'},{q:'100 גרם',i:'סוכר'},{q:'2 כפות',i:'מי ורדים'},{q:'1 כפית',i:'קינמון'},{q:'1 כפית',i:'קליפת תפוז מגוררת'},],
@@ -10724,7 +10726,7 @@ const R=[
 /* ── שכנות עיראק ── */
 {id:'iq1',cat:'iraq',badge:'שכנות עיראק',title:'קובה בסלק אדום',
  desc:'קובה — הלב של המטבח העיראקי היהודי. קציצות בורגול במרק סלק אדום-חמוץ. מגישים בשבת ובחגים.',
- time:'90 דקות',serv:'5–6 מנות (20 קובות)',diff:'מאתגר',img:G.kubba[0],
+ time:'90 דקות',serv:'5–6 מנות (20 קובות)',diff:'מתקדם',img:G.kubba[0],
  src:'https://www.myjewishlearning.com/the-nosher/kibbeh-recipe/',
  vid:'https://www.youtube.com/results?search_query=%D7%A7%D7%95%D7%91%D7%94+%D7%91%D7%A1%D7%9C%D7%A7',
  mem:'מרגלית, השכנה מעיראק בקטמון, לימדה את אמא לעשות קובה בשישי בבוקר. "ריח הסלק זה ריח שבת," אמרה מרגלית. "בבגדד עשינו אותם על האש כל ערב שישי." אמא שמרה על הסוד של המרק החמוץ-מתוק — הכמות הנכונה של לימון ושל סוכר.',
@@ -10764,7 +10766,7 @@ const R=[
 
 {id:'iq2',cat:'iraq',badge:'שכנות עיראק',title:'קובה חמוסטה (ירוק לימוני)',
  desc:'קובה בורגול במרק תרד-סלרי-לימון. המרק הירוק החמוץ הוא המאפיין של עיראק.',
- time:'85 דקות',serv:'5–6 מנות',diff:'מאתגר',img:G.kubba[0],
+ time:'85 דקות',serv:'5–6 מנות',diff:'מתקדם',img:G.kubba[0],
  src:'https://www.myjewishlearning.com/the-nosher/kibbeh-recipe/',
  mem:'"חמוסטה — חמוץ," הסבירה מרגלית לאמא. "בבגדד אכלנו אותה בשישי בצהריים עם אורז." הצבע הירוק של המרק, הריח החמוץ המרענן — שונה לגמרי מהמטבח המרוקאי, אבל אמא אהבה אותה מיד.',
  ingr:[
@@ -10820,7 +10822,7 @@ const R=[
 
 {id:'iq4',cat:'iraq',badge:'שכנות עיראק',title:'דולמה עיראקית',
  desc:'עלי גפן ממולאים בתערובת אורז ובשר, מבושלים ברוטב חמוץ-מתוק של תמרינד ולימון.',
- time:'120 דקות',serv:'5–6 מנות (30–35 דולמות)',diff:'מאתגר',img:G.dolma[0],
+ time:'120 דקות',serv:'5–6 מנות (30–35 דולמות)',diff:'מתקדם',img:G.dolma[0],
  src:'https://www.themediterraneandish.com/stuffed-grape-leaves-recipe/',
  mem:'בשכנות הדולמה הייתה שפה משותפת. "אמא עשתה אותה עם לימון," אמרה נחמה מהקומה שלמטה, "אנחנו עם תמרינד." אמא למדה לשלב — חצי לימון, חצי תמרינד. כך יצאה גרסת הקטמון.',
  ingr:[
@@ -10908,7 +10910,7 @@ const R=[
 /* ── שכנות כורדיסטן ── */
 {id:'ku1',cat:'kurd',badge:'שכנות כורדיסטן',title:'קובה קדרה (שמנת)',
  desc:'קובה בורגול גדולה בצורת דיסק, מבושלת ברוטב עגבניות וכרישה עמוק. ייחודית לכורדים.',
- time:'80 דקות',serv:'5 מנות (12–15 יח׳)',diff:'מאתגר',img:G.kubba[0],
+ time:'80 דקות',serv:'5 מנות (12–15 יח׳)',diff:'מתקדם',img:G.kubba[0],
  src:'https://www.myjewishlearning.com/the-nosher/kibbeh-recipe/',
  mem:'נורה הכורדייה, גרה בקומה השלישית בקטמון. "קדרה — בכורדית זה "סיר,"" הסבירה. "כשעשינו קדרה, כל הבניין ידע." הדיסקים הגדולים, השמנתיים — שונים לגמרי מהקובה העיראקית. אמא אהבה את הפשטות שלה.',
  ingr:[
@@ -10978,7 +10980,7 @@ const R=[
 
 {id:'ku3',cat:'kurd',badge:'שכנות כורדיסטן',title:'שישבראק (כיסוני בשר בלבן)',
  desc:'כיסוני בצק ממולאים בשר מבושלים ביוגורט עם שום — מנה כורדית-ערבית קלאסית.',
- time:'100 דקות',serv:'4 מנות (25–30 יח׳)',diff:'מאתגר',img:G.dumpling[0],
+ time:'100 דקות',serv:'4 מנות (25–30 יח׳)',diff:'מתקדם',img:G.dumpling[0],
  src:'https://www.themediterraneandish.com/dumpling-recipe/',
  mem:'נורה הסבירה: "שישבראק — הדרך שלנו לאמר שאנחנו אוהבים אתכם." ואכן, היא עשתה אותם רק לאורחים מיוחדים. אמא עזרה לה לגלגל את הכיסונים, ונורה לימדה אותה את סוד הלבן עם השום.',
  ingr:[
@@ -11796,7 +11798,7 @@ const R=[
 
 {id:'bu4',cat:'buk',badge:'שכנות בוכרה',title:'מנטי (כיסוני קיטור בוכאריים)',
  desc:'כיסוני בצק ממולאים בשר וכרישה, מבושלים בקיטור. מוגשים עם שמנת חמוצה ושמן.',
- time:'90 דקות',serv:'4 מנות (20 יח׳)',diff:'מאתגר',img:G.dumpling[0],
+ time:'90 דקות',serv:'4 מנות (20 יח׳)',diff:'מתקדם',img:G.dumpling[0],
  src:'https://www.themediterraneandish.com/dumpling-recipe/',
  mem:'"מנטי עם קיטור — לא עם מים," הדגישה אסתר. "קיטור נותן לעור להיות רך ולא לרדת." אמא, שרגילה לדולמה ולקובה במים, התרגשה מבישול הקיטור. "כמו המחווג המרוקאי," אמרה. אסתר: "כן! אבל עם בשר."',
  ingr:[
@@ -12678,7 +12680,7 @@ const R=[
 
 {id:'iq22',cat:'iraq',badge:'שכנות עיראק',title:'בקלאוה בגדדית',
  desc:'בקלאוה עם אגוזי מלך, פיסטוקים ומי ורדים — גרסת בגדד של הקינוח.',
- time:'60 דקות',serv:'28 יחידות',diff:'מאתגר',img:G.baklava[0],
+ time:'60 דקות',serv:'28 יחידות',diff:'מתקדם',img:G.baklava[0],
  src:'https://www.themediterraneandish.com/baklava-recipe/',
  mem:'\"בקלאוה עיראקית — יותר אגוזים, פחות מתוק,\" אמרה מרגלית. \"הגרסה שלנו לא מתוקה כמו הטורקית.\"',
  ingr:[
@@ -12920,7 +12922,7 @@ const R=[
 
 {id:'ku9',cat:'kurd',badge:'שכנות כורדיסטן',title:'דולמה כורדית (עלי גפן)',
  desc:'עלי גפן ממולאים אורז ועשבים בלי בשר — גרסה טבעונית כורדית.',
- time:'100 דקות',serv:'5 מנות (25 יח)',diff:'מאתגר',img:G.dolma[0],
+ time:'100 דקות',serv:'5 מנות (25 יח)',diff:'מתקדם',img:G.dolma[0],
  src:'https://www.themediterraneandish.com/stuffed-grape-leaves-recipe/',
  mem:'\"דולמה בלי בשר — לימי צום,\" אמרה נורה. \"אבל הטעם לא חסר כלום.\"',
  ingr:[
@@ -13259,7 +13261,7 @@ const R=[
 
 {id:'ku24',cat:'kurd',badge:'שכנות כורדיסטן',title:'גמה (פשטידת שמרים ממלאת)',
  desc:'פשטידת שמרים גדולה ממולאת בשר ואורז — מנה כורדית לחגים.',
- time:'90 דקות',serv:'6 מנות',diff:'מאתגר',img:G.briouats[0],
+ time:'90 דקות',serv:'6 מנות',diff:'מתקדם',img:G.briouats[0],
  src:'https://www.taste-of-maroc.com/briouats-recipe/',
  mem:'\"גמה — זה לחגיגות,\" אמרה נורה. \"לא לכל יום. לכלה, לבר מצווה, לשבת גדולה.\"',
  ingr:[
@@ -13414,7 +13416,7 @@ const R=[
 /* ── אשכנז — המשך ── */
 {id:'as8',cat:'ashk',badge:'שכנות אשכנז',title:'קרפלך (כיסוני בשר)',
  desc:'כיסוני בצק ביצה ממולאים בשר — מרוקאים במרק עוף בשישי בלילה.',
- time:'90 דקות',serv:'5 מנות (30 יח)',diff:'מאתגר',img:G.dumpling[0],
+ time:'90 דקות',serv:'5 מנות (30 יח)',diff:'מתקדם',img:G.dumpling[0],
  src:'https://www.themediterraneandish.com/dumpling-recipe/',
  mem:'\"קרפלך — רק שישי,\" אמרה רחל. \"כל שישי בפולין, אמא עשתה קרפלך. בישראל — אותו רחל.\"',
  ingr:[
@@ -14535,7 +14537,7 @@ const R=[
 
 {id:'pe10',cat:'pers',badge:'שכנות פרס',title:'פלאו (אורז פרסי קלאסי)',
  desc:'אורז פרסי בשיטת tahdig — קרום זהוב בתחתית הסיר. הגביע הקדוש של המטבח הפרסי.',
- time:'60 דקות',serv:'5 מנות',diff:'מאתגר',img:G.rice_dish[0],
+ time:'60 דקות',serv:'5 מנות',diff:'מתקדם',img:G.rice_dish[0],
  src:'https://www.themediterraneandish.com/moroccan-rice/',
  mem:'\"tahdig — כולם רוצים את הקרום,\" אמרה פאטמה. \"מי שמקבל — זכה. אמא תמיד שמרה לבן הבכור.\"',
  ingr:[
@@ -14981,7 +14983,7 @@ const R=[
 
 {id:'pe29',cat:'pers',badge:'שכנות פרס',title:'פלאו זעפרן (אורז חגיגי)',
  desc:'אורז פרסי עם זעפרן ובצל מקורמל — גרסה הכי חגיגית של האורז הפרסי.',
- time:'55 דקות',serv:'5 מנות',diff:'מאתגר',img:G.rice_dish[0],
+ time:'55 דקות',serv:'5 מנות',diff:'מתקדם',img:G.rice_dish[0],
  src:'https://www.themediterraneandish.com/moroccan-rice/',
  mem:'\"פלאו זעפרן לחתונה. לבר מצווה. לאורחים,\" אמרה פאטמה.',
  ingr:[
@@ -15187,7 +15189,7 @@ const R=[
 
 {id:'bu15',cat:'buk',badge:'שכנות בוכרה',title:'מנטי בבוכרה (כיסוני בשר גדולים)',
  desc:'כיסוני בצק גדולים ממולאים בשר וכרוב — מאודים. גדולים כמו כופתאות.',
- time:'90 דקות',serv:'4 מנות',diff:'מאתגר',img:G.dumpling[0],
+ time:'90 דקות',serv:'4 מנות',diff:'מתקדם',img:G.dumpling[0],
  src:'https://www.themediterraneandish.com/dumpling-recipe/',
  mem:'\"מנטי — כמו כופתאות, אבל גדולים יותר,\" אמרה אסתר. \"ומאודים, לא מבושלים.\"',
  ingr:[
@@ -15335,7 +15337,7 @@ const R=[
 
 {id:'bu21',cat:'buk',badge:'שכנות בוכרה',title:'קסונסוי (כיסוני בשר קטנים)',
  desc:'כיסוני בצק קטנים ממולאים בשר וצנוביות — מבושלים במים.',
- time:'75 דקות',serv:'4 מנות',diff:'מאתגר',img:G.dumpling[0],
+ time:'75 דקות',serv:'4 מנות',diff:'מתקדם',img:G.dumpling[0],
  src:'https://www.themediterraneandish.com/dumpling-recipe/',
  mem:'\"קסונסוי — קטנים כמו צנוביות. אוכלים 20 בבת אחת,\" אמרה אסתר.',
  ingr:[
@@ -16367,7 +16369,7 @@ const R=[
 
 {id:'is20',cat:'isr',badge:'ישראלי',title:'קרמבו ביתי',
  desc:'ביסקוויט קוקוס עם מרנג וציפוי שוקולד — הקרמבו הישראלי הנוסטלגי.',
- time:'60 דקות',serv:'12 יחידות',diff:'מאתגר',img:G.dessert_pastry[0],
+ time:'60 דקות',serv:'12 יחידות',diff:'מתקדם',img:G.dessert_pastry[0],
  src:'https://www.taste-of-maroc.com/moroccan-pastries/',
  mem:'קרמבו — אחד הדברים שהכי קשה להסביר לזרים. \"זה עוגה?\" \"לא.\" \"זה גלידה?\" \"לא.\" \"מה זה?\" \"קרמבו.\"',
  ingr:[
@@ -17245,7 +17247,7 @@ const R=[
 
 {id:'tr27',cat:'turk',badge:'יהדות טורקיה',title:'סרמה (עלי גפן ממולאים)',
  desc:'עלי גפן ממולאים אורז ועשבים ללא בשר — ארוחה צמחונית חגיגית.',
- time:'80 דקות',serv:'5 מנות (25 יח)',diff:'מאתגר',img:G.dolma[0],
+ time:'80 דקות',serv:'5 מנות (25 יח)',diff:'מתקדם',img:G.dolma[0],
  src:'https://www.themediterraneandish.com/stuffed-grape-leaves-recipe/',
  mem:'\"סרמה — כמו דולמה, אבל קטנה יותר,\" אמרה שושנה. \"ועם עלי גפן — לא כרוב.\"',
  ingr:[
@@ -17270,7 +17272,7 @@ const R=[
 
 {id:'tr28',cat:'turk',badge:'יהדות טורקיה',title:'בקלאוה טורקית',
  desc:'בקלאוה פילו עם פיסטוקים וסירופ ורד — הקינוח הטורקי הלגנדרי.',
- time:'60 דקות',serv:'30 יחידות',diff:'מאתגר',img:G.baklava[0],
+ time:'60 דקות',serv:'30 יחידות',diff:'מתקדם',img:G.baklava[0],
  src:'https://www.themediterraneandish.com/baklava-recipe/',
  mem:'\"בקלאוה — כולם לוקחים קינוח מהטורקים,\" אמרה שושנה. \"בקלאוה טורקית = מקור.\"',
  ingr:[
@@ -19160,9 +19162,10 @@ const MENU_STRUCTURE = [
 ];
 
 
-</script>
 
+</script>
 <script>
+
 /* ═══════════════════════════════════════════════
    GLOBAL STATE
 ═══════════════════════════════════════════════ */
@@ -19180,12 +19183,16 @@ let CUR_IDX     = -1;
 /* Safe localStorage access */
 (function() {
   try {
-    const raw = localStorage.getItem('perla_favs');
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) FAV = new Set(parsed);
+    var _raw = localStorage.getItem('perla_favs');
+    if (_raw) {
+      var _parsed = JSON.parse(_raw);
+      if (Array.isArray(_parsed)) {
+        FAV = new Set(_parsed.filter(function(id) {
+          return typeof id === 'string' && id.length > 0 && id.length < 20;
+        }));
+      }
     }
-  } catch (_) { FAV = new Set(); }
+  } catch (_e) { FAV = new Set(); }
 })();
 
 /* ═══════════════════════════════════════════════
@@ -19206,7 +19213,7 @@ function setText(id, val) {
 }
 function setHTML(id, html) {
   const el = document.getElementById(id);
-  if (el) el.innerHTML = html; // only trusted internal HTML
+  if (el) el.innerHTML = html; // SECURITY: Only call with trusted static HTML — never user input
 }
 function show(id) { const el = document.getElementById(id); if (el) el.hidden = false; }
 function hide(id) { const el = document.getElementById(id); if (el) el.hidden = true; }
@@ -19303,6 +19310,7 @@ function renderGrid() {
     if (imgSrc) {
       const img = document.createElement('img');
       img.setAttribute('data-src', imgSrc);
+      img.loading = 'lazy';
       img.alt = r.title;
       img.loading = 'lazy';
       img.onload  = function() { this.classList.add('loaded'); };
@@ -19331,7 +19339,7 @@ function renderGrid() {
 
     const badge = document.createElement('div');
     badge.className = 'c-badge';
-    badge.textContent = r.badge || '';
+    badge.textContent = r.badge ? String(r.badge) : '';
 
     const title = document.createElement('div');
     title.className = 'c-title';
@@ -19742,6 +19750,13 @@ function openM(id) {
   // Focus management
   var closeBtn = document.getElementById('m-close');
   if (closeBtn) setTimeout(function() { closeBtn.focus(); }, 50);
+  // Mobile swipe-down to close
+  var _mbox = document.getElementById('mbox');
+  if (_mbox && 'ontouchstart' in window) {
+    var _ty = 0;
+    _mbox.addEventListener('touchstart', function(e) { _ty = e.touches[0].clientY; }, {passive:true});
+    _mbox.addEventListener('touchend',   function(e) { if (e.changedTouches[0].clientY - _ty > 80) closeM(); }, {passive:true});
+  }
 }
 
 function appendUploadWrap(hero, recipeId) {
@@ -19832,7 +19847,7 @@ function printRecipe() {
   var r = CUR_REC;
   if (!r) return;
   var w = window.open('', '_blank', 'noopener,noreferrer');
-  if (!w) return;
+  if (!w) { showToast('לא ניתן לפתוח חלון — בדקו הגדרות דפדפן'); return; }
   var ingrs = (r.ingr || []).map(function(i) {
     return '<li><strong>' + esc(i.q) + '</strong> ' + esc(i.i) + '</li>';
   }).join('');
@@ -19886,6 +19901,8 @@ function uploadImg(recipeId) {
     reader.onload = function(ev) {
       var b64 = ev.target.result;
       if (!b64 || !b64.startsWith('data:image/')) { showToast('קובץ לא תקין'); return; }
+      var _allowed = ['data:image/jpeg;base64,','data:image/png;base64,','data:image/webp;base64,','data:image/gif;base64,'];
+      if (!_allowed.some(function(t) { return b64.startsWith(t); })) { showToast('סוג קובץ לא נתמך'); return; }
       try {
         localStorage.setItem('perla_img_' + recipeId, b64);
         showToast('התמונה נשמרה');
@@ -19941,7 +19958,12 @@ document.addEventListener('DOMContentLoaded', function() {
   // Search input
   var srch = document.getElementById('srch');
   if (srch) {
-    srch.addEventListener('input', function() { doSearch(this.value); });
+    var _srchTimer = null;
+    srch.addEventListener('input', function() {
+      clearTimeout(_srchTimer);
+      var val = this.value;
+      _srchTimer = setTimeout(function() { doSearch(val); }, 200);
+    });
     srch.addEventListener('keydown', function(e) { if (e.key === 'Escape') clearSearch(); });
   }
   var clr = document.getElementById('srch-clr');
@@ -20014,6 +20036,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (r) setTimeout(function() { openM(id); }, 300);
   }
 });
+
 
 </script>
 </body>
