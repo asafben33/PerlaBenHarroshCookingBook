@@ -1,8 +1,9 @@
-﻿# Exclude everything by default
+# Exclude everything by default
 *
 
 # Allow only project files
 !index.html
+!recipes.js
 !download_images.py
 !README.md
 !docs/

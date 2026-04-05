@@ -479,6 +479,7 @@ def main() -> None:
     log.info("-" * 60)
 
     gkey_downloaded = {}   # gkey -> local path of downloaded image
+    url_to_dest = {}       # img_url -> local path, avoids re-downloading identical images
 
     for i, (gkey, article) in enumerate(WIKI_ARTICLES.items(), start=1):
         log.info(f"  [{i:3d}/{total_gkeys}] {gkey!r} -> Wikipedia:{article!r}")
@@ -491,29 +492,61 @@ def main() -> None:
             report_progress(processed, total_files, ok, skip, fail)
             continue
 
-        # Save as {gkey}-1.jpg and {gkey}-2.jpg (same image for both slots)
-        for n in (1, 2):
-            fname  = gkey.replace("_", "-") + f"-{n}.jpg"
-            dest   = os.path.join(IMAGES_DIR, fname)
-            result = download_image(fname, img_url, dest)
-            processed += 1
+        # Download ONCE as {gkey}-1.jpg, then copy to {gkey}-2.jpg (no extra download)
+        fname1 = gkey.replace("_", "-") + "-1.jpg"
+        fname2 = gkey.replace("_", "-") + "-2.jpg"
+        dest1  = os.path.join(IMAGES_DIR, fname1)
+        dest2  = os.path.join(IMAGES_DIR, fname2)
 
-            if result == "ok":
-                ok += 1
-                size = os.path.getsize(dest) // 1024 if not DRY_RUN else 0
-                if n == 1:
-                    log.info(f"    OK    {fname} ({size} KB)")
-                    gkey_downloaded[gkey] = dest
-            elif result == "skip":
-                skip += 1
-                if n == 1:
-                    log.info(f"    SKIP  {fname}")
-                    gkey_downloaded[gkey] = dest
-            else:
-                fail += 1
+        # Check if source was already downloaded by a duplicate-article G key
+        if img_url in url_to_dest and os.path.exists(url_to_dest[img_url]):
+            # Reuse existing file — copy, no download
+            src_existing = url_to_dest[img_url]
+            for dest, fname in [(dest1, fname1), (dest2, fname2)]:
+                if not (os.path.exists(dest) and os.path.getsize(dest) >= MIN_FILE_SIZE_BYTES):
+                    if not DRY_RUN:
+                        shutil.copy2(src_existing, dest)
+                    ok += 1
+                    log.info(f"    REUSE {fname} (copy of {os.path.basename(src_existing)})")
+                else:
+                    skip += 1
+                processed += 1
+                report_progress(processed, total_files, ok, skip, fail)
+            gkey_downloaded[gkey] = dest1
+            continue
 
+        # Download -1 from Wikipedia
+        result = download_image(fname1, img_url, dest1)
+        processed += 1
+        if result == "ok":
+            ok += 1
+            size = os.path.getsize(dest1) // 1024 if not DRY_RUN else 0
+            log.info(f"    OK    {fname1} ({size} KB)")
+            gkey_downloaded[gkey] = dest1
+            url_to_dest[img_url] = dest1
+        elif result == "skip":
+            skip += 1
+            log.info(f"    SKIP  {fname1}")
+            gkey_downloaded[gkey] = dest1
+            url_to_dest[img_url] = dest1
+        else:
+            fail += 1
+            processed += 1   # count -2 as failed too
             report_progress(processed, total_files, ok, skip, fail)
-            time.sleep(DELAY_BETWEEN_REQUESTS)
+            continue
+        report_progress(processed, total_files, ok, skip, fail)
+        time.sleep(DELAY_BETWEEN_REQUESTS)
+
+        # Copy -1 to -2 — identical image, no extra download
+        processed += 1
+        if not (os.path.exists(dest2) and os.path.getsize(dest2) >= MIN_FILE_SIZE_BYTES):
+            if not DRY_RUN:
+                shutil.copy2(dest1, dest2)
+            ok += 1
+            log.info(f"    COPY  {fname2} (from {fname1})")
+        else:
+            skip += 1
+        report_progress(processed, total_files, ok, skip, fail)
 
     # ── PHASE 2: Copy category images to every recipe file ───────────
     log.info("")
