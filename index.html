@@ -14,333 +14,256 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════
-   DESIGN TOKENS
-═══════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
+  --wood-d:#1c0f08;--wood-m:#3d1a0a;--wood-l:#6b3520;
   --clay:#b84223;--clay-d:#8c2e14;--clay-l:#d4603a;
   --saffron:#c49a0c;--saffron-l:#e8bb2a;--saffron-d:#9a7808;
-  --indigo:#1e3a6e;--green:#3d6e3a;
-  --parch:#faf3e0;--parch-2:#f3e8c8;--parch-3:#ece0b8;--cream:#fffdf6;
-  --wood-d:#1c0f08;--wood-m:#3d1a0a;--wood-l:#6b3520;
+  --parch:#faf3e0;--parch-2:#f3e8c8;--parch-3:#ece0b8;
+  --cream:#fffdf6;--bdr:rgba(155,95,45,.2);
   --ink:#1a0c06;--ink-m:#4a2a14;--ink-l:#8a6044;
-  --bdr:rgba(155,95,45,.2);
-  --sh-sm:0 2px 10px rgba(28,15,8,.12);
-  --sh-md:0 8px 32px rgba(28,15,8,.2);
-  --sh-lg:0 24px 64px rgba(28,15,8,.32);
-  --tr:.25s cubic-bezier(.4,0,.2,1);
+  --sh-sm:0 2px 8px rgba(28,15,8,.1);
+  --sh-md:0 8px 28px rgba(28,15,8,.18);
+  --sh-lg:0 20px 60px rgba(28,15,8,.28);
+  --tr:.22s cubic-bezier(.4,0,.2,1);
+  --r:10px;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'Heebo',sans-serif;background:var(--parch);color:var(--ink);direction:rtl;text-align:right;line-height:1.65;overflow-x:hidden;min-height:100vh}
-img{display:block;max-width:100%}
-button{cursor:pointer;font-family:inherit;border:none;background:none}
-a{color:inherit;text-decoration:none}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Frank Ruhl Libre',serif;background:var(--parch);color:var(--ink);direction:rtl;text-align:right}
 
-/* ═══ HEADER ═══ */
-.site-header{
-  background:linear-gradient(135deg,var(--wood-d) 0%,var(--wood-m) 55%,#5c2010 100%);
-  border-bottom:3px solid var(--saffron);
-  position:sticky;top:0;z-index:400;
-  box-shadow:0 4px 24px rgba(0,0,0,.42);
+.skip-link{position:absolute;top:-44px;right:0;background:var(--clay);color:#fff;padding:.5rem 1rem;border-radius:0 0 8px 0;z-index:9999;font-size:.88rem;transition:top .2s}
+.skip-link:focus{top:0}
+
+/* ── HEADER ── */
+.site-hdr{
+  position:sticky;top:0;z-index:500;
+  background:var(--wood-d);border-bottom:2px solid var(--saffron-d);
+  box-shadow:0 2px 12px rgba(0,0,0,.4);
 }
-.hdr{max-width:1520px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.7rem 2rem;flex-wrap:wrap}
-.hdr-brand-name{font-family:'Frank Ruhl Libre',serif;font-size:clamp(1.15rem,2.5vw,1.7rem);font-weight:900;color:var(--saffron-l);text-shadow:0 2px 10px rgba(0,0,0,.4);line-height:1.2}
-.hdr-brand-sub{font-size:.72rem;color:rgba(228,188,100,.65);font-weight:300;letter-spacing:.1em;margin-top:.1rem}
-.hdr-orn{color:rgba(196,154,12,.38);font-size:1.3rem;letter-spacing:.35em;flex-shrink:0}
-.hdr-search{flex:1;max-width:380px;min-width:170px;position:relative}
-.hdr-search-ic{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);color:rgba(228,188,100,.45);pointer-events:none;width:15px;height:15px}
-#srch{width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(196,154,12,.28);border-radius:28px;color:#f0dcb0;padding:.58rem 2.4rem .58rem .9rem;font-family:'Heebo',sans-serif;font-size:.87rem;outline:none;direction:rtl;transition:var(--tr)}
-#srch::placeholder{color:rgba(228,188,100,.35)}
-#srch:focus{background:rgba(255,255,255,.13);border-color:var(--saffron-l);box-shadow:0 0 0 3px rgba(196,154,12,.16)}
-#srch-clr{position:absolute;left:.8rem;top:50%;transform:translateY(-50%);color:rgba(228,188,100,.55);font-size:1.1rem;display:none;line-height:1;padding:0 .15rem}
-#srch-clr.show{display:block}
-@media(max-width:650px){.hdr{padding:.6rem 1rem}.hdr-orn{display:none}}
+.hdr-inner{max-width:1400px;margin:0 auto;padding:.6rem 1.5rem;display:flex;align-items:center;gap:1.2rem}
+.hdr-brand{flex:1}
+.hdr-title{font-size:1.05rem;font-weight:700;color:var(--saffron-l);line-height:1.2}
+.hdr-sub{font-size:.7rem;color:var(--saffron-d);margin-top:.1rem}
+.hdr-search{
+  display:flex;align-items:center;gap:.45rem;
+  background:rgba(255,255,255,.07);border:1px solid rgba(196,154,12,.25);
+  border-radius:100px;padding:.38rem .9rem;
+  transition:border-color var(--tr),background var(--tr);min-width:220px;
+}
+.hdr-search:focus-within{background:rgba(255,255,255,.11);border-color:var(--saffron)}
+.srch-ic{width:15px;height:15px;color:var(--saffron-d);flex-shrink:0}
+#srch{background:transparent;border:none;outline:none;font-family:inherit;font-size:.86rem;color:var(--parch);flex:1;min-width:0}
+#srch::placeholder{color:rgba(250,243,224,.38)}
+.srch-clr{background:transparent;border:none;color:var(--saffron-d);font-size:1rem;line-height:1;cursor:pointer}
 
-/* ═══ CAT NAV ═══ */
-.cat-nav{background:var(--wood-m);border-bottom:2.5px solid rgba(196,154,12,.32);overflow-x:auto;scrollbar-width:none;position:sticky;top:62px;z-index:350}
-.cat-nav::-webkit-scrollbar{display:none}
-.cat-inner{max-width:1520px;margin:0 auto;display:flex;padding:0 1.5rem}
-.cat-btn{color:rgba(196,160,90,.6);font-family:'Frank Ruhl Libre',serif;font-size:.88rem;font-weight:500;padding:.8rem 1rem;border-bottom:3px solid transparent;margin-bottom:-2.5px;white-space:nowrap;transition:var(--tr);letter-spacing:.02em}
-.cat-btn:hover{color:var(--saffron-l);background:rgba(255,255,255,.03)}
-.cat-btn.active{color:var(--saffron-l);border-bottom-color:var(--saffron-l);background:rgba(196,154,12,.07)}
-@media(max-width:640px){.cat-nav{top:54px}.cat-btn{font-size:.79rem;padding:.72rem .82rem}}
+/* ── TOP NAV ── */
+.top-nav{
+  position:sticky;top:52px;z-index:400;
+  background:var(--wood-m);
+  border-bottom:1px solid rgba(196,154,12,.2);
+  box-shadow:0 4px 16px rgba(0,0,0,.25);
+}
+.top-nav-inner{max-width:1400px;margin:0 auto;padding:0 1.5rem;overflow-x:auto;scrollbar-width:none}
+.top-nav-inner::-webkit-scrollbar{display:none}
+.top-nav-bar{display:flex;align-items:stretch;gap:0;min-width:max-content}
 
-/* ═══ HERO ═══ */
-.hero{background:linear-gradient(155deg,#120903 0%,#2c1208 42%,#501c08 100%);padding:4.5rem 2rem 4rem;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='rgba(196,154,12,.07)' stroke-width='1'%3E%3Cpolygon points='60,6 114,33 114,87 60,114 6,87 6,33'/%3E%3Cpolygon points='60,22 98,41 98,79 60,98 22,79 22,41'/%3E%3Ccircle cx='60' cy='60' r='15'/%3E%3Cline x1='60' y1='6' x2='60' y2='22'/%3E%3Cline x1='60' y1='98' x2='60' y2='114'/%3E%3Cline x1='6' y1='33' x2='22' y2='41'/%3E%3Cline x1='98' y1='79' x2='114' y2='87'/%3E%3Cline x1='114' y1='33' x2='98' y2='41'/%3E%3Cline x1='22' y1='79' x2='6' y2='87'/%3E%3C/g%3E%3C/svg%3E") repeat;pointer-events:none}
-.hero::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:350px;background:radial-gradient(ellipse,rgba(196,154,12,.1) 0%,transparent 68%);pointer-events:none}
-.hero-c{position:relative;z-index:1;max-width:820px;margin:0 auto;text-align:center}
-.hero-orn{color:var(--saffron);font-size:1.6rem;letter-spacing:.5em;margin-bottom:1.3rem;opacity:.65}
-.hero-h1{font-family:'Frank Ruhl Libre',serif;font-size:clamp(2.2rem,6.5vw,4.2rem);font-weight:900;color:#fff;line-height:1.12;margin-bottom:.5rem;text-shadow:0 4px 24px rgba(0,0,0,.55)}
+/* Top-level nav buttons */
+.nav-top-btn{
+  display:flex;align-items:center;gap:.4rem;
+  padding:.65rem 1rem;
+  background:transparent;border:none;border-bottom:2px solid transparent;
+  color:var(--parch-2);font-family:inherit;font-size:.84rem;font-weight:600;
+  cursor:pointer;white-space:nowrap;
+  transition:color var(--tr),border-color var(--tr),background var(--tr);
+  position:relative;
+}
+.nav-top-btn:hover{color:var(--saffron-l);background:rgba(255,255,255,.04)}
+.nav-top-btn.active{color:var(--saffron-l);border-bottom-color:var(--saffron)}
+.nav-top-btn .nav-cnt{font-size:.68rem;opacity:.55;background:rgba(196,154,12,.18);border-radius:100px;padding:.1rem .38rem;flex-shrink:0}
+.nav-top-btn .nav-arr{font-size:.65rem;opacity:.6;transition:transform var(--tr)}
+.nav-top-btn.panel-open .nav-arr{transform:rotate(180deg)}
+
+/* Dropdown panel */
+.nav-panel{
+  background:var(--wood-d);
+  border-bottom:2px solid var(--saffron-d);
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+  max-height:0;overflow:hidden;
+  transition:max-height .32s cubic-bezier(.4,0,.2,1);
+}
+.nav-panel.open{max-height:400px}
+.nav-panel-inner{
+  max-width:1400px;margin:0 auto;
+  padding:.8rem 1.5rem 1rem;
+}
+
+/* Sub-category chips in panel */
+.panel-row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;padding:.2rem 0}
+.panel-label{font-size:.7rem;font-weight:700;letter-spacing:.06em;color:var(--saffron-d);margin-left:.3rem;opacity:.8}
+.panel-btn{
+  display:flex;align-items:center;gap:.35rem;
+  background:rgba(255,255,255,.06);border:1px solid rgba(196,154,12,.2);
+  border-radius:100px;padding:.32rem .8rem;
+  color:var(--parch-2);font-family:inherit;font-size:.8rem;cursor:pointer;
+  transition:background var(--tr),border-color var(--tr),color var(--tr);white-space:nowrap;
+}
+.panel-btn:hover{background:rgba(196,154,12,.15);border-color:var(--saffron-d);color:var(--saffron-l)}
+.panel-btn.active{background:rgba(196,154,12,.22);border-color:var(--saffron);color:var(--saffron-l);font-weight:600}
+.panel-cnt{font-size:.68rem;opacity:.5}
+.panel-sep{width:1px;height:20px;background:rgba(196,154,12,.2);margin:0 .2rem;flex-shrink:0}
+
+/* Accordion within panel */
+.panel-acc-hdr{
+  display:flex;align-items:center;gap:.4rem;
+  background:rgba(255,255,255,.04);border:1px solid rgba(196,154,12,.15);
+  border-radius:100px;padding:.32rem .8rem;
+  color:var(--parch-2);font-family:inherit;font-size:.8rem;cursor:pointer;
+  transition:background var(--tr),border-color var(--tr),color var(--tr);white-space:nowrap;
+}
+.panel-acc-hdr:hover,.panel-acc-hdr.open{background:rgba(196,154,12,.15);border-color:var(--saffron-d);color:var(--saffron-l)}
+.panel-acc-hdr .acc-arr{font-size:.62rem;transition:transform var(--tr)}
+.panel-acc-hdr.open .acc-arr{transform:rotate(180deg)}
+.panel-acc-body{
+  display:none;flex-wrap:wrap;gap:.4rem;
+  background:rgba(0,0,0,.15);border-radius:var(--r);
+  padding:.5rem .7rem;margin-top:.3rem;
+  width:100%;
+}
+.panel-acc-body.open{display:flex}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(155deg,var(--wood-d) 0%,var(--wood-m) 55%,var(--clay-d) 100%);
+  padding:2.5rem 1.5rem 2rem;border-bottom:2px solid var(--saffron-d);
+  position:relative;overflow:hidden;
+}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 75% 50%,rgba(196,154,12,.07) 0%,transparent 65%)}
+.hero-inner{max-width:700px;position:relative;z-index:1}
+.hero-orn{font-size:1rem;color:var(--saffron-d);letter-spacing:.8em;margin-bottom:.8rem}
+.hero-h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;color:var(--parch);line-height:1.2;margin-bottom:.4rem}
 .hero-h1 em{color:var(--saffron-l);font-style:normal}
-.hero-h2{font-family:'Frank Ruhl Libre',serif;font-size:clamp(1rem,2.2vw,1.25rem);color:rgba(228,188,100,.7);font-weight:300;letter-spacing:.09em;margin-bottom:2.2rem}
-.hero-story{color:rgba(218,188,148,.8);font-size:clamp(.86rem,1.8vw,1.02rem);line-height:2;font-weight:300;max-width:680px;margin:0 auto 2.8rem}
-.hero-pills{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center}
-.hero-pill{background:rgba(196,154,12,.13);border:1.5px solid rgba(196,154,12,.32);color:var(--saffron-l);border-radius:30px;padding:.38rem 1.1rem;font-size:.79rem;font-weight:500;letter-spacing:.03em}
-@media(max-width:600px){.hero{padding:3rem 1rem 3rem}}
+.hero-sub{font-size:.92rem;color:var(--saffron-d);margin-bottom:.7rem;letter-spacing:.03em}
+.hero-desc{font-size:.88rem;color:rgba(250,243,224,.68);line-height:1.75;max-width:540px;margin-bottom:1rem}
+.hero-pills{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1rem}
+.h-pill{background:rgba(196,154,12,.14);border:1px solid rgba(196,154,12,.28);color:var(--saffron-l);border-radius:100px;padding:.22rem .75rem;font-size:.76rem}
+.about-toggle{background:transparent;border:1px solid rgba(196,154,12,.28);color:var(--saffron-d);border-radius:100px;padding:.32rem .9rem;font-size:.8rem;cursor:pointer;transition:border-color var(--tr),color var(--tr)}
+.about-toggle:hover{border-color:var(--saffron);color:var(--saffron-l)}
 
-/* ═══ MAIN ═══ */
-.main{max-width:1520px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
-.sec-head{display:flex;align-items:center;gap:1rem;margin-bottom:1.8rem;padding-bottom:.8rem;border-bottom:2px solid var(--bdr)}
-.sec-h2{font-family:'Frank Ruhl Libre',serif;font-size:clamp(1.3rem,3vw,1.85rem);font-weight:700;color:var(--clay)}
-.sec-count{font-size:.79rem;color:var(--ink-l);background:var(--parch-2);border:1px solid var(--bdr);border-radius:20px;padding:.17rem .7rem}
-.no-res{grid-column:1/-1;text-align:center;padding:5rem 1rem;color:var(--ink-l);font-family:'Frank Ruhl Libre',serif;font-size:1.2rem}
-.no-res::before{content:'✦';display:block;font-size:3rem;opacity:.2;margin-bottom:1rem}
+/* ── ABOUT ── */
+.about-section{background:var(--cream);border-bottom:1px solid var(--parch-3);max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1)}
+.about-section.open{max-height:500px}
+.about-inner{max-width:760px;margin:0 auto;padding:1.8rem 1.5rem;display:flex;gap:1.8rem;align-items:flex-start}
+.about-img{width:72px;height:72px;border-radius:50%;flex-shrink:0;background:var(--clay);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:rgba(255,255,255,.55);border:3px solid var(--saffron-d)}
+.about-text{flex:1}
+.about-h2{font-size:1.05rem;color:var(--clay);margin-bottom:.5rem}
+.about-text p{font-size:.87rem;line-height:1.78;color:var(--ink-m);margin-bottom:.7rem}
+.about-tags{display:flex;flex-wrap:wrap;gap:.35rem}
+.a-tag{background:var(--parch-2);border:1px solid var(--bdr);color:var(--ink-m);border-radius:100px;padding:.18rem .65rem;font-size:.73rem}
 
-/* ═══ GRID ═══ */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.6rem}
-@media(max-width:500px){.grid{grid-template-columns:1fr;gap:1.1rem}}
+/* ── RECIPE GRID ── */
+.main-grid{max-width:1400px;margin:0 auto;padding:1.5rem}
+.grid-hdr{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;border-bottom:1px solid var(--bdr);padding-bottom:.7rem}
+.grid-title{font-size:1.1rem;color:var(--clay)}
+.grid-cnt{font-size:.8rem;color:var(--ink-l)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:1.1rem}
+.no-res{grid-column:1/-1;text-align:center;padding:3rem 1rem;color:var(--ink-l)}
 
-/* ═══ CARD ═══ */
-.card{background:var(--cream);border-radius:16px;border:1.5px solid var(--bdr);box-shadow:var(--sh-sm);overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:transform var(--tr),box-shadow var(--tr);animation:cIn .45s ease both}
-@keyframes cIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-.card:nth-child(1){animation-delay:.04s}.card:nth-child(2){animation-delay:.09s}.card:nth-child(3){animation-delay:.14s}.card:nth-child(4){animation-delay:.19s}.card:nth-child(5){animation-delay:.23s}.card:nth-child(n+6){animation-delay:.28s}
-.card:hover{transform:translateY(-6px);box-shadow:var(--sh-md)}
-.card:focus-visible{outline:3px solid var(--saffron);outline-offset:2px}
-.c-img{height:155px;overflow:hidden;position:relative;flex-shrink:0;background:var(--parch-2)}
-.c-img img{width:100%;height:100%;object-fit:cover;transition:transform .55s ease,opacity .3s ease;opacity:0}.c-img img.loaded{opacity:1}
-.card:hover .c-img img{transform:scale(1.08)}
-.c-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-.c-badge{position:absolute;top:.65rem;right:.65rem;background:var(--clay);color:#fff;font-size:.67rem;font-weight:700;padding:.22rem .65rem;border-radius:12px;letter-spacing:.04em;text-shadow:0 1px 3px rgba(0,0,0,.3)}
-.c-arch{position:absolute;bottom:-1px;left:0;right:0;height:22px;overflow:hidden}
-.c-arch svg{width:100%;height:100%;display:block}
-.c-body{padding:1.1rem 1.25rem 1.25rem;flex:1;display:flex;flex-direction:column}
-.c-title{font-family:'Frank Ruhl Libre',serif;font-size:1.12rem;font-weight:700;color:var(--ink);margin-bottom:.35rem;line-height:1.28}
-.c-desc{font-size:.82rem;color:var(--ink-m);line-height:1.65;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.c-foot{display:flex;align-items:center;justify-content:space-between;margin-top:.9rem;padding-top:.72rem;border-top:1px solid var(--bdr)}
-.c-time{font-size:.74rem;font-weight:600;color:var(--saffron-d);display:flex;align-items:center;gap:.28rem}
-.c-time svg{width:13px;height:13px;flex-shrink:0}
-.c-diff{font-size:.69rem;background:var(--parch-2);border:1px solid var(--bdr);border-radius:10px;padding:.14rem .55rem;color:var(--ink-l)}
+/* ── CARD ── */
+.card{background:var(--cream);border-radius:var(--r);border:1px solid var(--bdr);box-shadow:var(--sh-sm);overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:transform var(--tr),box-shadow var(--tr);animation:cIn .28s ease both}
+.card:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
+@keyframes cIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.c-img{position:relative;height:145px;overflow:hidden;background:var(--parch-2);flex-shrink:0}
+.c-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.card:hover .c-img img{transform:scale(1.05)}
+.c-body{padding:.65rem .75rem;flex:1;display:flex;flex-direction:column;gap:.22rem}
+.c-badge{font-size:.63rem;font-weight:700;color:var(--saffron-d);text-transform:uppercase;letter-spacing:.05em}
+.c-title{font-size:.85rem;font-weight:700;color:var(--ink);line-height:1.3;flex:1}
+.c-meta{display:flex;gap:.4rem;flex-wrap:wrap;font-size:.7rem;color:var(--ink-l)}
+.c-diff{padding:.08rem .4rem;border-radius:100px;font-size:.66rem;font-weight:600}
+.c-diff.קל{background:rgba(61,110,58,.14);color:#3d6e3a}
+.c-diff.בינוני{background:rgba(196,154,12,.14);color:var(--saffron-d)}
+.c-diff.מתקדם{background:rgba(184,66,35,.14);color:var(--clay-d)}
 
-/* Category placeholder gradients */
-.ph-s{background:linear-gradient(140deg,#6b1e0a,#a83522)}
-.ph-sa{background:linear-gradient(140deg,#1e4a12,#3d7a20)}
-.ph-v{background:linear-gradient(140deg,#2a4e26,#5a8040)}
-.ph-f{background:linear-gradient(140deg,#0e2e4a,#1a5280)}
-.ph-m{background:linear-gradient(140deg,#3e0e06,#6b2510)}
-.ph-c{background:linear-gradient(140deg,#4a3208,#8b6010)}
-.ph-h{background:linear-gradient(140deg,#3a0e38,#7a2070)}
-.ph-d{background:linear-gradient(140deg,#3e2008,#7a4510)}
-.ph-sp{background:linear-gradient(140deg,#0e1e4a,#1a3a80)}
+/* ── MODAL ── */
+.ovl{position:fixed;inset:0;z-index:800;background:rgba(28,15,8,.72);backdrop-filter:blur(3px);display:none;overflow-y:auto;padding:2rem 1rem}
+.ovl.open{display:flex;align-items:flex-start;justify-content:center}
+.mbox{background:var(--cream);border-radius:var(--r);max-width:660px;width:100%;position:relative;box-shadow:var(--sh-lg);overflow:hidden;animation:slideUp .28s cubic-bezier(.4,0,.2,1)}
+@keyframes slideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+.m-progress{position:absolute;top:0;left:0;right:0;height:3px;z-index:2;background:linear-gradient(to left,var(--saffron),var(--clay));transform-origin:right;transform:scaleX(0);transition:transform .3s}
+.m-hero{position:relative;height:230px;overflow:hidden;background:linear-gradient(135deg,var(--wood-d),var(--wood-m))}
+.m-hero img{width:100%;height:100%;object-fit:cover}
+.m-cls,.m-nav-btn{position:absolute;top:.8rem;z-index:3;width:32px;height:32px;border-radius:50%;background:rgba(28,15,8,.65);border:1px solid rgba(255,255,255,.18);color:#fff;font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background var(--tr)}
+.m-cls{left:.8rem}.m-cls:hover{background:var(--clay)}
+.m-prev{left:3rem}.m-next{left:5.4rem}
+.m-nav-btn:hover{background:var(--clay-d)}
+.m-hero-grad{position:absolute;bottom:0;right:0;left:0;background:linear-gradient(transparent,rgba(28,15,8,.9));padding:1.8rem 1.1rem .8rem}
+.m-badge{display:inline-block;background:var(--clay);color:#fff;font-size:.62rem;font-weight:700;letter-spacing:.05em;padding:.18rem .5rem;border-radius:100px;margin-bottom:.25rem}
+.m-title{color:var(--parch);font-size:1.28rem;font-weight:900;line-height:1.25}
+.m-subdesc{color:rgba(250,243,224,.65);font-size:.82rem;margin-top:.25rem}
+.m-body{padding:1.1rem}
+.m-mem{background:linear-gradient(to left,rgba(196,154,12,.1),rgba(196,154,12,.03));border-right:3px solid var(--saffron-d);padding:.65rem .9rem;border-radius:0 var(--r) var(--r) 0;margin-bottom:.9rem}
+.m-mem-lbl{font-size:.7rem;font-weight:700;color:var(--saffron-d);margin-bottom:.25rem;letter-spacing:.04em}
+#m-mem-txt{font-size:.86rem;line-height:1.68;color:var(--ink-m)}
+.m-meta{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:.9rem;font-size:.78rem}
+.m-meta-item{background:var(--parch-2);border:1px solid var(--bdr);border-radius:100px;padding:.22rem .65rem;color:var(--ink-m)}
+.m-st{font-size:.9rem;font-weight:700;color:var(--clay);margin:.75rem 0 .45rem;padding-bottom:.28rem;border-bottom:1px solid var(--bdr)}
+.m-ingr-item{display:flex;align-items:baseline;gap:.55rem;padding:.35rem 0;border-bottom:1px dotted var(--bdr);font-size:.86rem}
+.m-ingr-q{color:var(--saffron-d);font-weight:600;min-width:75px;flex-shrink:0}
+.m-ingr-i{color:var(--ink-m)}
+.m-steps{padding-right:1.1rem}
+.m-step{margin-bottom:.65rem;font-size:.86rem;line-height:1.65;color:var(--ink-m)}
+.m-step-t{color:var(--clay-d);font-weight:600;font-size:.78rem;margin-right:.35rem}
+.m-tip{background:var(--parch-2);border-right:3px solid var(--saffron);border-radius:0 var(--r) var(--r) 0;padding:.65rem .9rem;margin:.4rem 0}
+.m-tip-lbl{font-size:.68rem;font-weight:700;color:var(--saffron-d);margin-bottom:.22rem}
+#m-tip-txt{font-size:.86rem;line-height:1.65;color:var(--ink-m)}
+.m-src-wrap{margin-top:.5rem;padding:.4rem .75rem;background:rgba(196,154,12,.07);border-right:3px solid var(--saffron);border-radius:0 8px 8px 0;font-size:.8rem}
+.m-src-lbl{color:var(--ink-l);font-weight:600}
+.m-src-link{color:var(--saffron);text-decoration:none}.m-src-link:hover{text-decoration:underline}
+.m-actions{display:flex;gap:.55rem;margin:.9rem 0;flex-wrap:wrap}
+.m-act-btn{display:flex;align-items:center;gap:.38rem;background:var(--parch-2);border:1px solid var(--bdr);border-radius:100px;padding:.38rem .9rem;font-size:.8rem;color:var(--ink-m);cursor:pointer;transition:background var(--tr),color var(--tr)}
+.m-act-btn:hover{background:var(--parch-3);color:var(--clay)}
+.m-vbtn{display:inline-flex;align-items:center;gap:.45rem;background:var(--clay);color:#fff;border-radius:100px;padding:.45rem 1.1rem;font-size:.82rem;margin-top:.25rem;transition:background var(--tr)}
+.m-vbtn:hover{background:var(--clay-d)}
 
-/* ═══ MODAL OVERLAY ═══ */
-.ovl{display:none;position:fixed;inset:0;background:rgba(8,3,1,.87);z-index:600;overflow-y:auto;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);padding:1.5rem 1rem;align-items:flex-start;justify-content:center}
-.ovl.open{display:flex;animation:fIn .22s ease}
-@keyframes fIn{from{opacity:0}to{opacity:1}}
+/* ── FOOTER ── */
+.site-footer{background:var(--wood-d);color:rgba(250,243,224,.58);text-align:center;padding:2rem 1rem;border-top:1px solid rgba(196,154,12,.18)}
+.ft-memorial{color:var(--saffron-l);font-size:.98rem;margin-bottom:.35rem;font-weight:600}
+.ft-sub{font-size:.76rem;margin-bottom:.55rem;opacity:.7}
+.ft-quote{font-style:italic;font-size:.82rem;color:var(--saffron-d);margin-bottom:.75rem}
+.ft-orn{color:var(--saffron-d);letter-spacing:.8em;font-size:.85rem}
 
-/* ═══ MODAL BOX ═══ */
-.mbox{background:var(--parch);width:100%;max-width:940px;border-radius:22px;overflow:hidden;box-shadow:var(--sh-lg);animation:sUp .3s cubic-bezier(.22,.68,0,1.2)}
-@keyframes sUp{from{transform:translateY(28px);opacity:0}to{transform:translateY(0);opacity:1}}
+/* ── BACK TO TOP & TOAST ── */
+.back-top{position:fixed;bottom:1.4rem;left:1.4rem;z-index:400;width:40px;height:40px;border-radius:50%;background:var(--clay);border:none;color:#fff;font-size:1.05rem;box-shadow:var(--sh-md);opacity:0;pointer-events:none;cursor:pointer;transition:opacity var(--tr),transform var(--tr)}
+.back-top.on{opacity:1;pointer-events:auto}.back-top:hover{transform:translateY(-2px)}
+.toast{position:fixed;bottom:4.5rem;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--parch);padding:.45rem 1.1rem;border-radius:100px;font-size:.83rem;opacity:0;pointer-events:none;transition:opacity .28s;z-index:900}
+.toast.show{opacity:1}
 
-.m-hero{height:330px;position:relative;overflow:hidden;background:var(--wood-d)}
-.m-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.m-hero-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.m-hero-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,3,1,.88) 0%,rgba(8,3,1,.28) 55%,transparent 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:1.8rem 2.2rem}
-.m-badge{background:var(--clay);color:#fff;font-size:.72rem;font-weight:700;padding:.25rem .78rem;border-radius:12px;letter-spacing:.04em;width:fit-content;margin-bottom:.65rem}
-.m-title{font-family:'Frank Ruhl Libre',serif;font-size:clamp(1.7rem,4vw,2.6rem);font-weight:900;color:#fff;text-shadow:0 3px 14px rgba(0,0,0,.6);line-height:1.15}
-.m-subdesc{color:rgba(218,188,148,.82);font-size:.9rem;margin-top:.4rem;font-weight:300}
-.m-progress-bar{height:4px;background:linear-gradient(to left,var(--saffron-l),var(--clay));transform-origin:right;transform:scaleX(0);transition:transform .12s}
-.m-cls{position:absolute;top:1rem;left:1rem;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:var(--tr);z-index:5}
-.m-cls:hover{background:var(--clay);transform:scale(1.1)}
-
-.m-body{padding:2rem 2.2rem 2.8rem;direction:rtl}
-@media(max-width:620px){.m-hero{height:240px}.m-hero-grad{padding:1.2rem}.m-body{padding:1.4rem 1.1rem 2.5rem}.ovl{padding:3rem 0 0;align-items:flex-end}.mbox{border-radius:20px 20px 0 0}}
-
-/* Memory */
-.m-mem{background:linear-gradient(135deg,#f9edce,#f0e0a8);border:1.5px solid rgba(196,154,12,.26);border-right:5px solid var(--saffron);border-radius:0 10px 10px 0;padding:1.1rem 1.3rem;margin-bottom:1.8rem;font-style:italic;color:var(--ink-m);font-size:.92rem;line-height:1.88}
-.m-mem-lbl{font-family:'Frank Ruhl Libre',serif;font-size:.72rem;font-weight:700;font-style:normal;color:var(--saffron-d);text-transform:uppercase;letter-spacing:.11em;margin-bottom:.45rem;display:flex;align-items:center;gap:.45rem}
-.m-mem-lbl::before{content:'';display:inline-block;width:18px;height:1.5px;background:var(--saffron)}
-
-/* Meta chips */
-.m-meta{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:2rem}
-.m-chip{background:var(--cream);border:1.5px solid var(--bdr);border-radius:20px;padding:.3rem .9rem;font-size:.79rem;color:var(--ink-m);display:flex;align-items:center;gap:.38rem}
-.m-chip strong{color:var(--clay);font-weight:700}
-
-/* Section titles in modal */
-.m-st{font-family:'Frank Ruhl Libre',serif;font-size:1.08rem;font-weight:700;color:var(--clay);margin-bottom:.88rem;display:flex;align-items:center;gap:.65rem}
-.m-st::after{content:'';flex:1;height:1.5px;background:linear-gradient(to left,transparent,var(--bdr))}
-
-/* Ingredients grid */
-.m-ingr{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:2rem}
-@media(max-width:520px){.m-ingr{grid-template-columns:1fr}}
-.m-ing{display:flex;align-items:flex-start;gap:.55rem;background:var(--cream);border:1.5px solid var(--bdr);border-radius:10px;padding:.55rem .82rem;font-size:.85rem;line-height:1.5}
-.m-dot{width:9px;height:9px;border-radius:50%;background:var(--saffron);margin-top:.38rem;flex-shrink:0}
-.m-qty{font-weight:700;color:var(--clay);margin-left:.2rem}
-.m-sep{grid-column:1/-1;font-weight:700;color:var(--clay);font-size:.79rem;padding:.3rem 0 .1rem;border-bottom:1px dashed var(--bdr)}
-
-/* Steps */
-.m-steps{list-style:none;margin-bottom:2rem}
-.m-step{display:flex;gap:1rem;padding:.95rem 0;border-bottom:1px solid var(--bdr)}
-.m-step:last-child{border-bottom:none}
-.m-snum{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--clay),var(--clay-l));color:#fff;font-family:'Frank Ruhl Libre',serif;font-weight:700;font-size:.88rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(168,53,34,.35)}
-.m-sbody{font-size:.9rem;line-height:1.76;color:var(--ink);padding-top:.22rem}
-.m-sdur{display:inline-block;background:var(--parch-2);border:1px solid var(--bdr);border-radius:6px;padding:.06rem .5rem;font-size:.71rem;color:var(--saffron-d);font-weight:700;margin-left:.4rem;white-space:nowrap;vertical-align:middle}
-
-/* Tip */
-.m-tip{background:linear-gradient(135deg,#fffde8,#fef8d4);border:1.5px solid rgba(196,154,12,.28);border-right:5px solid var(--saffron);border-radius:0 10px 10px 0;padding:1.1rem 1.3rem;margin-bottom:1.6rem;font-size:.9rem;color:var(--ink-m);line-height:1.8}
-.m-tip-lbl{font-family:'Frank Ruhl Libre',serif;font-weight:700;font-size:.77rem;color:var(--saffron-d);margin-bottom:.4rem;display:flex;align-items:center;gap:.5rem}
-.m-tip-lbl::before{content:'';display:inline-block;width:18px;height:1.5px;background:var(--saffron)}
-
-/* Video */
-.m-vbtn{display:inline-flex;align-items:center;gap:.55rem;background:var(--clay);color:#fff;border-radius:10px;padding:.7rem 1.4rem;font-size:.88rem;font-weight:600;letter-spacing:.02em;transition:background var(--tr),transform var(--tr);margin-top:.4rem}
-.m-vbtn:hover{background:var(--clay-l);transform:translateY(-2px)}
-.m-vbtn svg{width:18px;height:18px;flex-shrink:0}
-
-/* Scroll top */
-#stb{position:fixed;bottom:1.8rem;left:1.8rem;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--clay),var(--clay-l));color:#fff;font-size:1.15rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-md);z-index:300;opacity:0;pointer-events:none;transition:opacity var(--tr),transform var(--tr)}
-#stb.on{opacity:1;pointer-events:auto}
-#stb:hover{transform:translateY(-3px)}
-
-/* Footer */
-footer{background:var(--wood-d);border-top:3px solid var(--saffron);color:rgba(196,160,90,.68);text-align:center;padding:2.8rem 1rem 2.2rem;font-size:.84rem;line-height:2.2}
-.ft{font-family:'Frank Ruhl Libre',serif;font-size:1.25rem;font-weight:700;color:var(--saffron-l);margin-bottom:.5rem}
-.fq{font-style:italic;opacity:.5;font-size:.78rem;margin-top:.6rem}
-.fo{color:rgba(196,154,12,.28);font-size:1.2rem;letter-spacing:.5em;margin-top:.8rem}
-
-/* ── PRINT BUTTON ── */
-.m-print-btn{display:inline-flex;align-items:center;gap:.5rem;background:var(--parch-2);
-  color:var(--ink-m);border:1.5px solid var(--bdr);border-radius:10px;
-  padding:.6rem 1.2rem;font-size:.85rem;font-weight:500;
-  transition:background var(--tr);margin-top:.4rem;margin-right:.6rem;cursor:pointer}
-.m-print-btn:hover{background:var(--parch-3)}
-
-/* ── SERVINGS SCALER ── */
-.m-scale-wrap{display:flex;align-items:center;gap:.8rem;background:var(--cream);
-  border:1.5px solid var(--bdr);border-radius:10px;padding:.55rem 1rem;
-  margin-bottom:1.8rem;flex-wrap:wrap}
-.m-scale-lbl{font-size:.82rem;color:var(--ink-m);font-weight:500}
-.m-scale-btn{width:30px;height:30px;border-radius:50%;
-  background:var(--clay);color:#fff;font-size:1.1rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  transition:background var(--tr);flex-shrink:0;cursor:pointer}
-.m-scale-btn:hover{background:var(--clay-l)}
-.m-scale-num{font-family:'Frank Ruhl Libre',serif;font-size:1.1rem;
-  font-weight:700;color:var(--clay);min-width:28px;text-align:center}
-.m-scale-info{font-size:.75rem;color:var(--ink-l)}
-
-/* ── BACK TO TOP IN MODAL ── */
-.m-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--bdr)}
-
-/* ── TOAST ── */
-.toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(20px);
-  background:var(--wood-d);color:var(--saffron-l);
-  font-family:'Frank Ruhl Libre',serif;font-size:.9rem;
-  padding:.7rem 1.6rem;border-radius:25px;
-  box-shadow:var(--sh-md);opacity:0;pointer-events:none;
-  transition:all .3s ease;z-index:800;white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-@media print{
-  .site-header,.cat-nav,.hero,footer,#stb,.modal-overlay{display:none!important}
-  .main-wrap{padding:0}
-  .card{break-inside:avoid;page-break-inside:avoid}
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hdr-sub{display:none}
+  .hdr-search{min-width:0;flex:1}
+  .top-nav-inner{padding:0 .8rem}
+  .nav-top-btn{padding:.55rem .7rem;font-size:.78rem}
+  .main-grid{padding:1rem .8rem}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:.85rem}
 }
-
-/* DIFFICULTY FILTER */
-.diff-bar-wrap{background:var(--parch-2);border-bottom:1.5px solid var(--bdr)}
-.diff-bar{max-width:1520px;margin:0 auto;padding:.5rem 1.5rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
-.diff-lbl{font-size:.78rem;color:var(--ink-l);font-weight:500;margin-left:.3rem}
-.diff-btn{font-size:.75rem;padding:.28rem .8rem;border-radius:20px;background:var(--cream);border:1.5px solid var(--bdr);color:var(--ink-m);cursor:pointer;transition:var(--tr);font-family:'Heebo',sans-serif}
-.diff-btn:hover{background:var(--parch-3)}
-.diff-btn.active{background:var(--clay);color:#fff;border-color:var(--clay)}
-
-/* FAVORITES */
-.fav-btn{position:absolute;top:.65rem;left:.65rem;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.82);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:transform var(--tr);z-index:2}
-.fav-btn:hover{transform:scale(1.2)}
-.fav-btn.fav-active{color:var(--clay)}
-.fav-counter{display:none;background:var(--clay);color:#fff;font-size:.65rem;font-weight:700;border-radius:10px;padding:.1rem .45rem;margin-right:.4rem}
-.fav-counter.show{display:inline-block}
-
-/* ABOUT */
-.about-wrap{background:linear-gradient(135deg,var(--parch-2),var(--parch-3));border-bottom:2px solid var(--bdr);padding:2.5rem 2rem}
-.about-in{max-width:1520px;margin:0 auto;display:grid;grid-template-columns:180px 1fr;gap:2.5rem;align-items:center}
-.about-pic{width:160px;height:160px;border-radius:50%;background:linear-gradient(135deg,var(--clay-d),var(--wood-l));display:flex;align-items:center;justify-content:center;font-size:5rem;color:rgba(255,255,255,.22);border:4px solid var(--saffron);box-shadow:var(--sh-md)}
-.about-h{font-family:'Frank Ruhl Libre',serif;font-size:clamp(1.2rem,3vw,1.6rem);font-weight:900;color:var(--clay);margin-bottom:.5rem}
-.about-p{font-size:.9rem;line-height:1.95;color:var(--ink-m);font-weight:300}
-.about-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
-.about-tag{background:var(--cream);border:1.5px solid var(--bdr);border-radius:20px;padding:.28rem .9rem;font-size:.75rem;color:var(--ink-l)}
-@media(max-width:640px){.about-in{grid-template-columns:1fr;text-align:center}.about-pic{margin:0 auto}.about-tags{justify-content:center}}
-
-/* COOKING TIMER */
-.step-timer-btn{display:inline-flex;align-items:center;gap:.3rem;
-  background:var(--clay);color:#fff;border-radius:6px;
-  padding:.08rem .5rem;font-size:.68rem;font-weight:600;
-  cursor:pointer;margin-right:.35rem;vertical-align:middle;
-  transition:background var(--tr);border:none;font-family:'Heebo',sans-serif}
-.step-timer-btn:hover{background:var(--clay-l)}
-.step-timer-btn.running{background:var(--saffron-d);animation:pulse .8s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
-
-/* TIMER WIDGET (fixed bottom right) */
-.timer-widget{position:fixed;bottom:1.8rem;right:1.8rem;
-  background:var(--wood-d);color:var(--saffron-l);
-  border:2px solid var(--saffron);border-radius:16px;
-  padding:.8rem 1.2rem;z-index:700;
-  box-shadow:var(--sh-lg);display:none;
-  font-family:'Frank Ruhl Libre',serif;min-width:160px}
-.timer-widget.show{display:block;animation:slideInRight .3s ease}
-@keyframes slideInRight{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
-.timer-title{font-size:.72rem;opacity:.65;margin-bottom:.2rem}
-.timer-display{font-size:2rem;font-weight:900;letter-spacing:.05em;line-height:1}
-.timer-step{font-size:.72rem;opacity:.6;margin-top:.2rem;max-width:140px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.timer-controls{display:flex;gap:.5rem;margin-top:.6rem}
-.timer-ctrl{flex:1;background:rgba(255,255,255,.1);color:var(--saffron-l);
-  border:1px solid rgba(196,154,12,.3);border-radius:8px;
-  padding:.3rem;font-size:.75rem;cursor:pointer;font-family:'Heebo',sans-serif;
-  text-align:center;transition:background var(--tr)}
-.timer-ctrl:hover{background:rgba(255,255,255,.2)}
-
-/* RANDOM RECIPE BUTTON */
-.random-btn{display:inline-flex;align-items:center;gap:.5rem;
-  background:transparent;border:1.5px solid rgba(196,154,12,.4);
-  color:var(--saffron-l);border-radius:28px;padding:.45rem 1.1rem;
-  font-family:'Frank Ruhl Libre',serif;font-size:.82rem;cursor:pointer;
-  transition:var(--tr);margin-right:.5rem}
-.random-btn:hover{background:rgba(196,154,12,.1);border-color:var(--saffron-l)}
-
-/* INGREDIENT SEARCH TOGGLE */
-.ing-search-wrap{background:var(--parch-2);border-bottom:1.5px solid var(--bdr);
-  padding:.5rem 1.5rem;display:none}
-.ing-search-wrap.show{display:block}
-.ing-search-inner{max-width:1520px;margin:0 auto;
-  display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
-.ing-search-lbl{font-size:.78rem;color:var(--ink-l);font-weight:500;white-space:nowrap}
-#ing-input{flex:1;min-width:200px;max-width:400px;
-  background:var(--cream);border:1.5px solid var(--bdr);border-radius:20px;
-  padding:.48rem 1rem;font-family:'Heebo',sans-serif;font-size:.85rem;
-  color:var(--ink);direction:rtl;outline:none;transition:var(--tr)}
-#ing-input:focus{border-color:var(--saffron);box-shadow:0 0 0 3px rgba(196,154,12,.12)}
-.ing-tag{background:var(--parch-3);border:1px solid var(--bdr);border-radius:12px;
-  padding:.18rem .6rem;font-size:.73rem;color:var(--ink-m);
-  display:inline-flex;align-items:center;gap:.3rem}
-.ing-tag button{background:none;border:none;color:var(--clay);cursor:pointer;
-  font-size:.9rem;line-height:1;padding:0}
-.ing-tags-list{display:flex;flex-wrap:wrap;gap:.4rem}
-</style>
-<style>
-.mi-grp-hdr{background:transparent;border:none;color:var(--ink-l);
-  font:600 .85rem/1 'Frank Ruhl Libre',serif;padding:.45rem .9rem;
-  cursor:pointer;display:flex;align-items:center;gap:.4rem;width:100%;text-align:right;
-  border-bottom:1px solid var(--bdr)}
-.mi-grp-hdr:hover,.mi-grp-hdr.act{color:var(--saffron-l)}
-.mi-grp-hdr .mi-arrow{opacity:.6;font-size:.7rem}
-
-/* Recipe source attribution */
-.m-src-wrap{padding:.5rem 1rem .5rem 1.5rem;background:rgba(196,154,12,.08);
-  border-right:3px solid var(--saffron);margin:.5rem 1rem;border-radius:0 6px 6px 0;
-  font-size:.85rem}
-.m-src-lbl{color:var(--ink-m);font-weight:600}
-.m-src-link{color:var(--saffron);text-decoration:none}
-.m-src-link:hover{text-decoration:underline;color:var(--saffron-l)}
-
-/* Navigation dropdown styles */
-.nav-group { display:inline-block; position:relative; }
-.nav-grp-btn { }
-.nav-drop-item:hover { background:rgba(255,255,255,.08) !important; color:var(--saffron-l) !important; }
-.nav-drop { box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+@media(max-width:600px){
+  .hdr-inner{padding:.5rem .8rem;gap:.6rem}
+  .hdr-title{font-size:.9rem}
+  .hero{padding:1.8rem .9rem 1.5rem}
+  .hero-h1{font-size:1.7rem}
+  .hero-desc{display:none}
+  .about-inner{flex-direction:column;padding:1.2rem .9rem;gap:.9rem}
+  .main-grid{padding:.8rem}
+  .grid{grid-template-columns:1fr 1fr;gap:.65rem}
+  .c-img{height:120px}
+  .ovl{padding:1.5rem 0 0;align-items:flex-end}
+  .mbox{border-radius:var(--r) var(--r) 0 0}
+}
+@media(max-width:380px){
+  .grid{grid-template-columns:1fr 1fr}
+  .c-img{height:105px}
+}
 </style>
 <script type="application/ld+json">
 {
@@ -361,92 +284,107 @@ footer{background:var(--wood-d);border-top:3px solid var(--saffron);color:rgba(1
 </head>
 <body>
 
-<header class="site-header">
-  <div class="hdr">
+<a href="#main-content" class="skip-link">דלג לתוכן</a>
+
+<!-- HEADER -->
+<header class="site-hdr" role="banner">
+  <div class="hdr-inner">
     <div class="hdr-brand">
-      <div class="hdr-brand-name">ספר הבישול של פרלה בן ארוש ז"ל</div>
-      <div class="hdr-brand-sub">קזבלנקה · מרקש · מורשת ספרד | מטבח מרוקאי-ספרדי</div>
+      <div class="hdr-title">ספר הבישול של פרלה בן ארוש ז"ל</div>
+      <div class="hdr-sub">קזבלנקה · מרקש · מורשת ספרד | מטבח מרוקאי-ספרדי</div>
     </div>
-    <div class="hdr-orn">✦ ✦ ✦</div>
-    <div class="hdr-search">
-      <svg class="hdr-search-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" id="srch" placeholder="חפשו מתכון, מרכיב, קטגוריה..." autocomplete="off" aria-label="חיפוש מתכון" oninput="doSearch(this.value)">
-      <button id="srch-clr" onclick="clearSearch()" aria-label="נקה">×</button>
+    <div class="hdr-search" role="search">
+      <svg class="srch-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="srch" placeholder="חפשו מתכון, מרכיב..." autocomplete="off"
+             aria-label="חיפוש מתכון" oninput="doSearch(this.value)">
+      <button id="srch-clr" class="srch-clr" onclick="clearSearch()" aria-label="נקה חיפוש" style="display:none">✕</button>
     </div>
   </div>
 </header>
 
-<nav class="cat-nav" aria-label="קטגוריות">
-  <div class="cat-inner" id="cat-inner"></div>
+<!-- HORIZONTAL NAV -->
+<nav class="top-nav" role="navigation" aria-label="קטגוריות מתכונים">
+  <div class="top-nav-inner">
+    <div class="top-nav-bar" id="cat-inner" role="menubar"></div>
+  </div>
+  <!-- Dropdown panel (shared, populated dynamically) -->
+  <div class="nav-panel" id="nav-panel" aria-hidden="true">
+    <div class="nav-panel-inner" id="nav-panel-inner"></div>
+  </div>
 </nav>
 
-<section class="hero">
-  <div class="hero-c">
-    <div class="hero-orn" style="letter-spacing:.8em">✦ ✦ ✦</div>
-    <h1 class="hero-h1">המטבח של <em>אמא פרלה</em></h1>
-    <p class="hero-h2">מרוקו · ספרד · ישראל — טעמים שנולדו מאהבה</p>
-    <p class="hero-story">פרלה בן ארוש ז"ל נולדה בקזבלנקה וגדלה על ריחות השוק של מרוקו. נישאה לאיש ממשפחת קארו — צאצאי מגורשי ספרד — ולמדה את המטבח האנדלוסי מחמותה לבל. מטבחה הפך לפסיפס עשיר: מרוקאי וספרדי, שני עולמות בסיר אחד. כל תבשיל נושא ריח, זיכרון ואהבה.</p>
-    <div class="hero-pills">
-      <span class="hero-pill" id="pill-cnt">טוען...</span>
-      <span class="hero-pill">9 קטגוריות</span>
-      <span class="hero-pill">מרוקאי ✦ ספרדי</span>
-      <span class="hero-pill">קזבלנקה · מרקש</span>
-      <span class="hero-pill">מסורת של דורות</span>
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-inner">
+    <p class="hero-orn" aria-hidden="true">✦ ✦ ✦</p>
+    <h1 class="hero-h1" id="hero-title">המטבח של <em>אמא פרלה</em></h1>
+    <p class="hero-sub">מרוקו · ספרד · ישראל — טעמים שנולדו מאהבה</p>
+    <p class="hero-desc">פרלה בן ארוש ז"ל נולדה בקזבלנקה וגדלה על ריחות השוק של מרוקו.
+      נישאה לאיש ממשפחת קארו — צאצאי מגורשי ספרד — ולמדה את המטבח האנדלוסי מחמותה לבל.
+      מטבחה הפך לפסיפס עשיר: מרוקאי וספרדי, שני עולמות בסיר אחד.</p>
+    <div class="hero-pills" role="list">
+      <span class="h-pill" role="listitem" id="pill-cnt">טוען...</span>
+      <span class="h-pill" role="listitem">18 עדות ומטבחים</span>
+      <span class="h-pill" role="listitem">קזבלנקה · מרקש</span>
+      <span class="h-pill" role="listitem">מסורת של דורות</span>
     </div>
+    <button class="about-toggle" onclick="toggleAbout()" aria-expanded="false" aria-controls="about-section">
+      קרא עוד על פרלה ז"ל ▾
+    </button>
   </div>
 </section>
 
-
-<section class="about-wrap">
-  <div class="about-in">
-    <div class="about-pic">&#9786;</div>
-    <div>
-      <h2 class="about-h">פרלה בן ארוש ז"ל — מי הייתה?</h2>
-      <p class="about-p">נולדה בקזבלנקה, גדלה בין ריחות השוק המרוקאי ואהבה לבשל עוד לפני שלמדה לקרוא. נישאה לאיש ממשפחת קארו — צאצאי מגורשי ספרד בשנת 1492 — ולמדה את המטבח האנדלוסי מחמותה לבל. שני עולמות, שתי מסורות, סיר אחד מלא אהבה. מתכוניה לא נכתבו — הם חיו בראשה ובידיה, ומובאים כאן ממה שסיפרה לילדיה.</p>
-      <div class="about-tags">
-        <span class="about-tag">קזבלנקה</span>
-        <span class="about-tag">מרקש</span>
-        <span class="about-tag">מורשת ספרד</span>
-        <span class="about-tag">משפחת קארו</span>
-        <span class="about-tag">מגורשי ספרד 1492</span>
-        <span class="about-tag">מטבח מרוקאי</span>
-        <span class="about-tag">מטבח אנדלוסי</span>
+<!-- ABOUT (collapsible) -->
+<section class="about-section" id="about-section" aria-hidden="true">
+  <div class="about-inner">
+    <div class="about-img" aria-hidden="true">☺</div>
+    <div class="about-text">
+      <h2 class="about-h2">פרלה בן ארוש ז"ל — מי הייתה?</h2>
+      <p>נולדה בקזבלנקה, גדלה בין ריחות השוק המרוקאי ואהבה לבשל עוד לפני שלמדה לקרוא.
+         נישאה לאיש ממשפחת קארו — צאצאי מגורשי ספרד בשנת 1492 — ולמדה את המטבח
+         האנדלוסי מחמותה לבל. שני עולמות, שתי מסורות, סיר אחד מלא אהבה.</p>
+      <div class="about-tags" role="list">
+        <span class="a-tag" role="listitem">קזבלנקה</span>
+        <span class="a-tag" role="listitem">מרקש</span>
+        <span class="a-tag" role="listitem">מורשת ספרד</span>
+        <span class="a-tag" role="listitem">משפחת קארו</span>
+        <span class="a-tag" role="listitem">מגורשי ספרד 1492</span>
+        <span class="a-tag" role="listitem">מטבח מרוקאי</span>
+        <span class="a-tag" role="listitem">מטבח אנדלוסי</span>
       </div>
     </div>
   </div>
 </section>
-<main class="main">
-  <div class="sec-head">
-    <h2 class="sec-h2" id="sec-title">כל המתכונים</h2>
-    <span class="sec-count" id="sec-cnt"></span>
+
+<!-- RECIPE GRID -->
+<main class="main-grid" id="main-content" role="main">
+  <div class="grid-hdr">
+    <h2 class="grid-title" id="sec-title">כל המתכונים</h2>
+    <span class="grid-cnt" id="sec-cnt" aria-live="polite"></span>
   </div>
-  <div class="grid" id="grid" role="list"></div>
+  <div class="grid" id="grid" role="list" aria-label="רשימת מתכונים"></div>
 </main>
 
-<footer>
-  <div class="ft">לזכר נשמת פרלה בן ארוש ז"ל</div>
-  <div>קזבלנקה · מרקש · ישראל | משפחת קארו — צאצאי מגורשי ספרד 1492</div>
-  <div style="margin:.4rem 0;font-size:.8rem;opacity:.45">104 מתכונים מסורתיים שנשמרו לדורות</div>
-  <div class="fq">"הטעם הכי טוב בעולם הוא הטעם שזוכרים" — פרלה</div>
-  <div style="margin-top:.8rem;font-size:.75rem;opacity:.3">
-    נבנה באהבה לזכרה | perla-cooking.netlify.app
-  </div>
-  <div class="fo">✦ ✦ ✦</div>
+<!-- FOOTER -->
+<footer class="site-footer" role="contentinfo">
+  <p class="ft-memorial">לזכר נשמת פרלה בן ארוש ז"ל</p>
+  <p class="ft-sub">קזבלנקה · מרקש · ישראל | משפחת קארו — צאצאי מגורשי ספרד 1492</p>
+  <p class="ft-quote">"הטעם הכי טוב בעולם הוא הטעם שזוכרים" — פרלה</p>
+  <p class="ft-orn" aria-hidden="true">✦ ✦ ✦</p>
 </footer>
 
-<button id="stb" aria-label="חזרה לראש הדף" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<button id="stb" class="back-top" aria-label="חזרה לראש הדף"
+        onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
-<div class="ovl" id="ovl" role="dialog" aria-modal="true" onclick="ovlClose(event)">
+<!-- MODAL -->
+<div class="ovl" id="ovl" role="dialog" aria-modal="true" aria-labelledby="m-title"
+     onclick="ovlClose(event)">
   <div class="mbox" id="mbox">
-    <div class="m-progress" id="m-progress" style="background:linear-gradient(to left,var(--saffron-l),var(--clay));height:4px;transform:scaleX(0);transform-origin:right;transition:transform .1s"></div>
+    <div class="m-progress" id="m-progress"></div>
     <div class="m-hero" id="m-hero">
-      <button class="m-cls" onclick="closeM()" aria-label="סגור">✕</button>
-      <button onclick="navRecipe(-1)" aria-label="מתכון קודם"
-        style="position:absolute;top:1rem;right:4rem;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:1.1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;transition:background .2s"
-        onmouseover="this.style.background='rgba(184,66,35,.8)'" onmouseout="this.style.background='rgba(0,0,0,.45)'">›</button>
-      <button onclick="navRecipe(1)" aria-label="מתכון הבא"
-        style="position:absolute;top:1rem;right:7rem;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:1.1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;transition:background .2s"
-        onmouseover="this.style.background='rgba(184,66,35,.8)'" onmouseout="this.style.background='rgba(0,0,0,.45)'">‹</button>
+      <button class="m-cls" onclick="closeM()" aria-label="סגור מתכון">✕</button>
+      <button class="m-nav-btn m-prev" onclick="navRecipe(-1)" aria-label="מתכון קודם">‹</button>
+      <button class="m-nav-btn m-next" onclick="navRecipe(1)" aria-label="מתכון הבא">›</button>
       <div class="m-hero-grad">
         <div class="m-badge" id="m-badge" style="display:none"></div>
         <h2 class="m-title" id="m-title"></h2>
@@ -454,10 +392,7 @@ footer{background:var(--wood-d);border-top:3px solid var(--saffron);color:rgba(1
       </div>
     </div>
     <div class="m-body">
-      <div class="m-mem">
-        <div class="m-mem-lbl">זיכרון ממרוקו</div>
-        <div id="m-mem-txt"></div>
-      </div>
+      <div class="m-mem"><div class="m-mem-lbl">זיכרון ממרוקו ✦</div><div id="m-mem-txt"></div></div>
       <div class="m-meta" id="m-meta"></div>
       <h3 class="m-st">רכיבים</h3>
       <div class="m-ingr" id="m-ingr"></div>
@@ -465,36 +400,31 @@ footer{background:var(--wood-d);border-top:3px solid var(--saffron);color:rgba(1
       <ol class="m-steps" id="m-steps"></ol>
       <div id="m-tip-wrap">
         <h3 class="m-st">הטיפ של אמא פרלה</h3>
-        <div class="m-tip"><div class="m-tip-lbl">סוד הבישול</div><div id="m-tip-txt"></div></div><div id="m-src-wrap" class="m-src-wrap" style="display:none"><span class="m-src-lbl">מקור המתכון: </span><a id="m-src-link" href="#" target="_blank" rel="noopener" class="m-src-link">קישור למתכון מקורי</a></div></div>
+        <div class="m-tip"><div class="m-tip-lbl">סוד הבישול</div><div id="m-tip-txt"></div></div>
+        <div id="m-src-wrap" class="m-src-wrap" style="display:none">
+          <span class="m-src-lbl">מקור המתכון: </span>
+          <a id="m-src-link" href="#" target="_blank" rel="noopener" class="m-src-link">קישור למתכון מקורי ↗</a>
+        </div>
       </div>
       <div class="m-actions">
-        <button class="m-print-btn" onclick="printRecipe()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-            <rect x="6" y="14" width="12" height="8"/>
-          </svg>
-          הדפס מתכון
+        <button class="m-act-btn" onclick="printRecipe()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>הדפס
         </button>
-        <button class="m-print-btn" onclick="shareRecipe()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-          </svg>
-          שתף מתכון
+        <button class="m-act-btn" onclick="shareRecipe()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>שתף
         </button>
       </div>
-
       <div id="m-vid-wrap" style="display:none">
         <h3 class="m-st">צפייה בהכנה</h3>
         <a class="m-vbtn" id="m-vid-link" target="_blank" rel="noopener noreferrer">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.543 6.498C22 8.28 22 12 22 12s0 3.72-.457 5.502c-.254.985-.997 1.76-1.938 2.022C17.896 20 12 20 12 20s-5.893 0-7.605-.476c-.945-.266-1.687-1.04-1.938-2.022C2 15.72 2 12 2 12s0-3.72.457-5.502c.254-.985.997-1.76 1.938-2.022C6.107 4 12 4 12 4s5.896 0 7.605.476c.945.266 1.687 1.04 1.938 2.022zM10 15.5l6-3.5-6-3.5v7z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18"><path d="M21.543 6.498C22 8.28 22 12 22 12s0 3.72-.457 5.502c-.254.985-.997 1.76-1.938 2.022C17.896 20 12 20 12 20s-5.893 0-7.605-.476c-.945-.266-1.687-1.04-1.938-2.022C2 15.72 2 12 2 12s0-3.72.457-5.502c.254-.985.997-1.76 1.938-2.022C6.107 4 12 4 12 4s5.896 0 7.605.476c.945.266 1.687 1.04 1.938 2.022zM10 15.5l6-3.5-6-3.5v7z"/></svg>
           צפייה ביוטיוב
         </a>
       </div>
     </div>
   </div>
 </div>
-
+<div id="toast" class="toast" role="alert" aria-live="polite"></div>
 
 <script>
 const G = {
@@ -18774,41 +18704,45 @@ function selMultiCat(ids){
 }
 
 
+
 const MENU_STRUCTURE = [
+  /* ── ALL ── */
   {id:'all', lbl:'כל המתכונים'},
 
-  /* ── Moroccan ── */
-  {lbl:'מרוקאי', items:[
-    {id:'soups',  lbl:'מרקים', cnt:true},
-    {id:'salads', lbl:'סלטים', cnt:true},
+  /* ── MOROCCAN ── */
+  {lbl:'מרוקאי', key:'moroccan', items:[
+    {ids:['soups','salads','veg','meat','chick','fish','hol','des'], lbl:'הכל', icon:'🇲🇦'},
+    {id:'soups',  lbl:'מרקים'},
+    {id:'salads', lbl:'סלטים'},
     {ids:['meat','chick','fish'], lbl:'מנות עיקריות', items:[
       {id:'meat',  lbl:'בשר וקציצות'},
       {id:'chick', lbl:'עוף ושבת'},
       {id:'fish',  lbl:'דגים'},
     ]},
-    {id:'veg',  lbl:'ירקות ותוספות', cnt:true},
+    {id:'veg',  lbl:'ירקות ותוספות'},
     {id:'hol',  lbl:'חגים ומועדים', sub:[
-      {id:'hol', h:null,        lbl:'כל החגים'},
-      {div:true},
-      {id:'hol', h:'shabbat',   lbl:'שבת'},
-      {id:'hol', h:'rosh',      lbl:'ראש השנה'},
-      {id:'hol', h:'kippur',    lbl:'יום כיפור'},
-      {id:'hol', h:'pesach',    lbl:'פסח'},
-      {id:'hol', h:'mimouna',   lbl:'מימונה'},
-      {id:'hol', h:'hanukkah',  lbl:'חנוכה'},
-      {id:'hol', h:'purim',     lbl:'פורים'},
-      {id:'hol', h:'shavuot',   lbl:'שבועות'},
-      {id:'hol', h:'sukkot',    lbl:'סוכות'},
-      {id:'hol', h:'henna',     lbl:'חינה'},
+      {id:'hol', h:null,       lbl:'כל החגים'},
+      {sep:true},
+      {id:'hol', h:'shabbat',  lbl:'שבת'},
+      {id:'hol', h:'rosh',     lbl:'ראש השנה'},
+      {id:'hol', h:'kippur',   lbl:'יום כיפור'},
+      {id:'hol', h:'pesach',   lbl:'פסח'},
+      {id:'hol', h:'mimouna',  lbl:'מימונה'},
+      {id:'hol', h:'hanukkah', lbl:'חנוכה'},
+      {id:'hol', h:'purim',    lbl:'פורים'},
+      {id:'hol', h:'shavuot',  lbl:'שבועות'},
+      {id:'hol', h:'sukkot',   lbl:'סוכות'},
+      {id:'hol', h:'henna',    lbl:'חינה'},
     ]},
-    {id:'des',  lbl:'קינוחים ומאפים מתוקים', cnt:true},
+    {id:'des', lbl:'קינוחים ומאפים'},
   ]},
 
-  /* ── Spanish-Moroccan ── */
-  {id:'span', lbl:'ספרדי-מרוקאי', cnt:true},
+  /* ── SPANISH-MOROCCAN ── */
+  {id:'span', lbl:'ספרדי-מרוקאי'},
 
-  /* ── Katamon neighbours ── */
-  {lbl:'שכנות הקטמון', items:[
+  /* ── KATAMON NEIGHBOURS ── */
+  {lbl:'שכנות הקטמון', key:'katamon', items:[
+    {ids:['iraq','kurd','ashk','yem','pers','buk','tun'], lbl:'הכל'},
     {id:'iraq', lbl:'עיראק'},
     {id:'kurd', lbl:'כורדיסטן'},
     {id:'ashk', lbl:'אשכנז'},
@@ -18818,13 +18752,27 @@ const MENU_STRUCTURE = [
     {id:'tun',  lbl:'טוניסיה'},
   ]},
 
-  /* ── Israeli + Turkish ── */
-  {id:'isr',  lbl:'מטבח ישראלי',  cnt:true},
-  {id:'turk', lbl:'יהדות טורקיה', cnt:true},
+  /* ── ISRAELI & TURKISH ── */
+  {id:'isr',  lbl:'מטבח ישראלי'},
+  {id:'turk', lbl:'יהדות טורקיה'},
 ];
+
 </script>
 
 <script>
+
+
+
+
+
+
+function toggleAbout(){
+  const sec = document.getElementById('about-section');
+  const btn = document.querySelector('.about-toggle');
+  const open = sec.classList.toggle('open');
+  sec.setAttribute('aria-hidden', !open);
+  if(btn){ btn.textContent = open ? 'סגור ▲' : 'קרא עוד על פרלה ז"ל ▾'; btn.setAttribute('aria-expanded', open); }
+}
 /* ── Global State ── */
 let ACT_CAT='all', ACT_CATS=[], ACT_HOLIDAY=null, ACT_DIFF='all';
 let SEARCH='', SHOW_FAVS=false;
@@ -18851,149 +18799,189 @@ const PH={soups:'ph-s',salads:'ph-sa',veg:'ph-v',fish:'ph-f',meat:'ph-m',chick:'
    IMAGES (Wikipedia commons, free)
 ══════════════════════════════════════ */
 
-function buildNav(){
-  const inner = document.getElementById('cat-inner');
-  if(!inner) return;
-  inner.innerHTML = '';
 
-  function makeBtn(lbl, cnt, isActive, onclick){
+
+function buildNav(){
+  const bar = document.getElementById('cat-inner');
+  const panel = document.getElementById('nav-panel');
+  const panelInner = document.getElementById('nav-panel-inner');
+  if(!bar) return;
+  bar.innerHTML = '';
+  if(panel) panel.classList.remove('open');
+
+  let activeTopBtn = null;
+
+  function cnt(ids){
+    if(!ids) return 0;
+    if(typeof ids === 'string') return ids==='all' ? R.length : R.filter(r=>r.cat===ids).length;
+    return R.filter(r=>ids.includes(r.cat)).length;
+  }
+
+  function closePanel(){
+    if(panel) panel.classList.remove('open');
+    bar.querySelectorAll('.nav-top-btn.panel-open').forEach(b=>{
+      b.classList.remove('panel-open');
+    });
+    activeTopBtn = null;
+  }
+
+  function openPanel(btn, buildFn){
+    if(activeTopBtn === btn){ closePanel(); return; }
+    closePanel();
+    activeTopBtn = btn;
+    btn.classList.add('panel-open');
+    if(panelInner) panelInner.innerHTML = '';
+    buildFn();
+    if(panel) panel.classList.add('open');
+  }
+
+  function makeChip(lbl, c, onclick, isActive){
     const b = document.createElement('button');
-    b.className = 'cat-btn' + (isActive ? ' active' : '');
-    b.innerHTML = cnt != null
-      ? lbl + '<span style="font-size:.62rem;opacity:.55;margin-right:.3rem"> (' + cnt + ')</span>'
-      : lbl;
+    b.className = 'panel-btn' + (isActive ? ' active' : '');
+    b.innerHTML = lbl + (c!=null ? ' <span class="panel-cnt">(' + c + ')</span>' : '');
     b.onclick = onclick;
     return b;
   }
 
+  function setActive(catId, hol, cats){
+    // Refresh active on all panel chips
+    panelInner && panelInner.querySelectorAll('.panel-btn').forEach(b=>{
+      b.classList.remove('active');
+    });
+  }
+
   MENU_STRUCTURE.forEach(node => {
-    // ── Simple leaf ──────────────────────────────────────────────
-    if(node.id && !node.items && !node.sub){
-      const cnt = node.id==='all' ? R.length : R.filter(r=>r.cat===node.id).length;
-      const active = ACT_CAT===node.id && !ACT_HOLIDAY && !ACT_CATS.length;
-      inner.appendChild(makeBtn(node.lbl, node.cnt ? cnt : null, active,
-        () => selCatHol(node.id, null, null)));
+
+    /* ── Simple leaf (כל המתכונים, ספרדי-מרוקאי, etc.) ── */
+    if(node.id && !node.items){
+      const c = cnt(node.id);
+      const btn = document.createElement('button');
+      btn.className = 'nav-top-btn' + (ACT_CAT===node.id && !ACT_HOLIDAY && !ACT_CATS.length ? ' active' : '');
+      btn.setAttribute('role','menuitem');
+      btn.innerHTML = node.lbl + (c ? ' <span class="nav-cnt">' + c + '</span>' : '');
+      btn.onclick = () => {
+        bar.querySelectorAll('.nav-top-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        closePanel();
+        selCatHol(node.id, null, null);
+      };
+      bar.appendChild(btn);
       return;
     }
 
-    // ── Group with dropdown ───────────────────────────────────────
-    const wrap = document.createElement('div');
-    wrap.className = 'nav-group';
-    wrap.style.cssText = 'position:relative;display:inline-block';
+    /* ── Group with dropdown ── */
+    const totalCnt = node.items
+      ? node.items.reduce((a,it)=>a + (it.id ? cnt(it.id) : it.ids ? cnt(it.ids) : 0), 0)
+      : (node.ids ? cnt(node.ids) : 0);
 
-    // Group header button
-    const grpBtn = document.createElement('button');
-    grpBtn.className = 'cat-btn nav-grp-btn';
+    const btn = document.createElement('button');
+    btn.className = 'nav-top-btn';
+    btn.setAttribute('role','menuitem');
+    btn.setAttribute('aria-haspopup','true');
+    btn.innerHTML = node.lbl
+      + (totalCnt ? ' <span class="nav-cnt">' + totalCnt + '</span>' : '')
+      + ' <span class="nav-arr">▾</span>';
 
-    // If group has ids[] → multi-cat (מנות עיקריות)
-    if(node.ids){
-      const active = node.ids.every(c => ACT_CATS.includes(c));
-      if(active) grpBtn.classList.add('active');
-      grpBtn.innerHTML = node.lbl + ' <span style="font-size:.7rem">▾</span>';
-      grpBtn.onclick = e => { e.stopPropagation(); selMultiCat(node.ids); };
-    } else {
-      const childActive = (node.items||[]).some(it =>
-        it.id === ACT_CAT || (it.sub && it.sub.some(s => s.id === ACT_CAT && s.h === ACT_HOLIDAY))
-      );
-      if(childActive) grpBtn.classList.add('active');
-      grpBtn.innerHTML = node.lbl + ' <span style="font-size:.7rem">▾</span>';
-    }
-
-    // Dropdown panel
-    const drop = document.createElement('div');
-    drop.className = 'nav-drop';
-    drop.style.cssText = 'display:none;position:absolute;right:0;top:100%;background:var(--wood-d);'
-      + 'border:1px solid var(--bdr);border-radius:0 0 8px 8px;min-width:180px;z-index:200;padding:.3rem 0';
-
-    // Toggle on header click (if no ids[])
-    if(!node.ids){
-      grpBtn.onclick = e => {
-        e.stopPropagation();
-        const open = drop.style.display === 'block';
-        // Close all other dropdowns
-        document.querySelectorAll('.nav-drop').forEach(d => d.style.display='none');
-        drop.style.display = open ? 'none' : 'block';
-      };
-    } else {
-      // Also show dropdown on hover/arrow
-      const arrowBtn = document.createElement('button');
-      arrowBtn.innerHTML = '▾';
-      arrowBtn.className = 'cat-btn';
-      arrowBtn.style.cssText = 'padding:0 .4rem;font-size:.75rem';
-      arrowBtn.onclick = e => {
-        e.stopPropagation();
-        const open = drop.style.display==='block';
-        document.querySelectorAll('.nav-drop').forEach(d=>d.style.display='none');
-        drop.style.display = open ? 'none' : 'block';
-      };
-      wrap.appendChild(grpBtn);
-      wrap.appendChild(arrowBtn);
-    }
-
-    // Build dropdown items
-    (node.items||[]).forEach(item => {
-      if(item.sub){
-        // Item with sub-dropdown (חגים)
-        const subWrap = document.createElement('div');
-        subWrap.style.cssText = 'position:relative';
-        const subBtn = document.createElement('button');
-        subBtn.className = 'nav-drop-item';
-        const hCnt = R.filter(r=>r.cat===item.id).length;
-        subBtn.innerHTML = item.lbl + ' <span style="opacity:.5;font-size:.7rem">▸</span>';
-        subBtn.style.cssText = 'width:100%;text-align:right;padding:.5rem 1rem;background:transparent;'
-          + 'border:none;color:var(--ink);cursor:pointer;display:block';
-        subBtn.onmouseenter = () => subdrop.style.display='block';
-        subBtn.onmouseleave = () => setTimeout(()=>{if(!subdrop.matches(':hover'))subdrop.style.display='none'},150);
-
-        const subdrop = document.createElement('div');
-        subdrop.style.cssText = 'display:none;position:absolute;right:100%;top:0;background:var(--wood-d);'
-          + 'border:1px solid var(--bdr);border-radius:8px;min-width:160px;z-index:300;padding:.3rem 0';
-        subdrop.onmouseenter = () => subdrop.style.display='block';
-        subdrop.onmouseleave = () => subdrop.style.display='none';
-
-        item.sub.forEach(s => {
-          const sb = document.createElement('button');
-          sb.className = 'nav-drop-item';
-          const sc = s.h ? (HOLIDAY_TAGS[s.h]||[]).length : R.filter(r=>r.cat===s.id).length;
-          sb.innerHTML = s.lbl + (sc ? '<span style="opacity:.5;font-size:.7rem"> ('+sc+')</span>' : '');
-          sb.style.cssText = 'width:100%;text-align:right;padding:.45rem 1rem;background:transparent;'
-            + 'border:none;color:var(--ink-l);cursor:pointer;display:block;font-size:.85rem';
-          sb.onclick = () => { selCatHol(s.id, s.h||null, null); closeDrops(); };
-          if(s.div){ const d=document.createElement('hr');d.style.cssText='border-color:var(--bdr);margin:.2rem 0';subdrop.appendChild(d);return; }
-          subdrop.appendChild(sb);
-        });
-        subWrap.appendChild(subBtn);
-        subWrap.appendChild(subdrop);
-        drop.appendChild(subWrap);
-      } else {
-        // Simple dropdown item
-        const db = document.createElement('button');
-        db.className = 'nav-drop-item';
-        const ic = item.ids ? null : (item.id ? R.filter(r=>r.cat===item.id).length : null);
-        db.innerHTML = item.lbl + (ic!=null ? '<span style="opacity:.5;font-size:.7rem"> ('+ic+')</span>' : '');
-        db.style.cssText = 'width:100%;text-align:right;padding:.5rem 1rem;background:transparent;'
-          + 'border:none;color:var(--ink-l);cursor:pointer;display:block;font-size:.85rem';
-        if(item.ids){
-          db.onclick = () => { selMultiCat(item.ids); closeDrops(); };
-        } else {
-          db.onclick = () => { selCatHol(item.id, null, null); closeDrops(); };
-        }
-        drop.appendChild(db);
-      }
+    // Check if any child is active → mark top btn active
+    const hasActive = node.items && node.items.some(it=>{
+      if(it.ids) return it.ids.some(id=>ACT_CATS.includes(id)||ACT_CAT===id);
+      if(it.id) return ACT_CAT===it.id;
+      return false;
     });
+    if(hasActive) btn.classList.add('active');
 
-    if(!node.ids) wrap.appendChild(grpBtn);
-    wrap.appendChild(drop);
-    inner.appendChild(wrap);
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      openPanel(btn, () => buildDropdown(node));
+    };
+
+    bar.appendChild(btn);
   });
 
-  // Close dropdowns on outside click
-  document.onclick = () => closeDrops();
+  // Close panel when clicking outside
+  document.addEventListener('click', closePanel, {once:false});
+  bar.addEventListener('click', e=>e.stopPropagation());
+  if(panel) panel.addEventListener('click', e=>e.stopPropagation());
+
+  function buildDropdown(node){
+    if(!panelInner) return;
+    const row = document.createElement('div');
+    row.className = 'panel-row';
+
+    (node.items||[]).forEach(item => {
+
+      /* — Accordion sub-group (e.g. מנות עיקריות, חגים) — */
+      if(item.items || item.sub){
+        const subItems = item.items || item.sub || [];
+        const hdr = document.createElement('button');
+        hdr.className = 'panel-acc-hdr';
+        const ic = item.ids ? cnt(item.ids) : cnt(item.id);
+        hdr.innerHTML = item.lbl
+          + (ic ? ' <span class="panel-cnt">('+ic+')</span>' : '')
+          + ' <span class="acc-arr">▾</span>';
+        const body = document.createElement('div');
+        body.className = 'panel-acc-body';
+
+        // Add "all" for this group
+        if(item.ids){
+          const allC = makeChip('הכל ב' + item.lbl, cnt(item.ids),
+            ()=>{ bar.querySelectorAll('.nav-top-btn').forEach(b=>b.classList.remove('active'));
+                  selMultiCat(item.ids); closePanel(); },
+            ACT_CATS.length && item.ids.every(id=>ACT_CATS.includes(id)));
+          body.appendChild(allC);
+        }
+
+        subItems.forEach(s => {
+          if(s.sep){ const sep=document.createElement('span');sep.className='panel-sep';body.appendChild(sep);return; }
+          const sc = s.h ? (HOLIDAY_TAGS[s.h]||[]).length : cnt(s.id);
+          const isAct = s.h ? (ACT_CAT===s.id && ACT_HOLIDAY===s.h) : ACT_CAT===s.id && !ACT_HOLIDAY && !ACT_CATS.length;
+          const chip = makeChip(s.lbl, sc||null, ()=>{
+            bar.querySelectorAll('.nav-top-btn').forEach(b=>b.classList.remove('active'));
+            selCatHol(s.id, s.h||null, null);
+            closePanel();
+          }, isAct);
+          body.appendChild(chip);
+        });
+
+        hdr.onclick = () => {
+          const open = body.classList.toggle('open');
+          hdr.classList.toggle('open', open);
+        };
+        // Auto-open if has active child
+        const accActive = item.id && ACT_CAT===item.id;
+        const accHolActive = item.sub && item.sub.some(s=>s.h && ACT_CAT==='hol' && ACT_HOLIDAY===s.h);
+        if(accActive || accHolActive){ body.classList.add('open'); hdr.classList.add('open'); }
+
+        row.appendChild(hdr);
+        row.appendChild(body);
+        return;
+      }
+
+      /* — Multi-cat leaf (הכל, e.g. in Katamon group) — */
+      if(item.ids && !item.items){
+        const isAct = item.ids.every(id=>ACT_CATS.includes(id));
+        const chip = makeChip(item.lbl, cnt(item.ids), ()=>{
+          bar.querySelectorAll('.nav-top-btn').forEach(b=>b.classList.remove('active'));
+          selMultiCat(item.ids); closePanel();
+        }, isAct);
+        row.appendChild(chip);
+        return;
+      }
+
+      /* — Simple category chip — */
+      const ic = cnt(item.id);
+      const isAct = ACT_CAT===item.id && !ACT_HOLIDAY && !ACT_CATS.length;
+      const chip = makeChip(item.lbl, ic, ()=>{
+        bar.querySelectorAll('.nav-top-btn').forEach(b=>b.classList.remove('active'));
+        selCatHol(item.id, null, null); closePanel();
+      }, isAct);
+      row.appendChild(chip);
+    });
+
+    panelInner.appendChild(row);
+  }
 }
 
-function closeDrops(){
-  document.querySelectorAll('.nav-drop').forEach(d => d.style.display='none');
-}
 
 
 function selCat(id,btn){
@@ -19281,30 +19269,37 @@ function openRandomRecipe() {
 /* ══════════════════════════════
    UPDATE FILTERED TO INCLUDE ING TAGS
 ══════════════════════════════ */
+
 function filtered(){
   return R.filter(r=>{
     let cok;
     if(ACT_CATS && ACT_CATS.length) cok = ACT_CATS.includes(r.cat);
-    else if(ACT_CAT==='all') cok = true;
+    else if(ACT_CAT==='all' || ACT_CAT==='multi') cok = true;
     else if(ACT_CAT==='hol' && ACT_HOLIDAY){ cok = new Set(HOLIDAY_TAGS[ACT_HOLIDAY]||[]).has(r.id); }
     else cok = r.cat===ACT_CAT;
+
     const dok = ACT_DIFF==='all' || r.diff===ACT_DIFF;
     const fok = !SHOW_FAVS || FAV.has(r.id);
-    // Ingredient tags filter
-    const iok = ING_TAGS.size === 0 || [...ING_TAGS].every(tag => {
-      const allIngr = (r.ingr||[]).map(i => i.i + ' ' + i.q).join(' ').toLowerCase();
+    const iok = ING_TAGS.size===0 || [...ING_TAGS].every(tag=>{
+      const allIngr=(r.ingr||[]).map(i=>i.i+' '+i.q).join(' ').toLowerCase();
       return allIngr.includes(tag.toLowerCase());
     });
+
     if(!SEARCH) return cok && dok && fok && iok;
-    const h=[r.title,r.desc,r.mem||'',catLbl(r.cat),(r.ingr||[]).map(i=>i.i+' '+i.q).join(' '),(r.tip||'')].join(' ').toLowerCase();
-    return cok && dok && fok && iok && h.includes(SEARCH);
+
+    // Whole-word search for Hebrew: term must be surrounded by
+    // word boundaries (space, punctuation, or string edges)
+    const src = [r.title, r.desc, r.mem||'', catLbl(r.cat),
+      (r.ingr||[]).map(i=>i.i+' '+i.q).join(' '),
+      (r.tip||'')].join(' ').toLowerCase();
+    const term = SEARCH.trim().toLowerCase();
+    // Check if term exists as a standalone word
+    const wordRe = new RegExp('(?:^|[\\s,.()\'";!?:\-])' + term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '(?:[\\s,.()\'";!?:\-]|$)');
+    const sok = wordRe.test(src) || src.includes(term + ' ') || src.startsWith(term) || src.endsWith(term) || src.includes(' ' + term);
+    return cok && dok && fok && iok && sok;
   });
 }
 
-
-/* ══════════════════════
-   RELATED RECIPES
-══════════════════════ */
 function renderRelated(r) {
   const wrap = document.getElementById('m-related-wrap');
   const container = document.getElementById('m-related');
@@ -19528,28 +19523,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* ── PAGE INIT ── */
 document.addEventListener('DOMContentLoaded', () => {
-  // Update pill counters
-  const pillCnt = document.getElementById('pill-cnt');
-  if (pillCnt) pillCnt.textContent = R.length + ' מתכונים';
-
-  // Build navigation and render recipe grid
+  // Close sidebar on escape
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape'){
+      closeM();
+      if(document.getElementById('sidebar')?.classList.contains('open')) toggleSidebar();
+    }
+  });
+  // Update pill counter
+  const pill = document.getElementById('pill-cnt');
+  if(pill) pill.textContent = R.length + ' מתכונים';
+  // Initialise
   buildNav();
   renderGrid();
-
-  // Sticky back-to-top button
+  // Back to top
   window.addEventListener('scroll', () => {
-    const stb = document.getElementById('stb');
-    if (stb) stb.classList.toggle('on', scrollY > 450);
-  }, {passive: true});
+    const btn = document.getElementById('stb');
+    if(btn) btn.classList.toggle('on', scrollY > 400);
+  }, {passive:true});
+  // Fav counter
+  if(typeof updateFavCounter === 'function') updateFavCounter();
+});;
 
-  // Favourites counter
-  if (typeof updateFavCounter === 'function') updateFavCounter();
 
-  // Close modal on Escape
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeM();
-  });
-});
 </script>
 </body>
 </html>
