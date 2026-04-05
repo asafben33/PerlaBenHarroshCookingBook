@@ -150,8 +150,7 @@ body{font-family:'Frank Ruhl Libre',serif;background:var(--parch);color:var(--in
 .about-toggle:hover{border-color:var(--saffron);color:var(--saffron-l)}
 
 /* ── ABOUT ── */
-.about-section{background:var(--cream);border-bottom:1px solid var(--parch-3);max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1)}
-.about-section.open{max-height:500px}
+.about-section{background:var(--cream);border-bottom:1px solid var(--parch-3);max-height:0;overflow:hidden;visibility:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1),visibility 0s .45s}.about-section.open{visibility:visible;transition:max-height .45s cubic-bezier(.4,0,.2,1),visibility 0s 0s}
 .about-inner{max-width:760px;margin:0 auto;padding:1.8rem 1.5rem;display:flex;gap:1.8rem;align-items:flex-start}
 .about-img{width:72px;height:72px;border-radius:50%;flex-shrink:0;background:var(--clay);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:rgba(255,255,255,.55);border:3px solid var(--saffron-d)}
 .about-text{flex:1}
@@ -264,6 +263,12 @@ body{font-family:'Frank Ruhl Libre',serif;background:var(--parch);color:var(--in
   .grid{grid-template-columns:1fr 1fr}
   .c-img{height:105px}
 }
+
+.panel-acc-wrap{width:100%}
+.panel-acc-body{display:none;flex-wrap:wrap;gap:.4rem;background:rgba(0,0,0,.18);
+  border-radius:8px;padding:.5rem .65rem;margin-top:.28rem;width:100%}
+.panel-acc-body.open{display:flex}
+.panel-sep-hr{border:none;border-top:1px solid rgba(196,154,12,.2);width:100%;margin:.15rem 0}
 </style>
 <script type="application/ld+json">
 {
@@ -18766,6 +18771,7 @@ const MENU_STRUCTURE = [
 
 
 
+
 function toggleAbout(){
   const sec = document.getElementById('about-section');
   const btn = document.querySelector('.about-toggle');
@@ -18801,188 +18807,185 @@ const PH={soups:'ph-s',salads:'ph-sa',veg:'ph-v',fish:'ph-f',meat:'ph-m',chick:'
 
 
 
+
+/* ── nav state ── */
+var _navOpenKey = null;
+
+function closeNavPanel(){
+  var panel = document.getElementById('nav-panel');
+  if(panel) panel.classList.remove('open');
+  document.querySelectorAll('.nav-top-btn').forEach(function(b){ b.classList.remove('panel-open'); });
+  _navOpenKey = null;
+}
+
+function openNavPanel(key, btn, buildFn){
+  if(_navOpenKey === key){ closeNavPanel(); return; }
+  closeNavPanel();
+  _navOpenKey = key;
+  btn.classList.add('panel-open');
+  var pi = document.getElementById('nav-panel-inner');
+  if(pi){ pi.innerHTML = ''; buildFn(pi); }
+  var panel = document.getElementById('nav-panel');
+  if(panel) panel.classList.add('open');
+}
+
+/* Add document close-listener once */
+if(!window._navListenerAdded){
+  window._navListenerAdded = true;
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('#cat-inner') && !e.target.closest('#nav-panel')){
+      closeNavPanel();
+    }
+  });
+}
+
 function buildNav(){
-  const bar = document.getElementById('cat-inner');
-  const panel = document.getElementById('nav-panel');
-  const panelInner = document.getElementById('nav-panel-inner');
+  var bar = document.getElementById('cat-inner');
   if(!bar) return;
   bar.innerHTML = '';
-  if(panel) panel.classList.remove('open');
-
-  let activeTopBtn = null;
 
   function cnt(ids){
     if(!ids) return 0;
-    if(typeof ids === 'string') return ids==='all' ? R.length : R.filter(r=>r.cat===ids).length;
-    return R.filter(r=>ids.includes(r.cat)).length;
+    if(typeof ids === 'string') return ids==='all' ? R.length : R.filter(function(r){ return r.cat===ids; }).length;
+    return R.filter(function(r){ return ids.indexOf(r.cat) >= 0; }).length;
   }
 
-  function closePanel(){
-    if(panel) panel.classList.remove('open');
-    bar.querySelectorAll('.nav-top-btn.panel-open').forEach(b=>{
-      b.classList.remove('panel-open');
-    });
-    activeTopBtn = null;
-  }
-
-  function openPanel(btn, buildFn){
-    if(activeTopBtn === btn){ closePanel(); return; }
-    closePanel();
-    activeTopBtn = btn;
-    btn.classList.add('panel-open');
-    if(panelInner) panelInner.innerHTML = '';
-    buildFn();
-    if(panel) panel.classList.add('open');
-  }
-
-  function makeChip(lbl, c, onclick, isActive){
-    const b = document.createElement('button');
-    b.className = 'panel-btn' + (isActive ? ' active' : '');
-    b.innerHTML = lbl + (c!=null ? ' <span class="panel-cnt">(' + c + ')</span>' : '');
-    b.onclick = onclick;
+  function chip(lbl, c, clickFn, isAct){
+    var b = document.createElement('button');
+    b.className = 'panel-btn' + (isAct?' active':'');
+    b.innerHTML = lbl + (c!=null ? ' <span class="panel-cnt">('+c+')</span>' : '');
+    b.onclick = function(e){ e.stopPropagation(); clickFn(); };
     return b;
   }
 
-  function setActive(catId, hol, cats){
-    // Refresh active on all panel chips
-    panelInner && panelInner.querySelectorAll('.panel-btn').forEach(b=>{
-      b.classList.remove('active');
-    });
-  }
+  MENU_STRUCTURE.forEach(function(node, idx){
+    var key = node.id || node.key || ('grp'+idx);
 
-  MENU_STRUCTURE.forEach(node => {
-
-    /* ── Simple leaf (כל המתכונים, ספרדי-מרוקאי, etc.) ── */
+    /* simple leaf */
     if(node.id && !node.items){
-      const c = cnt(node.id);
-      const btn = document.createElement('button');
+      var c = cnt(node.id);
+      var btn = document.createElement('button');
       btn.className = 'nav-top-btn' + (ACT_CAT===node.id && !ACT_HOLIDAY && !ACT_CATS.length ? ' active' : '');
       btn.setAttribute('role','menuitem');
-      btn.innerHTML = node.lbl + (c ? ' <span class="nav-cnt">' + c + '</span>' : '');
-      btn.onclick = () => {
-        bar.querySelectorAll('.nav-top-btn').forEach(b=>b.classList.remove('active'));
+      btn.innerHTML = node.lbl + (c?'<span class="nav-cnt">'+c+'</span>':'');
+      btn.onclick = function(e){
+        e.stopPropagation();
+        closeNavPanel();
+        document.querySelectorAll('.nav-top-btn').forEach(function(b){ b.classList.remove('active'); });
         btn.classList.add('active');
-        closePanel();
         selCatHol(node.id, null, null);
       };
       bar.appendChild(btn);
       return;
     }
 
-    /* ── Group with dropdown ── */
-    const totalCnt = node.items
-      ? node.items.reduce((a,it)=>a + (it.id ? cnt(it.id) : it.ids ? cnt(it.ids) : 0), 0)
-      : (node.ids ? cnt(node.ids) : 0);
+    /* group */
+    var total = (node.items||[]).reduce(function(a,it){
+      return a + (it.ids ? cnt(it.ids) : it.id ? cnt(it.id) : 0);
+    }, 0);
 
-    const btn = document.createElement('button');
-    btn.className = 'nav-top-btn';
+    var hasActive = (node.items||[]).some(function(it){
+      if(it.ids) return it.ids.some(function(id){ return ACT_CATS.indexOf(id)>=0 || ACT_CAT===id; });
+      return it.id && ACT_CAT===it.id;
+    });
+
+    var btn = document.createElement('button');
+    btn.className = 'nav-top-btn' + (hasActive?' active':'');
     btn.setAttribute('role','menuitem');
     btn.setAttribute('aria-haspopup','true');
     btn.innerHTML = node.lbl
-      + (totalCnt ? ' <span class="nav-cnt">' + totalCnt + '</span>' : '')
-      + ' <span class="nav-arr">▾</span>';
-
-    // Check if any child is active → mark top btn active
-    const hasActive = node.items && node.items.some(it=>{
-      if(it.ids) return it.ids.some(id=>ACT_CATS.includes(id)||ACT_CAT===id);
-      if(it.id) return ACT_CAT===it.id;
-      return false;
-    });
-    if(hasActive) btn.classList.add('active');
-
-    btn.onclick = (e) => {
+      + (total?'<span class="nav-cnt">'+total+'</span>':'')
+      + '<span class="nav-arr">▾</span>';
+    btn.onclick = function(e){
       e.stopPropagation();
-      openPanel(btn, () => buildDropdown(node));
+      openNavPanel(key, btn, function(pi){ buildPanel(node, pi); });
     };
-
     bar.appendChild(btn);
   });
-
-  // Close panel when clicking outside
-  document.addEventListener('click', closePanel, {once:false});
-  bar.addEventListener('click', e=>e.stopPropagation());
-  if(panel) panel.addEventListener('click', e=>e.stopPropagation());
-
-  function buildDropdown(node){
-    if(!panelInner) return;
-    const row = document.createElement('div');
-    row.className = 'panel-row';
-
-    (node.items||[]).forEach(item => {
-
-      /* — Accordion sub-group (e.g. מנות עיקריות, חגים) — */
-      if(item.items || item.sub){
-        const subItems = item.items || item.sub || [];
-        const hdr = document.createElement('button');
-        hdr.className = 'panel-acc-hdr';
-        const ic = item.ids ? cnt(item.ids) : cnt(item.id);
-        hdr.innerHTML = item.lbl
-          + (ic ? ' <span class="panel-cnt">('+ic+')</span>' : '')
-          + ' <span class="acc-arr">▾</span>';
-        const body = document.createElement('div');
-        body.className = 'panel-acc-body';
-
-        // Add "all" for this group
-        if(item.ids){
-          const allC = makeChip('הכל ב' + item.lbl, cnt(item.ids),
-            ()=>{ bar.querySelectorAll('.nav-top-btn').forEach(b=>b.classList.remove('active'));
-                  selMultiCat(item.ids); closePanel(); },
-            ACT_CATS.length && item.ids.every(id=>ACT_CATS.includes(id)));
-          body.appendChild(allC);
-        }
-
-        subItems.forEach(s => {
-          if(s.sep){ const sep=document.createElement('span');sep.className='panel-sep';body.appendChild(sep);return; }
-          const sc = s.h ? (HOLIDAY_TAGS[s.h]||[]).length : cnt(s.id);
-          const isAct = s.h ? (ACT_CAT===s.id && ACT_HOLIDAY===s.h) : ACT_CAT===s.id && !ACT_HOLIDAY && !ACT_CATS.length;
-          const chip = makeChip(s.lbl, sc||null, ()=>{
-            bar.querySelectorAll('.nav-top-btn').forEach(b=>b.classList.remove('active'));
-            selCatHol(s.id, s.h||null, null);
-            closePanel();
-          }, isAct);
-          body.appendChild(chip);
-        });
-
-        hdr.onclick = () => {
-          const open = body.classList.toggle('open');
-          hdr.classList.toggle('open', open);
-        };
-        // Auto-open if has active child
-        const accActive = item.id && ACT_CAT===item.id;
-        const accHolActive = item.sub && item.sub.some(s=>s.h && ACT_CAT==='hol' && ACT_HOLIDAY===s.h);
-        if(accActive || accHolActive){ body.classList.add('open'); hdr.classList.add('open'); }
-
-        row.appendChild(hdr);
-        row.appendChild(body);
-        return;
-      }
-
-      /* — Multi-cat leaf (הכל, e.g. in Katamon group) — */
-      if(item.ids && !item.items){
-        const isAct = item.ids.every(id=>ACT_CATS.includes(id));
-        const chip = makeChip(item.lbl, cnt(item.ids), ()=>{
-          bar.querySelectorAll('.nav-top-btn').forEach(b=>b.classList.remove('active'));
-          selMultiCat(item.ids); closePanel();
-        }, isAct);
-        row.appendChild(chip);
-        return;
-      }
-
-      /* — Simple category chip — */
-      const ic = cnt(item.id);
-      const isAct = ACT_CAT===item.id && !ACT_HOLIDAY && !ACT_CATS.length;
-      const chip = makeChip(item.lbl, ic, ()=>{
-        bar.querySelectorAll('.nav-top-btn').forEach(b=>b.classList.remove('active'));
-        selCatHol(item.id, null, null); closePanel();
-      }, isAct);
-      row.appendChild(chip);
-    });
-
-    panelInner.appendChild(row);
-  }
 }
 
+function buildPanel(node, pi){
+  var row = document.createElement('div');
+  row.className = 'panel-row';
 
+  function cnt(ids){
+    if(!ids) return 0;
+    if(typeof ids === 'string') return ids==='all' ? R.length : R.filter(function(r){ return r.cat===ids; }).length;
+    return R.filter(function(r){ return ids.indexOf(r.cat) >= 0; }).length;
+  }
+  function sel(catId, hol){
+    document.querySelectorAll('.nav-top-btn').forEach(function(b){ b.classList.remove('active'); });
+    selCatHol(catId, hol||null, null);
+    closeNavPanel();
+  }
+  function selM(ids){
+    document.querySelectorAll('.nav-top-btn').forEach(function(b){ b.classList.remove('active'); });
+    selMultiCat(ids);
+    closeNavPanel();
+  }
+
+  (node.items||[]).forEach(function(item){
+
+    /* accordion sub-group */
+    if(item.items || item.sub){
+      var subItems = item.items || item.sub || [];
+      var ic = item.ids ? cnt(item.ids) : cnt(item.id);
+      var accWrap = document.createElement('div');
+      accWrap.className = 'panel-acc-wrap';
+
+      var hdr = document.createElement('button');
+      hdr.className = 'panel-acc-hdr';
+      hdr.innerHTML = item.lbl
+        + (ic?'<span class="panel-cnt">('+ic+')</span>':'')
+        + '<span class="acc-arr">▾</span>';
+
+      var body = document.createElement('div');
+      body.className = 'panel-acc-body';
+
+      if(item.ids){
+        var allIsAct = item.ids.every(function(id){ return ACT_CATS.indexOf(id)>=0; });
+        body.appendChild(chip('הכל ב'+item.lbl, cnt(item.ids), function(){ selM(item.ids); }, allIsAct));
+      }
+
+      subItems.forEach(function(s){
+        if(s.sep){ var hr=document.createElement('hr');hr.className='panel-sep-hr';body.appendChild(hr);return; }
+        var sc = s.h ? (HOLIDAY_TAGS[s.h]||[]).length : cnt(s.id);
+        var isAct = s.h ? (ACT_CAT===s.id && ACT_HOLIDAY===s.h) : (ACT_CAT===s.id && !ACT_HOLIDAY && !ACT_CATS.length);
+        body.appendChild(chip(s.lbl, sc||null, function(){ sel(s.id, s.h||null); }, isAct));
+      });
+
+      /* auto-open if relevant child active */
+      var shouldOpen = (item.id && ACT_CAT===item.id) ||
+        (item.sub && item.sub.some(function(s){ return s.h && ACT_CAT==='hol' && ACT_HOLIDAY===s.h; }));
+      if(shouldOpen){ body.classList.add('open'); hdr.classList.add('open'); }
+
+      hdr.onclick = function(e){
+        e.stopPropagation();
+        var open = body.classList.toggle('open');
+        hdr.classList.toggle('open', open);
+      };
+
+      accWrap.appendChild(hdr);
+      accWrap.appendChild(body);
+      row.appendChild(accWrap);
+      return;
+    }
+
+    /* multi-cat "all" */
+    if(item.ids && !item.items){
+      var isAct = item.ids.every(function(id){ return ACT_CATS.indexOf(id)>=0; });
+      row.appendChild(chip(item.lbl, cnt(item.ids), function(){ selM(item.ids); }, isAct));
+      return;
+    }
+
+    /* simple chip */
+    var ic2 = cnt(item.id);
+    var isAct2 = ACT_CAT===item.id && !ACT_HOLIDAY && !ACT_CATS.length;
+    row.appendChild(chip(item.lbl, ic2, function(){ sel(item.id, null); }, isAct2));
+  });
+
+  pi.appendChild(row);
+}
 
 function selCat(id,btn){
   ACT_CAT=id;SEARCH='';
@@ -19294,8 +19297,14 @@ function filtered(){
       (r.tip||'')].join(' ').toLowerCase();
     const term = SEARCH.trim().toLowerCase();
     // Check if term exists as a standalone word
-    const wordRe = new RegExp('(?:^|[\\s,.()\'";!?:\-])' + term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '(?:[\\s,.()\'";!?:\-]|$)');
-    const sok = wordRe.test(src) || src.includes(term + ' ') || src.startsWith(term) || src.endsWith(term) || src.includes(' ' + term);
+    // Strict whole-word search for Hebrew
+    // Normalize all punctuation to spaces, pad with spaces, then check for ' word '
+    const rawSrc = [r.title, r.desc, r.mem||'', catLbl(r.cat),
+      (r.ingr||[]).map(i=>i.i+' '+i.q).join(' '),
+      (r.tip||'')].join(' ').toLowerCase();
+    const src = ' ' + rawSrc.replace(/[,.'":;!?()\[\]{}\/\\|]/g,' ') + ' ';
+    const term = ' ' + SEARCH.trim().toLowerCase() + ' ';
+    const sok = src.includes(term);
     return cok && dok && fok && iok && sok;
   });
 }
@@ -19544,6 +19553,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fav counter
   if(typeof updateFavCounter === 'function') updateFavCounter();
 });;
+
 
 
 </script>
