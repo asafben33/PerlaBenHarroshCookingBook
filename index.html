@@ -830,6 +830,29 @@ ul, ol { list-style: none; }
 <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <script>
+const CATS = [
+  {id:'all',    lbl:'כל המתכונים'},
+  {id:'soups',  lbl:'מרקים'},
+  {id:'salads', lbl:'סלטים'},
+  {id:'veg',    lbl:'תבשילי ירקות'},
+  {id:'meat',   lbl:'בשר וקציצות'},
+  {id:'chick',  lbl:'עוף ושבת'},
+  {id:'fish',   lbl:'דגים'},
+  {id:'hol',    lbl:'חגים וחינה'},
+  {id:'des',    lbl:'מימונה וקינוחים'},
+  {id:'span',   lbl:'מורשת ספרד'},
+  {id:'iraq',   lbl:'עיראק'},
+  {id:'kurd',   lbl:'כורדיסטן'},
+  {id:'ashk',   lbl:'אשכנז'},
+  {id:'yem',    lbl:'תימן'},
+  {id:'pers',   lbl:'פרס'},
+  {id:'buk',    lbl:'בוכרה'},
+  {id:'tun',    lbl:'טוניסיה'},
+  {id:'isr',    lbl:'מטבח ישראלי'},
+  {id:'turk',   lbl:'יהדות טורקיה'}
+];
+
+
 
 
 
@@ -19137,8 +19160,10 @@ const MENU_STRUCTURE = [
 
 
 
+
 </script>
 <script>
+
 /* ═══ HEBREW MORPHOLOGICAL SEARCH ═══════════════════════════
    Normalises final-letters, strips prefixes, matches root+suffixes.
    "פול" matches פולים/פולות/פולי — NOT פולנטה/פולו
@@ -19284,7 +19309,7 @@ function filtered() {
 
     // Search — strict whole-word
     if (SEARCH) {
-    var _srchFields = [r.title, r.desc || '', r.mem || '', catLbl(r.cat),
+    var _srchFields = [r.title, r.desc || '', r.mem || '',
       (r.ingr || []).map(function(i) { return i.i + ' ' + i.q; }).join(' '),
       r.tip || ''].join(' ');
     if (!hebrewMorphSearch(_srchFields, SEARCH)) return false;
@@ -19837,8 +19862,11 @@ function clearSearch() {
    HELPERS
 ═══════════════════════════════════════════════ */
 function catLbl(id) {
-  var c = CATS.find(function(x) { return x.id === id; });
-  return c ? c.lbl : id;
+  if (!id) return '';
+  try {
+    var c = CATS.find(function(x) { return x.id === id; });
+    return c ? c.lbl : id;
+  } catch(e) { return id || ''; }
 }
 
 var HOL_NAMES = {
@@ -20054,6 +20082,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (r) setTimeout(function() { openM(id); }, 300);
   }
 });
+
 
 
 
