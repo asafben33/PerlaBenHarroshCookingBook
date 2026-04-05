@@ -3,11 +3,12 @@
 
 # Allow only project files
 !index.html
-!recipes.js
 !download_images.py
 !README.md
 !docs/
 !docs/**
 !images/
 !images/**
+!assets/
+!assets/**
 !.gitignore
