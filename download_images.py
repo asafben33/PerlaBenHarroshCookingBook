@@ -26,6 +26,7 @@ import json
 import time
 import shutil
 import logging
+import re
 import urllib.request
 from datetime import datetime
 
@@ -86,7 +87,9 @@ WIKI_HEADERS = {
     "Accept"     : "application/json",
 }
 
-DELAY_BETWEEN_REQUESTS = 0.5
+DELAY_BETWEEN_REQUESTS = 2.0    # increased to avoid Wikimedia 429
+RETRY_WAIT_ON_429      = 8.0    # wait before retrying after 429
+MAX_RETRIES            = 3      # max download retries per file
 MIN_FILE_SIZE_BYTES    = 5_000
 
 # ─────────────────────────────────────────────────────────────────
@@ -101,12 +104,12 @@ WIKI_ARTICLES = {
     "bamia": "Okra",
     "bean_salad": "Bean_salad",
     "bean_soup": "Bean_soup",
-    "beet_salad": "Beet_salad",
+    "beet_salad": "Beetroot",
     "beghrir": "Beghrir",
     "borscht": "Borscht",
-    "bourekas": "Borek",
+    "bourekas": "Burekas",
     "bread_rolls": "Bread_roll",
-    "brik": "Brik_(food)",
+    "brik": "Brik",
     "briouats": "Briouat",
     "cabbage_salad": "Coleslaw",
     "cake": "Cake",
@@ -118,7 +121,7 @@ WIKI_ARTICLES = {
     "cheese_kugel": "Kugel",
     "chermoula_fish": "Chermoula",
     "chicken_fruit": "Chicken",
-    "chicken_lemon": "Chicken_with_preserved_lemons_and_olives",
+    "chicken_lemon": "Moroccan_cuisine",
     "chicken_roast": "Roast_chicken",
     "chicken_soup": "Chicken_soup",
     "chicken_spiced": "Chicken_tikka_masala",
@@ -403,10 +406,13 @@ def resolve_wiki_thumbnail(article_title: str) -> str | None:
         req = urllib.request.Request(url, headers=WIKI_HEADERS)
         with urllib.request.urlopen(req, timeout=15) as resp:
             data = json.loads(resp.read())
-        if "originalimage" in data:
-            return data["originalimage"]["source"]
+        # Use thumbnail only — originalimage causes 429 rate-limit errors
         if "thumbnail" in data:
-            return data["thumbnail"]["source"]
+            src = data["thumbnail"]["source"]
+            # Request width=400 for smaller, faster download
+            src = re.sub(r"/\d+px-", "/400px-", src)
+            return src
+        return None
         return None
     except Exception as exc:
         log.warning(f"  Wikipedia API failed for {article_title!r}: {exc}")
@@ -424,18 +430,25 @@ def download_image(label: str, img_url: str, dest: str) -> str:
     if DRY_RUN:
         log.info(f"  DRY-RUN  {label}")
         return "ok"
-    try:
-        req = urllib.request.Request(img_url, headers=HEADERS)
-        with urllib.request.urlopen(req, timeout=20) as resp:
-            data = resp.read()
-        if len(data) < MIN_FILE_SIZE_BYTES:
-            raise ValueError(f"Response too small: {len(data)} bytes")
-        with open(dest, "wb") as fh:
-            fh.write(data)
-        return "ok"
-    except Exception as exc:
-        log.error(f"  FAIL  {label} — {exc}")
-        return "fail"
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            req = urllib.request.Request(img_url, headers=HEADERS)
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                data = resp.read()
+            if len(data) < MIN_FILE_SIZE_BYTES:
+                raise ValueError(f"Response too small: {len(data)} bytes")
+            with open(dest, "wb") as fh:
+                fh.write(data)
+            return "ok"
+        except Exception as exc:
+            err = str(exc)
+            if "429" in err and attempt < MAX_RETRIES:
+                log.warning(f"  429 on {label} — waiting {RETRY_WAIT_ON_429}s before retry {attempt+1}/{MAX_RETRIES}")
+                time.sleep(RETRY_WAIT_ON_429)
+                continue
+            log.error(f"  FAIL  {label} — {exc}")
+            return "fail"
+    return "fail"
 
 
 # ─────────────────────────────────────────────────────────────────
