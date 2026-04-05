@@ -292,11 +292,6 @@ const KW = [
   [['דג','מרוקאי'],         'fish_tagine'],
   [['דג'],                  'fish_tagine'],
 ];
-
-function getImages(r) {
-  /* Per-recipe unique local images — see download_images.py */
-  return [`./images/r-${r.id}-1.jpg`, `./images/r-${r.id}-2.jpg`];
-}
 /* Legacy — kept for G_CAT fallback only */
 function getImages(r) {
   /* Per-recipe unique local images — see download_images.py */
@@ -17209,142 +17204,8 @@ const R=[
    CATEGORIES
 ══════════════════════════════════════ */
 
-/* ══════════════════════════════════════
-   ALL RECIPES
-══════════════════════════════════════ */
-/* ── DIFFICULTY FILTER ── */
-let ACT_DIFF = 'all';
-let SHOW_FAVS = false;
-const FAV = new Set(JSON.parse(localStorage.getItem('perla_favs') || '[]'));
-
-function saveFavs() {
-  localStorage.setItem('perla_favs', JSON.stringify([...FAV]));
-  updateFavCounter();
-}
-
-function updateFavCounter() {
-  const el = document.getElementById('fav-counter');
-  if (el) {
-    el.textContent = FAV.size + ' ♥';
-    el.classList.toggle('show', FAV.size > 0);
-  }
-}
-
-function toggleFav(id, btn) {
-  if (FAV.has(id)) {
-    FAV.delete(id);
-    btn.classList.remove('fav-active');
-    const icon = document.getElementById('fi-' + id);
-    if (icon) icon.textContent = '♡';
-  } else {
-    FAV.add(id);
-    btn.classList.add('fav-active');
-    const icon = document.getElementById('fi-' + id);
-    if (icon) icon.textContent = '♥';
-    // pulse animation
-    btn.animate([{transform:'scale(1.4)'},{transform:'scale(1)'}],{duration:300});
-    showToast('נשמר למועדפים ♥');
-  }
-  saveFavs();
-  if (SHOW_FAVS) renderGrid();
-}
-
-function toggleFavFilter(btn) {
-  SHOW_FAVS = !SHOW_FAVS;
-  btn.classList.toggle('active', SHOW_FAVS);
-  document.getElementById('sec-title').textContent = SHOW_FAVS ? 'המועדפים שלי' : (ACT_CAT === 'all' ? 'כל המתכונים' : catLbl(ACT_CAT));
-  renderGrid();
-}
-
-function setDiff(diff, btn) {
-  ACT_DIFF = diff;
-  document.querySelectorAll('.diff-btn').forEach(b => {
-    if (['קל','בינוני','מאתגר','all'].some(d => b.textContent.trim() === d || b.textContent.trim() === 'הכל')) {
-      b.classList.remove('active');
-    }
-  });
-  btn.classList.add('active');
-  renderGrid();
-}
-
-/* ══════════════════════════════════════
-   STATE
-══════════════════════════════════════ */
-let ACT_CAT='all', SEARCH='';
-const catLbl=id=>(CATS.find(c=>c.id===id)||{}).lbl||id;
-
-/* ══════════════════════════════════════
-   INIT
-══════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('pill-cnt').textContent=R.length+' מתכונים';
-  buildNav(); renderGrid();
-  window.addEventListener('scroll',()=>document.getElementById('stb').classList.toggle('on',scrollY>450),{passive:true});
-  updateFavCounter();
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
-});
-
-/* ══════════════════════════════════════
-   COMMUNITY BANNER DATA
-══════════════════════════════════════ */
-const COMM_INFO={
-  iraq: {
-    h:'שכנות עיראק — בגדד בקטמון',
-    p:'מרגלית ושכנותיה מעיראק הביאו את מטבח בגדד לקטמון. קובות, דולמות, תמר הינדי — כל אלה נכנסו לבית אמא דרך הדלת של קומה שלישית.'
-  },
-  kurd: {
-    h:'שכנות כורדיסטן — הרי כורדיסטן בירושלים',
-    p:'נורה ושכנותיה מכורדיסטן לימדו את אמא את קובה הקדרה, הדמפוכת והכישקה. "אנחנו גם יהודים, גם כורדים, גם ירושלמים," אמרה נורה.'
-  },
-  ashk: {
-    h:'שכנות אשכנז — פולין ורוסיה בקטמון',
-    p:'רחל מפולין ושכנותיה מאשכנז הכניסו לשכונה את הצ׳ולנט, הגפילטע פיש, הבורשט והקוגל. "שתי מסורות — שתי שפות — אחד שולחן," אמרה רחל.'
-  },
-  yem: {
-    h:'שכנות תימן — עדן בירושלים',
-    p:'רחמה ויוסף התימניים גרו בקומה הראשונה. ריח הג׳חנון בשבת בבוקר, הלחוח עם הדבש — נודע בכל הבניין. "תימן — זה גן עדן שנסגר," אמרה רחמה.'
-  },
-  pers: {
-    h:'שכנות פרס — טהרן בקטמון',
-    p:'פאטמה מטהרן לימדה את אמא את הגורמה סבזי — שעות של קציצת עשבים. "הסוד הוא בסבלנות," אמרה. "ופרס — כולה סבלנות."'
-  },
-  buk: {
-    h:'שכנות בוכרה — סמרקנד בירושלים',
-    p:'שמואל ואסתר הבוכארים הכניסו לשכונה את הפלוב, הסמסה והמנטי. "בוכרה — זה לא מדינה," אמר שמואל. "זה דרך חיים."'
-  },
-  tun: {
-    h:'מטבח טוניסאי יהודי — ג׳רבה ותוניס',
-    p:'יהדות תוניסיה הביאה מטבח חריף, ריחני ועוצמתי: ברייק, חריסה, קוסקוס חריף ודג במלצוניה. הברייק הטוניסאי — אחד מסמלי המטבח היהודי הצפון-אפריקאי.'
-  },
-  isr: {
-    h:'מטבח ישראלי — הטעמים שגדלנו עליהם',
-    p:'הפלאפל, החומוס, השקשוקה, המג׳דרה — המטבח הישראלי הוא פסיפס של כל העדות. כל אחד הביא משהו, וביחד יצא משהו ייחודי בעולם.'
-  },
-  turk: {
-    h:'יהדות טורקיה — איסטנבול וסלוניקי',
-    p:'יהדות טורקיה הביאה לישראל את הבורקס, הקאדאיף, הסרמה ועוד. מורשת ספרד דרך האימפריה העות׳מאנית — מטבח עשיר ומיוחד.'
-  }
-};
-const COMM_CATS = new Set(['iraq','kurd','ashk','yem','pers','buk','tun','isr','turk']);
 
 
-/* ══════════════════════════════════════════════════════
-   MEGA MENU DATA
-══════════════════════════════════════════════════════ */
-const HOLIDAY_TAGS = {
-  shabbat:  ['c3','c5','cx1','holf3','ex33','hv2','holfx1','holfx2',
-             'holfx3','add45','hn9','hn10','hn12','holf5','as1','is28','is19'],
-  rosh:     ['holf1','hle3','var7','hv5','h1','h3','mne3'],
-  pesach:   ['holf4','hle2','holfx1','spf1'],
-  mimouna:  ['holf5','hn17','add27','hv4','d1','d2','d3','d4'],
-  henna:    ['h2','holf2','hn13','hn14','hn15','ex34','fin13','fin14',
-             'hv1','hw2','hn19','hv3','rare12'],
-  purim:    ['hle4'],
-  shavuot:  ['hle5','hw4','hle1','hn14'],
-  sukkot:   ['hw5'],
-  hanukkah: ['tr5','dv1','d2'],
-  kippur:   ['s1','s8'],
-};
 
 
 const MENU_STRUCTURE = [

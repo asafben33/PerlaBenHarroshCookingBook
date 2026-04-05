@@ -455,13 +455,12 @@ footer{background:var(--wood-d);border-top:3px solid var(--saffron);color:rgba(1
 .mi-grp-hdr .mi-arrow{opacity:.6;font-size:.7rem}
 </style>
 <script src="recipes.js"></script>
-<script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Cookbook",
   "name": "ספר הבישול של פרלה בן ארוש ז\"ל",
-  "description": "949 מתכונים ממטבחים יהודיים מסורתיים — מרוקו, ספרד, טורקיה, תימן, פרס, עיראק ועוד",
+  "description": "1014 מתכונים ממטבחים יהודיים מסורתיים — מרוקו, ספרד, טורקיה, תימן, פרס, עיראק ועוד",
   "author": {
     "@type": "Person",
     "name": "פרלה בן ארוש ז\"ל",
@@ -472,6 +471,7 @@ footer{background:var(--wood-d);border-top:3px solid var(--saffron);color:rgba(1
   "genre": ["מטבח מרוקאי", "מטבח ספרדי-אנדלוסי", "מטבח טוניסאי", "מטבח טורקי", "מטבח יהודי-ישראלי", "מטבח תימני", "מטבח עיראקי", "מטבח פרסי"]
 }
 </script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫕</text></svg>">
 </head>
 <body>
 
@@ -623,6 +623,23 @@ footer{background:var(--wood-d);border-top:3px solid var(--saffron);color:rgba(1
 </div>
 
 <script>
+
+/* ── Global State ── */
+let ACT_CAT     = 'all';
+let ACT_CATS    = [];          // multi-category filter (e.g. meat+chick+fish)
+let ACT_HOLIDAY = null;
+let ACT_DIFF    = 'all';
+let SEARCH      = '';
+let SHOW_FAVS   = false;
+let FAV;
+try { FAV = new Set(JSON.parse(localStorage.getItem('perla_favs')||'[]')); }
+catch(e){ FAV = new Set(); }
+let ING_TAGS    = new Set();
+let CUR_REC     = null;
+let TIMER_SEC   = 0;
+let TIMER_INT   = null;
+let BASE_SERVINGS = 4;
+
 
 const CATS=[
   {id:'all',   lbl:'כל המתכונים'},
@@ -1514,7 +1531,1567 @@ function observeLazyImgs() {
 
 /* Call observeLazyImgs after each renderGrid — done inline, no wrapper */
 
+/* ═══════════════════════════════════════════════════════════
+   INIT — called after ALL scripts loaded; all globals defined
+══════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('pill-cnt').textContent=R.length+' מתכונים';
+  buildNav(); renderGrid();
+  window.addEventListener('scroll',()=>document.getElementById('stb').classList.toggle('on',scrollY>450),{passive:true});
+  updateFavCounter();
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+});
+
+
 </script>
+</body>
+</html
+
+DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="ספר הבישול של פרלה בן ארוש ז״ל — 949 מתכונים מסורתיים: מרוקו, ספרד, טורקיה, תימן, פרס, עיראק, כורדיסטן, אשכנז, בוכרה, טוניסיה וישראל.">
+<title>ספר הבישול של פרלה בן ארוש ז"ל | 949 מתכונים יהודיים מסורתיים</title>
+<meta property="og:title" content="ספר הבישול של פרלה בן ארוש ז&quot;ל">
+<meta property="og:description" content="949 מתכונים ממטבחים יהודיים מסורתיים — מרוקו, ספרד, טורקיה, תימן, פרס, עיראק ועוד">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://perla-cooking.netlify.app">
+<meta name="theme-color" content="#1c0f08">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════ */
+:root{
+  --clay:#b84223;--clay-d:#8c2e14;--clay-l:#d4603a;
+  --saffron:#c49a0c;--saffron-l:#e8bb2a;--saffron-d:#9a7808;
+  --indigo:#1e3a6e;--green:#3d6e3a;
+  --parch:#faf3e0;--parch-2:#f3e8c8;--parch-3:#ece0b8;--cream:#fffdf6;
+  --wood-d:#1c0f08;--wood-m:#3d1a0a;--wood-l:#6b3520;
+  --ink:#1a0c06;--ink-m:#4a2a14;--ink-l:#8a6044;
+  --bdr:rgba(155,95,45,.2);
+  --sh-sm:0 2px 10px rgba(28,15,8,.12);
+  --sh-md:0 8px 32px rgba(28,15,8,.2);
+  --sh-lg:0 24px 64px rgba(28,15,8,.32);
+  --tr:.25s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Heebo',sans-serif;background:var(--parch);color:var(--ink);direction:rtl;text-align:right;line-height:1.65;overflow-x:hidden;min-height:100vh}
+img{display:block;max-width:100%}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+a{color:inherit;text-decoration:none}
+
+/* ═══ HEADER ═══ */
+.site-header{
+  background:linear-gradient(135deg,var(--wood-d) 0%,var(--wood-m) 55%,#5c2010 100%);
+  border-bottom:3px solid var(--saffron);
+  position:sticky;top:0;z-index:400;
+  box-shadow:0 4px 24px rgba(0,0,0,.42);
+}
+.hdr{max-width:1520px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.7rem 2rem;flex-wrap:wrap}
+.hdr-brand-name{font-family:'Frank Ruhl Libre',serif;font-size:clamp(1.15rem,2.5vw,1.7rem);font-weight:900;color:var(--saffron-l);text-shadow:0 2px 10px rgba(0,0,0,.4);line-height:1.2}
+.hdr-brand-sub{font-size:.72rem;color:rgba(228,188,100,.65);font-weight:300;letter-spacing:.1em;margin-top:.1rem}
+.hdr-orn{color:rgba(196,154,12,.38);font-size:1.3rem;letter-spacing:.35em;flex-shrink:0}
+.hdr-search{flex:1;max-width:380px;min-width:170px;position:relative}
+.hdr-search-ic{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);color:rgba(228,188,100,.45);pointer-events:none;width:15px;height:15px}
+#srch{width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(196,154,12,.28);border-radius:28px;color:#f0dcb0;padding:.58rem 2.4rem .58rem .9rem;font-family:'Heebo',sans-serif;font-size:.87rem;outline:none;direction:rtl;transition:var(--tr)}
+#srch::placeholder{color:rgba(228,188,100,.35)}
+#srch:focus{background:rgba(255,255,255,.13);border-color:var(--saffron-l);box-shadow:0 0 0 3px rgba(196,154,12,.16)}
+#srch-clr{position:absolute;left:.8rem;top:50%;transform:translateY(-50%);color:rgba(228,188,100,.55);font-size:1.1rem;display:none;line-height:1;padding:0 .15rem}
+#srch-clr.show{display:block}
+@media(max-width:650px){.hdr{padding:.6rem 1rem}.hdr-orn{display:none}}
+
+/* ═══ CAT NAV ═══ */
+.cat-nav{background:var(--wood-m);border-bottom:2.5px solid rgba(196,154,12,.32);overflow-x:auto;scrollbar-width:none;position:sticky;top:62px;z-index:350}
+.cat-nav::-webkit-scrollbar{display:none}
+.cat-inner{max-width:1520px;margin:0 auto;display:flex;padding:0 1.5rem}
+@media(max-width:640px){.cat-nav{top:54px}.cat-btn{font-size:.79rem;padding:.72rem .82rem}}
+
+/* ═══ HERO ═══ */
+.hero{background:linear-gradient(155deg,#120903 0%,#2c1208 42%,#501c08 100%);padding:4.5rem 2rem 4rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='rgba(196,154,12,.07)' stroke-width='1'%3E%3Cpolygon points='60,6 114,33 114,87 60,114 6,87 6,33'/%3E%3Cpolygon points='60,22 98,41 98,79 60,98 22,79 22,41'/%3E%3Ccircle cx='60' cy='60' r='15'/%3E%3Cline x1='60' y1='6' x2='60' y2='22'/%3E%3Cline x1='60' y1='98' x2='60' y2='114'/%3E%3Cline x1='6' y1='33' x2='22' y2='41'/%3E%3Cline x1='98' y1='79' x2='114' y2='87'/%3E%3Cline x1='114' y1='33' x2='98' y2='41'/%3E%3Cline x1='22' y1='79' x2='6' y2='87'/%3E%3C/g%3E%3C/svg%3E") repeat;pointer-events:none}
+.hero::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:350px;background:radial-gradient(ellipse,rgba(196,154,12,.1) 0%,transparent 68%);pointer-events:none}
+.hero-c{position:relative;z-index:1;max-width:820px;margin:0 auto;text-align:center}
+.hero-orn{color:var(--saffron);font-size:1.6rem;letter-spacing:.5em;margin-bottom:1.3rem;opacity:.65}
+.hero-h1{font-family:'Frank Ruhl Libre',serif;font-size:clamp(2.2rem,6.5vw,4.2rem);font-weight:900;color:#fff;line-height:1.12;margin-bottom:.5rem;text-shadow:0 4px 24px rgba(0,0,0,.55)}
+.hero-h1 em{color:var(--saffron-l);font-style:normal}
+.hero-h2{font-family:'Frank Ruhl Libre',serif;font-size:clamp(1rem,2.2vw,1.25rem);color:rgba(228,188,100,.7);font-weight:300;letter-spacing:.09em;margin-bottom:2.2rem}
+.hero-story{color:rgba(218,188,148,.8);font-size:clamp(.86rem,1.8vw,1.02rem);line-height:2;font-weight:300;max-width:680px;margin:0 auto 2.8rem}
+.hero-pills{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center}
+.hero-pill{background:rgba(196,154,12,.13);border:1.5px solid rgba(196,154,12,.32);color:var(--saffron-l);border-radius:30px;padding:.38rem 1.1rem;font-size:.79rem;font-weight:500;letter-spacing:.03em}
+@media(max-width:600px){.hero{padding:3rem 1rem 3rem}}
+
+/* ═══ MAIN ═══ */
+.main{max-width:1520px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
+.sec-head{display:flex;align-items:center;gap:1rem;margin-bottom:1.8rem;padding-bottom:.8rem;border-bottom:2px solid var(--bdr)}
+.sec-h2{font-family:'Frank Ruhl Libre',serif;font-size:clamp(1.3rem,3vw,1.85rem);font-weight:700;color:var(--clay)}
+.sec-count{font-size:.79rem;color:var(--ink-l);background:var(--parch-2);border:1px solid var(--bdr);border-radius:20px;padding:.17rem .7rem}
+.no-res{grid-column:1/-1;text-align:center;padding:5rem 1rem;color:var(--ink-l);font-family:'Frank Ruhl Libre',serif;font-size:1.2rem}
+.no-res::before{content:'✦';display:block;font-size:3rem;opacity:.2;margin-bottom:1rem}
+
+/* ═══ GRID ═══ */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.6rem}
+@media(max-width:500px){.grid{grid-template-columns:1fr;gap:1.1rem}}
+
+/* ═══ CARD ═══ */
+.card{background:var(--cream);border-radius:16px;border:1.5px solid var(--bdr);box-shadow:var(--sh-sm);overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:transform var(--tr),box-shadow var(--tr);animation:cIn .45s ease both}
+@keyframes cIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.card:nth-child(1){animation-delay:.04s}.card:nth-child(2){animation-delay:.09s}.card:nth-child(3){animation-delay:.14s}.card:nth-child(4){animation-delay:.19s}.card:nth-child(5){animation-delay:.23s}.card:nth-child(n+6){animation-delay:.28s}
+.card:hover{transform:translateY(-6px);box-shadow:var(--sh-md)}
+.card:focus-visible{outline:3px solid var(--saffron);outline-offset:2px}
+
+
+/* ══════════════════════════════════════════════════════
+   MEGA MENU — replaces flat tab nav
+══════════════════════════════════════════════════════ */
+.cat-nav{position:sticky;top:0;z-index:200;background:var(--wood-d);
+  border-bottom:1px solid rgba(196,154,12,.25);
+  box-shadow:0 2px 12px rgba(0,0,0,.35)}
+.cat-inner{display:flex;align-items:stretch;justify-content:center;
+  flex-wrap:wrap;direction:rtl;min-height:52px;overflow:visible;
+  padding:0 .5rem}
+
+/* ─── Top-level item ─── */
+.mi{position:relative;display:flex;align-items:stretch}
+.mi-btn{display:flex;align-items:center;gap:.3rem;padding:.7rem 1rem;
+  font-size:.82rem;font-weight:600;font-family:inherit;
+  color:var(--ink-l);background:none;border:none;cursor:pointer;
+  white-space:nowrap;border-bottom:3px solid transparent;
+  transition:color .18s,border-color .18s,background .18s}
+.mi-btn:hover,.mi:hover>.mi-btn,.mi-btn.act{
+  color:var(--saffron-l);border-bottom-color:var(--saffron-l);
+  background:rgba(196,154,12,.07)}
+.mi-arrow{font-size:.58rem;opacity:.55;
+  transition:transform .2s;display:inline-block}
+.mi:hover>.mi-btn .mi-arrow{transform:rotate(180deg)}
+.mi-cnt{background:rgba(196,154,12,.18);color:var(--saffron-l);
+  font-size:.62rem;padding:.05rem .38rem;border-radius:12px;
+  font-weight:500;margin-right:.25rem}
+
+/* ─── Dropdown ─── */
+.mi-drop{position:absolute;top:100%;right:0;
+  background:linear-gradient(160deg,var(--wood-d) 0%,#1a0b05 100%);
+  border:1px solid rgba(196,154,12,.3);
+  border-top:2px solid var(--saffron-l);
+  border-radius:0 0 12px 12px;
+  box-shadow:0 12px 30px rgba(0,0,0,.5);
+  min-width:200px;padding:.45rem 0;
+  opacity:0;visibility:hidden;
+  transform:translateY(-6px);
+  transition:opacity .18s,transform .18s,visibility .18s;
+  z-index:400}
+.mi:hover>.mi-drop{opacity:1;visibility:visible;transform:translateY(0)}
+
+/* Wide dropdown (for שכנות grid) */
+.mi-drop.wide{min-width:360px;
+  display:grid;grid-template-columns:1fr 1fr;
+  padding:.6rem}
+.mi-drop.wide .mi-ditem{display:block}
+
+/* ─── Dropdown item ─── */
+.mi-ditem{position:relative}
+.mi-dbtn{display:flex;align-items:center;justify-content:space-between;
+  width:100%;padding:.48rem 1.2rem;text-align:right;
+  font-size:.81rem;font-family:inherit;
+  color:var(--ink-l);background:none;border:none;cursor:pointer;
+  white-space:nowrap;transition:background .12s,color .12s}
+.mi-dbtn:hover,.mi-ditem:hover>.mi-dbtn,.mi-dbtn.act{
+  background:rgba(196,154,12,.13);color:var(--saffron-l)}
+.mi-dbtn-icon{font-size:.6rem;opacity:.5;margin-left:.4rem}
+.mi-divider{height:1px;background:rgba(196,154,12,.2);margin:.35rem .8rem}
+
+/* ─── Sub-dropdown (3rd level) ─── */
+.mi-sub{position:absolute;top:-2px;right:100%;
+  background:linear-gradient(160deg,var(--wood-d) 0%,#1a0b05 100%);
+  border:1px solid rgba(196,154,12,.3);
+  border-right:2px solid var(--saffron-l);
+  border-radius:12px 0 12px 12px;
+  box-shadow:-8px 12px 30px rgba(0,0,0,.5);
+  min-width:175px;padding:.45rem 0;
+  opacity:0;visibility:hidden;
+  transform:translateX(6px);
+  transition:opacity .16s,transform .16s,visibility .16s;
+  z-index:500}
+.mi-ditem:hover>.mi-sub{opacity:1;visibility:visible;transform:translateX(0)}
+
+/* ─── Mobile hamburger ─── */
+.ham-btn{display:none;flex-direction:column;gap:5px;
+  padding:.8rem 1rem;background:none;border:none;cursor:pointer}
+.ham-btn span{display:block;width:22px;height:2px;
+  background:var(--ink-l);transition:.2s;border-radius:2px}
+.ham-open .ham-btn span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.ham-open .ham-btn span:nth-child(2){opacity:0}
+.ham-open .ham-btn span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.ham-nav{display:flex;align-items:center;justify-content:center}
+
+@media(max-width:768px){
+  .ham-btn{display:flex}
+  .ham-nav{display:none;flex-direction:column;width:100%;
+    padding:.5rem 0;border-top:1px solid var(--bdr)}
+  .ham-nav.open{display:flex}
+  .cat-inner{justify-content:flex-end}
+  .mi{width:100%}
+  .mi-btn{width:100%;justify-content:space-between;padding:.6rem 1.2rem}
+  .mi-drop{position:static;opacity:1!important;visibility:visible!important;
+    transform:none!important;box-shadow:none;border:none;border-top:none;
+    border-radius:0;border-right:2px solid var(--saffron-l);margin-right:1.2rem;
+    background:rgba(0,0,0,.15)}
+  .mi:not(.mob-open)>.mi-drop{display:none}
+  .mi.mob-open>.mi-drop{display:block}
+  .mi-sub{position:static!important;opacity:1!important;visibility:visible!important;
+    transform:none!important;box-shadow:none;border:none;
+    border-right:2px solid rgba(196,154,12,.3);margin-right:1rem;
+    background:rgba(0,0,0,.1)}
+  .mi-ditem:not(.mob-open)>.mi-sub{display:none}
+  .mi-ditem.mob-open>.mi-sub{display:block}
+  .mi-drop.wide{grid-template-columns:1fr}
+}
+
+/* ─── Card image ─── */
+.c-img{position:relative;height:155px;overflow:hidden;flex-shrink:0;background:var(--parch-2)}
+.c-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transition:transform .5s ease;display:block;
+  /* hide broken-image clock icon */
+  color:transparent;background:transparent}
+/* Hide broken/unloaded images completely */
+.c-img img:not([src]),.c-img img[src=""]{display:none !important}
+.card:hover .c-img img{transform:scale(1.06)}
+.c-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+
+/* ─── Modal gallery strip ─── */
+.m-gal-strip{display:flex;gap:6px;padding:.5rem 1rem;overflow-x:auto;background:rgba(0,0,0,.1)}
+.m-gal-thumb{width:72px;height:54px;object-fit:cover;border-radius:5px;cursor:pointer;
+  opacity:.55;transition:opacity .2s;border:2px solid transparent;flex-shrink:0}
+.m-gal-thumb.active,.m-gal-thumb:hover{opacity:1;border-color:var(--saffron-l)}
+
+
+/* Category placeholder gradients — Morocco & Spain */
+.ph-s{background:linear-gradient(140deg,#6b1e0a,#a83522)}
+.ph-sa{background:linear-gradient(140deg,#1e4a12,#3d7a20)}
+.ph-v{background:linear-gradient(140deg,#2a4e26,#5a8040)}
+.ph-f{background:linear-gradient(140deg,#0e2e4a,#1a5280)}
+.ph-m{background:linear-gradient(140deg,#3e0e06,#6b2510)}
+.ph-c{background:linear-gradient(140deg,#4a3208,#8b6010)}
+.ph-h{background:linear-gradient(140deg,#3a0e38,#7a2070)}
+.ph-d{background:linear-gradient(140deg,#3e2008,#7a4510)}
+.ph-sp{background:linear-gradient(140deg,#0e1e4a,#1a3a80)}
+/* Ethnic community placeholder gradients */
+.ph-iraq{background:linear-gradient(140deg,#3d2800,#8b5e00)}
+.ph-kurd{background:linear-gradient(140deg,#1a3a0a,#3d7025)}
+.ph-ashk{background:linear-gradient(140deg,#0a0a3a,#1a2870)}
+.ph-yem{background:linear-gradient(140deg,#4a1200,#9a3010)}
+.ph-pers{background:linear-gradient(140deg,#2a0a3a,#5a1878)}
+.ph-buk{background:linear-gradient(140deg,#003a3a,#007878)}
+.ph-tun{background:linear-gradient(140deg,#3a0808,#c0392b)}
+.ph-isr{background:linear-gradient(140deg,#002060,#0057b8)}
+.ph-turk{background:linear-gradient(140deg,#5c0a00,#c0392b)}
+
+/* ── NAV GROUP SEPARATOR ── */
+
+/* ── COMMUNITY BANNER ── */
+.comm-banner{background:linear-gradient(135deg,#1a0c3a 0%,#0f1e3a 50%,#001a1a 100%);border-bottom:2px solid rgba(196,154,12,.3);padding:1.4rem 2rem}
+.comm-banner-in{max-width:1520px;margin:0 auto}
+.comm-banner-h{font-family:'Frank Ruhl Libre',serif;font-size:clamp(1rem,2.5vw,1.35rem);font-weight:700;color:rgba(228,210,160,.85);margin-bottom:.35rem}
+.comm-banner-p{font-size:.84rem;color:rgba(196,174,130,.55);line-height:1.7;font-weight:300;max-width:860px}
+
+/* ═══ MODAL OVERLAY ═══ */
+.ovl{display:none;position:fixed;inset:0;background:rgba(8,3,1,.87);z-index:600;overflow-y:auto;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);padding:1.5rem 1rem;align-items:flex-start;justify-content:center}
+.ovl.open{display:flex;animation:fIn .22s ease}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+
+/* ═══ MODAL BOX ═══ */
+.mbox{background:var(--parch);width:100%;max-width:940px;border-radius:22px;overflow:hidden;box-shadow:var(--sh-lg);animation:sUp .3s cubic-bezier(.22,.68,0,1.2)}
+@keyframes sUp{from{transform:translateY(28px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+.m-hero{height:330px;position:relative;overflow:hidden;background:var(--wood-d)}
+.m-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.m-hero-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.m-hero-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,3,1,.88) 0%,rgba(8,3,1,.28) 55%,transparent 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:1.8rem 2.2rem}
+.m-badge{background:var(--clay);color:#fff;font-size:.72rem;font-weight:700;padding:.25rem .78rem;border-radius:12px;letter-spacing:.04em;width:fit-content;margin-bottom:.65rem}
+.m-title{font-family:'Frank Ruhl Libre',serif;font-size:clamp(1.7rem,4vw,2.6rem);font-weight:900;color:#fff;text-shadow:0 3px 14px rgba(0,0,0,.6);line-height:1.15}
+.m-subdesc{color:rgba(218,188,148,.82);font-size:.9rem;margin-top:.4rem;font-weight:300}
+.m-progress-bar{height:4px;background:linear-gradient(to left,var(--saffron-l),var(--clay));transform-origin:right;transform:scaleX(0);transition:transform .12s}
+.m-cls{position:absolute;top:1rem;left:1rem;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:var(--tr);z-index:5}
+.m-cls:hover{background:var(--clay);transform:scale(1.1)}
+
+.m-body{padding:2rem 2.2rem 2.8rem;direction:rtl}
+@media(max-width:620px){.m-hero{height:240px}.m-hero-grad{padding:1.2rem}.m-body{padding:1.4rem 1.1rem 2.5rem}.ovl{padding:3rem 0 0;align-items:flex-end}.mbox{border-radius:20px 20px 0 0}}
+
+/* Memory */
+.m-mem{background:linear-gradient(135deg,#f9edce,#f0e0a8);border:1.5px solid rgba(196,154,12,.26);border-right:5px solid var(--saffron);border-radius:0 10px 10px 0;padding:1.1rem 1.3rem;margin-bottom:1.8rem;font-style:italic;color:var(--ink-m);font-size:.92rem;line-height:1.88}
+.m-mem-lbl{font-family:'Frank Ruhl Libre',serif;font-size:.72rem;font-weight:700;font-style:normal;color:var(--saffron-d);text-transform:uppercase;letter-spacing:.11em;margin-bottom:.45rem;display:flex;align-items:center;gap:.45rem}
+.m-mem-lbl::before{content:'';display:inline-block;width:18px;height:1.5px;background:var(--saffron)}
+
+/* Meta chips */
+.m-meta{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:2rem}
+.m-chip{background:var(--cream);border:1.5px solid var(--bdr);border-radius:20px;padding:.3rem .9rem;font-size:.79rem;color:var(--ink-m);display:flex;align-items:center;gap:.38rem}
+.m-chip strong{color:var(--clay);font-weight:700}
+
+/* Section titles in modal */
+.m-st{font-family:'Frank Ruhl Libre',serif;font-size:1.08rem;font-weight:700;color:var(--clay);margin-bottom:.88rem;display:flex;align-items:center;gap:.65rem}
+.m-st::after{content:'';flex:1;height:1.5px;background:linear-gradient(to left,transparent,var(--bdr))}
+
+/* Ingredients grid */
+.m-ingr{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:2rem}
+@media(max-width:520px){.m-ingr{grid-template-columns:1fr}}
+.m-ing{display:flex;align-items:flex-start;gap:.55rem;background:var(--cream);border:1.5px solid var(--bdr);border-radius:10px;padding:.55rem .82rem;font-size:.85rem;line-height:1.5}
+.m-dot{width:9px;height:9px;border-radius:50%;background:var(--saffron);margin-top:.38rem;flex-shrink:0}
+.m-qty{font-weight:700;color:var(--clay);margin-left:.2rem}
+.m-sep{grid-column:1/-1;font-weight:700;color:var(--clay);font-size:.79rem;padding:.3rem 0 .1rem;border-bottom:1px dashed var(--bdr)}
+
+/* Steps */
+.m-steps{list-style:none;margin-bottom:2rem}
+.m-step{display:flex;gap:1rem;padding:.95rem 0;border-bottom:1px solid var(--bdr)}
+.m-step:last-child{border-bottom:none}
+.m-snum{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--clay),var(--clay-l));color:#fff;font-family:'Frank Ruhl Libre',serif;font-weight:700;font-size:.88rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(168,53,34,.35)}
+.m-sbody{font-size:.9rem;line-height:1.76;color:var(--ink);padding-top:.22rem}
+.m-sdur{display:inline-block;background:var(--parch-2);border:1px solid var(--bdr);border-radius:6px;padding:.06rem .5rem;font-size:.71rem;color:var(--saffron-d);font-weight:700;margin-left:.4rem;white-space:nowrap;vertical-align:middle}
+
+/* Tip */
+.m-tip{background:linear-gradient(135deg,#fffde8,#fef8d4);border:1.5px solid rgba(196,154,12,.28);border-right:5px solid var(--saffron);border-radius:0 10px 10px 0;padding:1.1rem 1.3rem;margin-bottom:1.6rem;font-size:.9rem;color:var(--ink-m);line-height:1.8}
+.m-tip-lbl{font-family:'Frank Ruhl Libre',serif;font-weight:700;font-size:.77rem;color:var(--saffron-d);margin-bottom:.4rem;display:flex;align-items:center;gap:.5rem}
+.m-tip-lbl::before{content:'';display:inline-block;width:18px;height:1.5px;background:var(--saffron)}
+
+/* Video */
+.m-vbtn{display:inline-flex;align-items:center;gap:.55rem;background:var(--clay);color:#fff;border-radius:10px;padding:.7rem 1.4rem;font-size:.88rem;font-weight:600;letter-spacing:.02em;transition:background var(--tr),transform var(--tr);margin-top:.4rem}
+.m-vbtn:hover{background:var(--clay-l);transform:translateY(-2px)}
+.m-vbtn svg{width:18px;height:18px;flex-shrink:0}
+
+/* Scroll top */
+#stb{position:fixed;bottom:1.8rem;left:1.8rem;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--clay),var(--clay-l));color:#fff;font-size:1.15rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-md);z-index:300;opacity:0;pointer-events:none;transition:opacity var(--tr),transform var(--tr)}
+#stb.on{opacity:1;pointer-events:auto}
+#stb:hover{transform:translateY(-3px)}
+
+/* Footer */
+footer{background:var(--wood-d);border-top:3px solid var(--saffron);color:rgba(196,160,90,.68);text-align:center;padding:2.8rem 1rem 2.2rem;font-size:.84rem;line-height:2.2}
+.ft{font-family:'Frank Ruhl Libre',serif;font-size:1.25rem;font-weight:700;color:var(--saffron-l);margin-bottom:.5rem}
+.fq{font-style:italic;opacity:.5;font-size:.78rem;margin-top:.6rem}
+.fo{color:rgba(196,154,12,.28);font-size:1.2rem;letter-spacing:.5em;margin-top:.8rem}
+
+/* ── PRINT BUTTON ── */
+.m-print-btn{display:inline-flex;align-items:center;gap:.5rem;background:var(--parch-2);
+  color:var(--ink-m);border:1.5px solid var(--bdr);border-radius:10px;
+  padding:.6rem 1.2rem;font-size:.85rem;font-weight:500;
+  transition:background var(--tr);margin-top:.4rem;margin-right:.6rem;cursor:pointer}
+.m-print-btn:hover{background:var(--parch-3)}
+
+/* ── SERVINGS SCALER ── */
+.m-scale-wrap{display:flex;align-items:center;gap:.8rem;background:var(--cream);
+  border:1.5px solid var(--bdr);border-radius:10px;padding:.55rem 1rem;
+  margin-bottom:1.8rem;flex-wrap:wrap}
+.m-scale-lbl{font-size:.82rem;color:var(--ink-m);font-weight:500}
+.m-scale-btn{width:30px;height:30px;border-radius:50%;
+  background:var(--clay);color:#fff;font-size:1.1rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  transition:background var(--tr);flex-shrink:0;cursor:pointer}
+.m-scale-btn:hover{background:var(--clay-l)}
+.m-scale-num{font-family:'Frank Ruhl Libre',serif;font-size:1.1rem;
+  font-weight:700;color:var(--clay);min-width:28px;text-align:center}
+.m-scale-info{font-size:.75rem;color:var(--ink-l)}
+
+/* ── BACK TO TOP IN MODAL ── */
+.m-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--bdr)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--wood-d);color:var(--saffron-l);
+  font-family:'Frank Ruhl Libre',serif;font-size:.9rem;
+  padding:.7rem 1.6rem;border-radius:25px;
+  box-shadow:var(--sh-md);opacity:0;pointer-events:none;
+  transition:all .3s ease;z-index:800;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media print{
+  .site-header,.cat-nav,.hero,footer,#stb,.modal-overlay{display:none!important}
+  .main-wrap{padding:0}
+  .card{break-inside:avoid;page-break-inside:avoid}
+}
+
+/* DIFFICULTY FILTER */
+.diff-bar-wrap{background:var(--parch-2);border-bottom:1.5px solid var(--bdr)}
+.diff-bar{max-width:1520px;margin:0 auto;padding:.5rem 1.5rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.diff-lbl{font-size:.78rem;color:var(--ink-l);font-weight:500;margin-left:.3rem}
+.diff-btn{font-size:.75rem;padding:.28rem .8rem;border-radius:20px;background:var(--cream);border:1.5px solid var(--bdr);color:var(--ink-m);cursor:pointer;transition:var(--tr);font-family:'Heebo',sans-serif}
+.diff-btn:hover{background:var(--parch-3)}
+.diff-btn.active{background:var(--clay);color:#fff;border-color:var(--clay)}
+
+/* FAVORITES */
+.fav-btn{position:absolute;top:.65rem;left:.65rem;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.82);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:transform var(--tr);z-index:2}
+.fav-btn:hover{transform:scale(1.2)}
+.fav-btn.fav-active{color:var(--clay)}
+.fav-counter{display:none;background:var(--clay);color:#fff;font-size:.65rem;font-weight:700;border-radius:10px;padding:.1rem .45rem;margin-right:.4rem}
+.fav-counter.show{display:inline-block}
+
+/* ABOUT */
+.about-wrap{background:linear-gradient(135deg,var(--parch-2),var(--parch-3));border-bottom:2px solid var(--bdr);padding:2.5rem 2rem}
+.about-in{max-width:1520px;margin:0 auto;display:grid;grid-template-columns:180px 1fr;gap:2.5rem;align-items:center}
+.about-pic{width:160px;height:160px;border-radius:50%;background:linear-gradient(135deg,var(--clay-d),var(--wood-l));display:flex;align-items:center;justify-content:center;font-size:5rem;color:rgba(255,255,255,.22);border:4px solid var(--saffron);box-shadow:var(--sh-md)}
+.about-h{font-family:'Frank Ruhl Libre',serif;font-size:clamp(1.2rem,3vw,1.6rem);font-weight:900;color:var(--clay);margin-bottom:.5rem}
+.about-p{font-size:.9rem;line-height:1.95;color:var(--ink-m);font-weight:300}
+.about-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.about-tag{background:var(--cream);border:1.5px solid var(--bdr);border-radius:20px;padding:.28rem .9rem;font-size:.75rem;color:var(--ink-l)}
+@media(max-width:640px){.about-in{grid-template-columns:1fr;text-align:center}.about-pic{margin:0 auto}.about-tags{justify-content:center}}
+
+/* COOKING TIMER */
+.step-timer-btn{display:inline-flex;align-items:center;gap:.3rem;
+  background:var(--clay);color:#fff;border-radius:6px;
+  padding:.08rem .5rem;font-size:.68rem;font-weight:600;
+  cursor:pointer;margin-right:.35rem;vertical-align:middle;
+  transition:background var(--tr);border:none;font-family:'Heebo',sans-serif}
+.step-timer-btn:hover{background:var(--clay-l)}
+.step-timer-btn.running{background:var(--saffron-d);animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+
+/* TIMER WIDGET (fixed bottom right) */
+.timer-widget{position:fixed;bottom:1.8rem;right:1.8rem;
+  background:var(--wood-d);color:var(--saffron-l);
+  border:2px solid var(--saffron);border-radius:16px;
+  padding:.8rem 1.2rem;z-index:700;
+  box-shadow:var(--sh-lg);display:none;
+  font-family:'Frank Ruhl Libre',serif;min-width:160px}
+.timer-widget.show{display:block;animation:slideInRight .3s ease}
+@keyframes slideInRight{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+.timer-title{font-size:.72rem;opacity:.65;margin-bottom:.2rem}
+.timer-display{font-size:2rem;font-weight:900;letter-spacing:.05em;line-height:1}
+.timer-step{font-size:.72rem;opacity:.6;margin-top:.2rem;max-width:140px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timer-controls{display:flex;gap:.5rem;margin-top:.6rem}
+.timer-ctrl{flex:1;background:rgba(255,255,255,.1);color:var(--saffron-l);
+  border:1px solid rgba(196,154,12,.3);border-radius:8px;
+  padding:.3rem;font-size:.75rem;cursor:pointer;font-family:'Heebo',sans-serif;
+  text-align:center;transition:background var(--tr)}
+.timer-ctrl:hover{background:rgba(255,255,255,.2)}
+
+/* RANDOM RECIPE BUTTON */
+.random-btn{display:inline-flex;align-items:center;gap:.5rem;
+  background:transparent;border:1.5px solid rgba(196,154,12,.4);
+  color:var(--saffron-l);border-radius:28px;padding:.45rem 1.1rem;
+  font-family:'Frank Ruhl Libre',serif;font-size:.82rem;cursor:pointer;
+  transition:var(--tr);margin-right:.5rem}
+.random-btn:hover{background:rgba(196,154,12,.1);border-color:var(--saffron-l)}
+
+/* INGREDIENT SEARCH TOGGLE */
+.ing-search-wrap{background:var(--parch-2);border-bottom:1.5px solid var(--bdr);
+  padding:.5rem 1.5rem;display:none}
+.ing-search-wrap.show{display:block}
+.ing-search-inner{max-width:1520px;margin:0 auto;
+  display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
+.ing-search-lbl{font-size:.78rem;color:var(--ink-l);font-weight:500;white-space:nowrap}
+#ing-input{flex:1;min-width:200px;max-width:400px;
+  background:var(--cream);border:1.5px solid var(--bdr);border-radius:20px;
+  padding:.48rem 1rem;font-family:'Heebo',sans-serif;font-size:.85rem;
+  color:var(--ink);direction:rtl;outline:none;transition:var(--tr)}
+#ing-input:focus{border-color:var(--saffron);box-shadow:0 0 0 3px rgba(196,154,12,.12)}
+.ing-tag{background:var(--parch-3);border:1px solid var(--bdr);border-radius:12px;
+  padding:.18rem .6rem;font-size:.73rem;color:var(--ink-m);
+  display:inline-flex;align-items:center;gap:.3rem}
+.ing-tag button{background:none;border:none;color:var(--clay);cursor:pointer;
+  font-size:.9rem;line-height:1;padding:0}
+.ing-tags-list{display:flex;flex-wrap:wrap;gap:.4rem}
+
+/* Multi-cat group header button */
+.mi-grp-hdr{background:transparent;border:none;color:var(--ink-l);
+  font:600 .85rem/1 'Frank Ruhl Libre',serif;padding:.45rem .9rem;
+  cursor:pointer;display:flex;align-items:center;gap:.4rem;width:100%;text-align:right;
+  border-bottom:1px solid var(--bdr)}
+.mi-grp-hdr:hover,.mi-grp-hdr.act{color:var(--saffron-l)}
+.mi-grp-hdr .mi-arrow{opacity:.6;font-size:.7rem}
+</style>
+<script src="recipes.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Cookbook",
+  "name": "ספר הבישול של פרלה בן ארוש ז\"ל",
+  "description": "1014 מתכונים ממטבחים יהודיים מסורתיים — מרוקו, ספרד, טורקיה, תימן, פרס, עיראק ועוד",
+  "author": {
+    "@type": "Person",
+    "name": "פרלה בן ארוש ז\"ל",
+    "birthPlace": "קזבלנקה, מרוקו"
+  },
+  "inLanguage": "he",
+  "url": "https://perla-cooking.netlify.app",
+  "genre": ["מטבח מרוקאי", "מטבח ספרדי-אנדלוסי", "מטבח טוניסאי", "מטבח טורקי", "מטבח יהודי-ישראלי", "מטבח תימני", "מטבח עיראקי", "מטבח פרסי"]
+}
+</script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫕</text></svg>">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="hdr">
+    <div class="hdr-brand">
+      <div class="hdr-brand-name">ספר הבישול של פרלה בן ארוש ז"ל</div>
+      <div class="hdr-brand-sub">קזבלנקה · מרקש · מורשת ספרד | 18 מטבחים יהודיים מסורתיים — 949 מתכונים</div>
+    </div>
+    <div class="hdr-orn">✦ ✦ ✦</div>
+    <div class="hdr-search">
+      <svg class="hdr-search-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="srch" placeholder="חפשו מתכון, מרכיב, קטגוריה..." autocomplete="off" aria-label="חיפוש מתכון" oninput="doSearch(this.value)">
+      <button id="srch-clr" onclick="clearSearch()" aria-label="נקה">×</button>
+    </div>
+  </div>
+</header>
+
+<nav class="cat-nav" aria-label="קטגוריות">
+  <div class="cat-inner" id="cat-inner"></div>
+</nav>
+
+<section class="hero">
+  <div class="hero-c">
+    <div class="hero-orn" style="letter-spacing:.8em">✦ ✦ ✦</div>
+    <h1 class="hero-h1">המטבח של <em>אמא\סבתא פרלה</em></h1>
+    <p class="hero-h2">מרוקו · ספרד — טעמים שנולדו מאהבה</p>
+    <p class="hero-story">פרלה בן ארוש ז"ל נולדה בקזבלנקה וגדלה על ריחות השוק של מרוקו. נישאה לאיש ממשפחת קארו — צאצאי מגורשי ספרד 1492 — ולמדה את המטבח האנדלוסי מחמותה לבל. עם העלייה לישראל, הגיעו לשכונת הקטמון בירושלים. שם, בין שכנות מעיראק, כורדיסטן, אשכנז, תימן, פרס ובוכרה, הפך מטבחה לפסיפס שלם. כאן תמצאו גם את יהדות טורקיה וטוניסיה, ואת האוכל הישראלי שגדלנו עליו — 949 מתכונים שנשמרו לדורות.</p>
+    <div class="hero-pills">
+      <span class="hero-pill" id="pill-cnt">טוען...</span>
+      <span class="hero-pill">18 קטגוריות</span>
+      <span class="hero-pill">מרוקאי · ספרדי · טוניסאי · טורקי</span>
+      <span class="hero-pill">עיראק · כורדיסטן · תימן · פרס · בוכרה · אשכנז</span>
+      <span class="hero-pill">מטבח ישראלי</span>
+    </div>
+  </div>
+</section>
+
+
+<section class="about-wrap">
+  <div class="about-in">
+    <div class="about-pic"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="80" height="80" opacity=".35"><circle cx="50" cy="38" r="22" fill="rgba(196,154,12,.6)"/><ellipse cx="50" cy="82" rx="28" ry="18" fill="rgba(196,154,12,.4)"/><circle cx="43" cy="35" r="3" fill="rgba(28,15,8,.7)"/><circle cx="57" cy="35" r="3" fill="rgba(28,15,8,.7)"/><path d="M42 46 Q50 53 58 46" stroke="rgba(28,15,8,.6)" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+    <div>
+      <h2 class="about-h">פרלה בן ארוש ז"ל — המטבח שלה, הסיפור שלנו</h2>
+      <p class="about-p">נולדה בקזבלנקה, גדלה בין ריחות השוק המרוקאי ואהבה לבשל עוד לפני שלמדה לקרוא. נישאה לאיש ממשפחת קארו — צאצאי מגורשי ספרד בשנת 1492 — ולמדה את המטבח האנדלוסי מחמותה לבל. עם העלייה לישראל, הגיעה לשכונת הקטמון בירושלים. שם, בין שכנות מעיראק, כורדיסטן, אשכנז, תימן, פרס ובוכרה — כולן בישלו יחד, למדו אחת מהשנייה, ושלחו סירים הלוך ושוב בין הדלתות. ספר הבישול הזה הולך מעבר לשכנות הקטמון — הוא כולל גם את מורשת יהדות טורקיה, טוניסיה, ואת האוכל הישראלי שאנחנו כולנו גדלנו עליו. 949 מתכונים שנשמרו לדורות, ממה שסיפרה לילדיה.</p>
+      <div class="about-tags">
+        <span class="about-tag">קזבלנקה</span>
+        <span class="about-tag">מרקש</span>
+        <span class="about-tag">מורשת ספרד 1492</span>
+        <span class="about-tag">משפחת קארו</span>
+        <span class="about-tag">קטמון ירושלים</span>
+        <span class="about-tag">מטבח מרוקאי</span>
+        <span class="about-tag">מטבח אנדלוסי</span>
+        <span class="about-tag">יהדות טורקיה</span>
+        <span class="about-tag">יהדות טוניסיה</span>
+        <span class="about-tag">מטבח עיראקי</span>
+        <span class="about-tag">מטבח תימני</span>
+        <span class="about-tag">מטבח פרסי</span>
+        <span class="about-tag">מטבח בוכרי</span>
+        <span class="about-tag">מטבח ישראלי</span>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="comm-banner" id="comm-banner" style="display:none">
+  <div class="comm-banner-in">
+    <h2 class="comm-banner-h" id="comm-banner-h">שכנות הקטמון</h2>
+    <p class="comm-banner-p" id="comm-banner-p">בשכונת הקטמון בירושלים, בשנות ה-50 וה-60, גרו יחד עולים מכל קצוות העולם. הדלתות היו פתוחות, ריחות הבישול עברו בין הקומות, והמתכונים נדדו מיד ליד. כל לשונית כאן מציגה את מה שאמא למדה מאחת השכנות.</p>
+  </div>
+</section>
+<main class="main">
+  <div class="sec-head">
+    <h2 class="sec-h2" id="sec-title">כל המתכונים</h2>
+    <span class="sec-count" id="sec-cnt"></span>
+  </div>
+  <div class="grid" id="grid" role="list"></div>
+</main>
+
+<footer>
+  <div class="ft">לזכר נשמת פרלה בן ארוש ז"ל</div>
+  <div>קזבלנקה · מרקש · איסטנבול · ג׳רבה · בגדד · תהרן · סמרקנד | משפחת קארו — מגורשי ספרד 1492</div>
+  <div style="margin:.4rem 0;font-size:.8rem;opacity:.45">949 מתכונים מסורתיים שנשמרו לדורות</div>
+  <div class="fq">"הטעם הכי טוב בעולם הוא הטעם שזוכרים" — פרלה בן ארוש ז"ל</div>
+  <div style="margin-top:.8rem;font-size:.75rem;opacity:.3">
+    נבנה באהבה לזכרה | perla-cooking.netlify.app
+  </div>
+  <div class="fo">✦ ✦ ✦</div>
+</footer>
+
+<button id="stb" aria-label="חזרה לראש הדף" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<div class="ovl" id="ovl" role="dialog" aria-modal="true" onclick="ovlClose(event)">
+  <div class="mbox" id="mbox">
+    <div class="m-progress" id="m-progress" style="background:linear-gradient(to left,var(--saffron-l),var(--clay));height:4px;transform:scaleX(0);transform-origin:right;transition:transform .1s"></div>
+    <div class="m-hero" id="m-hero">
+      <button class="m-cls" onclick="closeM()" aria-label="סגור">✕</button>
+      <button onclick="navRecipe(-1)" aria-label="מתכון קודם"
+        style="position:absolute;top:1rem;right:4rem;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:1.1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;transition:background .2s"
+        onmouseover="this.style.background='rgba(184,66,35,.8)'" onmouseout="this.style.background='rgba(0,0,0,.45)'">›</button>
+      <button onclick="navRecipe(1)" aria-label="מתכון הבא"
+        style="position:absolute;top:1rem;right:7rem;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:1.1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;transition:background .2s"
+        onmouseover="this.style.background='rgba(184,66,35,.8)'" onmouseout="this.style.background='rgba(0,0,0,.45)'">‹</button>
+      <div class="m-hero-grad">
+        <div class="m-badge" id="m-badge" style="display:none"></div>
+        <h2 class="m-title" id="m-title"></h2>
+        <p class="m-subdesc" id="m-subdesc"></p>
+      </div>
+    </div>
+    <div class="m-body">
+      <div class="m-mem">
+        <div class="m-mem-lbl">זיכרון ממרוקו</div>
+        <div id="m-mem-txt"></div>
+      </div>
+      <div class="m-meta" id="m-meta"></div>
+      <h3 class="m-st">רכיבים</h3>
+      <div class="m-ingr" id="m-ingr"></div>
+      <h3 class="m-st">שלבי ההכנה</h3>
+      <ol class="m-steps" id="m-steps"></ol>
+      <div id="m-tip-wrap">
+        <h3 class="m-st">הטיפ של אמא פרלה</h3>
+        <div class="m-tip"><div class="m-tip-lbl">סוד הבישול</div><div id="m-tip-txt"></div></div>
+      </div>
+      <div class="m-actions">
+        <button class="m-print-btn" onclick="printRecipe()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+            <rect x="6" y="14" width="12" height="8"/>
+          </svg>
+          הדפס מתכון
+        </button>
+        <button class="m-print-btn" onclick="shareRecipe()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+          שתף מתכון
+        </button>
+      </div>
+
+      <div id="m-vid-wrap" style="display:none">
+        <h3 class="m-st">צפייה בהכנה</h3>
+        <a class="m-vbtn" id="m-vid-link" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.543 6.498C22 8.28 22 12 22 12s0 3.72-.457 5.502c-.254.985-.997 1.76-1.938 2.022C17.896 20 12 20 12 20s-5.893 0-7.605-.476c-.945-.266-1.687-1.04-1.938-2.022C2 15.72 2 12 2 12s0-3.72.457-5.502c.254-.985.997-1.76 1.938-2.022C6.107 4 12 4 12 4s5.896 0 7.605.476c.945.266 1.687 1.04 1.938 2.022zM10 15.5l6-3.5-6-3.5v7z"/></svg>
+          צפייה ביוטיוב
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+/* ── Global State ── */
+let ACT_CAT     = 'all';
+let ACT_CATS    = [];          // multi-category filter (e.g. meat+chick+fish)
+let ACT_HOLIDAY = null;
+let ACT_DIFF    = 'all';
+let SEARCH      = '';
+let SHOW_FAVS   = false;
+let FAV;
+try { FAV = new Set(JSON.parse(localStorage.getItem('perla_favs')||'[]')); }
+catch(e){ FAV = new Set(); }
+let ING_TAGS    = new Set();
+let CUR_REC     = null;
+let TIMER_SEC   = 0;
+let TIMER_INT   = null;
+let BASE_SERVINGS = 4;
+
+
+const CATS=[
+  {id:'all',   lbl:'כל המתכונים'},
+  {id:'soups', lbl:'מרקים'},
+  {id:'salads',lbl:'סלטים'},
+  {id:'veg',   lbl:'תבשילי ירקות'},
+  {id:'fish',  lbl:'דגים'},
+  {id:'meat',  lbl:'בשר וקציצות'},
+  {id:'chick', lbl:'עוף ושבת'},
+  {id:'hol',   lbl:'חגים וחינה'},
+  {id:'des',   lbl:'מימונה וקינוחים'},
+  {id:'span',  lbl:'מורשת ספרד'},
+  /* שכנות הקטמון */
+  {id:'iraq',  lbl:'שכנות עיראק'},
+  {id:'kurd',  lbl:'שכנות כורדיסטן'},
+  {id:'ashk',  lbl:'שכנות אשכנז'},
+  {id:'yem',   lbl:'שכנות תימן'},
+  {id:'pers',  lbl:'שכנות פרס'},
+  {id:'buk',   lbl:'שכנות בוכרה'},
+  /* מטבחים נוספים */
+  {id:'tun',   lbl:'מטבח טוניסאי'},
+  {id:'isr',   lbl:'מטבח ישראלי'},
+  {id:'turk',  lbl:'יהדות טורקיה'},
+];
+const PH={soups:'ph-s',salads:'ph-sa',veg:'ph-v',fish:'ph-f',meat:'ph-m',chick:'ph-c',hol:'ph-h',des:'ph-d',span:'ph-sp',iraq:'ph-iraq',kurd:'ph-kurd',ashk:'ph-ashk',yem:'ph-yem',pers:'ph-pers',buk:'ph-buk',tun:'ph-tun',isr:'ph-isr',turk:'ph-turk'};
+
+/* ══════════════════════════════════════════════════════════
+   GALLERY — multiple images per food type
+   Source: Wikimedia Commons (CC-BY-SA)
+══════════════════════════════════════════════════════════ */
+
+
+function catCount(id){ return id==='all'?R.length:R.filter(r=>r.cat===id).length; }
+
+function holCount(h){
+  if(!h) return R.filter(r=>r.cat==='hol').length;
+  const ids = new Set(HOLIDAY_TAGS[h]||[]);
+  return R.filter(r=>ids.has(r.id)).length;
+}
+
+function selCatHol(id, holiday, el){
+  // Deactivate all buttons
+  document.querySelectorAll('.mi-btn,.mi-dbtn').forEach(b=>b.classList.remove('act'));
+  if(el) el.classList.add('act');
+  ACT_CAT     = id;
+  ACT_HOLIDAY = holiday;
+  ACT_DIFF    = 'all';
+  SEARCH      = '';
+  const si = document.getElementById('srch');
+  if(si) si.value='';
+  // Update section title
+  const titleEl = document.getElementById('sec-title');
+  if(titleEl){
+    if(id==='all') titleEl.textContent='כל המתכונים';
+    else if(holiday){
+      const hNames={shabbat:'שבת',rosh:'ראש השנה',kippur:'יום כיפור',
+        pesach:'פסח',mimouna:'מימונה',hanukkah:'חנוכה',purim:'פורים',
+        shavuot:'שבועות',sukkot:'סוכות',henna:'חינה'};
+      titleEl.textContent = 'חגים: ' + (hNames[holiday]||holiday);
+    } else titleEl.textContent = catLbl(id);
+  }
+  renderGrid();
+  window.scrollTo({top:document.querySelector('.main')?.offsetTop||400, behavior:'smooth'});
+}
+
+function buildNav(){
+  const inner = document.getElementById('cat-inner');
+  inner.innerHTML='';
+
+  // Hamburger button for mobile
+  const hamBtn = document.createElement('button');
+  hamBtn.className='ham-btn';
+  hamBtn.setAttribute('aria-label','תפריט');
+  hamBtn.innerHTML='<span></span><span></span><span></span>';
+  const hamNav = document.createElement('div');
+  hamNav.className='ham-nav';
+  hamBtn.onclick=()=>{
+    inner.classList.toggle('ham-open');
+    hamNav.classList.toggle('open');
+  };
+  inner.appendChild(hamBtn);
+  inner.appendChild(hamNav);
+
+  MENU_STRUCTURE.forEach(node=>{
+    const mi = document.createElement('div');
+    mi.className='mi';
+
+    if(node.id){
+      // Simple leaf item
+      const btn = document.createElement('button');
+      btn.className='mi-btn';
+      const cntN = node.cnt ? catCount(node.id) : '';
+      btn.innerHTML = `${node.lbl}${cntN?' <span class="mi-cnt">'+cntN+'</span>':''}`;
+      if(node.id===ACT_CAT && !ACT_HOLIDAY) btn.classList.add('act');
+      btn.onclick=()=>selCatHol(node.id, null, btn);
+      mi.appendChild(btn);
+    } else {
+      // Group with dropdown
+      const btn = document.createElement('button');
+      btn.className='mi-btn';
+      // Check if any child is active
+      const childIds = (node.items||[]).map(i=>i.id).filter(Boolean);
+      const isActive = childIds.includes(ACT_CAT);
+      if(isActive) btn.classList.add('act');
+      btn.innerHTML=`${node.lbl} <span class="mi-arrow">▾</span>`;
+
+      // Mobile: toggle
+      btn.addEventListener('click', e=>{
+        if(window.innerWidth<=768){
+          e.stopPropagation();
+          mi.classList.toggle('mob-open');
+        }
+      });
+
+      const drop = document.createElement('div');
+      drop.className = 'mi-drop' + (node.wide?' wide':'');
+
+      // Group header that selects multiple cats (e.g. 'מנות עיקריות')
+      if(node.ids||false){
+        const hdrBtn=document.createElement('button');
+        hdrBtn.className='mi-grp-hdr';
+        const allIds=(node.ids||[]);
+        const active=allIds.every(c=>ACT_CATS.includes(c)||ACT_CAT===c);
+        if(active) hdrBtn.classList.add('act');
+        hdrBtn.innerHTML=`${node.lbl} <span class="mi-arrow">▾</span>`;
+        hdrBtn.onclick=(e)=>{
+          e.stopPropagation();
+          const d=mi.querySelector('.mi-drop');
+          if(window.innerWidth>768){ selMultiCat(allIds,hdrBtn); }
+          else{ if(d) d.classList.toggle('open'); }
+        };
+        mi.appendChild(hdrBtn);
+      }
+      (node.items||[]).forEach(item=>{
+        if(item.sub){
+          // Item with sub-dropdown
+          const di = document.createElement('div');
+          di.className='mi-ditem';
+          const db = document.createElement('button');
+          db.className='mi-dbtn';
+          if(item.id===ACT_CAT && !ACT_HOLIDAY) db.classList.add('act');
+          db.innerHTML=`<span>${item.lbl}</span><span class="mi-dbtn-icon">◂</span>`;
+          db.addEventListener('click', e=>{
+            if(window.innerWidth<=768){
+              e.stopPropagation();
+              di.classList.toggle('mob-open');
+            } else selCatHol(item.id, null, db);
+          });
+          const sub = document.createElement('div');
+          sub.className='mi-sub';
+          item.sub.forEach(s=>{
+            if(s.div){const d=document.createElement('div');d.className='mi-divider';sub.appendChild(d);return;}
+            const sb=document.createElement('button');
+            sb.className='mi-dbtn';
+            if(item.id===ACT_CAT && ACT_HOLIDAY===s.h) sb.classList.add('act');
+            const hc = holCount(s.h);
+            sb.innerHTML=`<span>${s.lbl}</span><span class="mi-cnt">${hc}</span>`;
+            sb.onclick=()=>selCatHol(s.id, s.h, sb);
+            sub.appendChild(sb);
+          });
+          di.appendChild(db);
+          di.appendChild(sub);
+          drop.appendChild(di);
+        } else {
+          // Regular dropdown item
+          const di = document.createElement('div');
+          di.className='mi-ditem';
+          const db = document.createElement('button');
+          db.className='mi-dbtn';
+          const isAct = item.id===ACT_CAT && !ACT_HOLIDAY;
+          if(isAct) db.classList.add('act');
+          db.innerHTML=`<span>${item.lbl}</span><span class="mi-cnt">${catCount(item.id)}</span>`;
+          db.onclick=()=>selCatHol(item.id, null, db);
+          di.appendChild(db);
+          drop.appendChild(di);
+        }
+      });
+
+      mi.appendChild(btn);
+      mi.appendChild(drop);
+    }
+
+    hamNav.appendChild(mi);
+  });
+}
+
+
+function updateCommBanner(id){
+  const banner = document.getElementById('comm-banner');
+  if(COMM_CATS.has(id) && COMM_INFO[id]){
+    document.getElementById('comm-banner-h').textContent = COMM_INFO[id].h;
+    document.getElementById('comm-banner-p').textContent = COMM_INFO[id].p;
+    banner.style.display = '';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+function selCat(id,btn){ selCatHol(id, null, btn); }
+function selMultiCat(ids,btn){
+  ACT_CATS=ids||[];
+  ACT_CAT='multi';
+  ACT_HOLIDAY=null;
+  SEARCH='';
+  document.getElementById('srch').value='';
+  document.getElementById('srch-clr').classList.remove('show');
+  document.querySelectorAll('.mi-btn,.mi-dbtn').forEach(b=>b.classList.remove('act'));
+  if(btn) btn.classList.add('act');
+  const ttl=document.getElementById('sec-title');
+  if(ttl) ttl.textContent='מנות עיקריות';
+  renderGrid();
+}
+
+/* ══════════════════════════════════════
+   SEARCH
+══════════════════════════════════════ */
+function doSearch(v){
+  SEARCH=v.trim().toLowerCase();
+  document.getElementById('srch-clr').classList.toggle('show',v.length>0);
+  if(SEARCH){ ACT_CAT='all'; ACT_CATS=[]; }
+  const ttl=document.getElementById('sec-title');
+  if(ttl) ttl.textContent=SEARCH?'תוצאות חיפוש: '+SEARCH:'כל המתכונים';
+  renderGrid();
+}
+function clearSearch(){document.getElementById('srch').value='';doSearch('');}
+
+/* ══════════════════════════════════════
+   FILTER & RENDER
+══════════════════════════════════════ */
+
+
+
+
+/* ─── Modal gallery ─── */
+let _mGalCur = 0, _mGalImgs = [];
+function buildModalGallery(hz, imgs) {
+  _mGalImgs = imgs; _mGalCur = 0;
+  hz.querySelectorAll('.m-hero-gallery,.m-hero-ph,.m-gal-prev,.m-gal-next,.m-gal-dots,.m-gal-count').forEach(e=>e.remove());
+  const wrap = document.createElement('div'); wrap.className='m-hero-gallery';
+  imgs.forEach((src,i) => {
+    const s = document.createElement('div');
+    s.className = 'm-gallery-slide' + (i===0?' active':'');
+    const img = document.createElement('img');
+    img.src = src; img.alt=''; img.loading = i===0?'eager':'lazy';
+    img.onerror = ()=>{ s.style.display='none'; };
+    s.appendChild(img); wrap.appendChild(s);
+  });
+  if(imgs.length > 1) {
+    // arrows
+    const prev = document.createElement('button'); prev.className='m-gal-prev'; prev.innerHTML='&#8249;'; prev.setAttribute('aria-label','תמונה קודמת');
+    const next = document.createElement('button'); next.className='m-gal-next'; next.innerHTML='&#8250;'; next.setAttribute('aria-label','תמונה הבאה');
+    prev.onclick = e => { e.stopPropagation(); mGalGo(_mGalCur-1); };
+    next.onclick = e => { e.stopPropagation(); mGalGo(_mGalCur+1); };
+    wrap.appendChild(prev); wrap.appendChild(next);
+    // dots
+    const dotsWrap = document.createElement('div'); dotsWrap.className='m-gal-dots';
+    imgs.forEach((_,i) => {
+      const d = document.createElement('button');
+      d.className='m-gal-dot'+(i===0?' on':'');
+      d.onclick = e => { e.stopPropagation(); mGalGo(i); };
+      dotsWrap.appendChild(d);
+    });
+    wrap.appendChild(dotsWrap);
+    // count badge
+    const cnt = document.createElement('div'); cnt.className='m-gal-count'; cnt.id='m-gal-count';
+    cnt.textContent = '1 / ' + imgs.length;
+    wrap.appendChild(cnt);
+  }
+  hz.insertBefore(wrap, hz.firstChild);
+}
+function mGalGo(n) {
+  const slides = document.querySelectorAll('.m-gallery-slide');
+  const dots   = document.querySelectorAll('.m-gal-dot');
+  const cnt    = document.getElementById('m-gal-count');
+  if(!slides.length) return;
+  slides[_mGalCur].classList.remove('active');
+  if(dots[_mGalCur]) dots[_mGalCur].classList.remove('on');
+  _mGalCur = (n + slides.length) % slides.length;
+  slides[_mGalCur].classList.add('active');
+  if(dots[_mGalCur]) dots[_mGalCur].classList.add('on');
+  if(cnt) cnt.textContent = (_mGalCur+1) + ' / ' + _mGalImgs.length;
+}
+
+function renderGrid(){
+  const list=filtered();
+  const g=document.getElementById('grid');
+  document.getElementById('sec-cnt').textContent=list.length+' מתכונים';
+  if(!list.length){
+    const msg = SHOW_FAVS
+      ? 'עוד לא שמרת מועדפים — לחצו על ♡ בכל כרטיס מתכון'
+      : 'לא נמצאו מתכונים — נסו חיפוש אחר';
+    g.innerHTML = `<div class="no-res">${msg}</div>`;
+    return;
+  }
+  g.innerHTML=list.map(r=>{
+    const ph=PH[r.cat]||'';
+    const imgs=getImages(r);
+    const src=imgs[0]||'';
+    const fallback=r.img||'';
+    const imgH=src?`<img data-src="${src}" alt="${r.title}"
+      class="lazy-img"
+      data-fallback="${fallback}"
+      onload="var ph=this.parentElement.querySelector('.c-ph');if(ph)ph.style.display='none';"
+      onerror="this.style.display='none';var ph=this.parentElement.querySelector('.c-ph');if(ph)ph.style.display='flex';if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.dataset.fallback='';}">`:'';
+    return`<article class="card" role="listitem" tabindex="0"
+      onclick="openM('${r.id}')" onkeydown="if(event.key==='Enter')openM('${r.id}')">
+      <div class="c-img">
+        ${imgH}
+        <button class="fav-btn${FAV.has(r.id)?' fav-active':''}" onclick="event.stopPropagation();toggleFav('${r.id}',this)" aria-label="שמור מועדף">
+          <span id="fi-${r.id}">${FAV.has(r.id)?'♥':'♡'}</span>
+        </button>
+        <div class="c-ph ${ph}"></div>
+        ${r.badge?`<span class="c-badge">${r.badge}</span>`:''}
+        <div class="c-arch"><svg viewBox="0 0 400 22" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,22 C100,0 300,0 400,22 Z" fill="var(--parch)"/></svg></div>
+      </div>
+      <div class="c-body">
+        <h3 class="c-title">${r.title}</h3>
+        <p class="c-desc">${r.desc}</p>
+        <div class="c-foot">
+          <span class="c-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>${r.time}</span>
+          <span class="c-diff">${r.diff}</span>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+  requestAnimationFrame(observeLazyImgs);
+}
+
+/* ══════════════════════════════════════
+   MODAL
+══════════════════════════════════════ */
+function openM(id){
+  const r=R.find(x=>x.id===id);if(!r)return;
+  // Store current recipe and init servings scaler
+  CUR_RECIPE = r;
+  const sm = (r.serv||'4').match(/\d+/);
+  BASE_SERVINGS = sm ? parseInt(sm[0]) : 4;
+  CUR_SERVINGS = BASE_SERVINGS;
+  const snEl = document.getElementById('m-scale-num');
+  const siEl = document.getElementById('m-scale-info');
+  if(snEl) snEl.textContent = BASE_SERVINGS;
+  if(siEl) siEl.textContent = '';
+  const hz=document.getElementById('m-hero');
+  hz.querySelectorAll('img,.m-hero-ph').forEach(e=>e.remove());
+  // Main hero image
+  const rImgs = getImages(r);
+  hz.querySelectorAll('img,.m-hero-ph,.m-gal-strip').forEach(e=>e.remove());
+  if(rImgs.length){
+    const img=document.createElement('img');
+    img.src=rImgs[0]; img.alt=r.title; img.loading='eager'; img
+    img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover';
+    img.onerror=()=>{if(rImgs[1]&&img.src!==rImgs[1]){img.src=rImgs[1];}else{img.remove();addPh();}};
+    hz.insertBefore(img,hz.firstChild);
+    // Thumbnail strip (if multiple images)
+    if(rImgs.length>1){
+      const strip=document.createElement('div');
+      strip.className='m-gal-strip';
+      rImgs.forEach((src,i)=>{
+        const t=document.createElement('img');
+        t.src=src; t.className='m-gal-thumb'+(i===0?' active':'');
+        t.alt='תמונה '+(i+1); t.loading='lazy';
+        t.onclick=()=>{
+          img.src=src;
+          strip.querySelectorAll('.m-gal-thumb').forEach(x=>x.classList.remove('active'));
+          t.classList.add('active');
+        };
+        strip.appendChild(t);
+      });
+      hz.parentElement.insertBefore(strip, hz.nextSibling);
+    }
+  } else { addPh(); }
+  function addPh(){const d=document.createElement('div');d.className='m-hero-ph '+(PH[r.cat]||'');hz.insertBefore(d,hz.firstChild);}
+  const b=document.getElementById('m-badge');
+  if(r.badge){b.textContent=r.badge;b.style.display='';}else b.style.display='none';
+  document.getElementById('m-title').textContent=r.title;
+  document.getElementById('m-subdesc').textContent=r.desc;
+  document.getElementById('m-mem-txt').textContent=r.mem||'';
+  document.getElementById('m-meta').innerHTML=[['קטגוריה',catLbl(r.cat)],['זמן',r.time],['קושי',r.diff],['מנות',r.serv]]
+    .map(([k,v])=>`<span class="m-chip"><strong>${k}:</strong> ${v}</span>`).join('');
+  document.getElementById('m-ingr').innerHTML=(r.ingr||[]).map(item=>{
+    if(!item.i)return`<div class="m-sep">${item.q}</div>`;
+    return`<div class="m-ing"><div class="m-dot"></div><div><span class="m-qty">${item.q}</span> ${item.i}</div></div>`;
+  }).join('');
+  document.getElementById('m-steps').innerHTML=(r.steps||[]).map((s,i)=>{
+    // Parse duration for timer button
+    const durMatch = s.t.match(/(\d+)\s*דק/);
+    const durSec = durMatch ? parseInt(durMatch[1])*60 : 0;
+    const timerBtn = durSec > 0
+      ? `<button class="step-timer-btn" onclick="startTimer(${durSec},'${s.t} — ${s.s.substring(0,25)}...',this)" title="הפעל טיימר"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-left:3px"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> ${s.t}</button>`
+      : `<span class="m-sdur">${s.t}</span>`;
+    return `<li class="m-step"><div class="m-snum">${i+1}</div><div class="m-sbody">${timerBtn} ${s.s}</div></li>`;
+  }).join('');
+  const tw=document.getElementById('m-tip-wrap');
+  if(r.tip){document.getElementById('m-tip-txt').textContent=r.tip;tw.style.display='';}else tw.style.display='none';
+  const vw=document.getElementById('m-vid-wrap');
+  if(r.vid){document.getElementById('m-vid-link').href=r.vid;vw.style.display='';}else vw.style.display='none';
+  document.getElementById('ovl').classList.add('open');
+  document.body.style.overflow='hidden';
+  document.getElementById('ovl').scrollTop=0;
+  const pb = document.getElementById('m-progress');
+  if(pb) pb.style.transform='scaleX(0)';
+  // Set navigation index
+  const navList = getNavList();
+  CURRENT_RECIPE_IDX = navList.findIndex(x => x.id === r.id);
+  // Render related recipes
+  renderRelated(r);
+}
+
+/* ══════════════════════════════
+   COOKING TIMER
+══════════════════════════════ */
+let timerInterval = null;
+let timerRemaining = 0;
+let timerPaused = false;
+let timerStepLabel = '';
+let timerActiveBtn = null;
+
+function startTimer(seconds, label, btn) {
+  // If clicking same button, pause/resume
+  if (timerActiveBtn === btn && timerInterval) {
+    timerPaused ? timerResume() : timerPauseFunc();
+    return;
+  }
+  // Stop any existing timer
+  timerStop();
+  timerRemaining = seconds;
+  timerStepLabel = label;
+  timerActiveBtn = btn;
+  timerPaused = false;
+  if (btn) btn.classList.add('running');
+  document.getElementById('timer-step-lbl').textContent = label;
+  document.getElementById('timer-pause-btn').textContent = 'השהה';
+  document.getElementById('timer-widget').classList.add('show');
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    if (!timerPaused) {
+      timerRemaining--;
+      updateTimerDisplay();
+      if (timerRemaining <= 0) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        document.getElementById('timer-display').textContent = '00:00';
+        if (timerActiveBtn) timerActiveBtn.classList.remove('running');
+        // Play alert sound via Web Audio
+        try {
+          const ctx = new AudioContext();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.frequency.setValueAtTime(880, ctx.currentTime);
+          gain.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
+          osc.start(); osc.stop(ctx.currentTime + 1);
+        } catch(e) {}
+        showToast('הטיימר הסתיים! ' + timerStepLabel.substring(0,20));
+      }
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerRemaining / 60);
+  const s = timerRemaining % 60;
+  document.getElementById('timer-display').textContent =
+    String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+
+function timerPauseFunc() {
+  timerPaused = true;
+  document.getElementById('timer-pause-btn').textContent = 'המשך';
+}
+function timerResume() {
+  timerPaused = false;
+  document.getElementById('timer-pause-btn').textContent = 'השהה';
+}
+function timerPause() { timerPaused ? timerResume() : timerPauseFunc(); }
+function timerStop() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  if (timerActiveBtn) timerActiveBtn.classList.remove('running');
+  timerActiveBtn = null; timerPaused = false;
+  document.getElementById('timer-widget').classList.remove('show');
+}
+
+/* ══════════════════════════════
+   INGREDIENT SEARCH
+══════════════════════════════ */
+let ING_TAGS = new Set();
+
+function toggleIngSearch(btn) {
+  const wrap = document.getElementById('ing-search-wrap');
+  const isOpen = wrap.classList.toggle('show');
+  btn.classList.toggle('active', isOpen);
+  if (isOpen) document.getElementById('ing-input').focus();
+  else clearIngSearch();
+}
+
+function ingSearchInput(val) {
+  if (val.endsWith(',') || val.endsWith(' ')) {
+    const tag = val.replace(/[, ]+$/, '').trim();
+    if (tag.length > 1) {
+      ING_TAGS.add(tag);
+      document.getElementById('ing-input').value = '';
+      renderIngTags();
+      renderGrid();
+    }
+  }
+}
+
+function renderIngTags() {
+  document.getElementById('ing-tags').innerHTML = [...ING_TAGS].map(t =>
+    `<span class="ing-tag">${t}<button onclick="removeIngTag('${t}')" aria-label="הסר">×</button></span>`
+  ).join('');
+}
+
+function removeIngTag(tag) {
+  ING_TAGS.delete(tag);
+  renderIngTags();
+  renderGrid();
+}
+
+function clearIngSearch() {
+  ING_TAGS.clear();
+  document.getElementById('ing-input').value = '';
+  renderIngTags();
+  renderGrid();
+}
+
+// Update filtered() to include ingredient tags
+const _origFiltered = filtered;
+
+/* ══════════════════════════════
+   RANDOM RECIPE
+══════════════════════════════ */
+function openRandomRecipe() {
+  const list = filtered();
+  if (!list.length) { showToast('אין מתכונים להצגה'); return; }
+  const r = list[Math.floor(Math.random() * list.length)];
+  openM(r.id);
+  showToast('מתכון אקראי: ' + r.title);
+}
+
+/* ══════════════════════════════
+   UPDATE FILTERED TO INCLUDE ING TAGS
+══════════════════════════════ */
+function filtered(){
+  return R.filter(r=>{
+    // Holiday sub-filter
+    let cok;
+    if(ACT_CATS.length>0){ cok=ACT_CATS.includes(r.cat); }
+    else if(ACT_CAT==='all') cok=true;
+    else if(ACT_CAT==='hol' && ACT_HOLIDAY){
+      const ids=new Set(HOLIDAY_TAGS[ACT_HOLIDAY]||[]);
+      cok=ids.has(r.id);
+    } else cok=r.cat===ACT_CAT;
+    const dok = ACT_DIFF==='all' || r.diff===ACT_DIFF;
+    const fok = !SHOW_FAVS || FAV.has(r.id);
+    const iok = ING_TAGS.size===0 || [...ING_TAGS].every(tag=>{
+      const allIngr=(r.ingr||[]).map(i=>i.i+' '+i.q).join(' ').toLowerCase();
+      return allIngr.includes(tag.toLowerCase());
+    });
+    if(!SEARCH) return cok && dok && fok && iok;
+    const h=[r.title,r.desc,r.mem||'',catLbl(r.cat),(r.ingr||[]).map(i=>i.i+' '+i.q).join(' '),(r.tip||'')].join(' ').toLowerCase();
+    return cok && dok && fok && iok && h.includes(SEARCH);
+  });
+}
+
+
+/* ══════════════════════
+   RELATED RECIPES
+══════════════════════ */
+function renderRelated(r) {
+  const wrap = document.getElementById('m-related-wrap');
+  const container = document.getElementById('m-related');
+  if (!wrap || !container) return;
+
+  // Find recipes in same category, excluding current
+  const same = R.filter(x => x.cat === r.cat && x.id !== r.id);
+  // Shuffle and take 4
+  const shuffled = same.sort(() => 0.5 - Math.random()).slice(0, 4);
+
+  if (!shuffled.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+
+  container.innerHTML = shuffled.map(rel => `
+    <div class="related-card" onclick="openM('${rel.id}')" tabindex="0"
+         onkeydown="if(event.key==='Enter')openM('${rel.id}')">
+      <div class="related-cat">${catLbl(rel.cat)}</div>
+      <div class="related-title">${rel.title}</div>
+      <div class="related-time">${rel.time}</div>
+    </div>`).join('');
+}
+
+/* ══════════════════════
+   PREV / NEXT RECIPE NAVIGATION
+══════════════════════ */
+let CURRENT_RECIPE_IDX = -1;
+
+function getNavList() {
+  return filtered();
+}
+
+function navRecipe(dir) {
+  const list = getNavList();
+  if (!list.length) return;
+  CURRENT_RECIPE_IDX = Math.max(0, Math.min(list.length - 1, CURRENT_RECIPE_IDX + dir));
+  openM(list[CURRENT_RECIPE_IDX].id);
+}
+
+// Keyboard left/right inside modal
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('ovl').classList.contains('open')) return;
+  if (e.key === 'ArrowRight') navRecipe(-1);
+  if (e.key === 'ArrowLeft')  navRecipe(1);
+});
+
+function closeM(){document.getElementById('ovl').classList.remove('open');document.body.style.overflow='';}
+function ovlClose(e){if(e.target===document.getElementById('ovl'))closeM();}
+
+/* ── SERVINGS SCALER ── */
+let BASE_SERVINGS = 4;
+let CUR_SERVINGS = 4;
+let CUR_RECIPE = null;
+
+function parseNum(str) {
+  if (!str) return null;
+  str = str.toString().trim();
+  // Handle fractions like ½ ¼ ¾
+  const frac = {'½':0.5,'¼':0.25,'¾':0.75,'⅓':0.333,'⅔':0.667,'⅛':0.125,'⅜':0.375};
+  for (const [k,v] of Object.entries(frac)) str = str.replace(k, v + ' ');
+  // Handle ranges like 4–6
+  const range = str.match(/(\d+\.?\d*)\s*[–-]\s*(\d+\.?\d*)/);
+  if (range) return (parseFloat(range[1]) + parseFloat(range[2])) / 2;
+  const num = parseFloat(str.match(/(\d+\.?\d*)/)?.[1]);
+  return isNaN(num) ? null : num;
+}
+
+function fmtNum(n) {
+  if (n === Math.round(n)) return n.toString();
+  const fracs = [[0.5,'½'],[0.25,'¼'],[0.75,'¾'],[0.333,'⅓'],[0.667,'⅔'],[0.125,'⅛']];
+  const whole = Math.floor(n);
+  const frac = n - whole;
+  for (const [v,s] of fracs) {
+    if (Math.abs(frac - v) < 0.05) return (whole > 0 ? whole + ' ' : '') + s;
+  }
+  return n.toFixed(1).replace(/\.0$/, '');
+}
+
+function scaleServings(delta) {
+  CUR_SERVINGS = Math.max(1, Math.min(20, CUR_SERVINGS + delta));
+  document.getElementById('m-scale-num').textContent = CUR_SERVINGS;
+  const ratio = CUR_SERVINGS / BASE_SERVINGS;
+  document.getElementById('m-scale-info').textContent =
+    ratio === 1 ? '' : `(×${ratio.toFixed(1).replace(/\.0$/, '')})`;
+  // Re-render ingredients with scaled amounts
+  if (!CUR_RECIPE) return;
+  document.getElementById('m-ingr').innerHTML = (CUR_RECIPE.ingr || []).map(item => {
+    if (!item.i) return `<div class="m-sep">${item.q}</div>`;
+    const num = parseNum(item.q);
+    let display = item.q;
+    if (num !== null && ratio !== 1) {
+      const scaled = num * ratio;
+      const orig = item.q.toString();
+      display = orig.replace(/(\d+\.?\d*[½¼¾⅓⅔⅛]?|\d*[½¼¾⅓⅔⅛])/, fmtNum(scaled));
+    }
+    return `<div class="m-ing"><div class="m-dot"></div><div><span class="m-qty">${display}</span> ${item.i}</div></div>`;
+  }).join('');
+}
+
+/* ── PRINT RECIPE ── */
+function printRecipe() {
+  const r = CUR_RECIPE;
+  if (!r) return;
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<title>${r.title} — ספר הבישול של פרלה בן ארוש ז"ל</title>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&family=Heebo:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Heebo',sans-serif;direction:rtl;text-align:right;max-width:750px;margin:2rem auto;padding:1rem 2rem;color:#1a0c06;line-height:1.7}
+  h1{font-family:'Frank Ruhl Libre',serif;font-size:2rem;margin-bottom:.3rem}
+  h2{font-family:'Frank Ruhl Libre',serif;font-size:1.2rem;color:#b84223;margin:1.5rem 0 .6rem;border-bottom:2px solid #f3e8c8;padding-bottom:.3rem}
+  .meta{display:flex;gap:1rem;flex-wrap:wrap;margin:.5rem 0 1.5rem;font-size:.85rem;color:#8a6044}
+  .chip{background:#f3e8c8;padding:.2rem .7rem;border-radius:10px}
+  .mem{background:#f9edce;border-right:4px solid #c49a0c;padding:.8rem 1rem;margin:1rem 0;font-style:italic;font-size:.9rem;color:#4a2a14;border-radius:0 8px 8px 0}
+  .ingr-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}
+  .ing{background:#fffdf6;border:1px solid rgba(155,95,45,.2);border-radius:8px;padding:.4rem .7rem;font-size:.88rem;display:flex;gap:.5rem;align-items:flex-start}
+  .dot{width:8px;height:8px;border-radius:50%;background:#c49a0c;margin-top:.4rem;flex-shrink:0}
+  .qty{font-weight:700;color:#b84223}
+  .steps{list-style:none;padding:0}
+  .step{display:flex;gap:.8rem;padding:.7rem 0;border-bottom:1px solid #f3e8c8}
+  .step-n{width:28px;height:28px;border-radius:50%;background:#b84223;color:#fff;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .step-t{color:#9a7808;font-size:.72rem;font-weight:700;background:#f3e8c8;padding:.05rem .45rem;border-radius:5px;margin-left:.3rem}
+  .tip{background:#fffde8;border-right:5px solid #c49a0c;padding:.8rem 1rem;font-size:.88rem;color:#4a2a14;border-radius:0 8px 8px 0;margin:1rem 0}
+  .footer{margin-top:2rem;text-align:center;font-size:.75rem;color:#9a6040;border-top:1px solid #f3e8c8;padding-top:1rem}
+  .sep{grid-column:1/-1;font-weight:700;color:#b84223;font-size:.78rem;padding:.25rem 0;border-bottom:1px dashed rgba(155,95,45,.2)}
+  @media print{body{margin:.5rem;padding:.5rem 1rem}h1{font-size:1.5rem}}
+
+/* RELATED RECIPES */
+.related-card{background:var(--cream);border:1.5px solid var(--bdr);
+  border-radius:10px;padding:.65rem .9rem;cursor:pointer;
+  transition:var(--tr);min-width:150px;max-width:200px}
+.related-card:hover{background:var(--parch-2);transform:translateY(-2px);box-shadow:var(--sh-sm)}
+.related-cat{font-size:.65rem;color:var(--saffron-d);font-weight:600;
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:.2rem}
+.related-title{font-family:'Frank Ruhl Libre',serif;font-size:.88rem;
+  font-weight:700;color:var(--ink);line-height:1.3}
+.related-time{font-size:.72rem;color:var(--ink-l);margin-top:.2rem}
+</style>
+</head>
+<body>
+<h1>${r.title}</h1>
+<div class="meta">
+  <span class="chip">זמן: ${r.time}</span>
+  <span class="chip">קושי: ${r.diff}</span>
+  <span class="chip">מנות: ${CUR_SERVINGS !== BASE_SERVINGS ? CUR_SERVINGS + ' (מותאם)' : r.serv}</span>
+</div>
+<div class="mem"><strong>זיכרון ממרוקו:</strong> ${r.mem || ''}</div>
+<h2>רכיבים</h2>
+<div class="ingr-grid">
+${(r.ingr||[]).map(i => !i.i ? `<div class="sep">${i.q}</div>` :
+  `<div class="ing"><div class="dot"></div><div><span class="qty">${i.q}</span> ${i.i}</div></div>`).join('')}
+</div>
+<h2>שלבי ההכנה</h2>
+<ol class="steps">
+${(r.steps||[]).map((s,n) => `<li class="step"><div class="step-n">${n+1}</div><div><span class="step-t">${s.t}</span>${s.s}</div></li>`).join('')}
+</ol>
+${r.tip ? `<h2>הטיפ של אמא פרלה</h2><div class="tip">${r.tip}</div>` : ''}
+<div class="footer">ספר הבישול של פרלה בן ארוש ז"ל | perla-cooking.netlify.app</div>
+</body></html>`);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 600);
+}
+
+/* ── SHARE RECIPE ── */
+function shareRecipe() {
+  const r = CUR_RECIPE;
+  if (!r) return;
+  const text = `מתכון: ${r.title}
+מתוך ספר הבישול של פרלה בן ארוש ז"ל
+https://perla-cooking.netlify.app`;
+  if (navigator.share) {
+    navigator.share({ title: r.title, text: text, url: 'https://perla-cooking.netlify.app' })
+      .catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => showToast('הקישור הועתק!'));
+  }
+}
+
+/* ── TOAST ── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ── SWIPE TO CLOSE MODAL (mobile) ── */
+(function(){
+  let startY = 0;
+  const ovl = document.getElementById('modal-overlay');
+  if (!ovl) return;
+  ovl.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, {passive:true});
+  ovl.addEventListener('touchend', e => {
+    const dy = e.changedTouches[0].clientY - startY;
+    const box = document.getElementById('mbox');
+    if (box && !box.contains(e.target) && dy > 60) closeM();
+  }, {passive:true});
+})();
+
+/* ── KEYBOARD NAVIGATION ── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeM();
+  if (e.key === 'f' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault();
+    document.getElementById('srch').focus();
+  }
+});
+
+/* ── SMOOTH SCROLL TOP IN MODAL ── */
+document.addEventListener('DOMContentLoaded', () => {
+  const ovl = document.getElementById('modal-overlay');
+  if (ovl) {
+    ovl.addEventListener('scroll', () => {
+      const pct = ovl.scrollTop / (ovl.scrollHeight - ovl.clientHeight);
+      const bar = document.getElementById('m-progress');
+      if (bar) bar.style.transform = 'scaleX(' + Math.min(1, pct || 0) + ')';
+    }, {passive:true});
+  }
+});
+
+
+/* ══════════════════════════════════════
+   LAZY IMAGE LOADER — IntersectionObserver
+   Prevents 429 by loading only visible images
+══════════════════════════════════════ */
+const _imgObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting) {
+      const img = entry.target;
+      if(img.dataset.src) {
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+        _imgObserver.unobserve(img);
+      }
+    }
+  });
+}, { rootMargin: '200px 0px', threshold: 0.01 });
+
+function observeLazyImgs() {
+  document.querySelectorAll('img.lazy-img[data-src]').forEach(img => {
+    _imgObserver.observe(img);
+  });
+}
+
+/* ══════════════════════════════════════
+   DEBUG LOG PANEL
+══════════════════════════════════════ */
+(function() {
+  const panel = document.createElement('div');
+  panel.id = 'dbg-panel';
+  panel.style.cssText = [
+    'position:fixed','bottom:0','left:0','right:0',
+    'max-height:220px','overflow-y:auto',
+    'background:rgba(0,0,0,.88)','color:#0f0',
+    'font:12px/1.5 monospace','padding:.4rem .7rem',
+    'z-index:99999','direction:ltr',
+    'border-top:2px solid #0f0',
+    'display:none'
+  ].join(';');
+
+  const toggle = document.createElement('button');
+  toggle.id = 'dbg-toggle';
+  toggle.textContent = 'DEBUG';
+  toggle.style.cssText = [
+    'position:fixed','bottom:0','left:50%','transform:translateX(-50%)',
+    'background:#111','color:#0f0','border:1px solid #0f0',
+    'font:11px monospace','padding:2px 10px',
+    'cursor:pointer','z-index:100000','border-radius:4px 4px 0 0'
+  ].join(';');
+
+  toggle.onclick = () => {
+    const on = panel.style.display === 'none';
+    panel.style.display = on ? 'block' : 'none';
+    toggle.textContent = on ? 'HIDE DEBUG' : 'DEBUG';
+  };
+
+  document.body.appendChild(panel);
+  document.body.appendChild(toggle);
+
+  let logCount = 0;
+  function dbgLog(type, msg, color) {
+    logCount++;
+    const line = document.createElement('div');
+    line.style.color = color || '#0f0';
+    line.textContent = `[${logCount}] [${type}] ${msg}`;
+    panel.appendChild(line);
+    panel.scrollTop = panel.scrollHeight;
+    if(logCount <= 3) panel.style.display = 'block'; // auto-show first errors
+  }
+
+  // Intercept console
+  const _origError = console.error.bind(console);
+  const _origWarn  = console.warn.bind(console);
+  console.error = (...a) => { dbgLog('ERR', a.join(' '), '#f55'); _origError(...a); };
+  console.warn  = (...a) => { dbgLog('WARN', a.join(' '), '#fa0'); _origWarn(...a); };
+
+  // Track image errors globally
+  document.addEventListener('error', e => {
+    if(e.target && e.target.tagName === 'IMG') {
+      const src = e.target.src || e.target.dataset?.src || '(no src)';
+      const short = src.split('/').slice(-1)[0] || src.slice(-40);
+      dbgLog('IMG-FAIL', short, '#f88');
+    }
+  }, true);
+
+  // Track image successes (first 5 only)
+  let imgOk = 0;
+  document.addEventListener('load', e => {
+    if(e.target && e.target.tagName === 'IMG' && imgOk < 5) {
+      imgOk++;
+      const short = (e.target.src||'').split('/').slice(-1)[0];
+      dbgLog('IMG-OK', short, '#4f4');
+    }
+  }, true);
+
+  window._dbgLog = dbgLog;
+  window._dbgPanel = panel;
+})();
+
+/* Call observeLazyImgs after each renderGrid — done inline, no wrapper */
+
+/* ═══════════════════════════════════════════════════════════
+   INIT — called after ALL scripts loaded; all globals defined
+══════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('pill-cnt').textContent=R.length+' מתכונים';
+  buildNav(); renderGrid();
+  window.addEventListener('scroll',()=>document.getElementById('stb').classList.toggle('on',scrollY>450),{passive:true});
+  updateFavCounter();
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+});
+
+
 </script>
 </body>
 </html>
