@@ -30,7 +30,7 @@ except ImportError:
 # ══════════════════════════════════════════════════
 SCRIPT_DIR  = Path(__file__).parent
 IMG_DIR     = SCRIPT_DIR / "images"          # תיקיית פלט — תמיד images/
-LOG_FILE    = SCRIPT_DIR / "/logs/download_images.log"
+LOG_FILE    = SCRIPT_DIR / "./logs/download_images.log"
 
 # פרוקסי לסקריפט ההורדה בלבד.  None = ללא פרוקסי
 PROXY       = "http://pac.gov.il:8080"
