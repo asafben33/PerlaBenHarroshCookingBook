@@ -18718,6 +18718,62 @@ const R=[
 
 
 
+/* ── Holiday tag mapping (recipe IDs per holiday) ── */
+const HOLIDAY_TAGS = {
+  shabbat:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
+  rosh:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
+  kippur:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
+  pesach:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
+  mimouna:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
+  hanukkah:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
+  purim:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
+  shavuot:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
+  sukkot:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
+  henna:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7']
+};
+
+/* ── Category label helper ── */
+const catLbl = id => (CATS.find(c => c.id===id)||{}).lbl||id;
+
+/* ── Category and holiday count helpers ── */
+function catCount(id){ return id==='all' ? R.length : R.filter(r=>r.cat===id).length; }
+function holCount(h){
+  if(!h) return R.filter(r=>r.cat==='hol').length;
+  return (HOLIDAY_TAGS[h]||[]).length;
+}
+
+/* ── Category / holiday selector ── */
+function selCatHol(id, h, el){
+  ACT_CATS=[];
+  ACT_CAT=id; ACT_HOLIDAY=h||null; ACT_DIFF='all'; SEARCH='';
+  document.querySelectorAll('.cat-btn,.nav-drop-item').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const ttl = document.getElementById('sec-title');
+  const hNames={shabbat:'שבת',rosh:'ראש השנה',kippur:'יום כיפור',
+    pesach:'פסח',mimouna:'מימונה',hanukkah:'חנוכה',purim:'פורים',
+    shavuot:'שבועות',sukkot:'סוכות',henna:'חינה'};
+  if(ttl){
+    if(id==='all') ttl.textContent='כל המתכונים';
+    else if(h) ttl.textContent='חגים: '+(hNames[h]||h);
+    else ttl.textContent=catLbl(id);
+  }
+  const si=document.getElementById('srch'); if(si) si.value='';
+  const sc=document.getElementById('srch-clr'); if(sc) sc.classList.remove('show');
+  closeDrops();
+  renderGrid();
+}
+
+/* ── Multi-category selector (e.g. מנות עיקריות) ── */
+function selMultiCat(ids){
+  ACT_CATS=ids||[]; ACT_CAT='multi'; ACT_HOLIDAY=null; ACT_DIFF='all'; SEARCH='';
+  const ttl=document.getElementById('sec-title'); if(ttl) ttl.textContent='מנות עיקריות';
+  const si=document.getElementById('srch'); if(si) si.value='';
+  const sc=document.getElementById('srch-clr'); if(sc) sc.classList.remove('show');
+  closeDrops();
+  renderGrid();
+}
+
+
 const MENU_STRUCTURE = [
   {id:'all', lbl:'כל המתכונים'},
 
@@ -18939,16 +18995,7 @@ function closeDrops(){
   document.querySelectorAll('.nav-drop').forEach(d => d.style.display='none');
 }
 
-function selMultiCat(ids,btn){
-  ACT_CATS=ids||[]; ACT_CAT='multi'; ACT_HOLIDAY=null; ACT_DIFF='all';
-  SEARCH='';
-  const si=document.getElementById('srch'); if(si) si.value='';
-  const sc2=document.getElementById('srch-clr'); if(sc2) sc2.classList.remove('show');
-  document.querySelectorAll('.mi-btn,.mi-dbtn,.mi-grp-hdr').forEach(b=>b.classList.remove('act'));
-  if(btn) btn.classList.add('act');
-  const ttl=document.getElementById('sec-title'); if(ttl) ttl.textContent='מנות עיקריות';
-  renderGrid();
-}
+
 function selCat(id,btn){
   ACT_CAT=id;SEARCH='';
   document.getElementById('srch').value='';
