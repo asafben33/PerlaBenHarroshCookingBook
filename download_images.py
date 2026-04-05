@@ -3,656 +3,602 @@
 """
 download_images.py — ספר הבישול של פרלה בן ארוש ז"ל
 ======================================================
-מוריד תמונה ייחודית לכל 1,014 מתכונים.
+מוריד תמונה ספציפית לכל מתכון בדיוק:
+ - תמונה של המנה המוגמרת
+ - אם לא נמצא: תמונה של המרכיבים העיקריים
 
-אסטרטגיית הורדה (לפי עדיפות):
-  1. Wikimedia Commons API    — תמונות חינמיות, יציבות, מזוהות עם השם
-  2. TheMealDB API            — מסד נתונים של תמונות מאכלים (חינם, ללא מפתח)
-  3. loremflickr.com          — ניסיון ישיר (ללא פרוקסי) + headers של דפדפן
-  4. picsum.photos/seed/ID    — גיבוי סופי — תמיד עובד, ייחודי לכל מתכון
+מקורות (לפי עדיפות):
+  1. TheMealDB API   — 300+ תמונות מנות אמיתיות, ללא מפתח
+  2. Wikimedia Commons API — חיפוש לפי שם המנה באנגלית
+  3. Open Food Images  — DuckDuckGo Images API (ללא מפתח, ציבורי)
+  4. Unsplash via URL  — חיפוש תמונות אוכל ספציפי לפי שאילתה
 
-הגדרות פרוקסי:
-  - PROXY_FOR_DOWNLOAD: כתובת הפרוקסי עבור הסקריפט בלבד (gov.il)
-  - האתר עצמו לא משתמש בפרוקסי — תמונות loremflickr נטענות ישירות מהדפדפן
-
-הפעלה:
-  python download_images.py
-
-דרישות:
-  pip install requests
+הפעלה: python download_images.py
+דרישות: pip install requests
 """
-
-import os
-import re
-import sys
-import json
-import time
-import threading
+import os, re, sys, time, json, threading, hashlib
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_completed, wait, FIRST_COMPLETED
+from urllib.parse import quote_plus
 
 try:
     import requests
     from requests.adapters import HTTPAdapter
     from urllib3.util.retry import Retry
-    from urllib3.exceptions import InsecureRequestWarning
-    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+    import urllib3
+    urllib3.disable_warnings()
 except ImportError:
-    print("שגיאה: הרץ: pip install requests")
-    sys.exit(1)
+    print("pip install requests"); sys.exit(1)
 
-# ═══════════════════════════════════════════════
-#  CONFIGURATION — ערוך כאן בלבד
-# ═══════════════════════════════════════════════
-SCRIPT_DIR     = Path(__file__).parent
-IMG_DIR        = SCRIPT_DIR / "images"
-LOG_FILE       = SCRIPT_DIR / "download_images.log"
+# ══════════════════════════════════════════════════════
+# CONFIG
+# ══════════════════════════════════════════════════════
+SCRIPT_DIR = Path(__file__).parent
+DATA_SRC   = next((SCRIPT_DIR/f for f in ("data.js","index.html") if (SCRIPT_DIR/f).exists()), None)
+IMG_DIR    = SCRIPT_DIR / "images"          # ← תמיד images/ בלבד, לא images/spam/
+LOG_FILE   = SCRIPT_DIR / "download_images.log"
 
-# פרוקסי לסקריפט ההורדה בלבד (מחשב gov.il)
-# None = ללא פרוקסי
-PROXY          = "http://pac.gov.il:8080"
+PROXY      = "http://pac.gov.il:8080"
+DELAY      = 0.3                             # שניות בין הורדות
+OVERWRITE  = True                           # True = דרוס קיים; False = דלג
+WORKERS    = 2                               # threads — נמוך יותר כדי לא להיתקע
+TIMEOUT    = 15
+IMG_DIR.mkdir(parents=True, exist_ok=True)
 
-# הגדרות כלליות
-DELAY          = 0.8           # שניות בין הורדות
-OVERWRITE      = False         # True = דרוס קבצים קיימים
-WORKERS        = 4             # הורדות מקביליות
-TIMEOUT        = 25            # שניות להמתנה לתגובה
-MAX_SIZE_MB    = 5             # גודל מקסימלי לקובץ תמונה
+lock  = threading.Lock()
+logs  = []
+stats = dict(ok=0, skip=0, fail=0, mealdb=0, wiki=0, ddg=0)
 
-# ─── Browser-like headers (עוקפים חסימת bot) ────────────────────
-BROWSER_HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
-    "Accept":          "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-    "Accept-Language": "he-IL,he;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Cache-Control":   "no-cache",
-    "Pragma":          "no-cache",
-    "Sec-Fetch-Dest":  "image",
-    "Sec-Fetch-Mode":  "no-cors",
-    "Sec-Fetch-Site":  "cross-site",
-}
-
-API_HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
-    "Accept":          "application/json, text/html, */*",
-    "Accept-Language": "en-US,en;q=0.9",
-}
-
-# ═══════════════════════════════════════════════
-#  HEBREW → ENGLISH FOOD DICTIONARY (1,200 entries)
-# ═══════════════════════════════════════════════
-WIKI_MAP = {
-    # Soups
-    "חרירה": "Harira",
-    "ביסארה": "Bissara",
-    "מרק עדשים": "Red lentil soup",
-    "עדשים": "Lentil soup",
-    "מרק שעועית": "Bean soup",
-    "מרק עוף": "Chicken soup",
-    "מרק ירקות": "Vegetable soup",
-    "דלעת": "Pumpkin soup",
-    "בורשט": "Borscht",
-    "מרק עגבניות": "Tomato soup",
-    "מרק בצל": "French onion soup",
-    "מרק פטריות": "Mushroom cream soup",
-    "מרק תבואה": "Grain soup",
-    "מרק כבש": "Lamb soup",
-    "מרק דגים": "Fish soup",
-    "מרק פול": "Fava bean soup",
-    # Salads
-    "מטבוחה": "Matbucha",
-    "זעלוק": "Zaalouk",
-    "טבולה": "Tabbouleh",
-    "חומוס": "Hummus",
-    "גזר": "Moroccan carrot salad",
-    "סלט פול": "Fava bean salad",
-    "לוביה שחורה": "Black-eyed peas",
-    "שנקליש": "Shanklish",
-    "סלט תפוז": "Orange olive salad",
-    "סלט חצילים": "Eggplant salad",
-    "סלט פלפל": "Roasted pepper salad",
-    # Vegetables
-    "חצילים": "Eggplant dish",
-    "כרובית": "Roasted cauliflower",
-    "מעקודה": "Moroccan potato patties",
-    "במיה": "Okra tomato stew",
-    "פלפל ממולא": "Stuffed peppers",
-    "קישוא ממולא": "Stuffed zucchini",
-    "תרד": "Spinach chickpea stew",
-    "שעועית לבנה": "White bean stew",
-    # Meat
-    "קציצות": "Kefta moroccan meatballs",
-    "כבד": "Chicken liver",
-    "קובה בסלק": "Kibbeh beetroot",
-    "קובה חמוסטה": "Kibbeh hamusta",
-    "קובה": "Kibbeh",
-    "חמין": "Dafina moroccan",
-    "צ׳ולנט": "Cholent",
-    "סקינה": "Skhina moroccan",
-    "מרוזייה": "Mrouzia moroccan lamb",
-    "ח׳לייע": "Khlii preserved meat",
-    "מחמר": "Mahmar moroccan",
-    # Chicken
-    "עוף לימון": "Chicken preserved lemon olives",
-    "עוף עם זיתים": "Moroccan chicken olives",
-    "עוף עם פירות יבשים": "Moroccan chicken dried fruit",
-    "עוף עם שזיפים": "Moroccan chicken prunes",
-    "טאג׳ין עוף": "Chicken tagine",
-    "טאג׳ין כבש": "Lamb tagine",
-    "קוסקוס": "Couscous",
-    # Fish
-    "חריימה": "Chraime red fish",
-    "כפתאג׳ה": "Moroccan fish balls",
-    "סרדינים": "Sardines chermoula",
-    "שמורא": "Preserved salted fish moroccan",
-    "דג חריף": "Spicy moroccan fish",
-    "חרמולה": "Chermoula fish",
-    # Holidays / Henna
-    "מופלטה": "Mofletah moroccan",
-    "חינה": "Henna moroccan celebration",
-    # Desserts
-    "כעב הגזאל": "Gazelle horns almond pastry",
-    "שלדה": "Chebakia sesame honey",
-    "בריואט": "Briouat almond pastry",
-    "ספינג׳": "Sfenj moroccan donuts",
-    "חרוסת": "Charoset moroccan",
-    "תה נענע": "Moroccan mint tea",
-    "ח׳ריצ׳ה": "Moroccan anise cookies",
-    # Spanish / Sephardic
-    "גספאצ׳ו": "Gazpacho",
-    "פאייה": "Paella",
-    "אלבונדיגס": "Albondigas",
-    "אמפנדה": "Empanada",
-    "בורקס": "Borek pastry",
-    "סופריטו": "Sofrito",
-    # Iraqi
-    "דולמה": "Dolma",
-    "מסגוף": "Masgouf grilled fish",
-    "תבית": "Tebeet Iraqi chicken",
-    # Yemeni
-    "ג׳חנון": "Jachnun",
-    "לחוח": "Lahoh yemeni",
-    "זחוק": "Zhug yemeni",
-    "הילבה": "Hilbeh fenugreek",
-    # Persian
-    "גורמה סבזי": "Ghormeh sabzi",
-    "קוקו סבזי": "Kuku sabzi",
-    "פסנג׳ן": "Fesenjan",
-    # Ashkenazi
-    "גפילטע פיש": "Gefilte fish",
-    "לאקשן קוגל": "Noodle kugel",
-    "קרפלך": "Kreplach",
-    "בינטש": "Potato pancake latke",
-    # Israeli
-    "פלאפל": "Falafel",
-    "שקשוקה": "Shakshuka",
-    "מג׳דרה": "Mujaddara",
-    "שוורמה": "Shawarma",
-    "סביח": "Sabich Israeli",
-}
-
-# TheMealDB search terms for known dishes
-MEALDB_SEARCHES = {
-    "חרירה": "Harira", "קוסקוס": "Couscous", "עוף לימון": "Moroccan Chicken",
-    "חריימה": "Harissa", "חומוס": "Hummus", "שקשוקה": "Shakshuka",
-    "מג׳דרה": "Mujaddara", "פלאפל": "Falafel", "שוורמה": "Chicken Shawarma",
-    "גספאצ׳ו": "Gazpacho", "פאייה": "Seafood Paella", "עדשים": "Red Lentil Soup",
-    "קציצות": "Moroccan Meatballs", "גפילטע פיש": "Gefilte Fish",
-    "בורקס": "Borek", "גורמה סבזי": "Ghormeh Sabzi", "פסנג׳ן": "Fesenjan",
-    "ג׳חנון": "Jachnun", "דולמה": "Dolmades", "קובה": "Kibbeh",
-}
-
-# Category fallback keywords for loremflickr (with ?lock= for uniqueness)
-CAT_KW = {
-    "soups":   "moroccan,lentil,soup,bowl,spiced",
-    "salads":  "moroccan,mezze,salad,herbs",
-    "veg":     "moroccan,vegetable,couscous,stew",
-    "meat":    "moroccan,lamb,tagine,clay,pot",
-    "chick":   "moroccan,chicken,tagine,olives",
-    "fish":    "moroccan,spiced,fish,red,pepper",
-    "hol":     "moroccan,holiday,festive,food",
-    "des":     "moroccan,pastry,sweets,honey,almond",
-    "span":    "sephardic,spanish,jewish,food",
-    "iraq":    "iraqi,mezze,food",
-    "kurd":    "kurdish,stew,meat",
-    "ashk":    "ashkenazi,jewish,deli,food",
-    "yem":     "yemeni,jewish,food",
-    "pers":    "persian,iranian,food,herbs",
-    "buk":     "uzbek,plov,rice,central,asian",
-    "tun":     "tunisian,north,african,food",
-    "isr":     "israeli,street,food,modern",
-    "turk":    "turkish,jewish,sephardic,food",
-}
-
-# ═══════════════════════════════════════════════
-#  SETUP
-# ═══════════════════════════════════════════════
-IMG_DIR.mkdir(exist_ok=True)
-lock = threading.Lock()
-logs = []
-stats = {"ok": 0, "skip": 0, "fail_wiki": 0, "fail_mealdb": 0,
-         "fail_flickr": 0, "fail_picsum": 0, "ok_wiki": 0,
-         "ok_mealdb": 0, "ok_flickr": 0, "ok_picsum": 0}
-
-
-def log(msg, level="INFO"):
-    ts   = time.strftime("%H:%M:%S")
-    line = f"[{ts}] {level:5s} {msg}"
-    with lock:
-        logs.append(line)
+def log(msg):
+    ts = time.strftime("%H:%M:%S")
+    line = f"[{ts}] {msg}"
+    with lock: logs.append(line)
     print(line, flush=True)
 
+# ══════════════════════════════════════════════════════
+# מילון עברית→אנגלית מקיף לשמות מנות
+# ══════════════════════════════════════════════════════
+HE2EN = {
+    # ─ מרקים ─────────────────────────────────────────
+    "חרירה":"harira moroccan soup",
+    "ביסארה":"moroccan fava bean soup",
+    "מרק עדשים":"lentil soup",
+    "מרק שעועית":"bean soup",
+    "מרק עוף":"chicken soup",
+    "מרק ירקות":"moroccan vegetable soup",
+    "מרק עגבניות":"tomato soup",
+    "מרק דלעת":"pumpkin soup",
+    "בורשט":"borscht beet soup",
+    "מרק בצל":"french onion soup",
+    "מרק פטריות":"mushroom cream soup",
+    "מרק פול":"fava bean soup moroccan",
+    "לחשו":"moroccan semolina garlic soup",
+    "מרק מחמר":"moroccan red chicken soup",
+    "מרק קובה":"kubbe soup",
+    # ─ סלטים ─────────────────────────────────────────
+    "מטבוחה":"matbucha moroccan tomato pepper",
+    "זאלוק":"zaalouk moroccan eggplant",
+    "זעלוק":"zaalouk moroccan eggplant",
+    "טקטוקה":"taktouka moroccan pepper tomato",
+    "טבולה":"tabbouleh parsley",
+    "חומוס":"hummus chickpea",
+    "סלט גזר":"moroccan carrot salad",
+    "סלט כרוב":"moroccan coleslaw salad",
+    "סלט עגבניות":"moroccan tomato salad",
+    "סלט תפוחי אדמה":"potato salad moroccan",
+    "סלט סלק":"beet salad",
+    "פול":"fava bean salad",
+    "לוביה":"black eyed peas salad",
+    "שנקליש":"shanklish cheese salad",
+    "סלט תפוז":"orange olive moroccan salad",
+    "סלט פלפל":"roasted pepper salad moroccan",
+    # ─ ירקות ──────────────────────────────────────────
+    "חצילים ברוטב":"moroccan eggplant tomato",
+    "קישואים":"zucchini moroccan",
+    "כרובית":"roasted cauliflower chermoula",
+    "מעקודה":"moroccan potato patties",
+    "במיה":"okra tomato stew",
+    "שעועית ירוקה":"green beans tomato moroccan",
+    "כרוב מבושל":"moroccan braised cabbage",
+    "פלפל ממולא":"moroccan stuffed peppers",
+    "דלעת מתוקה":"moroccan sweet pumpkin",
+    "תרד":"spinach chickpea moroccan",
+    "שעועית לבנה":"white bean stew moroccan",
+    "ארטישוק":"artichoke stew moroccan",
+    # ─ בשר ────────────────────────────────────────────
+    "קציצות בקר":"moroccan beef meatballs kefta",
+    "קציצות עם חומוס":"meatballs hummus moroccan",
+    "תבשיל בשר עם שזיפים":"moroccan lamb plums almonds",
+    "בשר ראש":"moroccan head meat",
+    "חמין אשכנזי":"cholent ashkenazi",
+    "חמין":"dafina moroccan cholent",
+    "סקינה":"skhina moroccan sabbath",
+    "מרוזייה":"mrouzia moroccan lamb honey",
+    "כבד":"chopped liver moroccan",
+    "ח׳לייע":"khlii preserved moroccan meat",
+    "כבש":"moroccan lamb tagine",
+    # ─ עוף ────────────────────────────────────────────
+    "עוף עם זיתים ולימון":"moroccan chicken preserved lemon olives",
+    "עוף עם שקדים וצימוקים":"moroccan chicken almonds raisins",
+    "עוף עם פירות יבשים":"moroccan chicken dried fruits",
+    "עוף עם בצל":"moroccan chicken caramelized onions",
+    "עוף עם שזיפים":"moroccan chicken prunes",
+    "עוף עם כורכום":"moroccan chicken turmeric",
+    "עוף ביין":"moroccan chicken red wine braised",
+    "קוסקוס חגיגי":"moroccan couscous chicken friday",
+    "קוסקוס":"moroccan couscous",
+    "טאג׳ין עוף":"chicken tagine moroccan",
+    "טאג׳ין כבש":"lamb tagine moroccan",
+    "מחמר":"mahmar moroccan chicken paprika",
+    "שוורמה":"chicken shawarma",
+    # ─ דגים ──────────────────────────────────────────
+    "דג חריף":"spicy moroccan fish",
+    "דג עם צ׳רמולה":"fish chermoula moroccan",
+    "קציצות דגים":"moroccan fish balls",
+    "סרדינים":"sardines moroccan",
+    "חריימה":"chraime spicy fish libyan",
+    "דג מלוח":"salted preserved fish moroccan",
+    "שמורא":"preserved fish moroccan",
+    "גפילטע פיש":"gefilte fish jewish",
+    # ─ חגים ───────────────────────────────────────────
+    "עוף חגיגי עם פירות יבשים":"moroccan chicken dried fruits festive",
+    "מאפה בשר":"moroccan meat pastry",
+    "טאג׳ין חגיגי עם שזיפים":"moroccan lamb tagine plums almonds",
+    "סלטים חגיגיים":"moroccan mezze salads festive",
+    "חרוסת":"charoset passover moroccan",
+    "מימונה":"mimouna moroccan celebration",
+    # ─ קינוחים ────────────────────────────────────────
+    "מופלטה":"mofletah moroccan pancake",
+    "ספינג׳":"sfenj moroccan donuts",
+    "מקרוד":"makroud moroccan semolina dates",
+    "עוגיות שקדים":"moroccan almond cookies",
+    "עוגיות אניס":"moroccan anise sesame cookies",
+    "שלדה":"chebakia moroccan sesame honey",
+    "כעב הגזאל":"gazelle horns almond pastry",
+    "בריואט":"briouat moroccan fried pastry",
+    "תה נענע":"moroccan mint tea glass",
+    "עוגת תפוז":"moroccan orange almond cake",
+    "ריבה":"moroccan jam preserve",
+    "חלוה":"halva sesame sweet",
+    "בקלווה":"baklava honey walnut",
+    # ─ ספרדי ──────────────────────────────────────────
+    "סופריטו":"sofrito spanish sauce",
+    "אלבונדיגס":"albondigas spanish meatballs",
+    "גספאצ׳ו":"gazpacho cold soup andalusian",
+    "אמפנדה":"empanada spanish baked",
+    "אארוז עם עוף":"arroz con pollo spanish",
+    "פאייה":"paella seafood spanish",
+    "בורקס":"borek phyllo pastry",
+    # ─ עיראקי ─────────────────────────────────────────
+    "קובה בסלק":"kibbeh beetroot soup iraqi",
+    "קובה חמוסטה":"kibbeh hamusta lemon soup iraqi",
+    "קובה":"kibbeh Iraqi",
+    "דולמה":"dolma stuffed vegetables",
+    "תמר הינדי":"tamarind drink Iraqi",
+    "מסגוף":"masgouf grilled fish Tigris Iraqi",
+    "תבית":"tebeet Iraqi stuffed chicken rice",
+    # ─ כורדי ──────────────────────────────────────────
+    "קובה קדרה":"kibbeh cream Kurdish",
+    "שישבראק":"shishbarak dumplings yogurt",
+    "כישקה":"kishka stuffed Kurdish",
+    "דמפוכת עוף":"Kurdish chicken pot",
+    # ─ אשכנזי ─────────────────────────────────────────
+    "חמין אשכנזי":"cholent ashkenazi bean potato",
+    "לאקשן קוגל":"noodle kugel baked jewish",
+    "קוגל תפוח אדמה":"potato kugel jewish",
+    "בינטש":"potato latke pancake",
+    "קרפלך":"kreplach meat dumplings soup",
+    "כבד קצוץ":"chopped liver jewish",
+    "בורשט":"borscht beet soup eastern european",
+    # ─ תימני ──────────────────────────────────────────
+    "ג׳חנון":"jachnun yemeni pastry",
+    "לחוח":"lahoh yemeni sponge pancake",
+    "זחוק":"zhug yemeni green hot sauce",
+    "הילבה":"hilbeh yemeni fenugreek paste",
+    "מרק עצמות תימני":"yemeni bone broth soup",
+    "כסבה":"kusba yemeni rice raisins",
+    # ─ פרסי ───────────────────────────────────────────
+    "גורמה סבזי":"ghormeh sabzi persian herb stew",
+    "קוקו סבזי":"kuku sabzi persian herb frittata",
+    "פסנג׳ן":"fesenjan pomegranate walnut duck",
+    "ג׳ווארי":"ash reshteh persian noodle soup",
+    "ירקות ממולאים פרסיים":"dolmeh persian stuffed vegetables",
+    # ─ בוכארי ─────────────────────────────────────────
+    "אוש":"plov osh uzbek rice lamb",
+    "פלוב":"plov uzbek rice carrots",
+    "סמסה":"samsa baked pastry meat",
+    "מנטי":"manti steamed dumplings",
+    "נאן בוכארי":"bukharian naan bread",
+    # ─ טוניסאי ────────────────────────────────────────
+    "ברייק":"brik tunisian egg pastry",
+    "חריסה":"harissa tunisian chili paste",
+    "קוסקוס טוניסאי":"tunisian couscous lamb",
+    "מחמורה":"mahmoura tunisian almond cookies",
+    "מלצוניה":"tunisian spiced fish",
+    "לבלבי":"lablabi tunisian chickpea",
+    # ─ טורקי ──────────────────────────────────────────
+    "בורקס טורקי":"borek turkish cheese spinach",
+    "קלדאוס":"caldeirada turkish fish stew",
+    "מנדה":"Turkish fish patties",
+    "אגריסטה":"agristada turkish lemon chicken",
+    "בורמואלוס":"Turkish hanukkah fritters",
+    # ─ ישראלי ─────────────────────────────────────────
+    "פלאפל":"falafel pita Israeli street food",
+    "חומוס ביתי":"hummus Israeli",
+    "שקשוקה":"shakshuka eggs tomato Israeli",
+    "מג׳דרה":"mujaddara lentils rice crispy onion",
+    "שוורמה עוף":"chicken shawarma wrap",
+    "סביח":"sabich eggplant pita Israeli",
+    "מג׳דרה":"mujaddara lentil rice onion",
+}
 
-def make_session(use_proxy=True):
-    """Create a requests session with retry logic and browser headers."""
-    s = requests.Session()
+# TheMealDB — מנות מאומתות עם תמונות אמיתיות
+MEALDB_QUERIES = {
+    "harira":"Harira", "couscous":"Couscous", "chicken lemon":"Moroccan Chicken",
+    "shakshuka":"Shakshuka", "hummus":"Hummus", "falafel":"Falafel",
+    "shawarma":"Chicken Shawarma", "mujaddara":"Mujaddara", "tabbouleh":"Tabbouleh",
+    "gazpacho":"Gazpacho", "paella":"Seafood Paella", "lentil soup":"Red Lentil Soup",
+    "kefta":"Kofta Curry", "cholent":"Cholent", "ghormeh":"Ghormeh Sabzi",
+    "fesenjan":"Fesenjan", "kibbeh":"Kibbeh", "dolma":"Dolmades",
+    "jachnun":"Jachnun", "gefilte":"Gefilte Fish", "chraime":"Chraime",
+    "albondigas":"Albondigas", "empanada":"Empanadas", "borek":"Borek",
+    "baklava":"Baklava", "brik":"Brik", "plov":"Plov", "manti":"Manti",
+    "borscht":"Borscht", "sfenj":"Sfenj", "mofletah":"Mofletah",
+}
 
-    # Proxy: try auto-detect; also allow manual override
-    if use_proxy and PROXY:
-        # PAC URL or direct proxy URL
-        if PROXY.endswith(".pac") or "pac.gov.il" in PROXY:
-            # Try direct proxy first; PAC files need special handling
-            proxy_url = "http://pac.gov.il:8080"
-        else:
-            proxy_url = PROXY
-        s.proxies = {"http": proxy_url, "https": proxy_url}
-
-    retry = Retry(
-        total=3,
-        backoff_factor=1.5,
-        status_forcelist=[429, 500, 502, 503, 504],
-        allowed_methods=["GET"],
-    )
-    adapter = HTTPAdapter(max_retries=retry)
-    s.mount("https://", adapter)
-    s.mount("http://",  adapter)
-    s.headers.update(API_HEADERS)
-    s.verify = False   # bypass SSL issues on gov proxy
-    return s
-
-
-# Two sessions: one via proxy, one direct
-_sess_proxy  = None
-_sess_direct = None
-_sess_lock   = threading.Lock()
-
+# ══════════════════════════════════════════════════════
+# SESSION
+# ══════════════════════════════════════════════════════
+HDRS = {
+    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36",
+    "Accept":"image/webp,image/apng,image/*,*/*;q=0.8",
+}
+_sp = _sd = None
 
 def get_sessions():
-    global _sess_proxy, _sess_direct
-    with _sess_lock:
-        if _sess_proxy is None:
-            _sess_proxy  = make_session(use_proxy=True)
-            _sess_direct = make_session(use_proxy=False)
-    return _sess_proxy, _sess_direct
+    global _sp, _sd
+    if _sp is None:
+        def mk(proxy=None):
+            s = requests.Session()
+            if proxy: s.proxies={"http":proxy,"https":proxy}
+            s.mount("https://", HTTPAdapter(max_retries=Retry(2,backoff_factor=0.5,status_forcelist=[429,500,502,503])))
+            s.verify = False
+            s.headers.update(HDRS)
+            return s
+        _sp = mk(PROXY)
+        _sd = mk(None)
+    return _sp, _sd
 
-
-def safe_get(url, sess_proxy, sess_direct, stream=False, image_mode=False):
-    """Try proxy session first, then direct if proxy fails."""
-    headers = BROWSER_HEADERS if image_mode else API_HEADERS
-    for attempt, sess in enumerate([sess_proxy, sess_direct]):
+def safe_get(url, sp, sd, stream=False, timeout=None):
+    """Try proxy then direct. Returns response or None."""
+    t = timeout or TIMEOUT
+    for sess in [sp, sd]:
         try:
-            r = sess.get(
-                url, timeout=TIMEOUT, stream=stream,
-                headers=headers, allow_redirects=True,
-            )
+            r = sess.get(url, timeout=t, stream=stream, allow_redirects=True)
             if r.status_code == 200:
                 return r
-            elif r.status_code == 403 and attempt == 0:
-                continue  # try direct
-            else:
-                return None
         except Exception:
-            if attempt == 0:
-                continue  # try direct
-            return None
+            continue
     return None
 
-
-# ═══════════════════════════════════════════════
-#  RECIPE PARSER
-# ═══════════════════════════════════════════════
+# ══════════════════════════════════════════════════════
+# RECIPE PARSER
+# ══════════════════════════════════════════════════════
 def parse_recipes():
-    """Read recipe list from data.js or index.html."""
-    src_file = SCRIPT_DIR / "data.js"
-    if not src_file.exists():
-        src_file = SCRIPT_DIR / "index.html"
-    if not src_file.exists():
-        log("לא נמצא data.js או index.html", "ERROR")
-        sys.exit(1)
-
-    src = src_file.read_text(encoding="utf-8")
+    if not DATA_SRC:
+        log("ERROR: data.js or index.html not found"); sys.exit(1)
+    src = DATA_SRC.read_text(encoding="utf-8")
     out = []
-    for m in re.finditer(
-        r"id:'([^']+)',\s*cat:'([^']+)'[^;{]*?title:'([^']+)'",
-        src, re.DOTALL
-    ):
-        rid, cat, title = m.group(1), m.group(2), m.group(3)
-        # Try to find src: URL for this recipe
-        pos   = m.start()
-        block = src[pos:pos + 3000]
-        src_m = re.search(r"src:'([^']+)'", block)
-        out.append({
-            "id":    rid,
-            "cat":   cat,
-            "title": title,
-            "src":   src_m.group(1) if src_m else "",
-        })
+    for m in re.finditer(r"id:'([^']+)',\s*cat:'([^']+)'[^;{]*?title:'([^']+)'[^;{]*?(?:ingr:\[([^\]]{0,400})\])?", src, re.DOTALL):
+        ingr_raw = m.group(4) or ""
+        ingr_names = re.findall(r"i:'([^']+)'", ingr_raw)[:5]
+        out.append({"id":m.group(1),"cat":m.group(2),"title":m.group(3),"ingr":ingr_names})
     return out
 
+# ══════════════════════════════════════════════════════
+# QUERY BUILDER — title + ingr → English search query
+# ══════════════════════════════════════════════════════
+CAT_EN = {
+    "soups":"moroccan soup","salads":"moroccan salad mezze",
+    "veg":"moroccan vegetable dish","meat":"moroccan meat tagine",
+    "chick":"moroccan chicken","fish":"moroccan spiced fish",
+    "hol":"moroccan festive food","des":"moroccan pastry sweets",
+    "span":"sephardic spanish jewish food","iraq":"iraqi jewish food",
+    "kurd":"kurdish jewish food","ashk":"ashkenazi jewish food",
+    "yem":"yemeni jewish food","pers":"persian jewish food",
+    "buk":"bukharian uzbek rice plov","tun":"tunisian jewish food",
+    "isr":"israeli food","turk":"turkish jewish borek",
+}
 
-# ═══════════════════════════════════════════════
-#  IMAGE SOURCE 1 — WIKIMEDIA COMMONS
-# ═══════════════════════════════════════════════
-def wikimedia_image(sess_proxy, sess_direct, query):
-    """Search Wikimedia Commons for a food-related image. Returns URL or None."""
+def build_query(recipe):
+    """Build precise English food search query from Hebrew title + ingredients."""
+    title = recipe["title"]
+    cat   = recipe["cat"]
+    ingr  = recipe.get("ingr", [])
+
+    # 1. Direct dictionary lookup
+    for he, en in HE2EN.items():
+        if he in title:
+            return en
+
+    # 2. Partial keyword matching
+    kw_map = [
+        ("קציצות","kefta meatballs moroccan"),("עוף","moroccan chicken"),
+        ("כבש","moroccan lamb tagine"),("דג","moroccan fish"),
+        ("מרק","moroccan soup"),("סלט","moroccan salad"),
+        ("תבשיל","moroccan stew"),("עוגיות","moroccan cookies"),
+        ("לחם","moroccan bread"),("אורז","moroccan rice dish"),
+        ("קוסקוס","couscous moroccan"),("פסטה","pasta"),
+        ("חצילים","eggplant moroccan"),("עגבניות","tomato moroccan dish"),
+        ("גזר","carrot moroccan"),("כרובית","cauliflower dish"),
+        ("פלפל","pepper stuffed moroccan"),("תרד","spinach dish"),
+        ("שעועית","bean stew moroccan"),("חומוס","chickpea hummus"),
+        ("ביצים","eggs shakshuka"),("גבינה","cheese pastry"),
+        ("שקדים","almond pastry moroccan"),("דבש","honey moroccan"),
+        ("שזיפים","lamb prunes moroccan tagine"),("זיתים","olives moroccan"),
+        ("לימון","lemon preserved moroccan"),("טאג׳ין","tagine moroccan"),
+    ]
+    for he, en in kw_map:
+        if he in title:
+            return en
+
+    # 3. Use category + first ingredient
+    cat_en = CAT_EN.get(cat, "moroccan jewish food")
+    if ingr:
+        return f"{cat_en} {ingr[0]}"
+    return cat_en
+
+# ══════════════════════════════════════════════════════
+# SOURCE 1: TheMealDB
+# ══════════════════════════════════════════════════════
+def try_mealdb(query, sp, sd):
+    """Search TheMealDB for food image. Returns URL or None."""
+    # Check if any keyword matches our MEALDB_QUERIES mapping
+    q_lower = query.lower()
+    meal_name = None
+    for kw, name in MEALDB_QUERIES.items():
+        if kw in q_lower:
+            meal_name = name
+            break
+    if not meal_name:
+        # Try first two words of query
+        meal_name = " ".join(query.split()[:2])
+
+    try:
+        r = safe_get(f"https://www.themealdb.com/api/json/v1/1/search.php?s={quote_plus(meal_name)}", sp, sd, timeout=8)
+        if r:
+            meals = (r.json().get("meals") or [])
+            if meals:
+                thumb = meals[0].get("strMealThumb","")
+                if thumb:
+                    return thumb  # direct HD image URL
+    except Exception:
+        pass
+    return None
+
+# ══════════════════════════════════════════════════════
+# SOURCE 2: Wikimedia Commons API
+# ══════════════════════════════════════════════════════
+def try_wikimedia(query, sp, sd):
+    """Search Wikimedia Commons. Returns image URL or None."""
     try:
         r = safe_get(
             "https://commons.wikimedia.org/w/api.php",
-            sess_proxy, sess_direct,
+            sp, sd, timeout=10
         )
-        # Use requests directly to pass params
-        params = {
-            "action": "query", "list": "search",
-            "srsearch": f"{query} food", "srnamespace": 6,
-            "srlimit": 8, "format": "json",
-        }
-        # Try proxy first
-        for sess in [sess_proxy, sess_direct]:
+        # Need to pass params directly
+        for sess in [sp, sd]:
             try:
                 resp = sess.get(
                     "https://commons.wikimedia.org/w/api.php",
-                    params=params, timeout=TIMEOUT, verify=False,
+                    params={"action":"query","list":"search",
+                            "srsearch":f"{query} food dish recipe",
+                            "srnamespace":6,"srlimit":8,"format":"json"},
+                    timeout=10, verify=False
                 )
-                if resp.status_code != 200:
-                    continue
-                results = resp.json().get("query", {}).get("search", [])
+                if resp.status_code != 200: continue
+                results = resp.json().get("query",{}).get("search",[])
                 for res in results:
-                    title = res.get("title", "")
-                    if not title.startswith("File:"):
-                        continue
-                    low = title.lower()
-                    if not any(ext in low for ext in [".jpg", ".jpeg", ".png"]):
-                        continue
-                    # Skip diagrams, maps, logos
-                    if any(skip in low for skip in ["diagram","map","logo","flag","symbol","icon","svg"]):
-                        continue
-                    # Get image URL
-                    img_resp = sess.get(
+                    title = res.get("title","")
+                    if not title.startswith("File:"): continue
+                    tl = title.lower()
+                    # Skip non-food images
+                    if any(skip in tl for skip in ["map","flag","diagram","logo","icon","symbol","portrait","building"]): continue
+                    if not any(ext in tl for ext in [".jpg",".jpeg",".png"]): continue
+                    # Get actual URL
+                    r2 = sess.get(
                         "https://commons.wikimedia.org/w/api.php",
-                        params={
-                            "action": "query", "titles": title,
-                            "prop": "imageinfo", "iiprop": "url|size|mime",
-                            "iiurlwidth": 600, "format": "json",
-                        },
-                        timeout=TIMEOUT, verify=False,
+                        params={"action":"query","titles":title,"prop":"imageinfo",
+                                "iiprop":"url|size|mime","iiurlwidth":400,"format":"json"},
+                        timeout=10, verify=False
                     )
-                    if img_resp.status_code != 200:
-                        continue
-                    for page in img_resp.json().get("query", {}).get("pages", {}).values():
-                        ii = page.get("imageinfo", [{}])[0]
-                        url  = ii.get("thumburl") or ii.get("url", "")
-                        size = ii.get("size", 0)
-                        mime = ii.get("mime", "")
-                        if url and "image" in mime and size < MAX_SIZE_MB * 1024 * 1024:
+                    if r2.status_code != 200: continue
+                    for pg in r2.json().get("query",{}).get("pages",{}).values():
+                        ii = pg.get("imageinfo",[{}])[0]
+                        url  = ii.get("thumburl") or ii.get("url","")
+                        mime = ii.get("mime","")
+                        sz   = ii.get("size",0)
+                        if url and "image" in mime and 5000 < sz < 8*1024*1024:
                             return url
-                break  # success on one session
+                break
             except Exception:
                 continue
     except Exception:
         pass
     return None
 
-
-# ═══════════════════════════════════════════════
-#  IMAGE SOURCE 2 — THEMEALDB (free, no key)
-# ═══════════════════════════════════════════════
-def mealdb_image(sess_proxy, sess_direct, query):
-    """Search TheMealDB for a food image. Returns URL or None."""
-    for sess in [sess_proxy, sess_direct]:
-        try:
-            resp = sess.get(
-                "https://www.themealdb.com/api/json/v1/1/search.php",
-                params={"s": query}, timeout=TIMEOUT, verify=False,
-                headers=API_HEADERS,
-            )
-            if resp.status_code != 200:
+# ══════════════════════════════════════════════════════
+# SOURCE 3: DuckDuckGo Image Search (unofficial, no key)
+# ══════════════════════════════════════════════════════
+def try_ddg(query, sp, sd):
+    """Use DuckDuckGo instant answer API for images. Returns URL or None."""
+    try:
+        # DDG image search — get vqd token first
+        search_url = f"https://duckduckgo.com/?q={quote_plus(query+' food recipe photo')}&iax=images&ia=images"
+        for sess in [sd]:  # use direct only for DDG
+            try:
+                r = sess.get(search_url, timeout=8, verify=False,
+                             headers={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0.0.0"})
+                if r.status_code != 200: continue
+                vqd = re.search(r'vqd="([^"]+)"', r.text)
+                if not vqd: continue
+                # Fetch image results
+                r2 = sess.get(
+                    "https://duckduckgo.com/i.js",
+                    params={"l":"us-en","o":"json","q":query+" food recipe",
+                            "vqd":vqd.group(1),"f":",,,,,","p":"1"},
+                    timeout=8, verify=False,
+                    headers={"Referer":"https://duckduckgo.com/",
+                             "Accept":"application/json",
+                             "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0.0.0"}
+                )
+                if r2.status_code != 200: continue
+                results = r2.json().get("results",[])
+                for res in results:
+                    img_url = res.get("image","")
+                    # Filter: must be from trusted food sites
+                    trusted = ["wikimedia","themealdb","allrecipes","foodnetwork",
+                               "bonappetit","food52","seriouseats","epicurious",
+                               "cooking.nytimes","bbcgoodfood","wikipedia"]
+                    if any(t in img_url.lower() for t in trusted):
+                        # Verify it's actually an image
+                        rimg = sess.get(img_url, timeout=5, stream=True, verify=False)
+                        if rimg.status_code == 200 and "image" in rimg.headers.get("Content-Type",""):
+                            return img_url
+                    # Even untrusted — just take first that looks like food
+                    if img_url and any(kw in img_url.lower() for kw in ["food","recipe","cook","meal","dish"]):
+                        return img_url
+            except Exception:
                 continue
-            meals = resp.json().get("meals") or []
-            if meals:
-                thumb = meals[0].get("strMealThumb", "")
-                if thumb:
-                    return thumb + "/preview"  # 300x300 preview
-            break
-        except Exception:
-            continue
+    except Exception:
+        pass
     return None
 
-
-# ═══════════════════════════════════════════════
-#  IMAGE SOURCE 3 — LOREMFLICKR (browser headers, direct)
-# ═══════════════════════════════════════════════
-def loremflickr_image(sess_direct, cat, idx):
-    """Try loremflickr directly (without proxy). Returns URL on success or None."""
-    kw  = CAT_KW.get(cat, "food,moroccan,jewish")
-    url = f"https://loremflickr.com/600/400/{kw}?lock={20000 + idx}"
-    try:
-        r = sess_direct.get(
-            url, timeout=TIMEOUT, stream=True, verify=False,
-            headers=BROWSER_HEADERS, allow_redirects=True,
-        )
-        if r.status_code == 200:
-            content_type = r.headers.get("Content-Type", "")
-            if "image" in content_type:
-                return url  # return the URL for the site + download data
-        return None
-    except Exception:
-        return None
-
-
-# ═══════════════════════════════════════════════
-#  IMAGE SOURCE 4 — PICSUM PHOTOS (final fallback)
-# ═══════════════════════════════════════════════
-def picsum_url(recipe_id):
-    """Deterministic beautiful photo from Lorem Picsum. Always works."""
-    # Use recipe id as seed for consistent image across runs
-    return f"https://picsum.photos/seed/{recipe_id}/600/400"
-
-
-# ═══════════════════════════════════════════════
-#  DOWNLOAD ONE RECIPE IMAGE
-# ═══════════════════════════════════════════════
-def download_and_save(url, dest, sess_proxy, sess_direct, is_picsum=False):
-    """Download image from URL and save to dest. Returns True on success."""
-    for sess in ([sess_direct] if is_picsum else [sess_proxy, sess_direct]):
+# ══════════════════════════════════════════════════════
+# DOWNLOAD & VALIDATE
+# ══════════════════════════════════════════════════════
+def download_image(url, dest, sp, sd):
+    """Download and validate image. Returns True if saved successfully."""
+    for sess in [sp, sd]:
         try:
-            r = sess.get(
-                url, timeout=TIMEOUT, stream=True, verify=False,
-                headers=BROWSER_HEADERS, allow_redirects=True,
-            )
-            if r.status_code != 200:
-                continue
-            content_type = r.headers.get("Content-Type", "")
-            if "image" not in content_type and "jpeg" not in content_type:
-                continue
-            data = b""
-            for chunk in r.iter_content(8192):
-                data += chunk
-                if len(data) > MAX_SIZE_MB * 1024 * 1024:
-                    data = b""
-                    break
-            if data and len(data) > 1024:  # at least 1KB
+            r = sess.get(url, timeout=TIMEOUT, stream=True, allow_redirects=True)
+            if r.status_code != 200: continue
+            ct = r.headers.get("Content-Type","")
+            if "image" not in ct and "jpeg" not in ct and "jpg" not in ct: continue
+            data = b"".join(r.iter_content(8192))
+            # Basic validation: must be > 5KB and start with JPEG/PNG/GIF magic bytes
+            if len(data) < 5000: continue
+            magic = data[:4]
+            is_img = (magic[:2] == b'\xff\xd8' or      # JPEG
+                      magic[:4] == b'\x89PNG' or        # PNG
+                      magic[:3] == b'GIF')               # GIF
+            if not is_img:
+                # Accept if Content-Type says image
+                if "image" in ct and len(data) > 10000:
+                    is_img = True
+            if is_img:
                 dest.write_bytes(data)
                 return True
         except Exception:
             continue
     return False
 
-
-def process_recipe(recipe, idx, sess_proxy, sess_direct):
-    """Find and download the best image for a recipe."""
-    rid   = recipe["id"]
-    title = recipe["title"]
-    cat   = recipe["cat"]
-    dest  = IMG_DIR / f"r-{rid}.jpg"
+# ══════════════════════════════════════════════════════
+# PROCESS ONE RECIPE
+# ══════════════════════════════════════════════════════
+def process_recipe(recipe, idx):
+    rid, cat, title = recipe["id"], recipe["cat"], recipe["title"]
+    dest = IMG_DIR / f"r-{rid}.jpg"
 
     if dest.exists() and not OVERWRITE:
         with lock: stats["skip"] += 1
-        return
+        return True
 
-    img_url   = None
-    source    = None
+    sp, sd = get_sessions()
+    query  = build_query(recipe)
+    log(f"  [{rid:8s}] {title[:30]:30s} → \"{query[:40]}\"")
 
-    # ── Source 1: Wikimedia ─────────────────────────────────────
-    for kw_he, kw_en in WIKI_MAP.items():
-        if kw_he in title:
-            img_url = wikimedia_image(sess_proxy, sess_direct, kw_en)
-            if img_url:
-                source = "wiki"
-                log(f"  wiki    [{rid}] {kw_en[:40]}")
-                break
+    # ── Source 1: TheMealDB ─────────────────────────
+    img_url = try_mealdb(query, sp, sd)
+    if img_url and download_image(img_url, dest, sp, sd):
+        with lock: stats["ok"] += 1; stats["mealdb"] += 1
+        log(f"  ✓ mealdb [{rid}]")
+        time.sleep(DELAY)
+        return True
     time.sleep(0.1)
 
-    # ── Source 2: TheMealDB ─────────────────────────────────────
-    if not img_url:
-        for kw_he, kw_en in MEALDB_SEARCHES.items():
-            if kw_he in title:
-                img_url = mealdb_image(sess_proxy, sess_direct, kw_en)
-                if img_url:
-                    source = "mealdb"
-                    log(f"  mealdb  [{rid}] {kw_en[:40]}")
-                    break
+    # ── Source 2: Wikimedia Commons ─────────────────
+    img_url = try_wikimedia(query, sp, sd)
+    if img_url and download_image(img_url, dest, sp, sd):
+        with lock: stats["ok"] += 1; stats["wiki"] += 1
+        log(f"  ✓ wiki   [{rid}]")
+        time.sleep(DELAY)
+        return True
     time.sleep(0.1)
 
-    # ── Source 3: og:image from src URL ─────────────────────────
-    if not img_url and recipe.get("src"):
-        try:
-            r = None
-            for sess in [sess_proxy, sess_direct]:
-                try:
-                    r = sess.get(
-                        recipe["src"], timeout=15, stream=True,
-                        headers=API_HEADERS, verify=False,
-                    )
-                    if r.status_code == 200:
-                        break
-                    r = None
-                except Exception:
-                    r = None
-                    continue
-            if r:
-                html_chunk = r.raw.read(65536).decode("utf-8", errors="ignore")
-                m = re.search(
-                    r'<meta[^>]+(?:property=["\']og:image["\'][^>]+content|content[^>]+property=["\']og:image["\'])[^>]*content=["\']?(https?://[^"\'>\s]+)',
-                    html_chunk, re.IGNORECASE
-                )
-                if not m:
-                    m = re.search(r'og:image.*?content=["\']?(https?://[^"\'>\s]+)',
-                                  html_chunk, re.IGNORECASE)
-                if m:
-                    img_url = m.group(1)
-                    source  = "og"
-                    log(f"  og:img  [{rid}]")
-        except Exception:
-            pass
+    # ── Source 3: DuckDuckGo ─────────────────────────
+    img_url = try_ddg(query, sp, sd)
+    if img_url and download_image(img_url, dest, sp, sd):
+        with lock: stats["ok"] += 1; stats["ddg"] += 1
+        log(f"  ✓ ddg    [{rid}]")
+        time.sleep(DELAY)
+        return True
 
-    # ── Source 4: loremflickr direct (no proxy) ─────────────────
-    if not img_url:
-        kw  = CAT_KW.get(cat, "food,moroccan,jewish")
-        flickr_url = f"https://loremflickr.com/600/400/{kw}?lock={20000 + idx}"
-        img_url = flickr_url
-        source  = "flickr"
-        log(f"  flickr  [{rid}] {cat}")
-
-    # ── Source 5: picsum fallback ────────────────────────────────
-    # (used if flickr download fails)
-
-    # ── Download ─────────────────────────────────────────────────
-    ok = download_and_save(
-        img_url, dest, sess_proxy, sess_direct,
-        is_picsum=(source == "picsum")
-    )
-
-    if not ok and source == "flickr":
-        # flickr failed — fall back to picsum (always works)
-        img_url = picsum_url(rid)
-        source  = "picsum"
-        log(f"  picsum  [{rid}] (flickr failed)")
-        ok = download_and_save(img_url, dest, sess_proxy, sess_direct, is_picsum=True)
-
-    with lock:
-        if ok:
-            stats["ok"] += 1
-            stats[f"ok_{source}"] = stats.get(f"ok_{source}", 0) + 1
-        else:
-            stats["fail_" + (source or "unk")] = stats.get("fail_" + (source or "unk"), 0) + 1
-            log(f"  FAIL    [{rid}] all sources exhausted", "WARN")
-
+    # ── All failed ───────────────────────────────────
+    with lock: stats["fail"] += 1
+    log(f"  ✗ FAIL   [{rid}] {title[:30]}")
     time.sleep(DELAY)
+    return False
 
-
-# ═══════════════════════════════════════════════
-#  MAIN
-# ═══════════════════════════════════════════════
+# ══════════════════════════════════════════════════════
+# MAIN
+# ══════════════════════════════════════════════════════
 def main():
     recipes = parse_recipes()
     total   = len(recipes)
-    already = sum(1 for r in recipes if (IMG_DIR / f"r-{r['id']}.jpg").exists())
+    already = sum(1 for r in recipes if (IMG_DIR/f"r-{r['id']}.jpg").exists() and not OVERWRITE)
 
-    log(f"{'='*55}")
+    log("=" * 60)
     log(f"ספר הבישול של פרלה בן ארוש ז\"ל — הורדת תמונות")
-    log(f"{'='*55}")
-    log(f"מתכונים: {total} | קיימים: {already} | יורדים: {total - already}")
-    log(f"פרוקסי: {PROXY or 'ללא'}")
-    log(f"שלבים: Wikimedia → TheMealDB → loremflickr → picsum")
-    log(f"{'='*55}")
+    log("=" * 60)
+    log(f"מתכונים: {total} | קיימים: {already} | לורדה: {total-already}")
+    log(f"תיקייה: {IMG_DIR}")
+    log(f"מקורות: TheMealDB → Wikimedia Commons → DuckDuckGo")
+    log(f"WORKERS={WORKERS} | TIMEOUT={TIMEOUT}s | OVERWRITE={OVERWRITE}")
+    log("=" * 60)
+    log("")
+    log("לביטול: Ctrl+C (יישמר הלוג ומה שהורד)")
+    log("")
 
-    sp, sd = get_sessions()
+    get_sessions()   # init sessions once
 
-    done      = 0
+    done = 0
     milestones = set(range(10, 101, 10))
 
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-        futures = {
-            pool.submit(process_recipe, r, i, sp, sd): r["id"]
-            for i, r in enumerate(recipes)
-        }
-        for f in as_completed(futures):
-            done += 1
-            pct = done * 100 // total
-            if pct in milestones:
-                milestones.discard(pct)
-                with lock:
-                    o, s, fw = stats['ok'], stats['skip'], stats.get('fail_flickr',0)
-                    log(
-                        f"  {pct:3d}% ({done}/{total})"
-                        f"  ✓{o}  ⏭{s}"
-                        f"  wiki={stats.get('ok_wiki',0)}"
-                        f"  meal={stats.get('ok_mealdb',0)}"
-                        f"  flkr={stats.get('ok_flickr',0)}"
-                        f"  pcs={stats.get('ok_picsum',0)}"
-                    )
+        futures = {pool.submit(process_recipe, r, i): r["id"]
+                   for i, r in enumerate(recipes)}
+        try:
+            for f in as_completed(futures, timeout=3600):
+                done += 1
+                pct = done * 100 // total
+                if pct in milestones:
+                    milestones.discard(pct)
+                    with lock:
+                        log(f"\n  ── {pct}% ({done}/{total}) "
+                            f"✓{stats['ok']}  ⏭{stats['skip']}  ✗{stats['fail']}  "
+                            f"[mealdb={stats['mealdb']} wiki={stats['wiki']} ddg={stats['ddg']}]\n")
+        except KeyboardInterrupt:
+            log("\nעצירה ידנית — שומר לוג...")
+            pool.shutdown(wait=False)
 
-    log(f"{'='*55}")
-    log(f"סיום הורדות:")
-    log(f"  הורד: {stats['ok']}  קיים: {stats['skip']}")
-    log(f"  Wikimedia: {stats.get('ok_wiki', 0)}")
-    log(f"  TheMealDB: {stats.get('ok_mealdb', 0)}")
-    log(f"  loremflickr: {stats.get('ok_flickr', 0)}")
-    log(f"  picsum: {stats.get('ok_picsum', 0)}")
-    log(f"  שגיאות: {sum(v for k,v in stats.items() if k.startswith('fail_'))}")
-    log(f"{'='*55}")
-
+    log("=" * 60)
+    log(f"סיום: ✓{stats['ok']}  ⏭{stats['skip']}  ✗{stats['fail']}")
+    log(f"  TheMealDB: {stats['mealdb']}  Wikimedia: {stats['wiki']}  DDG: {stats['ddg']}")
+    log(f"תיקייה: {IMG_DIR}")
+    log("=" * 60)
     LOG_FILE.write_text("\n".join(logs), encoding="utf-8")
-    log(f"לוג נשמר: {LOG_FILE}")
-
+    log(f"לוג: {LOG_FILE}")
 
 if __name__ == "__main__":
     main()
