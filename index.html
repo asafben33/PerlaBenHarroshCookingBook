@@ -9,7 +9,6 @@
 <meta http-equiv="Content-Security-Policy"
   content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src * data: blob:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self';">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
-<meta http-equiv="X-Frame-Options" content="DENY">
 <meta name="referrer" content="no-referrer">
 <meta property="og:title" content="ספר הבישול של פרלה בן ארוש ז״ל">
 <meta property="og:description" content="1,014 מתכונים מרוקאיים וספרדיים אותנטיים">
@@ -831,6 +830,7 @@ ul, ol { list-style: none; }
 <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <script>
+
 
 
 const G = {
@@ -19069,45 +19069,12 @@ const HOLIDAY_TAGS = {
 };
 
 /* ── Category label helper ── */
-const catLbl = id => (CATS.find(c => c.id===id)||{}).lbl||id;
 
 /* ── Category and holiday count helpers ── */
-function catCount(id){ return id==='all' ? R.length : R.filter(r=>r.cat===id).length; }
-function holCount(h){
-  if(!h) return R.filter(r=>r.cat==='hol').length;
-  return (HOLIDAY_TAGS[h]||[]).length;
-}
 
 /* ── Category / holiday selector ── */
-function selCatHol(id, h, el){
-  ACT_CATS=[];
-  ACT_CAT=id; ACT_HOLIDAY=h||null; ACT_DIFF='all'; SEARCH='';
-  document.querySelectorAll('.cat-btn,.nav-drop-item').forEach(b=>b.classList.remove('active'));
-  if(el) el.classList.add('active');
-  const ttl = document.getElementById('sec-title');
-  const hNames={shabbat:'שבת',rosh:'ראש השנה',kippur:'יום כיפור',
-    pesach:'פסח',mimouna:'מימונה',hanukkah:'חנוכה',purim:'פורים',
-    shavuot:'שבועות',sukkot:'סוכות',henna:'חינה'};
-  if(ttl){
-    if(id==='all') ttl.textContent='כל המתכונים';
-    else if(h) ttl.textContent='חגים: '+(hNames[h]||h);
-    else ttl.textContent=catLbl(id);
-  }
-  const si=document.getElementById('srch'); if(si) si.value='';
-  const sc=document.getElementById('srch-clr'); if(sc) sc.classList.remove('show');
-  closeDrops();
-  renderGrid();
-}
 
 /* ── Multi-category selector (e.g. מנות עיקריות) ── */
-function selMultiCat(ids){
-  ACT_CATS=ids||[]; ACT_CAT='multi'; ACT_HOLIDAY=null; ACT_DIFF='all'; SEARCH='';
-  const ttl=document.getElementById('sec-title'); if(ttl) ttl.textContent='מנות עיקריות';
-  const si=document.getElementById('srch'); if(si) si.value='';
-  const sc=document.getElementById('srch-clr'); if(sc) sc.classList.remove('show');
-  closeDrops();
-  renderGrid();
-}
 
 
 
@@ -19165,8 +19132,10 @@ const MENU_STRUCTURE = [
 
 
 
+
 </script>
 <script>
+
 
 /* ═══════════════════════════════════════════════
    GLOBAL STATE
@@ -20038,6 +20007,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (r) setTimeout(function() { openM(id); }, 300);
   }
 });
+
 
 
 </script>
