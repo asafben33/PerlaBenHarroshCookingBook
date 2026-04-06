@@ -1234,17 +1234,25 @@ def source_loremflickr(query, recipe_id):
 
 
 def find_youtube_video(title, query):
-    """Return a YouTube search URL for the recipe (no API key needed).
-    Returns a direct search URL that the user can click."""
+    """Return YouTube search URL — PRIORITY: Hebrew (Israeli) first.
+    1st choice: Hebrew title + מתכון  
+    2nd choice: Hebrew + English term
+    3rd choice: English recipe name
+    """
     from urllib.parse import quote_plus
-    # Build a targeted Hebrew+English search
-    he_q = title
-    en_q = query
-    # YouTube search URL — returns HTML we can parse
-    yt_url = f"https://www.youtube.com/results?search_query={quote_plus(he_q + ' מתכון')}"
-    return yt_url
+    # Priority 1: Hebrew recipe name + מתכון keyword
+    # This surfaces Israeli cooking channels first (Miri Tzahi, Keshef HaTvuot, etc.)
+    return f"https://www.youtube.com/results?search_query={quote_plus(title + ' מתכון')}"
 
 
+def build_youtube_urls(title, query):
+    """All YouTube search URLs in priority order for Hebrew/Israeli content."""
+    from urllib.parse import quote_plus
+    return [
+        "https://www.youtube.com/results?search_query=" + quote_plus(title + " מתכון"),
+        "https://www.youtube.com/results?search_query=" + quote_plus(title + " " + query),
+        "https://www.youtube.com/results?search_query=" + quote_plus(query + " recipe"),
+    ]
 def download_and_save(img_url, dest):
     """Download image and validate magic bytes. Returns True on success."""
     sp, sd = get_sess()
