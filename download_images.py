@@ -219,18 +219,37 @@ def get_sess():
 
 def _get(url, api=False, stream=False):
     """Try direct first, then proxy. Returns response or None.
-    Never hangs thanks to socket.setdefaulttimeout(8)."""
+    Never hangs thanks to socket.setdefaulttimeout(5)."""
     sp, sd = get_sess()
     hdrs = API_HDRS if api else HDRS
     for sess in [sd, sp]:
         try:
-            r = sess.get(url, timeout=NET_TIMEOUT, stream=stream,
+            r = sess.get(url, timeout=(3, 6), stream=stream,
                          allow_redirects=True, headers=hdrs)
             if r.status_code == 200:
                 return r
         except Exception:
             continue
     return None
+
+def _call_with_timeout(fn, timeout_sec=12):
+    """Run fn() in a daemon thread; return result or None on timeout."""
+    import threading
+    result = [None]
+    error  = [None]
+    def _worker():
+        try:
+            result[0] = fn()
+        except Exception as e:
+            error[0] = e
+    t = threading.Thread(target=_worker, daemon=True)
+    t.start()
+    t.join(timeout=timeout_sec)
+    if t.is_alive():
+        return None   # timed out — thread abandoned (daemon=True auto-dies)
+    if error[0]:
+        return None
+    return result[0]
 
 # ══════════════════════════════════════════════════
 # PARSE RECIPES from data.js / index.html
@@ -1503,12 +1522,13 @@ def download_and_save(img_url, dest):
         return False
     for sess in [sd, sp]:
         try:
-            r = sess.get(img_url, timeout=NET_TIMEOUT, stream=True,
+            # timeout=(connect, read) — read timeout prevents slow-drip hangs
+            r = sess.get(img_url, timeout=(3, 8), stream=False,
                          allow_redirects=True, verify=False)
             if r.status_code != 200: continue
             ct = r.headers.get("Content-Type","")
             if "text" in ct or "html" in ct: continue
-            data = b"".join(r.iter_content(8192))
+            data = r.content
             if len(data) < 3000: continue
             if data[:2] == b'\xff\xd8' or data[:4] == b'\x89PNG' or ("image" in ct and len(data) > 10_000):
                 # ── Duplicate detection (same as __DATA__ path) ──
@@ -1711,19 +1731,17 @@ def main():
         # ── Quick connectivity check ─────────────────────────────
         log("בודק חיבור רשת...")
         _test_ok = False
-        sp, sd = get_sess()
-        for _label, _s in [("direct", sd), ("proxy", sp)]:
-            try:
-                _r = _s.get("https://commons.wikimedia.org/w/api.php?action=query&meta=siteinfo&format=json",
-                           timeout=3, verify=False)
-                if _r.status_code == 200:
-                    log(f"  {_label}: OK")
-                    _test_ok = True
-                    break
-                else:
-                    log(f"  {_label}: HTTP {_r.status_code}")
-            except Exception as _e:
-                log(f"  {_label}: {type(_e).__name__}")
+        try:
+            import urllib.request
+            _req = urllib.request.Request(
+                "https://commons.wikimedia.org/w/api.php?action=query&meta=siteinfo&format=json",
+                headers={"User-Agent": "PerlaCookbook/1.0"})
+            _resp = urllib.request.urlopen(_req, timeout=4)
+            if _resp.status == 200:
+                log("  direct: OK")
+                _test_ok = True
+        except Exception as _e:
+            log(f"  direct: {type(_e).__name__}")
         if not _test_ok:
             log("  WARNING: אין חיבור לרשת — הסקריפט ינסה בכל זאת אבל רוב המקורות ייכשלו.")
             log("  TIP: בדוק proxy, VPN, או חיבור אינטרנט.")
@@ -1768,17 +1786,29 @@ def main():
 
             for si, (src_name, src_fn) in enumerate(sources):
                 if saved: break
+                # Hard per-recipe timeout: 45s total across all sources
+                if time.time() - t0 > 45:
+                    log(f"     TIMEOUT — recipe took >45s, skipping remaining sources")
+                    break
+                t1 = time.time()
                 try:
-                    t1 = time.time()
-                    url = src_fn()
-                    dt = time.time() - t1
-                    if url and download_and_save(url, dest):
-                        saved  = True
-                        source = src_name
-                        source_counts[src_name] = source_counts.get(src_name, 0) + 1
-                        log(f"     OK via {src_name} ({dt:.1f}s)")
-                    elif dt > 2:
-                        log(f"     {src_name}: no result ({dt:.1f}s)")
+                    # Hard timeout per source: 10s max (prevents infinite hangs)
+                    url = _call_with_timeout(src_fn, timeout_sec=10)
+                    dt_find = time.time() - t1
+                    if url:
+                        dl_ok = _call_with_timeout(
+                            lambda u=url, d=dest: download_and_save(u, d),
+                            timeout_sec=10)
+                        dt = time.time() - t1
+                        if dl_ok:
+                            saved  = True
+                            source = src_name
+                            source_counts[src_name] = source_counts.get(src_name, 0) + 1
+                            log(f"     OK via {src_name} ({dt:.1f}s)")
+                        elif dt > 2:
+                            log(f"     {src_name}: download failed ({dt:.1f}s)")
+                    elif dt_find > 2:
+                        log(f"     {src_name}: no result ({dt_find:.1f}s)")
                 except Exception as e:
                     dt = time.time() - t1
                     log(f"     {src_name} error ({dt:.1f}s): {type(e).__name__}")
