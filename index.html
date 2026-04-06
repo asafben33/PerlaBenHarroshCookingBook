@@ -20424,8 +20424,16 @@ function getRecipeImg(r) {
   if (!r) return null;
   var media = getMedia(r.id);
   if (media.imgs.length) return media.imgs[0];
-  if (r.img) return r.img;
-  return CAT_IMG[r.cat] || CAT_IMG._def;
+  return 'images/r-' + r.id + '.jpg';
+}
+
+/* Fallback sources for onerror (tried in order) */
+function _getImgFallbacks(r) {
+  var fb = [];
+  if (r.img) fb.push(r.img);
+  var cat = CAT_IMG[r.cat] || CAT_IMG._def;
+  if (cat) fb.push(cat);
+  return fb;
 }
 
 /* ═══════════════════════════════════════════════
@@ -20518,10 +20526,11 @@ function renderGrid() {
       img.onload  = function() { this.classList.add('loaded'); };
       img.onerror = function() {
         var self = this;
-        if (!self._triedFallback) {
-          self._triedFallback = true;
-          var fb = CAT_IMG[r.cat] || CAT_IMG._def;
-          if (fb && fb !== imgSrc) { self.src = fb; return; }
+        if (!self._fbIdx) self._fbIdx = 0;
+        var fbs = _getImgFallbacks(r);
+        if (self._fbIdx < fbs.length) {
+          self.src = fbs[self._fbIdx++];
+          return;
         }
         this.parentElement.classList.add('no-img');
         this.remove();
@@ -21302,7 +21311,7 @@ function refreshCardImg(recipeId) {
   if (!imgDiv) return;
   var media  = getMedia(recipeId);
   var r      = R.find(function(x) { return x && x.id === recipeId; });
-  var imgSrc = media.imgs.length ? media.imgs[0] : (r ? (r.img || CAT_IMG[r.cat] || CAT_IMG._def) : null);
+  var imgSrc = media.imgs.length ? media.imgs[0] : (r ? 'images/r-' + r.id + '.jpg' : null);
   var hasCustom = media.imgs.length > 0;
 
   // Rebuild img element
@@ -21316,10 +21325,11 @@ function refreshCardImg(recipeId) {
     img.onload  = function() { this.classList.add('loaded'); };
     img.onerror = function() {
       var self = this;
-      if (!self._triedFallback && r) {
-        self._triedFallback = true;
-        var fb = CAT_IMG[r.cat] || CAT_IMG._def;
-        if (fb && fb !== imgSrc) { self.src = fb; return; }
+      if (!self._fbIdx) self._fbIdx = 0;
+      var fbs = r ? _getImgFallbacks(r) : [];
+      if (self._fbIdx < fbs.length) {
+        self.src = fbs[self._fbIdx++];
+        return;
       }
       this.remove();
       imgDiv.classList.add('no-img');
@@ -21370,7 +21380,7 @@ function refreshModalMedia(r) {
   // Remove all existing img and upload-wrap elements
   hero.querySelectorAll('img, .m-upload-wrap').forEach(function(el) { el.remove(); });
 
-  var imgSrc = hasCustom ? media.imgs[0] : (r.img || CAT_IMG[r.cat] || CAT_IMG._def);
+  var imgSrc = hasCustom ? media.imgs[0] : 'images/r-' + r.id + '.jpg';
 
   if (imgSrc) {
     var img = document.createElement('img');
@@ -21378,10 +21388,11 @@ function refreshModalMedia(r) {
     img.onload  = function() { this.classList.add('loaded'); };
     img.onerror = function() {
       var self = this;
-      if (!self._triedFallback) {
-        self._triedFallback = true;
-        var fb = CAT_IMG[r.cat] || CAT_IMG._def;
-        if (fb && fb !== imgSrc) { self.src = fb; return; }
+      if (!self._fbIdx) self._fbIdx = 0;
+      var fbs = _getImgFallbacks(r);
+      if (self._fbIdx < fbs.length) {
+        self.src = fbs[self._fbIdx++];
+        return;
       }
       this.remove();
       if (!hasCustom) appendUploadWrap(hero, r.id);

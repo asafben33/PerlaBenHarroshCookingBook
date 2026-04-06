@@ -6,7 +6,7 @@ download_images.py — Perla Ben-Harrosh z"l Cookbook
 סקריפט מאוחד: הורדת תמונות + ניקוי כפילויות (dedup) — הכל בריצה אחת.
 
 שלב 1 — Download:
-  מוריד תמונות ל-1,005 מתכונים מקוריים + 40 לא-כשרים = 1,045 סה"כ.
+  מוריד תמונות ל-1,014 מתכונים מקוריים + 40 לא-כשרים = 1,054 סה"כ.
   מקורות בסדר עדיפות: עברית-ראשון → TheMealDB → Wikimedia →
                          Openverse → Unsplash → DuckDuckGo → Loremflickr
   בטוח מפני תלייה: socket timeout גלובלי, Ctrl+C = יציאה מיידית.
@@ -126,7 +126,7 @@ except ImportError:
 # ══════════════════════════════════════════════════
 SCRIPT_DIR  = Path(__file__).parent
 IMG_DIR     = SCRIPT_DIR / "images"        # output directory — always images/
-LOG_DIR     = Path(r"C:\Users\isasaf\Assi-ProjectsWorkFolder\PerlaBenHarroshCookingBook\logs")
+LOG_DIR     = Path(r"C:\Users\isasaf\Assi-ProjectsWorkFolder\PerlaBenHarroshCookingBook\logs") if sys.platform == 'win32' else SCRIPT_DIR / "logs"
 _ts         = datetime.now().strftime("%Y-%m-%d_%H.%M")
 LOG_FILE    = LOG_DIR / f"download_images_{_ts}.log"
 
@@ -1141,7 +1141,7 @@ CAT_QUERY = {
     "tun":    "tunisian food dish",
     "isr":    "israeli street food modern falafel hummus",
     "turk":   "turkish food dish",
-    "nonkosher": "kosher pareve substitute jewish food"
+    "nonkosher": "moroccan seafood shellfish dish"
 }
 
 # Ingredient-based fallback
@@ -1377,47 +1377,32 @@ def source_openverse(query):
 
 
 def source_unsplash_search(query):
-    """Unsplash featured photos + Picsum fallback — both free, no key needed."""
+    """Wikipedia article images — reliable, free, high-quality food photos."""
     _, sd = get_sess()
     from urllib.parse import quote_plus
     kw = _best_keywords(query, 3)
     try:
-        encoded = quote_plus(kw + ' food')
+        # Search English Wikipedia for articles matching the query
         r = sd.get(
-            f"https://source.unsplash.com/featured/600x400/?{encoded}",
-            timeout=NET_TIMEOUT, verify=False, headers=API_HDRS, allow_redirects=True)
-        if r.status_code == 200:
-            ct = r.headers.get("Content-Type", "")
-            if "image" in ct and len(r.content) > 8000:
-                return ("__DATA__", r.content)
-    except Exception:
-        pass
-    try:
-        seed = abs(hash(kw)) % 1000
-        r = sd.get(
-            f"https://picsum.photos/seed/{seed}/600/400",
-            timeout=NET_TIMEOUT, verify=False, headers=API_HDRS, allow_redirects=True)
-        if r.status_code == 200 and len(r.content) > 8000:
-            if "image" in r.headers.get("Content-Type",""):
-                return ("__DATA__", r.content)
-    except Exception:
-        pass
-    return None
-
-
-def source_pixabay(query):
-    """Loremflickr with food keyword — free CDN, no key, consistent per query."""
-    _, sd = get_sess()
-    from urllib.parse import quote_plus
-    kw = _best_keywords(query, 2)
-    try:
-        lock = abs(hash(kw)) % 9000 + 100
-        url = f"https://loremflickr.com/640/480/{quote_plus(kw)},food?lock={lock}"
-        r = sd.get(url, timeout=NET_TIMEOUT, verify=False, headers=API_HDRS,
-                   allow_redirects=True)
-        if r.status_code == 200 and len(r.content) > 5000:
-            if "image" in r.headers.get("Content-Type",""):
-                return ("__DATA__", r.content)
+            "https://en.wikipedia.org/w/api.php",
+            params={"action":"query","list":"search","srsearch":kw + " food",
+                    "srlimit":"5","format":"json"},
+            timeout=NET_TIMEOUT, verify=False, headers=API_HDRS)
+        if r.status_code != 200: return None
+        results = r.json().get("query",{}).get("search",[])
+        for res in results:
+            title = res.get("title","")
+            # Get page images
+            r2 = sd.get(
+                "https://en.wikipedia.org/w/api.php",
+                params={"action":"query","titles":title,"prop":"pageimages",
+                        "piprop":"original","format":"json"},
+                timeout=NET_TIMEOUT, verify=False, headers=API_HDRS)
+            if r2.status_code != 200: continue
+            for pg in r2.json().get("query",{}).get("pages",{}).values():
+                img = pg.get("original",{}).get("source","")
+                if img and any(e in img.lower() for e in [".jpg",".jpeg",".png"]):
+                    return img
     except Exception:
         pass
     return None
@@ -1526,10 +1511,23 @@ def download_and_save(img_url, dest):
             if "text" in ct or "html" in ct: continue
             data = b"".join(r.iter_content(8192))
             if len(data) < 3000: continue
-            if data[:2] == b'\xff\xd8' or data[:4] == b'\x89PNG':
-                dest.write_bytes(data); return True
-            if "image" in ct and len(data) > 10_000:
-                dest.write_bytes(data); return True
+            if data[:2] == b'\xff\xd8' or data[:4] == b'\x89PNG' or ("image" in ct and len(data) > 10_000):
+                # ── Duplicate detection (same as __DATA__ path) ──
+                file_sz = len(data)
+                existing = _size_index.get(file_sz)
+                if existing and existing != dest:
+                    try:
+                        dest.hardlink_to(existing)
+                    except AttributeError:
+                        os.link(str(existing), str(dest))
+                    except OSError:
+                        dest.write_bytes(data)
+                    if file_sz not in _size_index:
+                        _size_index[file_sz] = dest
+                    return True
+                dest.write_bytes(data)
+                _size_index[file_sz] = dest
+                return True
         except Exception:
             continue
     return False
@@ -1538,19 +1536,20 @@ def download_and_save(img_url, dest):
 def run_dedup(dry_run: bool = False) -> None:
     """שלב 2 — ניקוי כפילויות דינמי.
 
-    סורק את כל קבצי r-*.jpg לפי גודל קובץ.
-    בכל קבוצה עם גודל זהה:
+    סורק את כל קבצי r-*.jpg לפי SHA256 hash.
+    בכל קבוצה עם hash זהה:
       • קנוני  = הקובץ הראשון אלפביתית בקבוצה (נשמר)
       • שאר    = נמחקים ומוחלפים ב-Hard Link לקנוני
     Hard Link = שם נוסף לאותו inode — אפס מקום נוסף.
     """
     from collections import defaultdict
+    import hashlib
 
     log("=" * 60)
     log("שלב 2 — Dedup: ניקוי כפילויות" + (" [DRY RUN]" if dry_run else ""))
     log("=" * 60)
 
-    # ── סרוק את כל הקבצים וקבץ לפי גודל ─────────────────────
+    # ── סרוק את כל הקבצים וקבץ לפי גודל (pre-filter) ──────
     by_size: dict[int, list[Path]] = defaultdict(list)
     for p in sorted(IMG_DIR.glob("r-*.jpg")):
         try:
@@ -1560,12 +1559,24 @@ def run_dedup(dry_run: bool = False) -> None:
         except OSError:
             pass
 
-    dup_groups   = {sz: ps for sz, ps in by_size.items() if len(ps) > 1}
+    # ── Hash only files with duplicate sizes (optimization) ──
+    by_hash: dict[str, list[Path]] = defaultdict(list)
+    for sz, paths in by_size.items():
+        if len(paths) < 2:
+            continue
+        for p in paths:
+            try:
+                h = hashlib.sha256(p.read_bytes()).hexdigest()
+                by_hash[h].append(p)
+            except OSError:
+                pass
+
+    dup_groups   = {h: ps for h, ps in by_hash.items() if len(ps) > 1}
     total_dups   = sum(len(ps) - 1 for ps in dup_groups.values())
-    total_bytes  = sum(sz * (len(ps) - 1) for sz, ps in dup_groups.items())
+    total_bytes  = sum(ps[0].stat().st_size * (len(ps) - 1) for ps in dup_groups.values())
 
     log(f"קבצים סרוקים  : {sum(len(ps) for ps in by_size.values())}")
-    log(f"קבוצות כפולות : {len(dup_groups)}")
+    log(f"קבוצות כפולות : {len(dup_groups)} (SHA256)")
     log(f"כפילויות לניקוי: {total_dups}")
     log(f"מקום לשחרור   : {total_bytes / 1024 / 1024:.1f} MB")
     log("")
@@ -1579,23 +1590,15 @@ def run_dedup(dry_run: bool = False) -> None:
     skip_count = 0
     freed      = 0
 
-    for sz, paths in sorted(dup_groups.items(), key=lambda x: -x[0] * (len(x[1]) - 1)):
+    for h, paths in sorted(dup_groups.items(), key=lambda x: -(len(x[1]) - 1)):
         canon = paths[0]          # קנוני = ראשון אלפביתית
         aliases = paths[1:]       # כפילויות
+        try:
+            sz = canon.stat().st_size
+        except OSError:
+            sz = 0
         for alias in aliases:
-            # בדיקת בטיחות: וודא גדלים שווים לפני מחיקה
-            try:
-                a_sz = alias.stat().st_size
-                c_sz = canon.stat().st_size
-            except OSError:
-                skip_count += 1
-                continue
-
-            if a_sz != c_sz:
-                log(f"  SKIP  גודל שונה {alias.name} ({a_sz}) ≠ {canon.name} ({c_sz})")
-                skip_count += 1
-                continue
-
+            # SHA256 match guarantees identical content — safe to link
             if dry_run:
                 log(f"  DRY   {alias.name:30s} → {canon.name}  ({sz/1024:.0f} KB)")
                 ok_count += 1
@@ -1697,7 +1700,7 @@ def main():
         log("שלב 1 — הורדת תמונות")
         log("-" * 60)
         log(f"מתכונים: {total} | קיימים: {already} | OVERWRITE={OVERWRITE}")
-        log(f"מקורות: Hebrew → TheMealDB → Wikimedia → Openverse → Unsplash → DDG → Flickr")
+        log(f"מקורות: Hebrew → TheMealDB → Wikimedia → Openverse → Wikipedia → DDG → Flickr")
         log(f"Ctrl+C = יציאה מיידית")
         log("")
 
@@ -1730,7 +1733,7 @@ def main():
                 ("mealdb",    lambda q=query: source_mealdb(q)),
                 ("wikimedia", lambda q=query: source_wikimedia_single(q)),
                 ("openverse", lambda q=query: source_openverse(q)),
-                ("unsplash",  lambda q=query, rid=rid: source_unsplash_search(q)),
+                ("wikipedia2",lambda q=query, rid=rid: source_unsplash_search(q)),
                 ("ddg",       lambda q=query: source_foodimages_scrape(q)),
                 ("flickr",    lambda q=query, rid=rid: source_loremflickr(q, rid)),
             ]:
@@ -1764,7 +1767,7 @@ def main():
         log(f"הורדה הושלמה: ok={ok_count}  skip={skip_count}  fail={fail_count}")
         src_str = "  ".join(
             f"{k}={source_counts.get(k,0)}"
-            for k in ["hebrew","wikimedia","mealdb","unsplash","openverse","ddg"]
+            for k in ["hebrew","wikimedia","mealdb","wikipedia2","openverse","ddg"]
         )
         log(f"מקורות: {src_str}")
         log("-" * 60)
