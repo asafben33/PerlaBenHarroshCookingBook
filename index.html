@@ -880,7 +880,7 @@ ul, ol { list-style: none; }
     <p class="hero-tagline">לזכרם של פרלה ופנחס בן הראש — טעמים שזכרונם חי לנצח</p>
     <div class="hero-pills" role="list">
       <span class="hp" role="listitem" id="pill-cnt">טוען...</span>
-      <span class="hp" role="listitem">18 עדות</span>
+      <span class="hp" role="listitem">19 קטגוריות</span>
       <span class="hp" role="listitem">קזבלנקה · מרקש</span>
       <span class="hp" role="listitem">מסורת של דורות</span>
     </div>
@@ -1006,6 +1006,8 @@ ul, ol { list-style: none; }
 <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <script>
+
+
 
 
 
@@ -18613,8 +18615,19 @@ const HOLIDAY_TAGS = {
 
 
 const MENU_STRUCTURE = [
-  /* ── ALL ── */
-  {id:'all', lbl:'כל המתכונים'},
+  /* ── ALL — with themed subcategories ── */
+  {lbl:'כל המתכונים', key:'all_group', items:[
+    {id:'all', lbl:'כל המתכונים'},
+    {ids:['soups'], lbl:'מרקים'},
+    {ids:['salads'], lbl:'סלטים'},
+    {ids:['meat','chick','fish'], lbl:'מנות עיקריות'},
+    {ids:['veg'], lbl:'ירקות ותוספות'},
+    {ids:['hol'], lbl:'חגים ומועדים'},
+    {ids:['des'], lbl:'קינוחים ומאפים'},
+    {ids:['span'], lbl:'ספרדי-מרוקאי וס"ט'},
+    {ids:['iraq','kurd','ashk','yem','pers','buk','tun','turk','isr'], lbl:'מתכוני השכנים'},
+    {id:'nonkosher', lbl:'מתכונים לא כשרים'},
+  ]},
 
   /* ── MOROCCAN ── */
   {lbl:'מרוקאי', key:'moroccan', items:[
@@ -18657,9 +18670,9 @@ const MENU_STRUCTURE = [
     {ids:['sp9','spn3','spn5','ex42','ex43','ex45','fin19','fin20','spv5','spx4','spx7','spe9','spe10'], lbl:'קינוחים ומתוקים'},
   ]},
 
-  /* ── KATAMON / TALPIOT NEIGHBOURS ── */
-  {lbl:'מהמעברה בתלפיות ומשכונת הקטמונים בירושלים', key:'katamon', items:[
-    {ids:['iraq','kurd','ashk','yem','pers','buk','tun','turk'], lbl:'הכל'},
+  /* ── NEIGHBOURS & FRIENDS ── */
+  {lbl:'מתכונים שאמא למדה מהשכנים והחברים שתמיד עטפו אותה באהבה וחום', key:'katamon', items:[
+    {ids:['iraq','kurd','ashk','yem','pers','buk','tun','turk','isr'], lbl:'הכל'},
     {id:'iraq', lbl:'עיראק'},
     {id:'kurd', lbl:'כורדיסטן'},
     {id:'ashk', lbl:'אשכנז'},
@@ -18668,6 +18681,13 @@ const MENU_STRUCTURE = [
     {id:'buk',  lbl:'בוכרה'},
     {id:'tun',  lbl:'טוניסיה'},
     {id:'turk', lbl:'טורקיה'},
+    {lbl:'מטבח ישראלי', ids:['isr'], items:[
+      {ids:['is1','is2','is3','is4','is5','is6','is7','is8','is9','is10','is11','is12','is13','is14','is15','is16','is17','is18','is19','is20','is21','is22','is23','is24','is25','is26','is27','is28','is29','is30'], lbl:'הכל'},
+      {ids:['is1','is2','is3','is5','is7','is8','is12','is13','is21','is23'], lbl:'מאכלי רחוב ישראליים'},
+      {ids:['is4','is9','is10','is14','is15','is16','is18','is26','is28'], lbl:'מנות עיקריות'},
+      {ids:['is6','is19','is22','is24'], lbl:'לחמים ומאפים'},
+      {ids:['is11','is17','is20','is25','is27','is29','is30'], lbl:'קינוחים ועוגות'},
+    ]},
   ]},
 
   /* ── NON-KOSHER (מתכונים לא כשרים) ── */
@@ -18676,9 +18696,9 @@ const MENU_STRUCTURE = [
     {ids:['nk_fn3','nk_fn4','nk_fe3','nk_fe5','nk_add34','nk_ex19','nk_hv3','nk_spv2','nk_fe10'], lbl:'פירות ים ודגים לא כשרים'},
     {ids:['nk_c5','nk_h2','nk_sp2','nk_sp4','nk_hn15','nk_hn16','nk_rn7','nk_cne4','nk_se9','nk_chf3','nk_chf4','nk_add43','nk_add44','nk_ex26','nk_ex31','nk_fin13','nk_cw3','nk_chfx2','nk_holfx4','nk_me9','nk_hn18','nk_ku3','nk_ku25','nk_ku30','nk_ye19','nk_tr8','nk_tr26','nk_sn23','nk_bu2','nk_bu4','nk_spx3'], lbl:'בשר וחלב'},
   ]},
-  /* ── ISRAELI ── */
-  {id:'isr',  lbl:'מטבח ישראלי'},
 ];
+
+
 
 
 
@@ -18701,6 +18721,8 @@ const MENU_STRUCTURE = [
 
 </script>
 <script>
+
+
 
 
 
@@ -19152,6 +19174,22 @@ function buildNav() {
             hr.className = 'acc-sep';
             body.appendChild(hr); return;
           }
+          // Handle recipe-ID arrays (isr/span subcategories)
+          if (s.ids && !s.h) {
+            var isRecipeIds = s.ids.length > 0 && /[0-9]/.test(s.ids[0]);
+            if (isRecipeIds) {
+              var _sr = s.ids, _sl = s.lbl;
+              var activeSub = ACT_IDS && _sr.every(function(r){ return ACT_IDS.has(r); }) && _sr.length === ACT_IDS.size;
+              body.appendChild(makeChip(s.lbl, s.ids.length,
+                function() { selectByIds(_sr, _sl); }, activeSub));
+            } else {
+              body.appendChild(makeChip(s.lbl, catCnt(s.ids),
+                function() { selectMulti(s.ids, s.lbl); },
+                isActiveLeaf(null, null, s.ids)));
+            }
+            return;
+          }
+          // Standard: holiday or category
           var sc = s.h ? (HOLIDAY_TAGS[s.h] || []).length : catCnt(s.id);
           body.appendChild(makeChip(s.lbl, sc || null,
             function() { selectCat(s.id, s.h || null); },
@@ -19950,6 +19988,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (r) setTimeout(function() { openM(id); }, 300);
   }
 });
+
+
 
 
 
