@@ -1123,7 +1123,7 @@ def source_openverse(query):
     for q in [query, _best_keywords(query, 3)]:
         try:
             r = sd.get(
-                "https://api.openverse.engineering/v1/images/",
+                "https://api.openverse.org/v1/images/",
                 params={"q": q, "license_type": "commercial,modification",
                         "mature": "false", "page_size": 10, "format": "json"},
                 timeout=NET_TIMEOUT, verify=False, headers={
@@ -1147,21 +1147,28 @@ def source_openverse(query):
 
 
 def source_unsplash_search(query):
-    """Unsplash — search photos via public endpoint (no key needed for basic)."""
+    """Unsplash featured photos + Picsum fallback — both free, no key needed."""
     _, sd = get_sess()
     from urllib.parse import quote_plus
-    kw = _best_keywords(query, 3) + " food"
+    kw = _best_keywords(query, 3)
     try:
-        # Use the Unsplash source API which doesn't require auth
-        # This returns a random relevant image
-        encoded = quote_plus(kw)
-        url = f"https://source.unsplash.com/600x400/?{encoded}"
-        r = sd.get(url, timeout=NET_TIMEOUT, verify=False,
-                   headers=API_HDRS, allow_redirects=True)
+        encoded = quote_plus(kw + ' food')
+        r = sd.get(
+            f"https://source.unsplash.com/featured/600x400/?{encoded}",
+            timeout=NET_TIMEOUT, verify=False, headers=API_HDRS, allow_redirects=True)
         if r.status_code == 200:
-            ct = r.headers.get("Content-Type","")
-            if "image" in ct and len(r.content) > 10000:
-                # This is already a downloaded image, save directly
+            ct = r.headers.get("Content-Type", "")
+            if "image" in ct and len(r.content) > 8000:
+                return ("__DATA__", r.content)
+    except Exception:
+        pass
+    try:
+        seed = abs(hash(kw)) % 1000
+        r = sd.get(
+            f"https://picsum.photos/seed/{seed}/600/400",
+            timeout=NET_TIMEOUT, verify=False, headers=API_HDRS, allow_redirects=True)
+        if r.status_code == 200 and len(r.content) > 8000:
+            if "image" in r.headers.get("Content-Type",""):
                 return ("__DATA__", r.content)
     except Exception:
         pass
@@ -1169,20 +1176,18 @@ def source_unsplash_search(query):
 
 
 def source_pixabay(query):
-    """Pixabay public images — no API key for basic searches via web."""
+    """Loremflickr with food keyword — free CDN, no key, consistent per query."""
     _, sd = get_sess()
     from urllib.parse import quote_plus
-    kw = _best_keywords(query, 3)
+    kw = _best_keywords(query, 2)
     try:
-        r = sd.get(
-            f"https://pixabay.com/api/?key=&q={quote_plus(kw)}&image_type=photo"
-            f"&category=food&per_page=5&safesearch=true",
-            timeout=NET_TIMEOUT, verify=False, headers=API_HDRS)
-        # Without API key this won't work — but try anyway
-        if r.status_code == 200:
-            hits = r.json().get("hits", [])
-            if hits:
-                return hits[0].get("webformatURL","") or None
+        lock = abs(hash(kw)) % 9000 + 100
+        url = f"https://loremflickr.com/640/480/{quote_plus(kw)},food?lock={lock}"
+        r = sd.get(url, timeout=NET_TIMEOUT, verify=False, headers=API_HDRS,
+                   allow_redirects=True)
+        if r.status_code == 200 and len(r.content) > 5000:
+            if "image" in r.headers.get("Content-Type",""):
+                return ("__DATA__", r.content)
     except Exception:
         pass
     return None
@@ -1203,7 +1208,7 @@ def source_foodimages_scrape(query):
             })
         if vqd_r.status_code != 200: return None
         # Extract vqd token
-        vqd_m = re.search(r"vqd=([\d-]+)", vqd_r.text)
+        vqd_m = re.search(r'vqd=([0-9-]+)', vqd_r.text) or re.search(r'"vqd":"([^"]+)"', vqd_r.text)
         if not vqd_m: return None
         vqd = vqd_m.group(1)
         img_r = sd.get(

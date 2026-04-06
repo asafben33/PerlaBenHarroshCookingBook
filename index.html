@@ -18680,7 +18680,7 @@ const HOLIDAY_TAGS = {
   rosh:['add17','add26','add27','add35','add55','add56','as11','as12','as14','as18','as19','as27','as28','bu28','bu7','ce1','ce9','chf2','chf5','chfx3','chfx5','d3','d6','def1','def10','def8','dle4','dle5','dn12','dn14','dn17','dn18','dn4','dn5','dn6','dn8','dne4','dne5','dv2','dv3','dv4','dw3','dx1','dx3','ex15','ex27','ex36','ex37','ex39','ex42','ex8','fin17','fin28','h3','hle3','hn2','hne3','holf1','hv5','hx3','hx4','iq30','ku22','m3','me12','mne3','pe11','pe27','pe6','pe8','rare6','rer7','s6','san13','se6','sle2','slv6','sne3','sv6','sw3','tr20','tr22','tr29','tr4','ve6','ye28'],
   shabbat:['add14','add15','add45','add56','as1','as10','as12','as13','as14','as15','as17','as19','as23','as26','as4','as6','bu12','bu18','bu5','c1','c3','c5','ce8','cx1','cx2','cx5','def5','dn15','dn16','dn3','ex33','ex36','f1','f3','fe11','fe12','fe15','fe6','fin22','fin24','fin30','hn12','hn16','hn17','hn20','hn23','hne2','hne4','holf3','holfx1','holfx3','hv2','iq1','iq10','iq21','iq5','is19','is28','ku24','m1','me11','me13','me15','mef6','rare6','rare9','rer4','sa3','sle16','sle23','sn21','sn25','sn8','sp4','sp6','spe1','spn1','spv1','spx1','spx4','spx5','sv2','sw2','tr12','tr2','tr22','tr30','tr6','tr9','v4','var3','ve13','ve16','ve18','ve20','ve7','vn8','vx1','ye1','ye11','ye12','ye17','ye21','ye27','ye5','ye8'],
   shavuot:['add7','add8','as14','as17','as22','as24','as26','as7','bu2','fin1','fin22','fn2','hle1','hle5','hn14','holf2','hw4','is21','is24','is27','is6','ku27','ku28','pe22','sle16','spe4','spn2','spnx5','spx4','spx7','tn25','tn29','tr1','tr15','tr16','tr18','tr19','tr21','tr5','tr6','ve11','vef6','vef9','vne1','vw1','vw3','ye2'],
-  sukkot:['add20','add7','add8','as11','as24','as8','bu15','bu17','bu2','bu21','bu4','d3','ex18','ex21','ex26','ex34','ex35','f4','fif5','fin14','fin15','fin17','fin6','fn3','fw1','fx1','hle4','hn13','hn15','hne3','hne4','holf2','hw5','iq15','iq19','iq29','iq4','is21','ku24','ku3','ku9','me17','me5','mef9','mx3','mx4','pe16','pe4','rare4','sf8','tn1','tn23','tn29','tr1','tr13','tr16','tr19','tr27','tr8','tr9','ve19','vef9','vn3','vn4','vn5','vn6','vne3','vne4','vne5','vv2','vv4','vw3','ye14'],
+  sukkot:['add20','add7','add8','as11','as24','as8','bu15','bu17','bu2','bu21','bu4','d3','ex18','ex21','ex26','ex34','ex35','f4','fif5','fin14','fin15','fin17','fin6','fw1','fx1','hle4','hn13','hn15','hne3','hne4','holf2','hw5','iq15','iq19','iq29','iq4','is21','ku24','ku3','ku9','me17','me5','mef9','mx3','mx4','pe16','pe4','rare4','sf8','tn1','tn23','tn29','tr1','tr13','tr16','tr19','tr27','tr8','tr9','ve19','vef9','vn3','vn4','vn5','vn6','vne3','vne4','vne5','vv2','vv4','vw3','ye14'],
 };
 
 /* ── Category label helper ── */
@@ -18697,13 +18697,13 @@ const MENU_STRUCTURE = [
   /* ── ALL — with themed subcategories ── */
   {lbl:'כל המתכונים', key:'all_group', items:[
     {id:'all', lbl:'כל המתכונים'},
-    {ids:['soups'], lbl:'מרקים'},
-    {ids:['salads'], lbl:'סלטים'},
+    {id:'soups', lbl:'מרקים'},
+    {id:'salads', lbl:'סלטים'},
     {ids:['meat','chick','fish'], lbl:'מנות עיקריות'},
-    {ids:['veg'], lbl:'ירקות ותוספות'},
-    {ids:['hol'], lbl:'חגים ומועדים'},
-    {ids:['des'], lbl:'קינוחים ומאפים'},
-    {ids:['span'], lbl:'ספרדי-מרוקאי וס"ט'},
+    {id:'veg', lbl:'ירקות ותוספות'},
+    {id:'hol', lbl:'חגים ומועדים'},
+    {id:'des', lbl:'קינוחים ומאפים'},
+    {id:'span', lbl:'ספרדי-מרוקאי וס"ט'},
     {ids:['iraq','kurd','ashk','yem','pers','buk','tun','turk','isr'], lbl:'מתכוני השכנים'},
     {id:'nonkosher', lbl:'מתכונים לא כשרים'},
   ]},
@@ -18886,7 +18886,8 @@ let ACT_HOLIDAY = null;
 let ACT_DIFF    = 'all';
 let SEARCH      = '';
 let SHOW_FAVS   = false;
-let ACT_IDS     = null;   // Set<string> of recipe IDs for span subcat filtering
+let ACT_IDS     = null;
+let ACT_NAV_KEY = 'all_group'; // tracks which nav group is active   // Set<string> of recipe IDs for span subcat filtering
 let FAV         = new Set();
 let ING_TAGS    = new Set();
 let CUR_REC     = null;
@@ -19198,11 +19199,12 @@ function buildNav() {
     return b;
   }
 
-  function selectCat(catId, hol) {
+  function selectCat(catId, hol, groupKey) {
     ACT_CATS    = [];
     ACT_IDS     = null;
     ACT_CAT     = catId;
     ACT_HOLIDAY = hol || null;
+    if (groupKey) ACT_NAV_KEY = groupKey;
     SEARCH      = '';
     var si = document.getElementById('srch');
     if (si) si.value = '';
@@ -19214,11 +19216,12 @@ function buildNav() {
     if (ttl) ttl.textContent = hol ? 'חגים: ' + (holName(hol) || hol) : catLbl(catId);
   }
 
-  function selectMulti(ids, label) {
+  function selectMulti(ids, label, groupKey) {
     ACT_CATS    = ids.slice();
     ACT_IDS     = null;
     ACT_CAT     = '';
     ACT_HOLIDAY = null;
+    if (groupKey) ACT_NAV_KEY = groupKey;
     SEARCH      = '';
     var si = document.getElementById('srch');
     if (si) si.value = '';
@@ -19230,11 +19233,12 @@ function buildNav() {
     if (ttl) ttl.textContent = label || 'מתכונים';
   }
 
-  function selectByIds(recipeIds, label) {
+  function selectByIds(recipeIds, label, groupKey) {
     ACT_IDS     = new Set(recipeIds);
     ACT_CATS    = [];
     ACT_CAT     = 'span';
     ACT_HOLIDAY = null;
+    if (groupKey) ACT_NAV_KEY = groupKey;
     SEARCH      = '';
     var si = document.getElementById('srch');
     if (si) si.value = '';
@@ -19270,7 +19274,7 @@ function buildNav() {
 
         if (item.ids) {
           body.appendChild(makeChip('הכל ב' + item.lbl, catCnt(item.ids),
-            function() { selectMulti(item.ids, item.lbl); },
+            function() { selectMulti(item.ids, item.lbl, node.key); },
             isActiveLeaf(null, null, item.ids)));
         }
 
@@ -19287,10 +19291,10 @@ function buildNav() {
               var _sr = s.ids, _sl = s.lbl;
               var activeSub = ACT_IDS && _sr.every(function(r){ return ACT_IDS.has(r); }) && _sr.length === ACT_IDS.size;
               body.appendChild(makeChip(s.lbl, s.ids.length,
-                function() { selectByIds(_sr, _sl); }, activeSub));
+                function() { selectByIds(_sr, _sl, node.key); }, activeSub));
             } else {
               body.appendChild(makeChip(s.lbl, catCnt(s.ids),
-                function() { selectMulti(s.ids, s.lbl); },
+                function() { selectMulti(s.ids, s.lbl, node.key); },
                 isActiveLeaf(null, null, s.ids)));
             }
             return;
@@ -19298,7 +19302,7 @@ function buildNav() {
           // Standard: holiday or category
           var sc = s.h ? (HOLIDAY_TAGS[s.h] || []).length : catCnt(s.id);
           body.appendChild(makeChip(s.lbl, sc || null,
-            function() { selectCat(s.id, s.h || null); },
+            function() { selectCat(s.id, s.h || null, node.key); },
             isActiveLeaf(s.id, s.h || null, null)));
         });
 
@@ -19329,11 +19333,11 @@ function buildNav() {
           var activeSubcat = ACT_IDS && _rids.every(function(rid) { return ACT_IDS.has(rid); })
                              && _rids.length === ACT_IDS.size;
           row.appendChild(makeChip(item.lbl, item.ids.length,
-            function() { selectByIds(_rids, _lbl); },
+            function() { selectByIds(_rids, _lbl, node.key); },
             activeSubcat));
         } else {
           row.appendChild(makeChip(item.lbl, catCnt(item.ids),
-            function() { selectMulti(item.ids, item.lbl); },
+            function() { selectMulti(item.ids, item.lbl, node.key); },
             isActiveLeaf(null, null, item.ids)));
         }
         return;
@@ -19341,7 +19345,7 @@ function buildNav() {
 
       // Simple chip
       row.appendChild(makeChip(item.lbl, catCnt(item.id),
-        function() { selectCat(item.id, null); },
+        function() { selectCat(item.id, null, node.key); },
         isActiveLeaf(item.id, null, null)));
     });
 
@@ -19361,7 +19365,7 @@ function buildNav() {
       btn.addEventListener('click', function(e) {
         e.stopPropagation();
         closePanel();
-        selectCat(node.id, null);
+        selectCat(node.id, null, node.key || ('g' + idx));
       });
       bar.appendChild(btn);
       return;
@@ -19394,11 +19398,7 @@ function buildNav() {
       }, 0);
     })();
 
-    var grpActive = node.key === 'all_group' ? ACT_CAT === 'all' || ACT_CATS.length > 0
-      : (node.items || []).some(function(it) {
-          return (it.ids && it.ids.some(function(id) { return ACT_CATS.indexOf(id) >= 0 || ACT_CAT === id; }))
-              || (it.id && ACT_CAT === it.id);
-        });
+    var grpActive = (node.key && node.key === ACT_NAV_KEY);
 
     var btn = document.createElement('button');
     btn.className = 'nb' + (grpActive ? ' active' : '');
