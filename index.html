@@ -300,14 +300,21 @@ ol { padding-right: 1.2rem; }
 .hero {
   direction: rtl;
   background: linear-gradient(165deg,
-    rgba(2,6,16,.93) 0%, rgba(6,16,36,.88) 45%,
-    rgba(18,7,2,.80) 100%);
+    rgba(2,6,16,.60) 0%, rgba(6,16,36,.50) 45%,
+    rgba(18,7,2,.42) 100%);
   padding: 3.5rem 1.5rem 2.8rem;
   text-align: right;
   position: relative;
   overflow: hidden;
 }
-.hero-inner { max-width: 760px; margin-right: auto; position: relative; }
+.hero-inner {
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: 0;
+  position: relative;
+  direction: rtl;
+  text-align: right;
+}
 .hero-orn { font-size: 1rem; color: var(--c-gold-d); opacity: .4; letter-spacing: .5rem; margin-bottom: .6rem; }
 .hero-h1 {
   direction: rtl;
@@ -343,7 +350,7 @@ ol { padding-right: 1.2rem; }
 /* ── About ────────────────────────────────────────────────── */
 .about {
   direction: rtl; text-align: right;
-  background: rgba(3,8,20,.96);
+  background: rgba(3,8,20,.92);
   border-bottom: 1px solid rgba(196,147,10,.15);
   max-height: 0;
   overflow: hidden;
@@ -377,12 +384,13 @@ ol { padding-right: 1.2rem; }
 }
 
 /* ── Main / Grid ──────────────────────────────────────────── */
-main { background: rgba(2,5,12,.62); min-height: 60vh; }
+main { background: rgba(1,3,8,.30); min-height: 60vh; }
 .grid-header {
   display: flex;
   direction: rtl; align-items: center; justify-content: space-between;
   padding: .7rem 1.5rem;
   border-bottom: 1px solid rgba(196,147,10,.12);
+  background: rgba(0,0,0,.25);
 }
 #sec-title { direction: rtl; text-align: right; font-size: 1rem; font-weight: 700; color: var(--c-gold-l); }
 #sec-cnt { font-size: .8rem; color: var(--c-gold-d); margin-right: .4rem; }
@@ -404,7 +412,7 @@ main { background: rgba(2,5,12,.62); min-height: 60vh; }
 }
 .card {
   direction: rtl;
-  background: rgba(253,248,238,.97);
+  background: rgba(253,248,238,.98);
   border-radius: var(--r-md);
   border: 1px solid var(--c-bdr);
   box-shadow: var(--sh-xs);
@@ -610,13 +618,13 @@ main { background: rgba(2,5,12,.62); min-height: 60vh; }
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
 <defs>
   <linearGradient id="cbSky" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#010510"/>
-    <stop offset="55%" stop-color="#040e26"/>
+    <stop offset="0%" stop-color="#040820"/>
+    <stop offset="55%" stop-color="#071535"/>
     <stop offset="85%" stop-color="#1a0a04"/>
     <stop offset="100%" stop-color="#0d1520"/>
   </linearGradient>
   <linearGradient id="cbSea" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#04193a"/>
+    <stop offset="0%" stop-color="#082248"/>
     <stop offset="100%" stop-color="#020c1e"/>
   </linearGradient>
   <linearGradient id="cbGlow" x1="0" y1="0" x2="0" y2="1">
@@ -637,11 +645,11 @@ main { background: rgba(2,5,12,.62); min-height: 60vh; }
   </filter>
   <pattern id="zellige" x="0" y="0" width="72" height="72" patternUnits="userSpaceOnUse">
     <polygon points="36,2 42,20 60,20 46,31 52,49 36,38 20,49 26,31 12,20 30,20"
-      fill="none" stroke="#c4930a" stroke-width="0.7" opacity="0.22"/>
+      fill="none" stroke="#c4930a" stroke-width="1.0" opacity="0.45"/>
     <polygon points="36,10 40,22 52,22 42,29 46,41 36,34 26,41 30,29 20,22 32,22"
-      fill="none" stroke="#c4930a" stroke-width="0.4" opacity="0.14"/>
-    <line x1="36" y1="0" x2="36" y2="72" stroke="#c4930a" stroke-width="0.3" opacity="0.09"/>
-    <line x1="0" y1="36" x2="72" y2="36" stroke="#c4930a" stroke-width="0.3" opacity="0.09"/>
+      fill="none" stroke="#c4930a" stroke-width="0.6" opacity="0.28"/>
+    <line x1="36" y1="0" x2="36" y2="72" stroke="#c4930a" stroke-width="0.4" opacity="0.18"/>
+    <line x1="0" y1="36" x2="72" y2="36" stroke="#c4930a" stroke-width="0.4" opacity="0.18"/>
     <line x1="0" y1="0" x2="72" y2="72" stroke="#c4930a" stroke-width="0.25" opacity="0.06"/>
     <line x1="72" y1="0" x2="0" y2="72" stroke="#c4930a" stroke-width="0.25" opacity="0.06"/>
     <circle cx="36" cy="36" r="3" fill="none" stroke="#c4930a" stroke-width="0.4" opacity="0.1"/>
@@ -691,9 +699,9 @@ main { background: rgba(2,5,12,.62); min-height: 60vh; }
 <!-- HASSAN II MOSQUE — main landmark, center -->
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- Mosque platform -->
-<rect x="560" y="480" width="320" height="180" fill="#1a0e05" opacity="0.95"/>
+<rect x="560" y="480" width="320" height="180" fill="#3a1e0a" opacity="0.95"/>
 <!-- Main hall -->
-<rect x="580" y="440" width="280" height="60" fill="#1a0e05" opacity="0.95"/>
+<rect x="580" y="440" width="280" height="60" fill="#3a1e0a" opacity="0.95"/>
 <!-- Decorative arch row on hall -->
 <ellipse cx="620" cy="440" rx="18" ry="22" fill="#c4930a" opacity="0.18"/>
 <ellipse cx="660" cy="440" rx="18" ry="22" fill="#c4930a" opacity="0.18"/>
@@ -702,28 +710,28 @@ main { background: rgba(2,5,12,.62); min-height: 60vh; }
 <ellipse cx="780" cy="440" rx="18" ry="22" fill="#c4930a" opacity="0.18"/>
 <ellipse cx="820" cy="440" rx="18" ry="22" fill="#c4930a" opacity="0.18"/>
 <!-- Side minarets (small) -->
-<rect x="582" y="400" width="20" height="45" fill="#1a0e05" opacity="0.9"/>
-<rect x="838" y="400" width="20" height="45" fill="#1a0e05" opacity="0.9"/>
-<polygon points="582,400 592,385 602,400" fill="#1a0e05" opacity="0.9"/>
-<polygon points="838,400 848,385 858,400" fill="#1a0e05" opacity="0.9"/>
+<rect x="582" y="400" width="20" height="45" fill="#3a1e0a" opacity="0.92"/>
+<rect x="838" y="400" width="20" height="45" fill="#3a1e0a" opacity="0.92"/>
+<polygon points="582,400 592,385 602,400" fill="#3a1e0a" opacity="0.92"/>
+<polygon points="838,400 848,385 858,400" fill="#3a1e0a" opacity="0.92"/>
 <!-- MAIN MINARET — tall and detailed -->
-<rect x="700" y="200" width="40" height="245" fill="#160c04" opacity="0.98"/>
+<rect x="700" y="200" width="40" height="245" fill="#2e1808" opacity="0.96"/>
 <!-- Minaret bands/decoration -->
-<rect x="700" y="260" width="40" height="6" fill="#c4930a" opacity="0.3"/>
-<rect x="700" y="300" width="40" height="6" fill="#c4930a" opacity="0.3"/>
-<rect x="700" y="340" width="40" height="6" fill="#c4930a" opacity="0.3"/>
-<rect x="700" y="380" width="40" height="6" fill="#c4930a" opacity="0.3"/>
+<rect x="700" y="260" width="40" height="6" fill="#c4930a" opacity="0.55"/>
+<rect x="700" y="300" width="40" height="6" fill="#c4930a" opacity="0.55"/>
+<rect x="700" y="340" width="40" height="6" fill="#c4930a" opacity="0.55"/>
+<rect x="700" y="380" width="40" height="6" fill="#c4930a" opacity="0.55"/>
 <!-- Minaret windows (horseshoe arches) -->
-<ellipse cx="720" cy="240" rx="8" ry="12" fill="none" stroke="#c4930a" stroke-width="1.5" opacity="0.4"/>
-<ellipse cx="720" cy="280" rx="8" ry="12" fill="none" stroke="#c4930a" stroke-width="1.5" opacity="0.4"/>
-<ellipse cx="720" cy="320" rx="8" ry="12" fill="none" stroke="#c4930a" stroke-width="1.5" opacity="0.4"/>
-<ellipse cx="720" cy="360" rx="8" ry="12" fill="none" stroke="#c4930a" stroke-width="1.5" opacity="0.4"/>
+<ellipse cx="720" cy="240" rx="8" ry="12" fill="none" stroke="#c4930a" stroke-width="2" opacity="0.75"/>
+<ellipse cx="720" cy="280" rx="8" ry="12" fill="none" stroke="#c4930a" stroke-width="2" opacity="0.75"/>
+<ellipse cx="720" cy="320" rx="8" ry="12" fill="none" stroke="#c4930a" stroke-width="2" opacity="0.75"/>
+<ellipse cx="720" cy="360" rx="8" ry="12" fill="none" stroke="#c4930a" stroke-width="2" opacity="0.75"/>
 <!-- Minaret top — lantern and pyramid -->
-<rect x="706" y="188" width="28" height="18" fill="#160c04" opacity="0.98"/>
+<rect x="706" y="188" width="28" height="18" fill="#2e1808" opacity="0.96"/>
 <polygon points="700,188 720,165 740,188" fill="#1a0e05" opacity="0.98"/>
-<rect x="716" y="155" width="8" height="12" fill="#c4930a" opacity="0.7"/>
+<rect x="716" y="155" width="8" height="12" fill="#c4930a" opacity="0.85"/>
 <!-- Crescent on top -->
-<circle cx="720" cy="148" r="7" fill="none" stroke="#c4930a" stroke-width="2" opacity="0.8"/>
+<circle cx="720" cy="148" r="7" fill="none" stroke="#c4930a" stroke-width="2.5" opacity="0.9"/>
 <circle cx="724" cy="145" r="5" fill="#160c04"/>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -733,7 +741,7 @@ main { background: rgba(2,5,12,.62); min-height: 60vh; }
 <!-- Synagogue arched entrance -->
 <ellipse cx="385" cy="510" rx="35" ry="42" fill="#0d0704" opacity="0.9"/>
 <!-- Synagogue dome -->
-<ellipse cx="385" cy="480" rx="45" ry="38" fill="#160c04" opacity="0.9"/>
+<ellipse cx="385" cy="480" rx="45" ry="38" fill="#2e1808" opacity="0.92"/>
 <!-- Star of David on synagogue -->
 <g transform="translate(385,468)" opacity="0.7">
   <polygon points="0,-20 11.5,10 -11.5,10" fill="none" stroke="#c4930a" stroke-width="2.5"/>
@@ -747,15 +755,15 @@ main { background: rgba(2,5,12,.62); min-height: 60vh; }
 <rect x="320" y="510" width="12" height="150" fill="#2a1208" opacity="0.8"/>
 <rect x="448" y="510" width="12" height="150" fill="#2a1208" opacity="0.8"/>
 <!-- Decorative cornice -->
-<rect x="310" y="505" width="150" height="10" fill="#c4930a" opacity="0.2"/>
+<rect x="310" y="505" width="150" height="10" fill="#c4930a" opacity="0.40"/>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- MELLAH HOUSES — Jewish quarter buildings (left) -->
 <!-- ═══════════════════════════════════════════════════════════ -->
 <rect x="0" y="530" width="100" height="230" fill="#160c04" opacity="0.88"/>
-<rect x="95" y="550" width="85" height="210" fill="#1a0e06" opacity="0.85"/>
+<rect x="95" y="550" width="85" height="210" fill="#3a2010" opacity="0.85"/>
 <rect x="175" y="515" width="70" height="245" fill="#160c04" opacity="0.88"/>
-<rect x="240" y="545" width="75" height="215" fill="#1a0e06" opacity="0.85"/>
+<rect x="240" y="545" width="75" height="215" fill="#3a2010" opacity="0.85"/>
 <!-- Arch windows on Mellah buildings -->
 <ellipse cx="30" cy="580" rx="14" ry="19" fill="#c4930a" opacity="0.12"/>
 <ellipse cx="60" cy="580" rx="14" ry="19" fill="#c4930a" opacity="0.12"/>
@@ -766,12 +774,12 @@ main { background: rgba(2,5,12,.62); min-height: 60vh; }
 <ellipse cx="200" cy="570" rx="13" ry="18" fill="#c4930a" opacity="0.12"/>
 <ellipse cx="270" cy="580" rx="13" ry="18" fill="#c4930a" opacity="0.12"/>
 <!-- Star of David on Mellah building -->
-<g transform="translate(200,545)" opacity="0.5">
+<g transform="translate(200,545)" opacity="0.75">
   <polygon points="0,-12 7,6 -7,6" fill="none" stroke="#c4930a" stroke-width="1.8"/>
   <polygon points="0,12 7,-6 -7,-6" fill="none" stroke="#c4930a" stroke-width="1.8"/>
 </g>
 <!-- Menorah motif on Mellah wall -->
-<g transform="translate(55,555)" opacity="0.4">
+<g transform="translate(55,555)" opacity="0.65">
   <line x1="0" y1="0" x2="0" y2="-18" stroke="#c4930a" stroke-width="2"/>
   <line x1="-14" y1="-6" x2="14" y2="-6" stroke="#c4930a" stroke-width="1.5"/>
   <line x1="-14" y1="-6" x2="-14" y2="-18" stroke="#c4930a" stroke-width="1.5"/>
@@ -783,11 +791,11 @@ main { background: rgba(2,5,12,.62); min-height: 60vh; }
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- CASABLANCA WHITE HOUSES — right side (Art Déco influence) -->
 <!-- ═══════════════════════════════════════════════════════════ -->
-<rect x="930" y="520" width="90" height="240" fill="#1a0e06" opacity="0.88"/>
-<rect x="1015" y="500" width="110" height="260" fill="#160c04" opacity="0.9"/>
-<rect x="1120" y="535" width="85" height="225" fill="#1a0e06" opacity="0.85"/>
+<rect x="930" y="520" width="90" height="240" fill="#3a2010" opacity="0.88"/>
+<rect x="1015" y="500" width="110" height="260" fill="#2e1808" opacity="0.92"/>
+<rect x="1120" y="535" width="85" height="225" fill="#3a2010" opacity="0.85"/>
 <rect x="1200" y="510" width="100" height="250" fill="#160c04" opacity="0.88"/>
-<rect x="1295" y="540" width="145" height="220" fill="#1a0e06" opacity="0.85"/>
+<rect x="1295" y="540" width="145" height="220" fill="#3a2010" opacity="0.85"/>
 <!-- Right buildings windows -->
 <rect x="945" y="555" width="20" height="28" rx="10" fill="#c4930a" opacity="0.12"/>
 <rect x="975" y="555" width="20" height="28" rx="10" fill="#c4930a" opacity="0.12"/>
@@ -811,19 +819,19 @@ main { background: rgba(2,5,12,.62); min-height: 60vh; }
 <!-- PALM TREES — Casablanca characteristic -->
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- Left palm -->
-<line x1="480" y1="760" x2="480" y2="490" stroke="#160c04" stroke-width="7" opacity="0.85"/>
+<line x1="480" y1="760" x2="480" y2="490" stroke="#3a2010" stroke-width="7" opacity="0.85"/>
 <path d="M480,490 Q445,452 415,462 Q450,465 480,490" fill="#160c04" opacity="0.8"/>
 <path d="M480,490 Q515,450 540,462 Q510,465 480,490" fill="#160c04" opacity="0.8"/>
 <path d="M480,490 Q462,440 478,425 Q482,455 480,490" fill="#160c04" opacity="0.8"/>
-<path d="M480,490 Q440,470 415,482 Q445,478 480,490" fill="#160c04" opacity="0.75"/>
-<path d="M480,490 Q520,472 545,482 Q515,478 480,490" fill="#160c04" opacity="0.75"/>
+<path d="M480,490 Q440,470 415,482 Q445,478 480,490" fill="#2e1808" opacity="0.78"/>
+<path d="M480,490 Q520,472 545,482 Q515,478 480,490" fill="#2e1808" opacity="0.78"/>
 <!-- Right palm -->
-<line x1="960" y1="760" x2="960" y2="490" stroke="#160c04" stroke-width="7" opacity="0.85"/>
+<line x1="960" y1="760" x2="960" y2="490" stroke="#3a2010" stroke-width="7" opacity="0.85"/>
 <path d="M960,490 Q925,452 895,462 Q930,465 960,490" fill="#160c04" opacity="0.8"/>
 <path d="M960,490 Q995,450 1020,462 Q990,465 960,490" fill="#160c04" opacity="0.8"/>
 <path d="M960,490 Q942,440 958,425 Q962,455 960,490" fill="#160c04" opacity="0.8"/>
-<path d="M960,490 Q920,470 895,482 Q925,478 960,490" fill="#160c04" opacity="0.75"/>
-<path d="M960,490 Q1000,472 1025,482 Q995,478 960,490" fill="#160c04" opacity="0.75"/>
+<path d="M960,490 Q920,470 895,482 Q925,478 960,490" fill="#2e1808" opacity="0.78"/>
+<path d="M960,490 Q1000,472 1025,482 Q995,478 960,490" fill="#2e1808" opacity="0.78"/>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- ATLANTIC OCEAN — Casablanca is coastal -->
@@ -833,7 +841,7 @@ main { background: rgba(2,5,12,.62); min-height: 60vh; }
 <rect x="0" y="715" width="1440" height="20" fill="url(#cbGlow)"/>
 <!-- Wave lines -->
 <path d="M0,745 Q120,732 240,745 Q360,758 480,745 Q600,732 720,745 Q840,758 960,745 Q1080,732 1200,745 Q1320,758 1440,745"
-  fill="none" stroke="#c4930a" stroke-width="1.2" opacity="0.2"/>
+  fill="none" stroke="#c4930a" stroke-width="1.5" opacity="0.45"/>
 <path d="M0,770 Q90,758 180,770 Q270,782 360,770 Q450,758 540,770 Q630,782 720,770 Q810,758 900,770 Q990,782 1080,770 Q1170,758 1260,770 Q1350,782 1440,770"
   fill="none" stroke="#c4930a" stroke-width="0.9" opacity="0.15"/>
 <path d="M0,795 Q180,784 360,795 Q540,806 720,795 Q900,784 1080,795 Q1260,806 1440,795"
@@ -850,9 +858,9 @@ main { background: rgba(2,5,12,.62); min-height: 60vh; }
 <!-- DECORATIVE BORDERS — Moroccan geometric top/bottom -->
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- Top border -->
-<rect x="0" y="0" width="1440" height="8" fill="#c4930a" opacity="0.3"/>
+<rect x="0" y="0" width="1440" height="8" fill="#c4930a" opacity="0.55"/>
 <path d="M0,8 L30,22 L60,8 L90,22 L120,8 L150,22 L180,8 L210,22 L240,8 L270,22 L300,8 L330,22 L360,8 L390,22 L420,8 L450,22 L480,8 L510,22 L540,8 L570,22 L600,8 L630,22 L660,8 L690,22 L720,8 L750,22 L780,8 L810,22 L840,8 L870,22 L900,8 L930,22 L960,8 L990,22 L1020,8 L1050,22 L1080,8 L1110,22 L1140,8 L1170,22 L1200,8 L1230,22 L1260,8 L1290,22 L1320,8 L1350,22 L1380,8 L1410,22 L1440,8"
-  fill="none" stroke="#c4930a" stroke-width="1" opacity="0.25"/>
+  fill="none" stroke="#c4930a" stroke-width="1.5" opacity="0.5"/>
 
 <!-- Stars of David border decoration (top) -->
 <g transform="translate(60,38)" opacity="0.3">
