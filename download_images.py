@@ -3,21 +3,53 @@
 """
 download_images.py — Perla Ben-Harrosh z"l Cookbook
 ====================================================
-Downloads food images for all 1,005 original recipes + 40 non-kosher copies (nk_*) = 1,045 total from TheMealDB and
-Wikimedia Commons. Robust against hangs: global socket timeout,
-Ctrl+C = immediate exit via os._exit(0), log flushed after every recipe.
+סקריפט מאוחד: הורדת תמונות + ניקוי כפילויות (dedup) — הכל בריצה אחת.
+
+שלב 1 — Download:
+  מוריד תמונות ל-1,005 מתכונים מקוריים + 40 לא-כשרים = 1,045 סה"כ.
+  מקורות בסדר עדיפות: עברית-ראשון → TheMealDB → Wikimedia →
+                         Openverse → Unsplash → DuckDuckGo → Loremflickr
+  בטוח מפני תלייה: socket timeout גלובלי, Ctrl+C = יציאה מיידית.
+
+שלב 2 — Dedup (ניקוי כפילויות דינמי):
+  סורק את תיקיית images/ לפי גודל קובץ.
+  כל קבוצת קבצים עם גודל זהה = תמונה כפולה.
+  מחליף כפילויות ב-Hard Link לקובץ הקנוני — אפס מקום נוסף,
+  כל מתכון ממשיך לראות r-{id}.jpg שלו ללא שינוי באתר.
 
 Usage:
-    python download_images.py
+    python download_images.py                    # הורדה + dedup (ברירת מחדל)
+    python download_images.py --skip-download    # רק dedup
+    python download_images.py --skip-dedup       # רק הורדה
+    python download_images.py --dry-run          # תצוגה מקדימה של dedup
+    python download_images.py --overwrite        # הורד מחדש גם קיימות
 
 Requirements:
     pip install requests
 
-Log saved to: SCRIPT_DIR/logs/download_images_YYYY-MM-DD_HH.MM.log
+Log: SCRIPT_DIR/logs/download_images_YYYY-MM-DD_HH.MM.log
 """
-import os, re, sys, time, signal, socket
+import os, re, sys, time, signal, socket, argparse
 from datetime import datetime
 from pathlib import Path
+
+# ── Fix Windows PowerShell UTF-8 encoding + Hebrew RTL display ──
+# Without this, Hebrew text in PS terminal appears reversed or garbled.
+# LTR_MARK (U+200E) forces left-to-right rendering for Hebrew in PS.
+LTR = '\u200e'   # Left-To-Right mark — prepend to any Hebrew console output
+if sys.platform == 'win32':
+    try:
+        # Python 3.7+ reconfigure stdout/stderr to UTF-8
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    except AttributeError:
+        import io
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+    # Set Windows console code page to UTF-8 (65001)
+    os.system('chcp 65001 >nul 2>&1')
+else:
+    LTR = ''  # Not needed on Linux/macOS
 
 # ── global socket timeout BEFORE any import of requests/urllib3 ──
 # This is the only reliable way to prevent hung network calls on Windows.
@@ -59,6 +91,7 @@ except Exception:
 # os._exit bypasses all cleanup (requests/urllib3 sessions) that cause hanging.
 # The log is already on disk after every recipe — nothing is lost.
 _STOP = False
+_size_index: dict = {}   # size→Path; built in main() for dedup
 def _sigint(sig, frame):
     print("\n\n[!] Ctrl+C — exiting...", flush=True)
     os._exit(0)   # immediate hard exit — no cleanup, no hang
@@ -66,8 +99,18 @@ signal.signal(signal.SIGINT, _sigint)
 
 # ── log — writes to file immediately after each call ──
 def log(msg):
+    # Add LTR mark before any Hebrew text so PowerShell renders RTL text correctly
+    console_msg = msg
+    if any('\u0590' <= c <= '\u05ff' for c in msg):
+        # Contains Hebrew — prepend LTR mark to prevent terminal reversal
+        console_msg = LTR + msg
     line = f"[{time.strftime('%H:%M:%S')}] {msg}"
-    print(line, flush=True)
+    console_line = f"[{time.strftime('%H:%M:%S')}] {console_msg}"
+    try:
+        print(console_line, flush=True)
+    except UnicodeEncodeError:
+        # Fallback: ASCII-safe output
+        print(f"[{time.strftime('%H:%M:%S')}] {msg.encode('ascii','replace').decode()}", flush=True)
     try:
         with open(LOG_FILE, 'a', encoding='utf-8') as f:
             f.write(line + '\n')
@@ -980,6 +1023,40 @@ TITLE_QUERIES = [
     ("בורמואלוס","bunuelos hanukkah fried dough"),
     ("ספינג׳ טורקי","lokma turkish fried dough honey"),
     ("פשטידת אורז ועוף","turkish chicken rice pie"),
+    # ── Additional entries fixing bad substring matches (2026-04 audit) ──
+    ("ריג׳לה",           "moroccan purslane salad"),
+    ("פיתה מרוקאית",     "moroccan pita bread round"),
+    ("פיתה ים תיכונית",  "pita mediterranean flatbread"),
+    ("פיתה ביתית",       "pita bread homemade"),
+    ("כרובית חרמולה",    "moroccan cauliflower chermoula"),
+    ("כרובית מרוקאי",    "moroccan cauliflower roasted"),
+    ("כרובית צלויה",     "moroccan cauliflower roasted"),
+    ("כרובית חריפה",     "moroccan spicy cauliflower"),
+    ("כרובית",           "moroccan cauliflower roasted"),
+    ("לחמניות שמרים",    "yeast rolls seeds bread"),
+    ("לחמניות גבינה",    "cheese rolls baked"),
+    ("לחמניות",          "moroccan bread rolls"),
+    ("דג בחלב שקדים",    "moroccan fish almond milk"),
+    ("חלב שקדים",        "moroccan almond milk drink"),
+    ("מקרל ממרוח",       "moroccan grilled mackerel"),
+    ("מקרל אפוי",        "moroccan baked mackerel"),
+    ("מקרל",             "moroccan mackerel fish"),
+    ("אסידה",            "asida north african porridge"),
+    ("ביצר",             "tunisian vegetables harissa"),
+    ("כבדה",             "moroccan liver spicy"),
+    ("שחשוקה",           "shakshuka eggs tomatoes"),
+    ("ממולאי ריקוטה",    "stuffed pasta ricotta spinach"),
+    ("ריקוטה",           "ricotta stuffed vegetable"),
+    ("מקרונה תוניסית",   "tunisian pasta sauce"),
+    ("סלט פולנטה",       "moroccan polenta salad"),
+    ("פולנטה",           "polenta cheese dish"),
+    ("פסטיל — ביצה",     "sephardic egg pastry"),
+    ("פסטיל ספרדי",      "sephardic egg pastry"),
+    ("סביחה",            "sabich eggplant pita"),
+    ("ספינג׳",           "sfenj moroccan donuts"),
+    ("ספנג׳",            "sfenj moroccan donuts"),
+    ("מרק קוסקוסית",     "moroccan couscous soup"),
+
 ]
 
 CAT_QUERY = {
@@ -1028,17 +1105,45 @@ INGR_FALLBACK = [
     ("שעועית",  "bean dish stew"),
 ]
 
+# Hebrew letter set for word-boundary detection
+_HE_LETTERS = frozenset('אבגדהוזחטיכלמנסעפצקרשתךםןףץ')
+
+def _he_word_boundary(s, idx, kw_len):
+    """Return True if kw at position idx in s is NOT a substring of a longer Hebrew word."""
+    before = s[idx - 1] if idx > 0 else ' '
+    after  = s[idx + kw_len] if idx + kw_len < len(s) else ' '
+    return (before not in _HE_LETTERS) and (after not in _HE_LETTERS)
+
+# Pre-sort TITLE_QUERIES by key length descending (longer/more specific first)
+# This prevents "כרוב" matching inside "כרובית", "ג׳לה" inside "ריג׳לה", etc.
+_TQ_SORTED = sorted(TITLE_QUERIES, key=lambda x: -len(x[0]))
+_IF_SORTED  = sorted(INGR_FALLBACK, key=lambda x: -len(x[0]))
+
 def build_query(recipe):
+    """Build an English image-search query for a recipe.
+
+    Uses word-boundary–aware matching so that shorter Hebrew keys
+    (e.g. 'כרוב') do NOT accidentally match longer words (e.g. 'כרובית').
+    Keys are tried longest-first so the most-specific match wins.
+    """
     ingrs = recipe.get("ingr", [])[:4]
     title = recipe["title"]
     cat   = recipe["cat"]
-    for kw, q in TITLE_QUERIES:
-        if kw in title:
+
+    # 1. TITLE match — word-boundary aware, longest key first
+    for kw, q in _TQ_SORTED:
+        idx = title.find(kw)
+        if idx >= 0 and _he_word_boundary(title, idx, len(kw)):
             return q
-    # Ingredient-based fallback
-    for kw, q in INGR_FALLBACK:
-        if kw in title or any(kw in i for i in ingrs):
+
+    # 2. Ingredient-based fallback — also longest-first
+    for kw, q in _IF_SORTED:
+        if _he_word_boundary(title + ' ', title.find(kw) if kw in title else -1, len(kw))                 and kw in title:
             return q
+        if any(kw in i for i in ingrs):
+            return q
+
+    # 3. Category default
     return CAT_QUERY.get(cat, "moroccan jewish food dish")
 
 # ══════════════════════════════════════════════════
@@ -1051,6 +1156,68 @@ def _best_keywords(query, n=3):
     words = [w for w in query.lower().split() if w not in STOP and len(w) > 2]
     return " ".join(words[:n])
 
+
+
+def source_hebrew_first(recipe_title, query_en):
+    """Search images using Hebrew recipe title first (Israeli/Hebrew sources priority).
+
+    Strategy:
+    1. Wikimedia Commons with Hebrew title + 'מאכל' / 'אוכל'
+    2. Hebrew Wikipedia food category images
+    3. Wikimedia with Hebrew title alone
+    Falls back to None so cascade continues to English sources.
+    """
+    _, sd = get_sess()
+    from urllib.parse import quote_plus
+
+    # Build Hebrew search variants
+    he_queries = [
+        recipe_title + " מאכל",          # title + "food" in Hebrew
+        recipe_title + " מתכון",          # title + "recipe" in Hebrew
+        recipe_title,                      # title alone
+    ]
+
+    for q in he_queries:
+        try:
+            r = sd.get(
+                "https://commons.wikimedia.org/w/api.php",
+                params={"action":"query","list":"search",
+                        "srsearch": q, "srnamespace": 6,
+                        "srlimit": 8, "format": "json",
+                        "uselang": "he"},   # Hebrew UI — biases results
+                timeout=NET_TIMEOUT, verify=False, headers=API_HDRS)
+            if r.status_code != 200:
+                continue
+            results = r.json().get("query", {}).get("search", [])
+            for res in results:
+                t = res.get("title", "")
+                if not t.startswith("File:"):
+                    continue
+                tl = t.lower()
+                if not any(e in tl for e in [".jpg", ".jpeg", ".png"]):
+                    continue
+                if any(b in tl for b in ["map", "flag", "logo", "diagram",
+                                          "icon", "symbol", "person", "portrait",
+                                          "flag", "coat_of_arms"]):
+                    continue
+                # Fetch image URL
+                r2 = sd.get(
+                    "https://commons.wikimedia.org/w/api.php",
+                    params={"action":"query","titles":t,"prop":"imageinfo",
+                            "iiprop":"url|size|mime","iiurlwidth":600,"format":"json"},
+                    timeout=NET_TIMEOUT, verify=False, headers=API_HDRS)
+                if r2.status_code != 200:
+                    continue
+                for pg in r2.json().get("query",{}).get("pages",{}).values():
+                    ii = pg.get("imageinfo", [{}])[0]
+                    url  = ii.get("thumburl") or ii.get("url", "")
+                    mime = ii.get("mime", "")
+                    sz   = ii.get("size", 0)
+                    if url and "image" in mime and 3000 < sz < 12_000_000:
+                        return url
+        except Exception:
+            continue
+    return None
 
 def source_mealdb(query):
     """TheMealDB free API — real food photos, fast."""
@@ -1265,7 +1432,26 @@ def download_and_save(img_url, dest):
     if isinstance(img_url, tuple) and img_url[0] == "__DATA__":
         data = img_url[1]
         if len(data) > 3000 and (data[:2] == b'\xff\xd8' or data[:4] == b'\x89PNG'):
+            # ── Duplicate detection ────────────────────────────────
+            file_sz = len(data)
+            # Check global size-index (defined in main(), accessed via global)
+            global _size_index
+            existing = _size_index.get(file_sz)
+            if existing and existing != dest:
+                # Identical file already on disk — hard-link instead of writing
+                try:
+                    dest.hardlink_to(existing)   # Python 3.10+
+                except AttributeError:
+                    os.link(str(existing), str(dest))  # fallback
+                except OSError:
+                    dest.write_bytes(data)  # fallback: write normally
+                # Register in index (dest → existing, same size)
+                if file_sz not in _size_index:
+                    _size_index[file_sz] = dest
+                return True
+            # ── Normal write ───────────────────────────────────────
             dest.write_bytes(data)
+            _size_index[file_sz] = dest   # register for future dedup
             return True
         return False
     for sess in [sd, sp]:
@@ -1286,90 +1472,251 @@ def download_and_save(img_url, dest):
     return False
 
 
+def run_dedup(dry_run: bool = False) -> None:
+    """שלב 2 — ניקוי כפילויות דינמי.
+
+    סורק את כל קבצי r-*.jpg לפי גודל קובץ.
+    בכל קבוצה עם גודל זהה:
+      • קנוני  = הקובץ הראשון אלפביתית בקבוצה (נשמר)
+      • שאר    = נמחקים ומוחלפים ב-Hard Link לקנוני
+    Hard Link = שם נוסף לאותו inode — אפס מקום נוסף.
+    """
+    from collections import defaultdict
+
+    log("=" * 60)
+    log("שלב 2 — Dedup: ניקוי כפילויות" + (" [DRY RUN]" if dry_run else ""))
+    log("=" * 60)
+
+    # ── סרוק את כל הקבצים וקבץ לפי גודל ─────────────────────
+    by_size: dict[int, list[Path]] = defaultdict(list)
+    for p in sorted(IMG_DIR.glob("r-*.jpg")):
+        try:
+            sz = p.stat().st_size
+            if sz > 0:
+                by_size[sz].append(p)
+        except OSError:
+            pass
+
+    dup_groups   = {sz: ps for sz, ps in by_size.items() if len(ps) > 1}
+    total_dups   = sum(len(ps) - 1 for ps in dup_groups.values())
+    total_bytes  = sum(sz * (len(ps) - 1) for sz, ps in dup_groups.items())
+
+    log(f"קבצים סרוקים  : {sum(len(ps) for ps in by_size.values())}")
+    log(f"קבוצות כפולות : {len(dup_groups)}")
+    log(f"כפילויות לניקוי: {total_dups}")
+    log(f"מקום לשחרור   : {total_bytes / 1024 / 1024:.1f} MB")
+    log("")
+
+    if total_dups == 0:
+        log("אין כפילויות — לא נדרש ניקוי.")
+        log("=" * 60)
+        return
+
+    ok_count   = 0
+    skip_count = 0
+    freed      = 0
+
+    for sz, paths in sorted(dup_groups.items(), key=lambda x: -x[0] * (len(x[1]) - 1)):
+        canon = paths[0]          # קנוני = ראשון אלפביתית
+        aliases = paths[1:]       # כפילויות
+        for alias in aliases:
+            # בדיקת בטיחות: וודא גדלים שווים לפני מחיקה
+            try:
+                a_sz = alias.stat().st_size
+                c_sz = canon.stat().st_size
+            except OSError:
+                skip_count += 1
+                continue
+
+            if a_sz != c_sz:
+                log(f"  SKIP  גודל שונה {alias.name} ({a_sz}) ≠ {canon.name} ({c_sz})")
+                skip_count += 1
+                continue
+
+            if dry_run:
+                log(f"  DRY   {alias.name:30s} → {canon.name}  ({sz/1024:.0f} KB)")
+                ok_count += 1
+                freed    += sz
+                continue
+
+            try:
+                alias.unlink()
+                os.link(str(canon), str(alias))   # Hard link
+                ok_count += 1
+                freed    += sz
+            except OSError as e:
+                log(f"  FAIL  {alias.name}: {e}")
+                skip_count += 1
+
+        # התקדמות ב-25% מהקבוצות
+        done = ok_count + skip_count
+        if done > 0 and done % max(1, total_dups // 4) < len(aliases):
+            pct = done * 100 // total_dups
+            log(f"  -- {pct}% ({done}/{total_dups})")
+
+    log("")
+    log("=" * 60)
+    if dry_run:
+        log(f"DRY RUN: {ok_count} כפילויות נמצאו")
+        log(f"מקום שישוחרר: {freed / 1024 / 1024:.1f} MB")
+        log("הרץ ללא --dry-run להחיל.")
+    else:
+        log(f"Dedup הושלם: {ok_count} Hard Links נוצרו, {skip_count} דולגו")
+        log(f"מקום שוחרר : {freed / 1024 / 1024:.1f} MB")
+    log("=" * 60)
+
+
 # ══════════════════════════════════════════════════
-# MAIN
+# MAIN — שני שלבים ברצף
 # ══════════════════════════════════════════════════
 def main():
-    global _STOP
+    global _STOP, OVERWRITE
 
+    # ── ארגומנטים ─────────────────────────────────────────────
+    parser = argparse.ArgumentParser(
+        description="Perla Cookbook — הורדת תמונות + ניקוי כפילויות",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=(
+            "דוגמאות:\n"
+            "  python download_images.py               # הורדה + dedup\n"
+            "  python download_images.py --skip-download  # רק dedup\n"
+            "  python download_images.py --skip-dedup     # רק הורדה\n"
+            "  python download_images.py --dry-run        # dedup — תצוגה בלבד\n"
+            "  python download_images.py --overwrite      # הורד מחדש הכל\n"
+        )
+    )
+    parser.add_argument("--skip-download", action="store_true",
+                        help="דלג על שלב ההורדה, הרץ רק dedup")
+    parser.add_argument("--skip-dedup",    action="store_true",
+                        help="דלג על שלב ה-dedup, הרץ רק הורדה")
+    parser.add_argument("--dry-run",       action="store_true",
+                        help="Dedup — תצוגה מקדימה בלבד, אין מחיקות")
+    parser.add_argument("--overwrite",     action="store_true",
+                        help="הורד מחדש גם תמונות קיימות (OVERWRITE=True)")
+    args = parser.parse_args()
+
+    if args.overwrite:
+        OVERWRITE = True
+
+    # ── אתחול לוג ────────────────────────────────────────────
     LOG_FILE.write_text("", encoding="utf-8")
-    recipes = parse_recipes()
-    total   = len(recipes)
-    already = sum(1 for r in recipes if (IMG_DIR / f"r-{r['id']}.jpg").exists())
-
     log("=" * 60)
-    log("Perla Ben-Harrosh z\"l Cookbook — Smart Image Downloader v2.0")
+    log("Perla Ben-Harrosh z\"l Cookbook — v3.0 (Download + Dedup)")
     log("=" * 60)
-    log(f"Recipes: {total} | Existing: {already} | OVERWRITE={OVERWRITE}")
-    log(f"Output: {IMG_DIR}")
-    log(f"Sources: TheMealDB → Wikimedia → Openverse → Unsplash → DuckDuckGo → Loremflickr")
-    log(f"Ctrl+C = immediate exit")
+    mode_parts = []
+    if not args.skip_download: mode_parts.append("Download")
+    if not args.skip_dedup:    mode_parts.append("Dedup" + (" [dry]" if args.dry_run else ""))
+    log(f"מצב: {' → '.join(mode_parts) or 'ללא פעולה'}")
+    log(f"תמונות: {IMG_DIR}")
+    log(f"לוג   : {LOG_FILE}")
     log("=" * 60)
 
-    ok_count = skip_count = fail_count = 0
-    source_counts = {}
+    # ══════════════════════════════════════════════════════════
+    # שלב 1 — הורדת תמונות
+    # ══════════════════════════════════════════════════════════
+    if not args.skip_download:
+        recipes = parse_recipes()
+        total   = len(recipes)
+        already = sum(1 for r in recipes if (IMG_DIR / f"r-{r['id']}.jpg").exists())
 
-    for i, recipe in enumerate(recipes):
-        if _STOP:
-            log("Stop requested."); break
-
-        rid   = recipe["id"]
-        title = recipe["title"]
-        cat   = recipe["cat"]
-        dest  = IMG_DIR / f"r-{rid}.jpg"
-
-        if dest.exists() and not OVERWRITE:
-            skip_count += 1
-            if skip_count <= 5 or skip_count % 100 == 0:
-                log(f"  >> [{i+1:4d}/{total}] skip [{rid}]")
-            continue
-
-        query = build_query(recipe)
-        log(f"  >> [{i+1:4d}/{total}] [{rid:8s}] {title[:30]:30s} → \"{query[:35]}\"")
-
-        saved  = False
-        source = "?"
-
-        # ── Source cascade (ordered by quality) ──────────────────
-        for src_name, src_fn in [
-            ("mealdb",    lambda q=query: source_mealdb(q)),
-            ("wikimedia", lambda q=query: source_wikimedia_single(q)),
-            ("openverse", lambda q=query: source_openverse(q)),
-            ("unsplash",  lambda q=query, rid=rid: source_unsplash_search(q)),
-            ("ddg",       lambda q=query: source_foodimages_scrape(q)),
-            ("flickr",    lambda q=query, rid=rid: source_loremflickr(q, rid)),
-        ]:
-            if saved: break
+        # בנה אינדקס גדלים מקבצים קיימים — למניעת כפילויות בזמן ריצה
+        global _size_index
+        _size_index = {}
+        for _p in IMG_DIR.glob("r-*.jpg"):
             try:
-                url = src_fn()
-                if url and download_and_save(url, dest):
-                    saved = True
-                    source = src_name
-                    source_counts[src_name] = source_counts.get(src_name, 0) + 1
-            except Exception as e:
-                log(f"     {src_name} error: {e}")
+                _sz = _p.stat().st_size
+                if _sz > 0 and _sz not in _size_index:
+                    _size_index[_sz] = _p
+            except OSError:
+                pass
 
-        if saved:
-            ok_count += 1
-            log(f"  OK  [{rid}] via {source}")
-        else:
-            fail_count += 1
-            log(f"  FAIL [{rid}] all sources exhausted")
+        log("")
+        log("שלב 1 — הורדת תמונות")
+        log("-" * 60)
+        log(f"מתכונים: {total} | קיימים: {already} | OVERWRITE={OVERWRITE}")
+        log(f"מקורות: Hebrew → TheMealDB → Wikimedia → Openverse → Unsplash → DDG → Flickr")
+        log(f"Ctrl+C = יציאה מיידית")
+        log("")
 
-        done = i + 1
-        pct  = done * 100 // total
-        if pct % 10 == 0 and done > 0 and done < total and done % (total//10) < 2:
-            src_summary = "  ".join(f"{k}={v}" for k,v in source_counts.items())
-            log(f"\n  -- {pct}% ({done}/{total})  ok={ok_count}  fail={fail_count}  [{src_summary}]\n")
+        ok_count = skip_count = fail_count = 0
+        source_counts: dict = {}
 
-        time.sleep(DELAY)
+        for i, recipe in enumerate(recipes):
+            if _STOP:
+                log("עצירה מבוקשת."); break
 
+            rid   = recipe["id"]
+            title = recipe["title"]
+            cat   = recipe["cat"]
+            dest  = IMG_DIR / f"r-{rid}.jpg"
+
+            if dest.exists() and not OVERWRITE:
+                skip_count += 1
+                if skip_count <= 5 or skip_count % 100 == 0:
+                    log(f"  >> [{i+1:4d}/{total}] skip [{rid}]")
+                continue
+
+            query = build_query(recipe)
+            log(f"  >> [{i+1:4d}/{total}] [{rid:8s}] {title[:30]:30s} → \"{query[:35]}\"")
+
+            saved  = False
+            source = "?"
+
+            for src_name, src_fn in [
+                ("hebrew",    lambda t=title, q=query: source_hebrew_first(t, q)),
+                ("mealdb",    lambda q=query: source_mealdb(q)),
+                ("wikimedia", lambda q=query: source_wikimedia_single(q)),
+                ("openverse", lambda q=query: source_openverse(q)),
+                ("unsplash",  lambda q=query, rid=rid: source_unsplash_search(q)),
+                ("ddg",       lambda q=query: source_foodimages_scrape(q)),
+                ("flickr",    lambda q=query, rid=rid: source_loremflickr(q, rid)),
+            ]:
+                if saved: break
+                try:
+                    url = src_fn()
+                    if url and download_and_save(url, dest):
+                        saved  = True
+                        source = src_name
+                        source_counts[src_name] = source_counts.get(src_name, 0) + 1
+                except Exception as e:
+                    log(f"     {src_name} error: {e}")
+
+            if saved:
+                ok_count += 1
+                log(f"  OK  [{rid}] via {source}")
+            else:
+                fail_count += 1
+                log(f"  FAIL [{rid}] all sources exhausted")
+
+            done = i + 1
+            pct  = done * 100 // total
+            if pct % 10 == 0 and done > 0 and done < total and done % (total // 10) < 2:
+                src_summary = "  ".join(f"{k}={v}" for k, v in source_counts.items())
+                log(f"\n  -- {pct}% ({done}/{total})  ok={ok_count}  fail={fail_count}  [{src_summary}]\n")
+
+            time.sleep(DELAY)
+
+        log("")
+        log("-" * 60)
+        log(f"הורדה הושלמה: ok={ok_count}  skip={skip_count}  fail={fail_count}")
+        src_str = "  ".join(
+            f"{k}={source_counts.get(k,0)}"
+            for k in ["hebrew","wikimedia","mealdb","unsplash","openverse","ddg"]
+        )
+        log(f"מקורות: {src_str}")
+        log("-" * 60)
+
+    # ══════════════════════════════════════════════════════════
+    # שלב 2 — ניקוי כפילויות (dedup דינמי)
+    # ══════════════════════════════════════════════════════════
+    if not args.skip_dedup:
+        log("")
+        run_dedup(dry_run=args.dry_run)
+
+    log("")
     log("=" * 60)
-    log(f"DONE: ok={ok_count}  skip={skip_count}  fail={fail_count}")
-    src_summary = "  ".join(f"{k}={v}" for k,v in source_counts.items())
-    log(f"Sources used: {src_summary}")
-    log(f"Output: {IMG_DIR}")
-    log(f"Log: {LOG_FILE}")
+    log("הכל הושלם.")
+    log(f"לוג: {LOG_FILE}")
     log("=" * 60)
 
 if __name__ == "__main__":
