@@ -596,7 +596,6 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
   .casablanca-bg { display: none !important; }
 }
 
-.c-sep { color: var(--c-ink-l); opacity: .65; padding: 0 0.1rem; }
 </style>
 <script type="application/ld+json">{
   "@context": "https://schema.org",
@@ -19089,11 +19088,7 @@ function renderGrid() {
       foot.appendChild(t);
     }
     if (r.time && r.diff) {
-      const sep = document.createElement('span');
-      sep.className = 'c-sep';
-      sep.textContent = ' · ';
-      sep.setAttribute('aria-hidden','true');
-      foot.appendChild(sep);
+      foot.appendChild(document.createTextNode(' '));
     }
     if (r.diff) {
       const d = document.createElement('span');
