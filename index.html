@@ -46,263 +46,39 @@
   --c-ink-l:     #8a6040;
   --c-bdr:       rgba(196,147,10,.18);
   --c-bdr2:      rgba(196,147,10,.08);
-
-  /* Shadows */
   --sh-xs:  0 1px 3px  rgba(20,8,2,.08);
   --sh-sm:  0 2px 8px  rgba(20,8,2,.10);
   --sh-md:  0 6px 24px rgba(20,8,2,.15);
   --sh-lg:  0 16px 48px rgba(20,8,2,.22);
   --sh-xl:  0 32px 80px rgba(20,8,2,.30);
-
-  /* Radii */
-  --r-sm: 6px;
-  --r-md: 12px;
-  --r-lg: 18px;
-  --r-xl: 24px;
-
-  /* Motion */
-  --ease: cubic-bezier(.4,0,.2,1);
-  --t-fast: .15s;
-  --t-med:  .25s;
-  --t-slow: .4s;
-
-  /* Nav */
-  --hdr-h: 58px;
-  --nav-h: 48px;
+  --r-sm:   6px;  --r-md: 12px;  --r-lg: 18px;  --r-xl: 24px;
+  --ease:   cubic-bezier(.4,0,.2,1);
+  --t-fast: .15s;  --t-med: .25s;
+  --hdr-h:  56px;  --nav-h: 44px;
 }
 
-/* ═══════════════════════════════════════════════
-   RESET & BASE
-═══════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; }
 body {
   font-family: 'Frank Ruhl Libre', 'David Libre', serif;
   background: transparent;
   color: var(--c-ink);
   direction: rtl;
   text-align: right;
-  line-height: 1.6;
-  min-height: 100dvh;
+  min-height: 100vh;
 }
-button { font-family: inherit; cursor: pointer; border: none; background: none; }
-img { max-width: 100%; display: block; }
-a { color: inherit; text-decoration: none; }
-ul, ol { list-style: none; }
-[hidden] { display: none !important; }
+button { font-family: inherit; direction: rtl; }
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+ol { padding-right: 1.2rem; }
 
-/* ═══════════════════════════════════════════════
-   ACCESSIBILITY
-═══════════════════════════════════════════════ */
-.sr-only {
-  position: absolute; width: 1px; height: 1px;
-  padding: 0; margin: -1px; overflow: hidden;
-  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-}
-.skip-link {
-  position: absolute; top: -60px; right: 1rem; z-index: 9999;
-  background: var(--c-spice); color: #fff;
-  padding: .5rem 1.2rem; border-radius: 0 0 var(--r-md) var(--r-md);
-  font-size: .9rem; font-weight: 600; transition: top var(--t-med);
-}
+/* Accessibility */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+.skip-link { position: absolute; top: -40px; right: 0; background: var(--c-gold); color: var(--c-dark); padding: .5rem 1rem; z-index: 999; }
 .skip-link:focus { top: 0; }
-:focus-visible {
-  outline: 2px solid var(--c-gold);
-  outline-offset: 2px;
-}
+*:focus-visible { outline: 2px solid var(--c-gold); outline-offset: 2px; }
 
-/* ═══════════════════════════════════════════════
-   HEADER
-═══════════════════════════════════════════════ */
-.hdr {
-  position: sticky; top: 0; z-index: 600;
-  height: var(--hdr-h);
-  background: var(--c-deep);
-  border-bottom: 1px solid var(--c-bdr);
-  box-shadow: 0 2px 20px rgba(0,0,0,.45);
-}
-.hdr-inner {
-  max-width: 1440px; margin: 0 auto; height: 100%;
-  padding: 0 1.5rem;
-  display: flex; align-items: center; gap: 1.2rem;
-}
-.hdr-brand { flex: 1; min-width: 0; }
-.hdr-title {
-  font-size: 1.05rem; font-weight: 700;
-  color: var(--c-gold-l);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.hdr-subtitle {
-  font-size: .68rem; color: var(--c-gold-d); margin-top: .05rem; opacity: .8;
-}
-.hdr-search {
-  display: flex; align-items: center; gap: .5rem;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(196,147,10,.22);
-  border-radius: 100px;
-  padding: .4rem 1rem;
-  transition: background var(--t-med), border-color var(--t-med);
-  max-width: 280px; flex: 1;
-}
-.hdr-search:focus-within {
-  background: rgba(255,255,255,.1);
-  border-color: var(--c-gold);
-  box-shadow: 0 0 0 3px rgba(196,147,10,.15);
-}
-.hdr-search svg { flex-shrink: 0; color: var(--c-gold-d); }
-#srch {
-  flex: 1; min-width: 0; background: transparent; border: none; outline: none;
-  font-family: inherit; font-size: .86rem; color: var(--c-bg);
-}
-#srch::placeholder { color: rgba(253,248,238,.32); }
-#srch-clr {
-  color: var(--c-gold-d); font-size: 1.1rem; line-height: 1;
-  padding: 0 .1rem; opacity: .7; transition: opacity var(--t-fast);
-}
-#srch-clr:hover { opacity: 1; }
-
-/* ═══════════════════════════════════════════════
-   TOP NAV
-═══════════════════════════════════════════════ */
-.top-nav {
-  position: sticky; top: var(--hdr-h); z-index: 500;
-  height: var(--nav-h);
-  background: var(--c-dark);
-  border-bottom: 2px solid var(--c-gold-d);
-  box-shadow: 0 4px 16px rgba(0,0,0,.3);
-}
-.top-nav-inner {
-  max-width: 1440px; margin: 0 auto; height: 100%;
-  padding: 0 1.5rem;
-  display: flex; align-items: stretch;
-  overflow-x: auto; scrollbar-width: none;
-}
-.top-nav-inner::-webkit-scrollbar { display: none; }
-
-/* Nav buttons */
-.nb {
-  display: flex; align-items: center; gap: .4rem;
-  padding: 0 1rem;
-  color: rgba(253,248,238,.7);
-  font-size: .84rem; font-weight: 600;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
-  white-space: nowrap;
-  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
-  position: relative;
-}
-.nb:hover { color: var(--c-gold-l); background: rgba(255,255,255,.04); }
-.nb.active { color: var(--c-gold-l); border-bottom-color: var(--c-gold); }
-.nb.panel-open { color: var(--c-gold-l); background: rgba(196,147,10,.1); }
-.nb-cnt {
-  font-size: .65rem; font-weight: 500;
-  background: rgba(196,147,10,.2); border-radius: 100px;
-  padding: .1rem .4rem; color: var(--c-gold);
-}
-.nb-arr { font-size: .6rem; opacity: .6; transition: transform var(--t-med); }
-.nb.panel-open .nb-arr { transform: rotate(180deg); }
-
-/* Dropdown panel */
-.nav-panel {
-  position: absolute; top: calc(var(--hdr-h) + var(--nav-h)); right: 0; left: 0; z-index: 499;
-  background: var(--c-deep);
-  border-bottom: 1px solid var(--c-bdr);
-  box-shadow: 0 12px 32px rgba(0,0,0,.4);
-  max-height: 0; overflow: hidden;
-  transition: max-height var(--t-slow) var(--ease);
-}
-.nav-panel.open { max-height: 360px; }
-.nav-panel-inner {
-  max-width: 1440px; margin: 0 auto;
-  padding: 1rem 1.5rem 1.2rem;
-}
-.panel-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: flex-start; }
-
-/* Panel chips */
-.pc {
-  display: inline-flex; align-items: center; gap: .3rem;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(196,147,10,.2);
-  border-radius: 100px;
-  padding: .3rem .85rem;
-  color: rgba(253,248,238,.72);
-  font-size: .8rem; cursor: pointer;
-  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
-}
-.pc:hover { background: rgba(196,147,10,.18); border-color: var(--c-gold-d); color: var(--c-gold-l); }
-.pc.active { background: rgba(196,147,10,.28); border-color: var(--c-gold); color: var(--c-gold-l); font-weight: 600; }
-.pc-cnt { font-size: .66rem; opacity: .5; }
-
-/* Panel accordion */
-/* .acc-wrap removed — display:contents set inline in JS */
-.acc-hdr {
-  display: inline-flex; align-items: center; gap: .3rem;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(196,147,10,.15);
-  border-radius: var(--r-md);
-  padding: .3rem .85rem;
-  color: rgba(253,248,238,.7);
-  font-size: .8rem; cursor: pointer;
-  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
-}
-.acc-hdr:hover, .acc-hdr.open {
-  background: rgba(196,147,10,.15); border-color: var(--c-gold-d); color: var(--c-gold-l);
-}
-.acc-hdr .acc-a { font-size: .6rem; transition: transform var(--t-med); }
-.acc-hdr.open .acc-a { transform: rotate(180deg); }
-.acc-body {
-  display: none; width: 100%;
-  flex-wrap: wrap; gap: .4rem;
-  background: rgba(0,0,0,.2);
-  border-radius: var(--r-md); padding: .6rem .8rem;
-  margin-top: .3rem;
-}
-.acc-body.open { display: flex; }
-.acc-sep { width: 100%; height: 1px; background: rgba(196,147,10,.12); margin: .1rem 0; }
-
-/* ═══════════════════════════════════════════════
-   HERO
-═══════════════════════════════════════════════ */
-.hero {
-  background: linear-gradient(165deg, rgba(3,8,18,.9) 0%, rgba(8,18,38,.85) 45%, rgba(20,8,3,.75) 100%) !important; }
-.c-img.no-img .c-media-bar { opacity: 0 !important; }
-.c-upload-btn { z-index: 2; position: relative; }
-
-
-/* ─── About section memorial statement ─────────────────────── */
-.about-memorial {
-  font-size: .95rem;
-  font-style: italic;
-  color: var(--c-gold-l);
-  border-right: 3px solid var(--c-gold-d);
-  padding-right: .8rem;
-  margin-bottom: 1rem;
-  line-height: 1.7;
-}
-
-
-/* Make main content areas slightly translucent to show background */
-.hdr {
-  background: linear-gradient(to bottom,
-    rgba(5,13,26,.97) 0%, rgba(10,22,40,.95) 100%) !important;
-}
-.cat-nav {
-  background: rgba(10,22,40,.95) !important;
-  border-bottom: 1px solid rgba(196,147,10,.2);
-}
-.hero {
-  background: linear-gradient(165deg,
-    rgba(3,8,18,.92) 0%, rgba(8,18,38,.88) 45%,
-    rgba(20,8,3,.78) 100%) !important;
-}
-.grid-section-wrap, main {
-  background: rgba(3,6,12,.6);
-}
-.footer {
-  background: rgba(5,13,26,.97) !important;
-}
-
-/* ── Casablanca Background — inline SVG ────────────────────── */
+/* ── Casablanca Background (fixed, behind everything) ─────── */
 .casablanca-bg {
   position: fixed;
   inset: 0;
@@ -317,22 +93,185 @@ ul, ol { list-style: none; }
   height: 100%;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: .01ms !important;
-    scroll-behavior: auto !important;
-  }
-  .card { animation: none; }
+/* ── Header ───────────────────────────────────────────────── */
+.hdr {
+  position: sticky;
+  top: 0;
+  z-index: 600;
+  height: var(--hdr-h);
+  background: linear-gradient(to bottom, rgba(2,5,15,.98) 0%, rgba(5,12,28,.96) 100%);
+  border-bottom: 1px solid rgba(196,147,10,.2);
+  box-shadow: 0 2px 12px rgba(0,0,0,.4);
 }
+.hdr-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.hdr-brand { flex: 1; min-width: 0; }
+.hdr-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--c-gold-l);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hdr-subtitle { font-size: .68rem; color: var(--c-gold-d); margin-top: .05rem; opacity: .8; }
+.hdr-search {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(196,147,10,.25);
+  border-radius: 100px;
+  padding: .3rem .7rem;
+}
+.hdr-search svg { color: var(--c-gold-d); flex-shrink: 0; }
+#srch {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--c-gold-l);
+  font-family: inherit;
+  font-size: .85rem;
+  width: 180px;
+  direction: rtl;
+}
+#srch::placeholder { color: rgba(196,147,10,.45); }
+#srch-clr {
+  background: none;
+  border: none;
+  color: var(--c-gold-d);
+  cursor: pointer;
+  font-size: .9rem;
+  line-height: 1;
+}
+#srch-clr:hover { color: var(--c-gold-l); }
 
-/* ═══ Print ═══ */
+/* ── Navigation ───────────────────────────────────────────── */
+.cat-nav {
+  position: sticky;
+  top: var(--hdr-h);
+  z-index: 500;
+  height: var(--nav-h);
+  background: rgba(4,10,24,.97);
+  border-bottom: 2px solid rgba(196,147,10,.25);
+  box-shadow: 0 4px 16px rgba(0,0,0,.35);
+}
+.cat-nav-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: .2rem;
+  overflow-x: auto;
+}
+.cat-nav-inner::-webkit-scrollbar { height: 0; }
+#cat-inner { display: flex; align-items: center; gap: .2rem; }
+.nb {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  padding: 0 1rem;
+  height: var(--nav-h);
+  color: rgba(245,236,215,.65);
+  font-size: .82rem;
+  white-space: nowrap;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.nb:hover { color: var(--c-gold-l); }
+.nb.active { color: var(--c-gold-l); border-bottom-color: var(--c-gold); }
+.nb-cnt {
+  font-size: .65rem;
+  font-weight: 500;
+  background: rgba(196,147,10,.2);
+  border-radius: 100px;
+  padding: .1rem .4rem;
+  color: var(--c-gold-d);
+}
+.nb-arr { font-size: .6rem; opacity: .6; transition: transform var(--t-med); }
+.nb.panel-open .nb-arr { transform: rotate(180deg); }
+.nav-panel {
+  position: absolute;
+  top: calc(var(--hdr-h) + var(--nav-h));
+  right: 0;
+  left: 0;
+  z-index: 490;
+  background: rgba(3,8,20,.98);
+  border-bottom: 2px solid rgba(196,147,10,.2);
+  box-shadow: var(--sh-lg);
+  display: none;
+}
+.nav-panel.open { display: block; }
+.nav-panel-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: .8rem 1.5rem 1rem;
+}
+.panel-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: flex-start; }
+.pc {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(196,147,10,.2);
+  border-radius: 100px;
+  padding: .3rem .85rem;
+  font-size: .78rem;
+  color: rgba(245,236,215,.75);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+}
+.pc:hover { background: rgba(196,147,10,.18); color: var(--c-gold-l); border-color: rgba(196,147,10,.45); }
+.pc.active { background: rgba(196,147,10,.25); border-color: rgba(196,147,10,.6); color: var(--c-gold-l); }
+.pc-cnt { font-size: .66rem; opacity: .5; }
+.acc-hdr {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(196,147,10,.18);
+  border-radius: 100px;
+  padding: .3rem .85rem;
+  font-size: .78rem;
+  color: rgba(245,236,215,.7);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.acc-hdr:hover, .acc-hdr.open { background: rgba(196,147,10,.15); color: var(--c-gold-l); }
+.acc-a { font-size: .6rem; opacity: .6; transition: transform var(--t-med); }
+.acc-hdr.open .acc-a { transform: rotate(180deg); }
+.acc-body {
+  display: none;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: .4rem;
+  background: rgba(0,0,0,.2);
+  border-radius: var(--r-sm);
+  padding: .5rem .7rem;
+  margin-top: .3rem;
+}
+.acc-body.open { display: flex; }
+.acc-sep { width: 100%; height: 1px; background: rgba(196,147,10,.12); margin: .2rem 0; }
 
 /* ── Hero ─────────────────────────────────────────────────── */
 .hero {
   background: linear-gradient(165deg,
-    rgba(3,8,18,.92) 0%, rgba(8,18,38,.88) 45%, rgba(20,8,3,.78) 100%);
+    rgba(2,6,16,.93) 0%, rgba(6,16,36,.88) 45%,
+    rgba(18,7,2,.80) 100%);
   padding: 3.5rem 1.5rem 2.8rem;
   text-align: right;
   position: relative;
@@ -342,29 +281,37 @@ ul, ol { list-style: none; }
 .hero-orn { font-size: 1rem; color: var(--c-gold-d); opacity: .4; letter-spacing: .5rem; margin-bottom: .6rem; }
 .hero-h1 {
   font-size: clamp(2rem, 5vw, 3.2rem);
-  font-weight: 900; color: var(--c-bg);
-  line-height: 1.1; margin: 0 0 .5rem;
+  font-weight: 900;
+  color: var(--c-bg);
+  line-height: 1.1;
+  margin: 0 0 .5rem;
 }
 .hero-h1 em { font-style: normal; color: var(--c-gold-l); }
 .hero-tagline { font-size: .96rem; color: var(--c-gold-l); margin-bottom: .9rem; letter-spacing: .03em; }
 .hero-pills { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.3rem; }
 .hp {
-  background: rgba(196,147,10,.18); border: 1px solid rgba(196,147,10,.45);
-  color: var(--c-gold-l); border-radius: 100px; padding: .28rem .8rem;
+  background: rgba(196,147,10,.18);
+  border: 1px solid rgba(196,147,10,.45);
+  color: var(--c-gold-l);
+  border-radius: 100px;
+  padding: .28rem .8rem;
   font-size: .76rem;
 }
 .hero-about-btn {
   display: inline-flex; align-items: center; gap: .5rem;
   color: var(--c-gold-d); font-size: .84rem; cursor: pointer;
-  background: none; border: none; font-family: inherit; text-decoration: underline;
+  background: none; border: none; font-family: inherit;
+  text-decoration: underline;
 }
 .hero-about-btn:hover { color: var(--c-gold-l); }
 
-/* ── About section ────────────────────────────────────────── */
+/* ── About ────────────────────────────────────────────────── */
 .about {
-  background: rgba(4,10,22,.96);
-  border-bottom: 1px solid var(--c-bg3);
-  max-height: 0; overflow: hidden; visibility: hidden;
+  background: rgba(3,8,20,.96);
+  border-bottom: 1px solid rgba(196,147,10,.15);
+  max-height: 0;
+  overflow: hidden;
+  visibility: hidden;
   transition: max-height .4s var(--ease), visibility .4s;
 }
 .about[aria-hidden="false"] { max-height: 600px; visibility: visible; }
@@ -378,60 +325,70 @@ ul, ol { list-style: none; }
 .about-h { font-size: 1.12rem; font-weight: 700; color: var(--c-gold-l); margin-bottom: .6rem; }
 .about-p { font-size: .9rem; line-height: 1.8; color: rgba(237,224,196,.88); margin-bottom: .8rem; }
 .about-memorial {
-  font-size: .95rem; font-style: italic; color: var(--c-gold-l);
-  border-right: 3px solid var(--c-gold-d); padding-right: .8rem; margin-bottom: 1rem; line-height: 1.7;
+  font-size: .95rem; font-style: italic;
+  color: var(--c-gold-l);
+  border-right: 3px solid var(--c-gold-d);
+  padding-right: .8rem; margin-bottom: 1rem; line-height: 1.7;
 }
 .about-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
 .at {
-  background: rgba(196,147,10,.12); border: 1px solid rgba(196,147,10,.3);
-  color: var(--c-gold-l); border-radius: 100px;
-  padding: .2rem .65rem; font-size: .72rem;
+  background: rgba(196,147,10,.12);
+  border: 1px solid rgba(196,147,10,.3);
+  color: var(--c-gold-l);
+  border-radius: 100px; padding: .2rem .65rem; font-size: .72rem;
 }
 
-/* ── Main section ─────────────────────────────────────────── */
-main { background: rgba(3,6,12,.6); min-height: 60vh; }
+/* ── Main / Grid ──────────────────────────────────────────── */
+main { background: rgba(2,5,12,.62); min-height: 60vh; }
 .grid-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: .7rem 1.5rem; border-bottom: 1px solid rgba(196,147,10,.12);
+  padding: .7rem 1.5rem;
+  border-bottom: 1px solid rgba(196,147,10,.12);
 }
 #sec-title { font-size: 1rem; font-weight: 700; color: var(--c-gold-l); }
 #sec-cnt { font-size: .8rem; color: var(--c-gold-d); margin-right: .4rem; }
 .diff-btns { display: flex; gap: .4rem; padding: .5rem 1.5rem; border-bottom: 1px solid rgba(196,147,10,.1); }
 .diff-btn {
-  background: rgba(255,255,255,.04); border: 1px solid rgba(196,147,10,.2);
-  color: rgba(245,236,215,.6); border-radius: 100px;
-  padding: .25rem .7rem; font-size: .73rem; cursor: pointer; font-family: inherit;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(196,147,10,.2);
+  color: rgba(245,236,215,.6);
+  border-radius: 100px; padding: .25rem .7rem;
+  font-size: .73rem; cursor: pointer; font-family: inherit;
 }
 .diff-btn.active { background: rgba(196,147,10,.2); border-color: rgba(196,147,10,.5); color: var(--c-gold-l); }
-
-/* ── Recipe Grid ──────────────────────────────────────────── */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 1rem; padding: 1.2rem 1.5rem 2rem;
+  gap: 1rem;
+  padding: 1.2rem 1.5rem 2rem;
 }
 .card {
-  background: rgba(253,248,238,.96);
-  border-radius: var(--r-md); border: 1px solid var(--c-bdr);
-  box-shadow: var(--sh-xs); cursor: pointer; overflow: hidden;
+  background: rgba(253,248,238,.97);
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-bdr);
+  box-shadow: var(--sh-xs);
+  cursor: pointer;
+  overflow: hidden;
   transition: transform .2s var(--ease), box-shadow .2s var(--ease);
   position: relative;
 }
 .card:hover { transform: translateY(-2px); box-shadow: var(--sh-md); }
 .c-img { height: 148px; position: relative; overflow: hidden; background: var(--c-bg2); }
-.c-img img { width: 100%; height: 100%; object-fit: cover; transition: opacity .3s; }
+.c-img img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .3s; }
 .c-img img.loaded { opacity: 1; }
+.c-img.no-img .c-media-bar { opacity: 0 !important; }
 .c-media-bar {
   position: absolute; bottom: 0; left: 0; right: 0;
   display: flex; justify-content: flex-end; padding: .3rem;
   background: linear-gradient(transparent, rgba(0,0,0,.5));
-  opacity: 0; transition: opacity var(--t-fast); pointer-events: none;
+  opacity: 0; transition: opacity var(--t-fast);
 }
-.card:hover .c-media-bar { opacity: 1; pointer-events: auto; }
+.card:hover .c-media-bar { opacity: 1; }
 .c-upload-btn {
-  background: transparent; border: 1.5px dashed var(--c-bdr);
+  background: transparent;
+  border: 1.5px dashed rgba(196,147,10,.5);
   border-radius: var(--r-sm); padding: .2rem .5rem;
-  font-size: .68rem; color: #fff; cursor: pointer; font-family: inherit;
+  font-size: .68rem; color: #fff; cursor: pointer; font-family: inherit; z-index: 2;
 }
 .c-upload-btn:hover { background: rgba(196,147,10,.3); border-color: var(--c-gold); }
 .c-info { padding: .65rem .7rem; }
@@ -440,28 +397,28 @@ main { background: rgba(3,6,12,.6); min-height: 60vh; }
   font-size: .64rem; font-weight: 700; border-radius: 100px;
   padding: .15rem .5rem; margin-bottom: .35rem;
 }
-.c-title { font-size: .85rem; font-weight: 700; color: var(--c-ink); line-height: 1.3; margin-bottom: .25rem;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.c-desc { font-size: .74rem; color: var(--c-ink-m); line-height: 1.5;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.c-meta { display: flex; gap: .4rem; font-size: .69rem; color: var(--c-ink-l); margin-top: .4rem; flex-wrap: wrap; }
-.c-tag {
-  background: var(--c-bg2); border: 1px solid var(--c-bdr2);
-  border-radius: 100px; padding: .1rem .4rem;
+.c-title {
+  font-size: .85rem; font-weight: 700; color: var(--c-ink); line-height: 1.3; margin-bottom: .25rem;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.c-diff-קל { background: #e8f5e9; color: #2e7d32; }
-.c-diff-בינוני { background: #fff3e0; color: #e65100; }
-.c-diff-מתקדם { background: #fce4ec; color: #c62828; }
-.c-fav { position: absolute; top: .4rem; right: .4rem; cursor: pointer; font-size: 1.1rem; opacity: .6; }
+.c-desc {
+  font-size: .74rem; color: var(--c-ink-m); line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.c-meta { display: flex; gap: .4rem; font-size: .69rem; color: var(--c-ink-l); margin-top: .4rem; flex-wrap: wrap; }
+.c-tag { background: var(--c-bg2); border: 1px solid var(--c-bdr2); border-radius: 100px; padding: .1rem .4rem; }
+.c-diff-קל { background: #e8f5e9; color: #2e7d32; border-radius: 100px; padding: .1rem .4rem; }
+.c-diff-בינוני { background: #fff3e0; color: #e65100; border-radius: 100px; padding: .1rem .4rem; }
+.c-diff-מתקדם { background: #fce4ec; color: #c62828; border-radius: 100px; padding: .1rem .4rem; }
+.c-fav { position: absolute; top: .4rem; right: .4rem; cursor: pointer; font-size: 1.1rem; opacity: .6; background: none; border: none; }
 .c-fav:hover, .c-fav.active { opacity: 1; }
 
-/* ── Modal / Overlay ──────────────────────────────────────── */
+/* ── Modal ────────────────────────────────────────────────── */
 #ovl {
   position: fixed; inset: 0; z-index: 800;
   backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-  background: rgba(2,8,18,.7);
-  display: none; align-items: center; justify-content: center;
-  padding: 1rem;
+  background: rgba(1,5,15,.72);
+  display: none; align-items: center; justify-content: center; padding: 1rem;
 }
 #ovl.open { display: flex; }
 #mbox {
@@ -499,158 +456,86 @@ main { background: rgba(3,6,12,.6); min-height: 60vh; }
   font-size: .64rem; font-weight: 700; border-radius: 100px;
   padding: .15rem .55rem; margin-bottom: .4rem;
 }
-.m-title { color: var(--c-bg); font-size: 1.35rem; font-weight: 900; line-height: 1.2; }
-.m-subdesc { color: rgba(253,248,238,.6); font-size: .84rem; margin-top: .25rem; }
+.m-title { color: var(--c-ink); font-size: 1.35rem; font-weight: 900; line-height: 1.2; }
+.m-subdesc { color: var(--c-ink-m); font-size: .84rem; margin-top: .25rem; }
 .m-meta { display: flex; flex-wrap: wrap; gap: .45rem; margin: .7rem 0 1rem; }
 .m-chip {
   display: inline-flex; align-items: center; gap: .3rem;
-  background: rgba(196,147,10,.15); border: 1px solid rgba(196,147,10,.25);
+  background: rgba(196,147,10,.12); border: 1px solid rgba(196,147,10,.25);
   border-radius: 100px; padding: .22rem .65rem; font-size: .78rem; color: var(--c-ink);
 }
 .m-mem {
   background: linear-gradient(to left, rgba(196,147,10,.1), rgba(196,147,10,.03));
   border-right: 3px solid var(--c-gold-d); border-radius: var(--r-sm);
-  padding: .7rem .9rem; margin-bottom: 1rem; font-style: italic;
-  color: var(--c-ink-m); font-size: .88rem; line-height: 1.7;
+  padding: .7rem .9rem; margin-bottom: 1rem;
+  font-style: italic; color: var(--c-ink-m); font-size: .88rem; line-height: 1.7;
 }
-.m-ingr-item { display: flex; justify-content: space-between; align-items: baseline;
-  padding: .3rem 0; border-bottom: 1px solid var(--c-bg3); }
+.m-sec-h { font-size: .78rem; font-weight: 700; color: var(--c-gold-d); text-transform: uppercase; letter-spacing: .06em; margin: .8rem 0 .4rem; }
+.m-ingr-item { display: flex; justify-content: space-between; align-items: baseline; padding: .3rem 0; border-bottom: 1px solid var(--c-bg3); }
 .m-ingr-q { font-weight: 600; min-width: 80px; color: var(--c-ink); font-size: .88rem; }
 .m-ingr-i { color: var(--c-ink-m); font-size: .88rem; }
 .m-steps { padding-right: 1.3rem; margin: .5rem 0; }
-.m-step { padding: .4rem 0; border-bottom: 1px solid var(--c-bg3); line-height: 1.7;
-  font-size: .88rem; color: var(--c-ink-m); }
+.m-step { padding: .4rem 0; border-bottom: 1px solid var(--c-bg3); line-height: 1.7; font-size: .88rem; color: var(--c-ink-m); }
 .m-step-t { color: var(--c-gold); font-weight: 700; }
-.m-tip-wrap {
-  background: rgba(196,147,10,.07); border: 1px solid rgba(196,147,10,.25);
-  border-radius: var(--r-md); padding: .7rem 1rem; margin-top: .8rem;
-}
+.m-tip-wrap { background: rgba(196,147,10,.07); border: 1px solid rgba(196,147,10,.25); border-radius: var(--r-md); padding: .7rem 1rem; margin-top: .8rem; }
 .m-tip-label { font-size: .72rem; font-weight: 700; color: var(--c-gold-d); margin-bottom: .3rem; }
-.m-src-box {
-  margin-top: .6rem; padding: .42rem .8rem;
-  background: rgba(196,147,10,.07); border: 1px solid rgba(196,147,10,.2);
-  border-radius: var(--r-sm);
-}
+.m-src-box { margin-top: .6rem; padding: .42rem .8rem; background: rgba(196,147,10,.07); border: 1px solid rgba(196,147,10,.2); border-radius: var(--r-sm); }
 .m-src-box a { color: var(--c-gold); font-size: .84rem; }
 .m-vid-wrap { margin-top: .6rem; padding-top: .6rem; border-top: 1px solid var(--c-bg3); }
 .m-vid-list { display: flex; flex-direction: column; gap: .4rem; margin-top: .4rem; }
-.m-vid-item {
-  display: flex; align-items: center; gap: .5rem;
-  background: var(--c-bg2); border: 1px solid var(--c-bdr2);
-  border-radius: var(--r-sm); padding: .35rem .6rem; font-size: .8rem;
-}
+.m-vid-item { display: flex; align-items: center; gap: .5rem; background: var(--c-bg2); border: 1px solid var(--c-bdr2); border-radius: var(--r-sm); padding: .35rem .6rem; font-size: .8rem; }
 .m-vid-link { flex: 1; color: var(--c-gold); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.m-vid-del {
-  flex-shrink: 0; background: transparent; border: 1px solid rgba(220,50,50,.3);
-  border-radius: 100px; width: 24px; height: 24px; color: #f99; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; font-size: .8rem;
-}
-.m-vid-del:hover { background: rgba(220,50,50,.2); color: #faa; }
-.m-vid-add {
-  display: inline-flex; align-items: center; gap: .35rem;
-  background: rgba(196,147,10,.1); border: 1.5px dashed rgba(196,147,10,.4);
-  border-radius: var(--r-md); padding: .42rem 1.1rem; color: var(--c-gold-d);
-  font-size: .8rem; cursor: pointer; margin-top: .35rem; width: 100%;
-  justify-content: center; transition: all var(--t-fast); font-family: inherit;
-}
+.m-vid-del { flex-shrink: 0; background: transparent; border: 1px solid rgba(220,50,50,.3); border-radius: 100px; width: 24px; height: 24px; color: #f99; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: .8rem; }
+.m-vid-del:hover { background: rgba(220,50,50,.2); }
+.m-vid-add { display: inline-flex; align-items: center; gap: .35rem; background: rgba(196,147,10,.1); border: 1.5px dashed rgba(196,147,10,.4); border-radius: var(--r-md); padding: .42rem 1.1rem; color: var(--c-gold-d); font-size: .8rem; cursor: pointer; margin-top: .35rem; width: 100%; justify-content: center; transition: all var(--t-fast); font-family: inherit; }
 .m-vid-add:hover { background: rgba(196,147,10,.22); border-style: solid; color: var(--c-gold-l); }
 .m-actions { display: flex; flex-wrap: wrap; gap: .4rem; padding-top: .6rem; border-top: 1px solid var(--c-bg3); margin-top: .6rem; }
-.m-act-media {
-  display: flex; align-items: center; gap: .35rem;
-  background: rgba(196,147,10,.12); border: 1.5px solid rgba(196,147,10,.3);
-  border-radius: 100px; padding: .38rem .9rem;
-  font-size: .78rem; color: var(--c-gold-d); cursor: pointer; font-family: inherit;
-  transition: background var(--t-fast);
-}
-.m-act-media:hover { background: rgba(196,147,10,.25); color: var(--c-gold-l); border-color: var(--c-gold-d); }
+.m-act-media { display: flex; align-items: center; gap: .35rem; background: rgba(196,147,10,.12); border: 1.5px solid rgba(196,147,10,.3); border-radius: 100px; padding: .38rem .9rem; font-size: .78rem; color: var(--c-gold-d); cursor: pointer; font-family: inherit; transition: background var(--t-fast); }
+.m-act-media:hover { background: rgba(196,147,10,.25); color: var(--c-gold-l); }
 .m-act-media.del { border-color: rgba(220,50,50,.35); color: #f99; }
-.m-act-media.del:hover { background: rgba(220,50,50,.2); color: #faa; }
+.m-act-media.del:hover { background: rgba(220,50,50,.2); }
+.upload-wrap { display: none; }
 
-/* ── Ingredient search ────────────────────────────────────── */
+/* ── Ingredient search / Timer / Toast / Back-top ─────────── */
 .ing-search { padding: .5rem 1.5rem; border-bottom: 1px solid rgba(196,147,10,.1); display: flex; gap: .4rem; flex-wrap: wrap; }
-.ing-tag {
-  background: rgba(196,147,10,.15); border: 1px solid rgba(196,147,10,.35);
-  border-radius: 100px; padding: .2rem .6rem; font-size: .75rem;
-  color: var(--c-gold-d); cursor: pointer; font-family: inherit;
-}
+.ing-tag { background: rgba(196,147,10,.15); border: 1px solid rgba(196,147,10,.35); border-radius: 100px; padding: .2rem .6rem; font-size: .75rem; color: var(--c-gold-d); cursor: pointer; font-family: inherit; }
 .ing-tag:hover { background: rgba(196,147,10,.25); }
-
-/* ── Timer box ────────────────────────────────────────────── */
-.timer-box {
-  position: fixed; bottom: 5rem; right: 1.5rem; z-index: 700;
-  background: var(--c-dark); border: 1px solid var(--c-gold-d);
-  border-radius: var(--r-lg); padding: .8rem 1.2rem;
-  color: var(--c-gold-l); font-size: 1.2rem; font-weight: 700;
-  box-shadow: var(--sh-lg); display: none;
-}
+.timer-box { position: fixed; bottom: 5rem; right: 1.5rem; z-index: 700; background: var(--c-dark); border: 1px solid var(--c-gold-d); border-radius: var(--r-lg); padding: .8rem 1.2rem; color: var(--c-gold-l); font-size: 1.2rem; font-weight: 700; box-shadow: var(--sh-lg); display: none; }
 .timer-box.active { display: block; }
-
-/* ── Casablanca Background ─────────────────────────────────── */
-.casablanca-bg {
-  position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
-}
-.casablanca-bg svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+#toast { position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%); background: var(--c-dark); color: var(--c-gold-l); border: 1px solid var(--c-gold-d); border-radius: 100px; padding: .5rem 1.2rem; z-index: 900; opacity: 0; transition: opacity .3s; pointer-events: none; font-size: .84rem; white-space: nowrap; }
+#toast.show { opacity: 1; }
+#back-top { position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 400; width: 42px; height: 42px; background: var(--c-gold); border-radius: 100%; color: var(--c-dark); border: none; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .3s; box-shadow: var(--sh-sm); }
+#back-top.visible { opacity: .8; }
+#back-top:hover { opacity: 1; }
 
 /* ── Footer ───────────────────────────────────────────────── */
-.footer {
-  background: rgba(3,8,18,.97); border-top: 1px solid var(--c-bdr);
-  text-align: center; padding: 2rem 1.5rem; color: var(--c-gold-d);
-  direction: rtl;
-}
+.footer { background: rgba(2,5,15,.98); border-top: 1px solid rgba(196,147,10,.2); text-align: center; padding: 2rem 1.5rem; color: var(--c-gold-d); direction: rtl; }
 .footer-memorial { color: var(--c-gold-l); font-size: 1rem; font-weight: 700; margin-bottom: .4rem; }
 .footer-sub { font-size: .76rem; color: rgba(237,224,196,.7); margin-bottom: .6rem; }
 .footer-quote { font-style: italic; color: var(--c-gold-d); font-size: .84rem; margin-bottom: .4rem; }
 .footer-orn { color: var(--c-gold-d); opacity: .4; font-size: .9rem; }
 
-/* ── Toast ────────────────────────────────────────────────── */
-#toast {
-  position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%);
-  background: var(--c-dark); color: var(--c-gold-l); border: 1px solid var(--c-gold-d);
-  border-radius: 100px; padding: .5rem 1.2rem; z-index: 900; opacity: 0;
-  transition: opacity .3s; pointer-events: none; font-size: .84rem; white-space: nowrap;
-}
-#toast.show { opacity: 1; }
-
-/* ── Back to top ──────────────────────────────────────────── */
-#back-top {
-  position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 400;
-  width: 42px; height: 42px; background: var(--c-gold); border-radius: 100%;
-  color: var(--c-dark); border: none; cursor: pointer; font-size: 1.1rem;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; transition: opacity .3s; box-shadow: var(--sh-sm);
-}
-#back-top.visible { opacity: .8; }
-#back-top:hover { opacity: 1; }
-
-/* ── Favorites ────────────────────────────────────────────── */
-.fav-cnt { font-size: .75rem; color: var(--c-gold-d); }
-
 /* ── Responsive ───────────────────────────────────────────── */
-@media (max-width: 1200px) {
-  .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
-}
+@media (max-width: 1200px) { .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); } }
 @media (max-width: 768px) {
   .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: .75rem; padding: .8rem 1rem 1.5rem; }
   .hero { padding: 2.5rem 1rem 2rem; }
   #mbox { border-radius: var(--r-lg); max-height: 95vh; }
+  .about-inner { flex-direction: column; }
 }
 @media (max-width: 480px) {
   .grid { grid-template-columns: 1fr; gap: .6rem; padding: .6rem .8rem 1.2rem; }
   .hero-h1 { font-size: clamp(1.4rem, 7vw, 2rem); }
   #ovl { align-items: flex-end; padding: 0; }
   #mbox { border-radius: var(--r-md) var(--r-md) 0 0; max-height: 95vh; width: 100%; }
-  .about-inner { flex-direction: column; }
 }
-
-/* ── Reduced motion ───────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
-
-/* ── Print ───────────────────────────────────────────────── */
 @media print {
-  .hdr, .top-nav, .nav-panel, .back-top, #ovl, .footer { display: none !important; }
+  .hdr, .cat-nav, .nav-panel, .back-top, #ovl, .footer { display: none !important; }
   .hero { background: none !important; color: #000 !important; }
+  .casablanca-bg { display: none !important; }
 }
 </style>
 <script type="application/ld+json">{
@@ -670,9 +555,10 @@ main { background: rgba(3,6,12,.6); min-height: 60vh; }
     "name": "מטבח מרוקאי-ספרדי-יהודי"
   }
 }</script>
-</head>
-<body>
+</head><body>
 
+<!-- ── Casablanca Background (fixed, behind all content) ──── -->
+<div class="casablanca-bg" aria-hidden="true">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
 <defs>
   <linearGradient id="cbSky" x1="0" y1="0" x2="0" y2="1">
@@ -945,310 +831,40 @@ main { background: rgba(3,6,12,.6); min-height: 60vh; }
 <rect width="1440" height="900" fill="url(#cbVign)"/>
 </svg>
 </div>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
-<defs>
-  <linearGradient id="cbSky" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#010510"/>
-    <stop offset="55%" stop-color="#040e26"/>
-    <stop offset="85%" stop-color="#1a0a04"/>
-    <stop offset="100%" stop-color="#0d1520"/>
-  </linearGradient>
-  <linearGradient id="cbSea" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#04193a"/>
-    <stop offset="100%" stop-color="#020c1e"/>
-  </linearGradient>
-  <linearGradient id="cbGlow" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#c4930a" stop-opacity="0"/>
-    <stop offset="100%" stop-color="#c4930a" stop-opacity="0.12"/>
-  </linearGradient>
-  <radialGradient id="cbMoon" cx="50%" cy="50%" r="50%">
-    <stop offset="0%" stop-color="#f5ecd7" stop-opacity="0.9"/>
-    <stop offset="100%" stop-color="#f5ecd7" stop-opacity="0"/>
-  </radialGradient>
-  <radialGradient id="cbVign" cx="50%" cy="50%" r="70%">
-    <stop offset="0%" stop-color="transparent"/>
-    <stop offset="100%" stop-color="#010510" stop-opacity="0.65"/>
-  </radialGradient>
-  <filter id="glow">
-    <feGaussianBlur stdDeviation="3" result="blur"/>
-    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-  </filter>
-  <pattern id="zellige" x="0" y="0" width="72" height="72" patternUnits="userSpaceOnUse">
-    <polygon points="36,2 42,20 60,20 46,31 52,49 36,38 20,49 26,31 12,20 30,20"
-      fill="none" stroke="#c4930a" stroke-width="0.7" opacity="0.22"/>
-    <polygon points="36,10 40,22 52,22 42,29 46,41 36,34 26,41 30,29 20,22 32,22"
-      fill="none" stroke="#c4930a" stroke-width="0.4" opacity="0.14"/>
-    <line x1="36" y1="0" x2="36" y2="72" stroke="#c4930a" stroke-width="0.3" opacity="0.09"/>
-    <line x1="0" y1="36" x2="72" y2="36" stroke="#c4930a" stroke-width="0.3" opacity="0.09"/>
-    <line x1="0" y1="0" x2="72" y2="72" stroke="#c4930a" stroke-width="0.25" opacity="0.06"/>
-    <line x1="72" y1="0" x2="0" y2="72" stroke="#c4930a" stroke-width="0.25" opacity="0.06"/>
-    <circle cx="36" cy="36" r="3" fill="none" stroke="#c4930a" stroke-width="0.4" opacity="0.1"/>
-  </pattern>
-</defs>
 
-<!-- Sky -->
-<rect width="1440" height="900" fill="url(#cbSky)"/>
+<noscript><style>body::before{content:"JavaScript נדרש";display:block;padding:1rem;background:#3e1c00;color:#f5ecd7;text-align:center;}</style></noscript>
 
-<!-- Zellige pattern overlay -->
-<rect width="1440" height="900" fill="url(#zellige)"/>
-
-<!-- Stars (50 stars scattered) -->
-<circle cx="72" cy="42" r="1.2" fill="#f5ecd7" opacity="0.9"/>
-<circle cx="150" cy="28" r="0.8" fill="#f5ecd7" opacity="0.7"/>
-<circle cx="230" cy="55" r="1.0" fill="#f5ecd7" opacity="0.8"/>
-<circle cx="310" cy="18" r="1.4" fill="#f5ecd7" opacity="0.9"/>
-<circle cx="395" cy="45" r="0.7" fill="#f5ecd7" opacity="0.6"/>
-<circle cx="460" cy="22" r="1.1" fill="#f5ecd7" opacity="0.8"/>
-<circle cx="540" cy="38" r="0.9" fill="#ede0c4" opacity="0.7"/>
-<circle cx="620" cy="15" r="1.3" fill="#f5ecd7" opacity="0.9"/>
-<circle cx="700" cy="50" r="0.8" fill="#f5ecd7" opacity="0.6"/>
-<circle cx="780" cy="25" r="1.2" fill="#f5ecd7" opacity="0.8"/>
-<circle cx="850" cy="42" r="0.7" fill="#ede0c4" opacity="0.7"/>
-<circle cx="930" cy="18" r="1.1" fill="#f5ecd7" opacity="0.9"/>
-<circle cx="1010" cy="55" r="1.0" fill="#f5ecd7" opacity="0.8"/>
-<circle cx="1090" cy="30" r="0.8" fill="#f5ecd7" opacity="0.7"/>
-<circle cx="1160" cy="15" r="1.3" fill="#f5ecd7" opacity="0.9"/>
-<circle cx="1240" cy="48" r="0.9" fill="#ede0c4" opacity="0.6"/>
-<circle cx="1320" cy="22" r="1.1" fill="#f5ecd7" opacity="0.8"/>
-<circle cx="1400" cy="38" r="0.8" fill="#f5ecd7" opacity="0.7"/>
-<circle cx="115" cy="70" r="0.7" fill="#f5ecd7" opacity="0.5"/>
-<circle cx="280" cy="68" r="0.9" fill="#f5ecd7" opacity="0.7"/>
-<circle cx="505" cy="65" r="0.7" fill="#ede0c4" opacity="0.5"/>
-<circle cx="660" cy="72" r="1.0" fill="#f5ecd7" opacity="0.6"/>
-<circle cx="820" cy="62" r="0.8" fill="#f5ecd7" opacity="0.7"/>
-<circle cx="975" cy="75" r="0.7" fill="#ede0c4" opacity="0.5"/>
-<circle cx="1130" cy="68" r="1.0" fill="#f5ecd7" opacity="0.6"/>
-<circle cx="1280" cy="55" r="0.8" fill="#f5ecd7" opacity="0.7"/>
-
-<!-- Moon crescent -->
-<circle cx="1280" cy="85" r="38" fill="#1a1230" opacity="0"/>
-<circle cx="1290" cy="82" r="32" fill="#f5ecd7" opacity="0.88" filter="url(#glow)"/>
-<circle cx="1308" cy="72" r="26" fill="#040e26"/>
-
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!-- HASSAN II MOSQUE — main landmark, center -->
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!-- Mosque platform -->
-<rect x="560" y="480" width="320" height="180" fill="#1a0e05" opacity="0.95"/>
-<!-- Main hall -->
-<rect x="580" y="440" width="280" height="60" fill="#1a0e05" opacity="0.95"/>
-<!-- Decorative arch row on hall -->
-<ellipse cx="620" cy="440" rx="18" ry="22" fill="#c4930a" opacity="0.18"/>
-<ellipse cx="660" cy="440" rx="18" ry="22" fill="#c4930a" opacity="0.18"/>
-<ellipse cx="700" cy="440" rx="18" ry="22" fill="#c4930a" opacity="0.18"/>
-<ellipse cx="740" cy="440" rx="18" ry="22" fill="#c4930a" opacity="0.18"/>
-<ellipse cx="780" cy="440" rx="18" ry="22" fill="#c4930a" opacity="0.18"/>
-<ellipse cx="820" cy="440" rx="18" ry="22" fill="#c4930a" opacity="0.18"/>
-<!-- Side minarets (small) -->
-<rect x="582" y="400" width="20" height="45" fill="#1a0e05" opacity="0.9"/>
-<rect x="838" y="400" width="20" height="45" fill="#1a0e05" opacity="0.9"/>
-<polygon points="582,400 592,385 602,400" fill="#1a0e05" opacity="0.9"/>
-<polygon points="838,400 848,385 858,400" fill="#1a0e05" opacity="0.9"/>
-<!-- MAIN MINARET — tall and detailed -->
-<rect x="700" y="200" width="40" height="245" fill="#160c04" opacity="0.98"/>
-<!-- Minaret bands/decoration -->
-<rect x="700" y="260" width="40" height="6" fill="#c4930a" opacity="0.3"/>
-<rect x="700" y="300" width="40" height="6" fill="#c4930a" opacity="0.3"/>
-<rect x="700" y="340" width="40" height="6" fill="#c4930a" opacity="0.3"/>
-<rect x="700" y="380" width="40" height="6" fill="#c4930a" opacity="0.3"/>
-<!-- Minaret windows (horseshoe arches) -->
-<ellipse cx="720" cy="240" rx="8" ry="12" fill="none" stroke="#c4930a" stroke-width="1.5" opacity="0.4"/>
-<ellipse cx="720" cy="280" rx="8" ry="12" fill="none" stroke="#c4930a" stroke-width="1.5" opacity="0.4"/>
-<ellipse cx="720" cy="320" rx="8" ry="12" fill="none" stroke="#c4930a" stroke-width="1.5" opacity="0.4"/>
-<ellipse cx="720" cy="360" rx="8" ry="12" fill="none" stroke="#c4930a" stroke-width="1.5" opacity="0.4"/>
-<!-- Minaret top — lantern and pyramid -->
-<rect x="706" y="188" width="28" height="18" fill="#160c04" opacity="0.98"/>
-<polygon points="700,188 720,165 740,188" fill="#1a0e05" opacity="0.98"/>
-<rect x="716" y="155" width="8" height="12" fill="#c4930a" opacity="0.7"/>
-<!-- Crescent on top -->
-<circle cx="720" cy="148" r="7" fill="none" stroke="#c4930a" stroke-width="2" opacity="0.8"/>
-<circle cx="724" cy="145" r="5" fill="#160c04"/>
-
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!-- SYNAGOGUE — Jewish quarter (Mellah), left of center -->
-<!-- ═══════════════════════════════════════════════════════════ -->
-<rect x="310" y="510" width="150" height="150" fill="#1a0a04" opacity="0.9"/>
-<!-- Synagogue arched entrance -->
-<ellipse cx="385" cy="510" rx="35" ry="42" fill="#0d0704" opacity="0.9"/>
-<!-- Synagogue dome -->
-<ellipse cx="385" cy="480" rx="45" ry="38" fill="#160c04" opacity="0.9"/>
-<!-- Star of David on synagogue -->
-<g transform="translate(385,468)" opacity="0.7">
-  <polygon points="0,-20 11.5,10 -11.5,10" fill="none" stroke="#c4930a" stroke-width="2.5"/>
-  <polygon points="0,20 11.5,-10 -11.5,-10" fill="none" stroke="#c4930a" stroke-width="2.5"/>
-</g>
-<!-- Synagogue windows -->
-<ellipse cx="345" cy="550" rx="12" ry="16" fill="#c4930a" opacity="0.15"/>
-<ellipse cx="385" cy="550" rx="12" ry="16" fill="#c4930a" opacity="0.15"/>
-<ellipse cx="425" cy="550" rx="12" ry="16" fill="#c4930a" opacity="0.15"/>
-<!-- Column pillars -->
-<rect x="320" y="510" width="12" height="150" fill="#2a1208" opacity="0.8"/>
-<rect x="448" y="510" width="12" height="150" fill="#2a1208" opacity="0.8"/>
-<!-- Decorative cornice -->
-<rect x="310" y="505" width="150" height="10" fill="#c4930a" opacity="0.2"/>
-
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!-- MELLAH HOUSES — Jewish quarter buildings (left) -->
-<!-- ═══════════════════════════════════════════════════════════ -->
-<rect x="0" y="530" width="100" height="230" fill="#160c04" opacity="0.88"/>
-<rect x="95" y="550" width="85" height="210" fill="#1a0e06" opacity="0.85"/>
-<rect x="175" y="515" width="70" height="245" fill="#160c04" opacity="0.88"/>
-<rect x="240" y="545" width="75" height="215" fill="#1a0e06" opacity="0.85"/>
-<!-- Arch windows on Mellah buildings -->
-<ellipse cx="30" cy="580" rx="14" ry="19" fill="#c4930a" opacity="0.12"/>
-<ellipse cx="60" cy="580" rx="14" ry="19" fill="#c4930a" opacity="0.12"/>
-<ellipse cx="30" cy="630" rx="14" ry="19" fill="#c4930a" opacity="0.12"/>
-<ellipse cx="60" cy="630" rx="14" ry="19" fill="#c4930a" opacity="0.12"/>
-<ellipse cx="115" cy="590" rx="12" ry="16" fill="#c4930a" opacity="0.1"/>
-<ellipse cx="145" cy="590" rx="12" ry="16" fill="#c4930a" opacity="0.1"/>
-<ellipse cx="200" cy="570" rx="13" ry="18" fill="#c4930a" opacity="0.12"/>
-<ellipse cx="270" cy="580" rx="13" ry="18" fill="#c4930a" opacity="0.12"/>
-<!-- Star of David on Mellah building -->
-<g transform="translate(200,545)" opacity="0.5">
-  <polygon points="0,-12 7,6 -7,6" fill="none" stroke="#c4930a" stroke-width="1.8"/>
-  <polygon points="0,12 7,-6 -7,-6" fill="none" stroke="#c4930a" stroke-width="1.8"/>
-</g>
-<!-- Menorah motif on Mellah wall -->
-<g transform="translate(55,555)" opacity="0.4">
-  <line x1="0" y1="0" x2="0" y2="-18" stroke="#c4930a" stroke-width="2"/>
-  <line x1="-14" y1="-6" x2="14" y2="-6" stroke="#c4930a" stroke-width="1.5"/>
-  <line x1="-14" y1="-6" x2="-14" y2="-18" stroke="#c4930a" stroke-width="1.5"/>
-  <line x1="-7" y1="-9" x2="-7" y2="-18" stroke="#c4930a" stroke-width="1.5"/>
-  <line x1="7" y1="-9" x2="7" y2="-18" stroke="#c4930a" stroke-width="1.5"/>
-  <line x1="14" y1="-6" x2="14" y2="-18" stroke="#c4930a" stroke-width="1.5"/>
-</g>
-
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!-- CASABLANCA WHITE HOUSES — right side (Art Déco influence) -->
-<!-- ═══════════════════════════════════════════════════════════ -->
-<rect x="930" y="520" width="90" height="240" fill="#1a0e06" opacity="0.88"/>
-<rect x="1015" y="500" width="110" height="260" fill="#160c04" opacity="0.9"/>
-<rect x="1120" y="535" width="85" height="225" fill="#1a0e06" opacity="0.85"/>
-<rect x="1200" y="510" width="100" height="250" fill="#160c04" opacity="0.88"/>
-<rect x="1295" y="540" width="145" height="220" fill="#1a0e06" opacity="0.85"/>
-<!-- Right buildings windows -->
-<rect x="945" y="555" width="20" height="28" rx="10" fill="#c4930a" opacity="0.12"/>
-<rect x="975" y="555" width="20" height="28" rx="10" fill="#c4930a" opacity="0.12"/>
-<rect x="945" y="605" width="20" height="28" rx="10" fill="#c4930a" opacity="0.12"/>
-<rect x="975" y="605" width="20" height="28" rx="10" fill="#c4930a" opacity="0.12"/>
-<ellipse cx="1068" cy="545" rx="14" ry="18" fill="#c4930a" opacity="0.13"/>
-<ellipse cx="1100" cy="545" rx="14" ry="18" fill="#c4930a" opacity="0.13"/>
-<ellipse cx="1068" cy="595" rx="14" ry="18" fill="#c4930a" opacity="0.13"/>
-<ellipse cx="1155" cy="560" rx="12" ry="16" fill="#c4930a" opacity="0.1"/>
-<ellipse cx="1240" cy="550" rx="14" ry="18" fill="#c4930a" opacity="0.12"/>
-<ellipse cx="1275" cy="550" rx="14" ry="18" fill="#c4930a" opacity="0.12"/>
-<rect x="1320" y="575" width="18" height="26" rx="9" fill="#c4930a" opacity="0.1"/>
-<rect x="1350" y="575" width="18" height="26" rx="9" fill="#c4930a" opacity="0.1"/>
-<rect x="1380" y="575" width="18" height="26" rx="9" fill="#c4930a" opacity="0.1"/>
-<!-- Art Déco rooftop decorations -->
-<rect x="1015" y="490" width="110" height="12" fill="#c4930a" opacity="0.15"/>
-<rect x="1025" y="480" width="20" height="12" fill="#1a0e06" opacity="0.9"/>
-<rect x="1095" y="480" width="20" height="12" fill="#1a0e06" opacity="0.9"/>
-
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!-- PALM TREES — Casablanca characteristic -->
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!-- Left palm -->
-<line x1="480" y1="760" x2="480" y2="490" stroke="#160c04" stroke-width="7" opacity="0.85"/>
-<path d="M480,490 Q445,452 415,462 Q450,465 480,490" fill="#160c04" opacity="0.8"/>
-<path d="M480,490 Q515,450 540,462 Q510,465 480,490" fill="#160c04" opacity="0.8"/>
-<path d="M480,490 Q462,440 478,425 Q482,455 480,490" fill="#160c04" opacity="0.8"/>
-<path d="M480,490 Q440,470 415,482 Q445,478 480,490" fill="#160c04" opacity="0.75"/>
-<path d="M480,490 Q520,472 545,482 Q515,478 480,490" fill="#160c04" opacity="0.75"/>
-<!-- Right palm -->
-<line x1="960" y1="760" x2="960" y2="490" stroke="#160c04" stroke-width="7" opacity="0.85"/>
-<path d="M960,490 Q925,452 895,462 Q930,465 960,490" fill="#160c04" opacity="0.8"/>
-<path d="M960,490 Q995,450 1020,462 Q990,465 960,490" fill="#160c04" opacity="0.8"/>
-<path d="M960,490 Q942,440 958,425 Q962,455 960,490" fill="#160c04" opacity="0.8"/>
-<path d="M960,490 Q920,470 895,482 Q925,478 960,490" fill="#160c04" opacity="0.75"/>
-<path d="M960,490 Q1000,472 1025,482 Q995,478 960,490" fill="#160c04" opacity="0.75"/>
-
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!-- ATLANTIC OCEAN — Casablanca is coastal -->
-<!-- ═══════════════════════════════════════════════════════════ -->
-<rect x="0" y="720" width="1440" height="180" fill="url(#cbSea)"/>
-<!-- Horizon glow reflection -->
-<rect x="0" y="715" width="1440" height="20" fill="url(#cbGlow)"/>
-<!-- Wave lines -->
-<path d="M0,745 Q120,732 240,745 Q360,758 480,745 Q600,732 720,745 Q840,758 960,745 Q1080,732 1200,745 Q1320,758 1440,745"
-  fill="none" stroke="#c4930a" stroke-width="1.2" opacity="0.2"/>
-<path d="M0,770 Q90,758 180,770 Q270,782 360,770 Q450,758 540,770 Q630,782 720,770 Q810,758 900,770 Q990,782 1080,770 Q1170,758 1260,770 Q1350,782 1440,770"
-  fill="none" stroke="#c4930a" stroke-width="0.9" opacity="0.15"/>
-<path d="M0,795 Q180,784 360,795 Q540,806 720,795 Q900,784 1080,795 Q1260,806 1440,795"
-  fill="none" stroke="#c4930a" stroke-width="0.7" opacity="0.1"/>
-<!-- Lighthouse (Phare d'El Hank — iconic Casablanca lighthouse) -->
-<rect x="128" y="670" width="14" height="58" fill="#1a0e06" opacity="0.9"/>
-<polygon points="121,670 135,652 149,670" fill="#1a0e06" opacity="0.9"/>
-<rect x="126" y="648" width="18" height="8" fill="#c4930a" opacity="0.4"/>
-<ellipse cx="135" cy="645" r="5" fill="#c4930a" opacity="0.6" filter="url(#glow)"/>
-<!-- Lighthouse base -->
-<rect x="120" y="722" width="30" height="12" fill="#1a0e06" opacity="0.9"/>
-
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!-- DECORATIVE BORDERS — Moroccan geometric top/bottom -->
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!-- Top border -->
-<rect x="0" y="0" width="1440" height="8" fill="#c4930a" opacity="0.3"/>
-<path d="M0,8 L30,22 L60,8 L90,22 L120,8 L150,22 L180,8 L210,22 L240,8 L270,22 L300,8 L330,22 L360,8 L390,22 L420,8 L450,22 L480,8 L510,22 L540,8 L570,22 L600,8 L630,22 L660,8 L690,22 L720,8 L750,22 L780,8 L810,22 L840,8 L870,22 L900,8 L930,22 L960,8 L990,22 L1020,8 L1050,22 L1080,8 L1110,22 L1140,8 L1170,22 L1200,8 L1230,22 L1260,8 L1290,22 L1320,8 L1350,22 L1380,8 L1410,22 L1440,8"
-  fill="none" stroke="#c4930a" stroke-width="1" opacity="0.25"/>
-
-<!-- Stars of David border decoration (top) -->
-<g transform="translate(60,38)" opacity="0.3">
-  <polygon points="0,-10 5.8,5 -5.8,5" fill="none" stroke="#c4930a" stroke-width="1.2"/>
-  <polygon points="0,10 5.8,-5 -5.8,-5" fill="none" stroke="#c4930a" stroke-width="1.2"/>
-</g>
-<g transform="translate(200,38)" opacity="0.3">
-  <polygon points="0,-10 5.8,5 -5.8,5" fill="none" stroke="#c4930a" stroke-width="1.2"/>
-  <polygon points="0,10 5.8,-5 -5.8,-5" fill="none" stroke="#c4930a" stroke-width="1.2"/>
-</g>
-<g transform="translate(1240,38)" opacity="0.3">
-  <polygon points="0,-10 5.8,5 -5.8,5" fill="none" stroke="#c4930a" stroke-width="1.2"/>
-  <polygon points="0,10 5.8,-5 -5.8,-5" fill="none" stroke="#c4930a" stroke-width="1.2"/>
-</g>
-<g transform="translate(1380,38)" opacity="0.3">
-  <polygon points="0,-10 5.8,5 -5.8,5" fill="none" stroke="#c4930a" stroke-width="1.2"/>
-  <polygon points="0,10 5.8,-5 -5.8,-5" fill="none" stroke="#c4930a" stroke-width="1.2"/>
-</g>
-
-<!-- Atmospheric haze / horizon city glow -->
-<ellipse cx="720" cy="620" rx="600" ry="120" fill="#c4930a" opacity="0.04"/>
-
-<!-- Vignette overlay -->
-<rect width="1440" height="900" fill="url(#cbVign)"/>
-</svg>
-</div>
-<noscript><style>body::before{content:"JavaScript נדרש";display:block;padding:1rem;background:#fff8ee;border-bottom:2px solid #c4930a;text-align:center;font-family:serif}</style></noscript>
-<a href="#main" class="skip-link">דלג לתוכן</a>
-
-<!-- HEADER -->
+<!-- ════════ HEADER ════════════════════════════════════════ -->
 <header class="hdr" role="banner">
   <div class="hdr-inner">
     <div class="hdr-brand">
       <div class="hdr-title">ספר הבישול של משפחת בן הראש</div>
-      <div class="hdr-subtitle" title="לזכרם של פרלה ופנחס בן הראש שזכרונם יהיה לברכה וגאווה לדורי דורות דרך הטעם המעלה זכרונות שחשבנו שכבר שכחנו...">לזכרם של פרלה ופנחס בן הראש ז"ל</div>
+      <div class="hdr-subtitle" title="לזכרם של פרלה ופנחס בן הראש שזכרונם יהיה לברכה וגאווה לדורי דורות">לזכרם של פרלה ופנחס בן הראש ז״ל</div>
     </div>
-    <div class="hdr-search" role="search">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input type="search" id="srch" placeholder="חפשו מתכון, מרכיב..." autocomplete="off" aria-label="חיפוש מתכון">
-      <button id="srch-clr" aria-label="נקה חיפוש" hidden>✕</button>
+    <div class="hdr-search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" id="srch" placeholder="חפש מתכון, מרכיב..." aria-label="חיפוש מתכון" autocomplete="off"/>
+      <button id="srch-clr" hidden aria-label="נקה חיפוש">✕</button>
     </div>
   </div>
 </header>
 
-<!-- TOP NAV -->
-<nav class="top-nav" aria-label="קטגוריות" role="navigation">
-  <div class="top-nav-inner" id="cat-inner" role="menubar"></div>
+<!-- ════════ NAVIGATION ════════════════════════════════════ -->
+<nav class="cat-nav" role="navigation" aria-label="קטגוריות מתכונים">
+  <div class="cat-nav-inner">
+    <div id="cat-inner" role="menubar" aria-label="קטגוריות"></div>
+  </div>
+  <div id="nav-panel" class="nav-panel" role="region" aria-label="תת-קטגוריות">
+    <div id="nav-panel-inner" class="nav-panel-inner"></div>
+  </div>
 </nav>
-<div class="nav-panel" id="nav-panel" aria-hidden="true" role="region" aria-label="תת-קטגוריות">
-  <div class="nav-panel-inner" id="nav-panel-inner"></div>
-</div>
 
-<!-- HERO -->
+<!-- ════════ HERO ══════════════════════════════════════════ -->
 <section class="hero" aria-labelledby="hero-h1">
   <div class="hero-inner">
-    <p class="hero-orn" aria-hidden="true">✦ ✦ ✦</p>
+    <div class="hero-orn" aria-hidden="true">✦ ✦ ✦</div>
     <h1 class="hero-h1" id="hero-h1">המטבח של <em>משפחת בן הראש</em></h1>
-    <p class="hero-tagline">לזכרם של פרלה ופנחס בן הראש — טעמים שזכרונם חי לנצח</p>
+    <p class="hero-tagline">לזכרם של פרלה ופנחס בן הראש — טעמים שמעלים זכרונות שחשבנו שכבר שכחנו...</p>
     <div class="hero-pills" role="list">
       <span class="hp" role="listitem" id="pill-cnt">טוען...</span>
       <span class="hp" role="listitem">19 קטגוריות</span>
@@ -1256,127 +872,139 @@ main { background: rgba(3,6,12,.6); min-height: 60vh; }
       <span class="hp" role="listitem">מסורת של דורות</span>
     </div>
     <button class="hero-about-btn" id="about-toggle" aria-expanded="false" aria-controls="about">
-      <span>קרא עוד על פרלה ופנחס בן הראש ז"ל</span>
-      <span aria-hidden="true" id="about-arrow">▾</span>
+      קרא עוד על פרלה ופנחס בן הראש ז״ל
+      <span id="about-arrow" aria-hidden="true">▾</span>
     </button>
   </div>
 </section>
 
-<!-- ABOUT (hidden by default) -->
-<section class="about" id="about" aria-hidden="true">
+<!-- ════════ ABOUT ═════════════════════════════════════════ -->
+<section id="about" class="about" aria-hidden="true" aria-labelledby="about-heading">
   <div class="about-inner">
-    <div class="about-avatar" aria-hidden="true">☺</div>
+    <div class="about-avatar" aria-hidden="true">🍊</div>
     <div class="about-body">
-      <h2 class="about-h">פרלה ופנחס בן הראש ז"ל — המשפחה שעיצבה מטבח</h2>
-      <p class="about-p about-memorial">ספר הבישול של משפחת בן הראש — לזכרם של פרלה ופנחס בן הראש שזכרונם יהיה לברכה וגאווה לדורי דורות דרך הטעם המעלה זכרונות שחשבנו שכבר שכחנו...</p>
-      <p class="about-p">פרלה נולדה בקזבלנקה, גדלה בין ריחות השוק המרוקאי ואהבה לבשל עוד לפני שלמדה לקרוא. נישאה לפנחס, איש ממשפחת קארו — צאצאי מגורשי ספרד בשנת 1492 — ולמדה את המטבח האנדלוסי מחמותה לבל. שני עולמות, שתי מסורות, סיר אחד מלא אהבה.</p>
-      <p class="about-p">מתכוניה לא נכתבו — הם חיו בראשה ובידיה, ומובאים כאן ממה שסיפרה לילדיה ולנכדיה. כל מתכון הוא פיסת זיכרון, כל ריח הוא גשר בין דורות.</p>
+      <h2 class="about-h" id="about-heading">פרלה ופנחס בן הראש ז״ל — המשפחה שיצבה מטבח</h2>
+      <p class="about-memorial">ספר הבישול של משפחת בן הראש — לזכרם של פרלה ופנחס בן הראש שזכרונם יהיה לברכה וגאווה לדורי דורות דרך הטעם המעלה זכרונות שחשבנו שכבר שכחנו...</p>
+      <p class="about-p">פרלה נולדה בקזבלנקה, גדלה במרקש, ועלתה לישראל עם לב מלא בטעמים ובסיפורים. נישאה לפנחס, איש ממשפחת קארו — צאצאי רבי יוסף קארו, מגורשי קסטיליה 1492. המטבח שלה שילב שני עולמות: מרוקו העמוקה וספרד האנדלוסית, ומאכלים שלמדה משכנים וחברים שתמיד עטפו אותה באהבה וחום.</p>
+      <p class="about-p">עם העלייה לישראל הגיעו לשכונת הקטמון בירושלים. שם, בין שכנות מעיראק, כורדיסטן, אשכנז, תימן, פרס ובוכרה — הפך מטבחה לפסיפס שלם. כאן תמצאו 1,045 מתכונים שנשמרו לדורות.</p>
       <div class="about-tags" role="list">
-        <span class="at" role="listitem">קזבלנקה</span>
-        <span class="at" role="listitem">מרקש</span>
-        <span class="at" role="listitem">מורשת ספרד</span>
-        <span class="at" role="listitem">משפחת קארו</span>
-        <span class="at" role="listitem">מגורשי ספרד 1492</span>
         <span class="at" role="listitem">מטבח מרוקאי</span>
-        <span class="at" role="listitem">מטבח אנדלוסי</span>
+        <span class="at" role="listitem">מורשת ספרד</span>
+        <span class="at" role="listitem">מגורשי ספרד 1492</span>
+        <span class="at" role="listitem">משפחת קארו</span>
+        <span class="at" role="listitem">ברק</span>
+        <span class="at" role="listitem">קובלקה</span>
+        <span class="at" role="listitem">שכונת הקטמון</span>
         <span class="at" role="listitem">זכרונות חיים</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- MAIN / GRID -->
-<main class="main" id="main" tabindex="-1">
-  <div class="grid-head">
-    <h2 class="grid-title" id="sec-title">כל המתכונים</h2>
-    <span class="grid-meta" id="sec-cnt" aria-live="polite" aria-atomic="true"></span>
+<!-- ════════ MAIN CONTENT ══════════════════════════════════ -->
+<main id="main" role="main">
+  <div class="grid-header">
+    <div>
+      <span id="sec-title">כל המתכונים</span>
+      <span id="sec-cnt"></span>
+    </div>
+    <div class="diff-btns" role="group" aria-label="סנן לפי רמת קושי">
+      <button class="diff-btn active" data-diff="all">הכל</button>
+      <button class="diff-btn" data-diff="קל">קל</button>
+      <button class="diff-btn" data-diff="בינוני">בינוני</button>
+      <button class="diff-btn" data-diff="מתקדם">מתקדם</button>
+    </div>
   </div>
-  <div class="grid" id="grid" role="list" aria-label="רשימת מתכונים" aria-live="polite" aria-busy="true"></div>
+  <div id="grid" class="grid" role="list" aria-label="רשימת מתכונים" aria-busy="true"></div>
 </main>
 
-<!-- FOOTER -->
-<footer class="footer" role="contentinfo">
-  <p class="footer-memorial">ספר הבישול של משפחת בן הראש — לזכרם של פרלה ופנחס בן הראש שזכרונם יהיה לברכה וגאווה לדורי דורות דרך הטעם המעלה זכרונות שחשבנו שכבר שכחנו...</p>
-  <p class="footer-sub">קזבלנקה · מרקש · ישראל | משפחת קארו — צאצאי מגורשי ספרד 1492</p>
-  <p class="footer-quote">"הטעם הכי טוב בעולם הוא הטעם שזוכרים" — פרלה</p>
-  <p class="footer-orn" aria-hidden="true">✦ ✦ ✦</p>
-</footer>
+<!-- ════════ BACK TO TOP ════════════════════════════════════ -->
+<button id="back-top" aria-label="חזור למעלה" hidden>↑</button>
 
-<button class="back-top" id="back-top" aria-label="חזרה לראש הדף">↑</button>
+<!-- ════════ OVERLAY + MODAL ══════════════════════════════ -->
+<div id="ovl" role="none" aria-hidden="true">
+  <div id="mbox" role="dialog" aria-modal="true" aria-label="מתכון">
+    <div id="m-progress" aria-hidden="true"></div>
 
-<!-- MODAL -->
-<div class="ovl" id="ovl" role="dialog" aria-modal="true" aria-labelledby="m-title">
-  <div class="mbox" id="mbox">
-    <div class="m-progress" id="m-progress" aria-hidden="true"></div>
+    <!-- Hero image -->
     <div class="m-hero" id="m-hero">
-      <div class="m-hero-overlay" aria-hidden="true"></div>
-      <div class="m-hero-media" id="m-hero-media">
-        <button class="m-hero-btn" id="m-hero-change" aria-label="שנה תמונה">📷 שנה</button>
-        <button class="m-hero-btn del" id="m-hero-del" aria-label="מחק תמונה" style="display:none">🗑 מחק</button>
-      </div>
-      <button class="m-btn-close" id="m-close" aria-label="סגור מתכון">✕</button>
-      <button class="m-btn-nav m-btn-prev" id="m-prev" aria-label="מתכון קודם">‹</button>
-      <button class="m-btn-nav m-btn-next" id="m-next" aria-label="מתכון הבא">›</button>
-      <div class="m-hero-content">
-        <div class="m-badge" id="m-badge" aria-hidden="true"></div>
-        <h2 class="m-title" id="m-title"></h2>
-        <p class="m-subdesc" id="m-subdesc"></p>
+      <div class="m-hero-media">
+        <button id="m-hero-change" class="m-hero-change" aria-label="שנה תמונה" hidden>🖼</button>
+        <button id="m-hero-del" class="m-hero-del" aria-label="מחק תמונה" hidden>✕</button>
       </div>
     </div>
+
+    <!-- Nav buttons -->
+    <div class="m-nav">
+      <button id="m-prev" class="m-prev" aria-label="מתכון קודם">‹</button>
+      <button id="m-close" class="m-close" aria-label="סגור">✕</button>
+      <button id="m-next" class="m-next" aria-label="מתכון הבא">›</button>
+    </div>
+
+    <!-- Body -->
     <div class="m-body" id="m-body">
-      <div class="m-mem" id="m-mem">
-        <div class="m-mem-label">זיכרון ממרוקו ✦</div>
-        <div class="m-mem-text" id="m-mem-txt"></div>
+      <span id="m-badge" class="m-badge" hidden></span>
+      <h2 id="m-title" class="m-title"></h2>
+      <p id="m-subdesc" class="m-subdesc"></p>
+
+      <!-- Memory -->
+      <div id="m-mem" class="m-mem" hidden>
+        <p id="m-mem-txt"></p>
       </div>
-      <div class="m-meta" id="m-meta"></div>
-      <h3 class="m-section-title">רכיבים</h3>
-      <div class="m-ingr" id="m-ingr" role="list"></div>
-      <h3 class="m-section-title">שלבי ההכנה</h3>
-      <ol class="m-steps" id="m-steps"></ol>
-      <div id="m-tip-wrap">
-        <h3 class="m-section-title">הטיפ של פרלה</h3>
-        <div class="m-tip-box">
-          <div class="m-tip-label">סוד הבישול</div>
-          <div class="m-tip-text" id="m-tip-txt"></div>
-        </div>
-        <div class="m-src-box" id="m-src-box" hidden>
-          <span class="m-src-label">מקור: </span>
-          <a class="m-src-link" id="m-src-link" href="#" target="_blank" rel="noopener noreferrer">קישור למתכון מקורי ↗</a>
-        </div>
+
+      <!-- Meta chips -->
+      <div id="m-meta" class="m-meta" role="list"></div>
+
+      <!-- Ingredients -->
+      <div class="m-sec-h">מרכיבים</div>
+      <div id="m-ingr" class="m-ingr" role="list"></div>
+
+      <!-- Steps -->
+      <div class="m-sec-h">אופן ההכנה</div>
+      <ol id="m-steps" class="m-steps"></ol>
+
+      <!-- Tip -->
+      <div id="m-tip-wrap" class="m-tip-wrap" hidden>
+        <div class="m-tip-label">טיפ של פרלה</div>
+        <p id="m-tip-txt"></p>
       </div>
+
+      <!-- Source / video link -->
+      <div id="m-src-box" class="m-src-box" hidden>
+        <a id="m-src-link" href="#" target="_blank" rel="noopener noreferrer">צפה בסרטון</a>
+      </div>
+
+      <!-- Video list -->
+      <div id="m-vid-wrap" class="m-vid-wrap" hidden>
+        <div id="m-vid-list" class="m-vid-list"></div>
+        <button id="m-vid-add" class="m-vid-add">+ הוסף סרטון</button>
+      </div>
+
+      <!-- Actions (print / share / media) -->
       <div class="m-actions">
-        <button class="m-act" id="m-print" aria-label="הדפס מתכון">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-          הדפס
-        </button>
-        <button class="m-act" id="m-share" aria-label="שתף מתכון">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          שתף
-        </button>
-        <button class="m-act m-act-media" id="m-upload-act" aria-label="הוסף או שנה תמונה">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-          תמונה
-        </button>
-        <button class="m-act m-act-media del" id="m-img-del-act" aria-label="מחק תמונה" style="display:none">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-          מחק תמונה
-        </button>
-      </div>
-      <div id="m-vid-wrap">
-        <h3 class="m-section-title">צפייה בהכנה</h3>
-        <div class="m-vid-list" id="m-vid-list"></div>
-        <button class="m-vid-add" id="m-vid-add" aria-label="הוסף סרטון למתכון">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-          הוסף סרטון
-        </button>
+        <button id="m-print" class="m-act-media" aria-label="הדפס מתכון">🖨 הדפס</button>
+        <button id="m-share" class="m-act-media" aria-label="שתף מתכון">⬆ שתף</button>
+        <button id="m-upload-act" class="m-act-media" aria-label="הוסף תמונה">🖼 תמונה</button>
+        <button id="m-img-del-act" class="m-act-media del" aria-label="מחק תמונה" hidden>✕ מחק תמונה</button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- ════════ TOAST ══════════════════════════════════════════ -->
 <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
+<!-- ════════ FOOTER ════════════════════════════════════════ -->
+<footer class="footer" role="contentinfo">
+  <div class="footer-memorial">ספר הבישול של משפחת בן הראש</div>
+  <div class="footer-sub">לזכרם של פרלה ופנחס בן הראש ז״ל | קזבלנקה · מרקש · ירושלים</div>
+  <div class="footer-quote">״האוכל שלה — הסיפור שלנו״</div>
+  <div class="footer-orn" aria-hidden="true">✦ ✦ ✦</div>
+</footer>
+
 <script>
+
+
 
 
 
@@ -19098,8 +18726,12 @@ const MENU_STRUCTURE = [
 
 
 
+
+
 </script>
 <script>
+
+
 
 
 
@@ -20394,6 +20026,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (r) setTimeout(function() { openM(id); }, 300);
   }
 });
+
+
 
 
 
