@@ -110,7 +110,7 @@ def _bidi_for_console(text: str) -> str:
 
 # ── global socket timeout BEFORE any import of requests/urllib3 ──
 # This is the only reliable way to prevent hung network calls on Windows.
-socket.setdefaulttimeout(8)
+socket.setdefaulttimeout(5)
 
 try:
     import requests
@@ -134,7 +134,7 @@ LOG_FILE    = LOG_DIR / f"download_images_{_ts}.log"
 PROXY       = "http://pac.gov.il:8080"
 
 DELAY       = 0.4    # seconds between recipes (rate limiting)
-NET_TIMEOUT = 6      # seconds per network request  (< socket global timeout=8)
+NET_TIMEOUT = 4      # seconds per network request  (< socket global timeout=8)
 OVERWRITE   = False  # True = overwrite existing images
 
 IMG_DIR.mkdir(parents=True, exist_ok=True)
@@ -1233,10 +1233,9 @@ def source_hebrew_first(recipe_title, query_en):
     _, sd = get_sess()
     from urllib.parse import quote_plus
 
-    # Build Hebrew search variants
+    # Build Hebrew search variants (limit to 2 for speed)
     he_queries = [
         recipe_title + " מאכל",          # title + "food" in Hebrew
-        recipe_title + " מתכון",          # title + "recipe" in Hebrew
         recipe_title,                      # title alone
     ]
 
@@ -1246,7 +1245,7 @@ def source_hebrew_first(recipe_title, query_en):
                 "https://commons.wikimedia.org/w/api.php",
                 params={"action":"query","list":"search",
                         "srsearch": q, "srnamespace": 6,
-                        "srlimit": 8, "format": "json",
+                        "srlimit": 3, "format": "json",
                         "uselang": "he"},   # Hebrew UI — biases results
                 timeout=NET_TIMEOUT, verify=False, headers=API_HDRS)
             if r.status_code != 200:
@@ -1659,10 +1658,15 @@ def main():
                         help="Dedup — תצוגה מקדימה בלבד, אין מחיקות")
     parser.add_argument("--overwrite",     action="store_true",
                         help="הורד מחדש גם תמונות קיימות (OVERWRITE=True)")
+    parser.add_argument("--no-proxy",      action="store_true",
+                        help="התעלם מה-proxy — חיבור ישיר בלבד")
     args = parser.parse_args()
 
     if args.overwrite:
         OVERWRITE = True
+    if args.no_proxy:
+        global PROXY
+        PROXY = None
 
     # ── אתחול לוג ────────────────────────────────────────────
     LOG_FILE.write_text("", encoding="utf-8")
@@ -1704,8 +1708,30 @@ def main():
         log(f"Ctrl+C = יציאה מיידית")
         log("")
 
+        # ── Quick connectivity check ─────────────────────────────
+        log("בודק חיבור רשת...")
+        _test_ok = False
+        sp, sd = get_sess()
+        for _label, _s in [("direct", sd), ("proxy", sp)]:
+            try:
+                _r = _s.get("https://commons.wikimedia.org/w/api.php?action=query&meta=siteinfo&format=json",
+                           timeout=3, verify=False)
+                if _r.status_code == 200:
+                    log(f"  {_label}: OK")
+                    _test_ok = True
+                    break
+                else:
+                    log(f"  {_label}: HTTP {_r.status_code}")
+            except Exception as _e:
+                log(f"  {_label}: {type(_e).__name__}")
+        if not _test_ok:
+            log("  WARNING: אין חיבור לרשת — הסקריפט ינסה בכל זאת אבל רוב המקורות ייכשלו.")
+            log("  TIP: בדוק proxy, VPN, או חיבור אינטרנט.")
+        log("")
+
         ok_count = skip_count = fail_count = 0
         source_counts: dict = {}
+        _dl_start = time.time()
 
         for i, recipe in enumerate(recipes):
             if _STOP:
@@ -1723,12 +1749,14 @@ def main():
                 continue
 
             query = build_query(recipe)
-            log(f"  >> [{i+1:4d}/{total}] [{rid:8s}] {title[:30]:30s} → \"{query[:35]}\"")
+            pct = (i + 1) * 100 // total
+            log(f"  >> [{i+1:4d}/{total}] {pct:3d}% [{rid:8s}] {title[:28]:28s} q=\"{query[:30]}\"")
 
             saved  = False
             source = "?"
+            t0 = time.time()
 
-            for src_name, src_fn in [
+            sources = [
                 ("hebrew",    lambda t=title, q=query: source_hebrew_first(t, q)),
                 ("mealdb",    lambda q=query: source_mealdb(q)),
                 ("wikimedia", lambda q=query: source_wikimedia_single(q)),
@@ -1736,29 +1764,40 @@ def main():
                 ("wikipedia2",lambda q=query, rid=rid: source_unsplash_search(q)),
                 ("ddg",       lambda q=query: source_foodimages_scrape(q)),
                 ("flickr",    lambda q=query, rid=rid: source_loremflickr(q, rid)),
-            ]:
+            ]
+
+            for si, (src_name, src_fn) in enumerate(sources):
                 if saved: break
                 try:
+                    t1 = time.time()
                     url = src_fn()
+                    dt = time.time() - t1
                     if url and download_and_save(url, dest):
                         saved  = True
                         source = src_name
                         source_counts[src_name] = source_counts.get(src_name, 0) + 1
+                        log(f"     OK via {src_name} ({dt:.1f}s)")
+                    elif dt > 2:
+                        log(f"     {src_name}: no result ({dt:.1f}s)")
                 except Exception as e:
-                    log(f"     {src_name} error: {e}")
+                    dt = time.time() - t1
+                    log(f"     {src_name} error ({dt:.1f}s): {type(e).__name__}")
 
+            elapsed = time.time() - t0
             if saved:
                 ok_count += 1
-                log(f"  OK  [{rid}] via {source}")
             else:
                 fail_count += 1
-                log(f"  FAIL [{rid}] all sources exhausted")
+                log(f"     FAIL — all sources exhausted ({elapsed:.0f}s)")
 
-            done = i + 1
-            pct  = done * 100 // total
-            if pct % 10 == 0 and done > 0 and done < total and done % (total // 10) < 2:
-                src_summary = "  ".join(f"{k}={v}" for k, v in source_counts.items())
-                log(f"\n  -- {pct}% ({done}/{total})  ok={ok_count}  fail={fail_count}  [{src_summary}]\n")
+            # ── Progress every 25 recipes or 10% ──
+            done = i + 1 - skip_count
+            if done > 0 and (done % 25 == 0 or (pct % 10 == 0 and pct > 0)):
+                avg_sec = (time.time() - _dl_start) / max(1, done)
+                remaining = (total - skip_count - done) * avg_sec
+                eta_min = remaining / 60
+                src_summary = " ".join(f"{k}={v}" for k, v in sorted(source_counts.items()))
+                log(f"\n  === {pct}% ({i+1}/{total}) ok={ok_count} fail={fail_count} | ETA {eta_min:.0f}min | {src_summary} ===\n")
 
             time.sleep(DELAY)
 
