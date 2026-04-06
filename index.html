@@ -595,6 +595,8 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
   .hero { background: none !important; color: #000 !important; }
   .casablanca-bg { display: none !important; }
 }
+
+.c-sep { color: var(--c-ink-l); opacity: .65; padding: 0 0.1rem; }
 </style>
 <script type="application/ld+json">{
   "@context": "https://schema.org",
@@ -19028,9 +19030,16 @@ function renderGrid() {
       img.alt = r.title;
       img.onload  = function() { this.classList.add('loaded'); };
       img.onerror = function() {
-        this.parentElement.classList.add('no-img');
-        this.remove();
-        _addCardUploadBtn(imgDiv, r.id, r.title);
+        var self = this;
+        if (!self._tried) {
+          self._tried = true;
+          var hashCode = r.id.split('').reduce(function(a,c){return a+c.charCodeAt(0);},0);
+          self.src = 'https://loremflickr.com/320/240/food,moroccan?lock=' + (Math.abs(hashCode) % 9000 + 100);
+        } else {
+          self.parentElement.classList.add('no-img');
+          self.remove();
+          _addCardUploadBtn(imgDiv, r.id, r.title);
+        }
       };
       imgDiv.appendChild(img);
     } else {
@@ -19078,6 +19087,13 @@ function renderGrid() {
       t.className = 'c-time';
       t.textContent = r.time;
       foot.appendChild(t);
+    }
+    if (r.time && r.diff) {
+      const sep = document.createElement('span');
+      sep.className = 'c-sep';
+      sep.textContent = ' · ';
+      sep.setAttribute('aria-hidden','true');
+      foot.appendChild(sep);
     }
     if (r.diff) {
       const d = document.createElement('span');
@@ -19208,6 +19224,17 @@ function buildNav() {
     ACT_IDS     = null;
     ACT_CAT     = '';
     ACT_HOLIDAY = null;
+    SEARCH      = '';
+    var si = document.getElementById('srch');
+    if (si) si.value = '';
+    hide('srch-clr');
+    closePanel();
+    updateNavActive();
+    renderGrid();
+    var ttl = document.getElementById('sec-title');
+    if (ttl) ttl.textContent = label || 'מתכונים';
+  }
+
   function selectByIds(recipeIds, label) {
     ACT_IDS     = new Set(recipeIds);
     ACT_CATS    = [];
@@ -19222,17 +19249,6 @@ function buildNav() {
     renderGrid();
     var ttl = document.getElementById('sec-title');
     if (ttl) ttl.textContent = label || 'ספרדי-מרוקאי';
-  }
-
-    SEARCH      = '';
-    var si = document.getElementById('srch');
-    if (si) si.value = '';
-    hide('srch-clr');
-    closePanel();
-    updateNavActive();
-    renderGrid();
-    var ttl = document.getElementById('sec-title');
-    if (ttl) ttl.textContent = label || 'מתכונים';
   }
 
   function buildPanel(node, pi) {
