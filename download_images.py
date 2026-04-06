@@ -33,23 +33,80 @@ import os, re, sys, time, signal, socket, argparse
 from datetime import datetime
 from pathlib import Path
 
-# ── Fix Windows PowerShell UTF-8 encoding + Hebrew RTL display ──
-# Without this, Hebrew text in PS terminal appears reversed or garbled.
-# LTR_MARK (U+200E) forces left-to-right rendering for Hebrew in PS.
-LTR = '\u200e'   # Left-To-Right mark — prepend to any Hebrew console output
+# ── Fix Windows PowerShell: UTF-8 encoding + Hebrew RTL display ─────────────
+# Problem: PowerShell is an LTR terminal. Hebrew is stored in logical order
+# (memory: right-to-left) but printed left-to-right, making it look reversed.
+#
+# Solution: pure-Python BiDi visual-order conversion — no external libraries.
+# Each Hebrew character-run is reversed before printing so that when the LTR
+# terminal reads left-to-right, a Hebrew reader sees it correctly right-to-left.
+# The LOG FILE always receives the original, unreversed Hebrew.
+# ─────────────────────────────────────────────────────────────────────────────
+
 if sys.platform == 'win32':
     try:
-        # Python 3.7+ reconfigure stdout/stderr to UTF-8
         sys.stdout.reconfigure(encoding='utf-8', errors='replace')
         sys.stderr.reconfigure(encoding='utf-8', errors='replace')
     except AttributeError:
         import io
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
         sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
-    # Set Windows console code page to UTF-8 (65001)
     os.system('chcp 65001 >nul 2>&1')
-else:
-    LTR = ''  # Not needed on Linux/macOS
+
+# Hebrew Unicode ranges used for character classification
+_HE_SET = frozenset(
+    'אבגדהוזחטיכלמנסעפצקרשתךםןףץ'   # base letters
+    'ׁׂ׳״'                            # marks / punctuation
+)
+
+def _he(ch: str) -> bool:
+    """True if ch is a Hebrew character."""
+    return ch in _HE_SET or '\u0591' <= ch <= '\u05c7' or '\ufb1d' <= ch <= '\ufb4f'
+
+def _bidi_for_console(text: str) -> str:
+    """
+    Convert Hebrew logical-order text to visual order for an LTR terminal.
+
+    Splits the string into alternating runs of Hebrew and non-Hebrew.
+    Each Hebrew run is reversed character-by-character so that when the
+    LTR terminal prints left-to-right, a Hebrew reader reading right-to-left
+    sees the correct word order.
+
+    Pure Python, no external packages required.
+    Log file is NOT affected — only the console print uses this.
+    """
+    if not any(_he(c) for c in text):
+        return text          # no Hebrew → nothing to fix
+
+    # ── Segment into Hebrew / Non-Hebrew runs ──────────────────────
+    segs: list[tuple[bool, list[str]]] = []   # (is_hebrew, chars)
+    cur_he   = None
+    cur_buf: list[str] = []
+
+    for ch in text:
+        ch_he = _he(ch)
+        # Spaces are "neutral" — continue the current run type
+        if ch == ' ' and cur_he is not None:
+            ch_he = cur_he
+        if ch_he != cur_he:
+            if cur_buf:
+                segs.append((cur_he, cur_buf))
+            cur_he  = ch_he
+            cur_buf = [ch]
+        else:
+            cur_buf.append(ch)
+    if cur_buf:
+        segs.append((cur_he, cur_buf))
+
+    # ── Rebuild: reverse each Hebrew run ──────────────────────────
+    out: list[str] = []
+    for is_he, chars in segs:
+        if is_he:
+            out.append(''.join(reversed(chars)))
+        else:
+            out.append(''.join(chars))
+
+    return ''.join(out)
 
 # ── global socket timeout BEFORE any import of requests/urllib3 ──
 # This is the only reliable way to prevent hung network calls on Windows.
@@ -98,19 +155,25 @@ def _sigint(sig, frame):
 signal.signal(signal.SIGINT, _sigint)
 
 # ── log — writes to file immediately after each call ──
-def log(msg):
-    # Add LTR mark before any Hebrew text so PowerShell renders RTL text correctly
-    console_msg = msg
-    if any('\u0590' <= c <= '\u05ff' for c in msg):
-        # Contains Hebrew — prepend LTR mark to prevent terminal reversal
-        console_msg = LTR + msg
-    line = f"[{time.strftime('%H:%M:%S')}] {msg}"
-    console_line = f"[{time.strftime('%H:%M:%S')}] {console_msg}"
+def log(msg: str) -> None:
+    """
+    Write msg to console (BiDi-fixed for Windows) and to the log file (original).
+    """
+    ts   = time.strftime('%H:%M:%S')
+    line = f"[{ts}] {msg}"                    # log file — original Hebrew
+
+    # Console — apply BiDi visual-order fix on Windows
+    if sys.platform == 'win32':
+        console_msg  = _bidi_for_console(msg)
+    else:
+        console_msg  = msg
+    console_line = f"[{ts}] {console_msg}"
+
     try:
         print(console_line, flush=True)
     except UnicodeEncodeError:
-        # Fallback: ASCII-safe output
-        print(f"[{time.strftime('%H:%M:%S')}] {msg.encode('ascii','replace').decode()}", flush=True)
+        # Last-resort ASCII fallback
+        print(f"[{ts}] {msg.encode('ascii', 'replace').decode()}", flush=True)
     try:
         with open(LOG_FILE, 'a', encoding='utf-8') as f:
             f.write(line + '\n')
