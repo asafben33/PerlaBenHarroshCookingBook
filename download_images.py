@@ -1042,105 +1042,236 @@ def build_query(recipe):
     return CAT_QUERY.get(cat, "moroccan jewish food dish")
 
 # ══════════════════════════════════════════════════
-# IMAGE SOURCES
+# IMAGE SOURCES — 5 sources in cascade
 # ══════════════════════════════════════════════════
+
+def _best_keywords(query, n=3):
+    """Return the n most descriptive words from the query."""
+    STOP = {"food","dish","recipe","plate","meal","with","and","the","in","a"}
+    words = [w for w in query.lower().split() if w not in STOP and len(w) > 2]
+    return " ".join(words[:n])
+
 
 def source_mealdb(query):
     """TheMealDB free API — real food photos, fast."""
     _, sd = get_sess()
-    words = query.split()[:2]
     from urllib.parse import quote_plus
+    # Try original query first, then simplified
+    for q in [query, _best_keywords(query, 2)]:
+        try:
+            url = f"https://www.themealdb.com/api/json/v1/1/search.php?s={quote_plus(q)}"
+            r = sd.get(url, timeout=NET_TIMEOUT, verify=False, headers=API_HDRS)
+            if r.status_code == 200:
+                meals = r.json().get("meals") or []
+                if meals:
+                    thumb = meals[0].get("strMealThumb", "")
+                    if thumb and thumb.startswith("http"):
+                        return thumb
+        except Exception:
+            pass
+    return None
+
+
+def source_wikimedia_single(query):
+    """Wikimedia Commons API — encyclopedic food photos."""
+    sp, sd = get_sess()
+    from urllib.parse import quote_plus
+    for sess in [sd, sp]:
+        for q in [query, _best_keywords(query, 2)]:
+            try:
+                r = sess.get(
+                    "https://commons.wikimedia.org/w/api.php",
+                    params={"action":"query","list":"search",
+                            "srsearch":f"{q} food","srnamespace":6,
+                            "srlimit":8,"format":"json"},
+                    timeout=NET_TIMEOUT, verify=False, headers=API_HDRS)
+                if r.status_code != 200: continue
+                results = r.json().get("query",{}).get("search",[])
+                chosen = None
+                for res in results:
+                    t = res.get("title","")
+                    if not t.startswith("File:"): continue
+                    tl = t.lower()
+                    if not any(e in tl for e in [".jpg",".jpeg",".png"]): continue
+                    if any(b in tl for b in ["map","flag","logo","diagram",
+                                              "icon","symbol","person","portrait"]): continue
+                    chosen = t; break
+                if not chosen: continue
+                r2 = sess.get(
+                    "https://commons.wikimedia.org/w/api.php",
+                    params={"action":"query","titles":chosen,"prop":"imageinfo",
+                            "iiprop":"url|size|mime","iiurlwidth":600,"format":"json"},
+                    timeout=NET_TIMEOUT, verify=False, headers=API_HDRS)
+                if r2.status_code != 200: continue
+                for pg in r2.json().get("query",{}).get("pages",{}).values():
+                    ii = pg.get("imageinfo",[{}])[0]
+                    url = ii.get("thumburl") or ii.get("url","")
+                    mime = ii.get("mime","")
+                    sz   = ii.get("size",0)
+                    if url and "image" in mime and 3000 < sz < 12_000_000:
+                        return url
+            except Exception:
+                continue
+    return None
+
+
+def source_openverse(query):
+    """Openverse CC image API — free open-licensed food photos.
+    No API key needed for basic searches."""
+    _, sd = get_sess()
+    from urllib.parse import quote_plus
+    for q in [query, _best_keywords(query, 3)]:
+        try:
+            r = sd.get(
+                "https://api.openverse.engineering/v1/images/",
+                params={"q": q, "license_type": "commercial,modification",
+                        "mature": "false", "page_size": 10, "format": "json"},
+                timeout=NET_TIMEOUT, verify=False, headers={
+                    **API_HDRS,
+                    "Accept": "application/json",
+                })
+            if r.status_code != 200: continue
+            results = r.json().get("results", [])
+            for res in results:
+                url = res.get("url", "")
+                # Prefer images with food-related tags
+                tags = [t.get("name","").lower() for t in res.get("tags",[])]
+                food_score = sum(1 for t in tags if t in
+                    {"food","cooking","meal","dish","cuisine","recipe",
+                     "moroccan","jewish","mediterranean","bread","soup"})
+                if url and url.startswith("http") and food_score > 0:
+                    return url
+        except Exception:
+            pass
+    return None
+
+
+def source_unsplash_search(query):
+    """Unsplash — search photos via public endpoint (no key needed for basic)."""
+    _, sd = get_sess()
+    from urllib.parse import quote_plus
+    kw = _best_keywords(query, 3) + " food"
     try:
-        url = f"https://www.themealdb.com/api/json/v1/1/search.php?s={quote_plus(' '.join(words))}"
-        r = sd.get(url, timeout=NET_TIMEOUT, verify=False, headers=API_HDRS)
+        # Use the Unsplash source API which doesn't require auth
+        # This returns a random relevant image
+        encoded = quote_plus(kw)
+        url = f"https://source.unsplash.com/600x400/?{encoded}"
+        r = sd.get(url, timeout=NET_TIMEOUT, verify=False,
+                   headers=API_HDRS, allow_redirects=True)
         if r.status_code == 200:
-            meals = (r.json().get("meals") or [])
-            if meals:
-                thumb = meals[0].get("strMealThumb", "")
-                if thumb:
-                    return thumb
+            ct = r.headers.get("Content-Type","")
+            if "image" in ct and len(r.content) > 10000:
+                # This is already a downloaded image, save directly
+                return ("__DATA__", r.content)
     except Exception:
         pass
     return None
 
-def source_wikimedia_single(query):
-    """Wikimedia Commons — max 2 API calls per recipe."""
-    sp, sd = get_sess()
+
+def source_pixabay(query):
+    """Pixabay public images — no API key for basic searches via web."""
+    _, sd = get_sess()
     from urllib.parse import quote_plus
-    for sess in [sd, sp]:
-        try:
-            r = sess.get(
-                "https://commons.wikimedia.org/w/api.php",
-                params={
-                    "action": "query", "list": "search",
-                    "srsearch": f"{query} food",
-                    "srnamespace": 6, "srlimit": 5, "format": "json",
-                },
-                timeout=NET_TIMEOUT, verify=False, headers=API_HDRS,
-            )
-            if r.status_code != 200:
-                continue
-            results = r.json().get("query", {}).get("search", [])
-            chosen = None
-            for res in results:
-                t = res.get("title", "")
-                if not t.startswith("File:"):
-                    continue
-                tl = t.lower()
-                if not any(e in tl for e in [".jpg", ".jpeg", ".png"]):
-                    continue
-                if any(b in tl for b in ["map","flag","logo","diagram","icon","symbol"]):
-                    continue
-                chosen = t
-                break
-            if not chosen:
-                continue
-            r2 = sess.get(
-                "https://commons.wikimedia.org/w/api.php",
-                params={
-                    "action": "query", "titles": chosen,
-                    "prop": "imageinfo", "iiprop": "url|size|mime",
-                    "iiurlwidth": 400, "format": "json",
-                },
-                timeout=NET_TIMEOUT, verify=False, headers=API_HDRS,
-            )
-            if r2.status_code != 200:
-                continue
-            for pg in r2.json().get("query", {}).get("pages", {}).values():
-                ii   = pg.get("imageinfo", [{}])[0]
-                url  = ii.get("thumburl") or ii.get("url", "")
-                mime = ii.get("mime", "")
-                sz   = ii.get("size", 0)
-                if url and "image" in mime and 3000 < sz < 8_000_000:
-                    return url
-        except Exception:
-            continue
+    kw = _best_keywords(query, 3)
+    try:
+        r = sd.get(
+            f"https://pixabay.com/api/?key=&q={quote_plus(kw)}&image_type=photo"
+            f"&category=food&per_page=5&safesearch=true",
+            timeout=NET_TIMEOUT, verify=False, headers=API_HDRS)
+        # Without API key this won't work — but try anyway
+        if r.status_code == 200:
+            hits = r.json().get("hits", [])
+            if hits:
+                return hits[0].get("webformatURL","") or None
+    except Exception:
+        pass
     return None
+
+
+def source_foodimages_scrape(query):
+    """Scrape food image from a DuckDuckGo image search as last resort."""
+    _, sd = get_sess()
+    from urllib.parse import quote_plus
+    kw = _best_keywords(query, 3) + " food recipe"
+    try:
+        # DuckDuckGo image search — parses JSON from their API
+        vqd_r = sd.get(
+            f"https://duckduckgo.com/?q={quote_plus(kw)}&iax=images&ia=images",
+            timeout=NET_TIMEOUT, verify=False, headers={
+                **API_HDRS,
+                "Accept": "text/html",
+            })
+        if vqd_r.status_code != 200: return None
+        # Extract vqd token
+        vqd_m = re.search(r"vqd=([\d-]+)", vqd_r.text)
+        if not vqd_m: return None
+        vqd = vqd_m.group(1)
+        img_r = sd.get(
+            "https://duckduckgo.com/i.js",
+            params={"l":"us-en","o":"json","q":kw,"vqd":vqd,"f":",,,,,","p":"1"},
+            timeout=NET_TIMEOUT, verify=False, headers={
+                **API_HDRS,
+                "Referer": "https://duckduckgo.com/",
+            })
+        if img_r.status_code != 200: return None
+        results = img_r.json().get("results", [])
+        for res in results[:5]:
+            url = res.get("image","")
+            w, h = res.get("width",0), res.get("height",0)
+            if url and w >= 300 and h >= 200:
+                return url
+    except Exception:
+        pass
+    return None
+
+
+def source_loremflickr(query, recipe_id):
+    """Loremflickr CDN — consistent placeholder images per recipe ID."""
+    from urllib.parse import quote_plus
+    kw = quote_plus(_best_keywords(query, 3))
+    lock = abs(hash(recipe_id)) % 10000 + 1
+    return f"https://loremflickr.com/600/400/{kw}?lock={lock}"
+
+
+def find_youtube_video(title, query):
+    """Return a YouTube search URL for the recipe (no API key needed).
+    Returns a direct search URL that the user can click."""
+    from urllib.parse import quote_plus
+    # Build a targeted Hebrew+English search
+    he_q = title
+    en_q = query
+    # YouTube search URL — returns HTML we can parse
+    yt_url = f"https://www.youtube.com/results?search_query={quote_plus(he_q + ' מתכון')}"
+    return yt_url
+
 
 def download_and_save(img_url, dest):
     """Download image and validate magic bytes. Returns True on success."""
     sp, sd = get_sess()
+    # Handle pre-downloaded data (from source_unsplash_search)
+    if isinstance(img_url, tuple) and img_url[0] == "__DATA__":
+        data = img_url[1]
+        if len(data) > 3000 and (data[:2] == b'\xff\xd8' or data[:4] == b'\x89PNG'):
+            dest.write_bytes(data)
+            return True
+        return False
     for sess in [sd, sp]:
         try:
             r = sess.get(img_url, timeout=NET_TIMEOUT, stream=True,
-                         allow_redirects=True)
-            if r.status_code != 200:
-                continue
-            ct = r.headers.get("Content-Type", "")
-            if "text" in ct or "html" in ct:
-                continue
+                         allow_redirects=True, verify=False)
+            if r.status_code != 200: continue
+            ct = r.headers.get("Content-Type","")
+            if "text" in ct or "html" in ct: continue
             data = b"".join(r.iter_content(8192))
-            if len(data) < 3000:
-                continue
+            if len(data) < 3000: continue
             if data[:2] == b'\xff\xd8' or data[:4] == b'\x89PNG':
-                dest.write_bytes(data)
-                return True
+                dest.write_bytes(data); return True
             if "image" in ct and len(data) > 10_000:
-                dest.write_bytes(data)
-                return True
+                dest.write_bytes(data); return True
         except Exception:
             continue
     return False
+
 
 # ══════════════════════════════════════════════════
 # MAIN
@@ -1148,31 +1279,26 @@ def download_and_save(img_url, dest):
 def main():
     global _STOP
 
-    # Clear log file at start
     LOG_FILE.write_text("", encoding="utf-8")
-
     recipes = parse_recipes()
     total   = len(recipes)
-    already = sum(1 for r in recipes
-                  if (IMG_DIR / f"r-{r['id']}.jpg").exists())
+    already = sum(1 for r in recipes if (IMG_DIR / f"r-{r['id']}.jpg").exists())
 
-    log("=" * 55)
-    log("Perla Ben-Harrosh z\"l Cookbook — Image Downloader")
-    log("=" * 55)
+    log("=" * 60)
+    log("Perla Ben-Harrosh z\"l Cookbook — Smart Image Downloader v2.0")
+    log("=" * 60)
     log(f"Recipes: {total} | Existing: {already} | OVERWRITE={OVERWRITE}")
-    log(f"Output dir: {IMG_DIR}")
-    log(f"Log file:   {LOG_FILE}")
-    log(f"Socket timeout: {socket.getdefaulttimeout()}s | Net timeout: {NET_TIMEOUT}s")
-    log(f"Sources: TheMealDB -> Wikimedia Commons")
-    log(f"Ctrl+C will exit immediately (log already saved per recipe)")
-    log("=" * 55)
+    log(f"Output: {IMG_DIR}")
+    log(f"Sources: TheMealDB → Wikimedia → Openverse → Unsplash → DuckDuckGo → Loremflickr")
+    log(f"Ctrl+C = immediate exit")
+    log("=" * 60)
 
-    ok_count = skip_count = fail_count = mealdb_count = wiki_count = 0
+    ok_count = skip_count = fail_count = 0
+    source_counts = {}
 
     for i, recipe in enumerate(recipes):
         if _STOP:
-            log("Stop requested.")
-            break
+            log("Stop requested."); break
 
         rid   = recipe["id"]
         title = recipe["title"]
@@ -1181,46 +1307,57 @@ def main():
 
         if dest.exists() and not OVERWRITE:
             skip_count += 1
-            if skip_count <= 5 or skip_count % 50 == 0:
+            if skip_count <= 5 or skip_count % 100 == 0:
                 log(f"  >> [{i+1:4d}/{total}] skip [{rid}]")
             continue
 
         query = build_query(recipe)
-        log(f"  >> [{i+1:4d}/{total}] [{rid:8s}] {title[:28]:28s} -> \"{query[:35]}\"")
+        log(f"  >> [{i+1:4d}/{total}] [{rid:8s}] {title[:30]:30s} → \"{query[:35]}\"")
 
         saved  = False
         source = "?"
 
-        if not saved:
-            url = source_mealdb(query)
-            if url and download_and_save(url, dest):
-                saved = True; source = "mealdb"; mealdb_count += 1
-
-        if not saved:
-            url = source_wikimedia_single(query)
-            if url and download_and_save(url, dest):
-                saved = True; source = "wiki"; wiki_count += 1
+        # ── Source cascade (ordered by quality) ──────────────────
+        for src_name, src_fn in [
+            ("mealdb",    lambda q=query: source_mealdb(q)),
+            ("wikimedia", lambda q=query: source_wikimedia_single(q)),
+            ("openverse", lambda q=query: source_openverse(q)),
+            ("unsplash",  lambda q=query, rid=rid: source_unsplash_search(q)),
+            ("ddg",       lambda q=query: source_foodimages_scrape(q)),
+            ("flickr",    lambda q=query, rid=rid: source_loremflickr(q, rid)),
+        ]:
+            if saved: break
+            try:
+                url = src_fn()
+                if url and download_and_save(url, dest):
+                    saved = True
+                    source = src_name
+                    source_counts[src_name] = source_counts.get(src_name, 0) + 1
+            except Exception as e:
+                log(f"     {src_name} error: {e}")
 
         if saved:
             ok_count += 1
-            log(f"  OK [{rid}] {source}")
+            log(f"  OK  [{rid}] via {source}")
         else:
             fail_count += 1
-            log(f"  FAIL [{rid}] no image found")
+            log(f"  FAIL [{rid}] all sources exhausted")
 
         done = i + 1
         pct  = done * 100 // total
-        if pct % 10 == 0 and done > 0 and done < total:
-            log(f"\n  -- {pct}% ({done}/{total})  ok={ok_count}  skip={skip_count}  fail={fail_count}  [mealdb={mealdb_count} wiki={wiki_count}]\n")
+        if pct % 10 == 0 and done > 0 and done < total and done % (total//10) < 2:
+            src_summary = "  ".join(f"{k}={v}" for k,v in source_counts.items())
+            log(f"\n  -- {pct}% ({done}/{total})  ok={ok_count}  fail={fail_count}  [{src_summary}]\n")
 
         time.sleep(DELAY)
 
-    log("=" * 55)
-    log(f"Done: ok={ok_count}  skip={skip_count}  fail={fail_count}")
-    log(f"  TheMealDB: {mealdb_count}  Wikimedia: {wiki_count}")
-    log(f"Output dir: {IMG_DIR}")
-    log(f"Log file:   {LOG_FILE}")
-    log("=" * 55)
+    log("=" * 60)
+    log(f"DONE: ok={ok_count}  skip={skip_count}  fail={fail_count}")
+    src_summary = "  ".join(f"{k}={v}" for k,v in source_counts.items())
+    log(f"Sources used: {src_summary}")
+    log(f"Output: {IMG_DIR}")
+    log(f"Log: {LOG_FILE}")
+    log("=" * 60)
 
 if __name__ == "__main__":
     main()
