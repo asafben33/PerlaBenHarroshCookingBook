@@ -18738,9 +18738,9 @@ const MENU_STRUCTURE = [
   /* ── ALL ── */
   {id:'all', lbl:'כל המתכונים'},
 
-  /* ── MOROCCAN ── */
-  {lbl:'מרוקאי', key:'moroccan', items:[
-    {ids:['soups','salads','veg','meat','chick','fish','hol','des'], lbl:'הכל', icon:'🇲🇦'},
+  /* ── MOROCCAN + SEPHARDIC ── */
+  {lbl:'מרוקאי-ספרדי', key:'moroccan', items:[
+    {ids:['soups','salads','veg','meat','chick','fish','hol','des','span'], lbl:'הכל', icon:'🇲🇦'},
     {id:'soups',  lbl:'מרקים'},
     {id:'salads', lbl:'סלטים'},
     {ids:['meat','chick','fish'], lbl:'מנות עיקריות', items:[
@@ -18764,10 +18764,8 @@ const MENU_STRUCTURE = [
       {id:'hol', h:'henna',    lbl:'חינה'},
     ]},
     {id:'des', lbl:'קינוחים ומאפים'},
+    {id:'span', lbl:'מורשת ספרד'},
   ]},
-
-  /* ── SPANISH-MOROCCAN ── */
-  {id:'span', lbl:'ספרדי-מרוקאי'},
 
   /* ── KATAMON NEIGHBOURS ── */
   {lbl:'שכנות הקטמון', key:'katamon', items:[
