@@ -135,7 +135,7 @@ PROXY       = "http://pac.gov.il:8080"
 
 DELAY       = 0.4    # seconds between recipes (rate limiting)
 NET_TIMEOUT = 4      # seconds per network request  (< socket global timeout=8)
-OVERWRITE   = False  # True = overwrite existing images
+OVERWRITE   = True  # True = overwrite existing images
 
 IMG_DIR.mkdir(parents=True, exist_ok=True)
 try:
@@ -200,9 +200,8 @@ def _make_sess(proxy=None):
     s = requests.Session()
     if proxy:
         s.proxies = {"http": proxy, "https": proxy}
-    s.mount("https://", HTTPAdapter(max_retries=Retry(1, backoff_factor=0.3,
-                                    status_forcelist=[429, 500, 502, 503])))
-    s.mount("http://",  HTTPAdapter(max_retries=Retry(1, backoff_factor=0.3)))
+    s.mount("https://", HTTPAdapter(max_retries=0))
+    s.mount("http://",  HTTPAdapter(max_retries=0))
     s.verify = False
     s.headers.update(HDRS)
     return s
@@ -1306,6 +1305,112 @@ def source_hebrew_first(recipe_title, query_en):
             continue
     return None
 
+
+# ═══════════════════════════════════════════════════════════
+# ISRAELI FOOD SITES — searched FIRST before international
+# ═══════════════════════════════════════════════════════════
+
+# Top Israeli food domains (images from these sites are prioritized)
+_IL_FOOD_DOMAINS = [
+    "10dakot.co.il", "hashulchan.co.il", "foody.co.il",
+    "food.walla.co.il", "mako.co.il", "ynet.co.il",
+    "shufersal.co.il", "machon-aviv.co.il", "tnuva.co.il",
+    "pnimi.co.il", "kinneret.co.il", "osem.co.il",
+    "krutit.co.il", "al-hashulchan.co.il", "cookieandkate.co.il",
+    "michalansky.com", "ilanab.co.il", "tapuz.co.il",
+    "ynetfood.co.il", "thekitchencoach.co.il",
+]
+
+
+def source_israeli_ddg(recipe_title, query_en):
+    """DuckDuckGo Hebrew image search — naturally surfaces Israeli food sites.
+
+    Searches for the Hebrew recipe title + 'מתכון' which surfaces
+    10dakot, hashulchan, walla, mako, shufersal etc. first.
+    """
+    sd = preferred_sess()
+    from urllib.parse import quote_plus
+
+    # Hebrew query prioritizes Israeli results naturally
+    kw = recipe_title + " מתכון אוכל"
+    try:
+        vqd_r = sd.get(
+            f"https://duckduckgo.com/?q={quote_plus(kw)}&iax=images&ia=images",
+            timeout=NET_TIMEOUT, verify=False, headers={
+                **API_HDRS, "Accept": "text/html"})
+        if vqd_r.status_code != 200: return None
+        vqd_m = re.search(r'vqd=([0-9-]+)', vqd_r.text) or re.search(r'"vqd":"([^"]+)"', vqd_r.text)
+        if not vqd_m: return None
+        vqd = vqd_m.group(1)
+        img_r = sd.get(
+            "https://duckduckgo.com/i.js",
+            params={"l":"il-he","o":"json","q":kw,"vqd":vqd,"f":",,,,,","p":"1"},
+            timeout=NET_TIMEOUT, verify=False, headers={
+                **API_HDRS, "Referer": "https://duckduckgo.com/"})
+        if img_r.status_code != 200: return None
+        results = img_r.json().get("results", [])
+
+        # First pass: prefer Israeli domains
+        for res in results[:10]:
+            url = res.get("image", "")
+            src = res.get("source", "").lower()
+            w, h = res.get("width", 0), res.get("height", 0)
+            if url and w >= 300 and h >= 200:
+                if any(d in src for d in _IL_FOOD_DOMAINS):
+                    return url
+
+        # Second pass: any good result from Hebrew search
+        for res in results[:5]:
+            url = res.get("image", "")
+            w, h = res.get("width", 0), res.get("height", 0)
+            if url and w >= 300 and h >= 200:
+                return url
+    except Exception:
+        pass
+    return None
+
+
+def source_israeli_sites_direct(recipe_title, query_en):
+    """Direct search on Israeli food site APIs.
+
+    Searches Google Custom Search Engine scoped to Israeli food domains,
+    or scrapes search results from Israeli food portals.
+    Uses DuckDuckGo with site: operator for specific Israeli food sites.
+    """
+    sd = preferred_sess()
+    from urllib.parse import quote_plus
+
+    # DuckDuckGo with site: operators for top Israeli food sites
+    il_sites = ["10dakot.co.il", "hashulchan.co.il", "foody.co.il",
+                "food.walla.co.il", "mako.co.il"]
+    site_query = " OR ".join(f"site:{s}" for s in il_sites)
+    kw = f"{recipe_title} מתכון ({site_query})"
+
+    try:
+        vqd_r = sd.get(
+            f"https://duckduckgo.com/?q={quote_plus(kw)}&iax=images&ia=images",
+            timeout=NET_TIMEOUT, verify=False, headers={
+                **API_HDRS, "Accept": "text/html"})
+        if vqd_r.status_code != 200: return None
+        vqd_m = re.search(r'vqd=([0-9-]+)', vqd_r.text) or re.search(r'"vqd":"([^"]+)"', vqd_r.text)
+        if not vqd_m: return None
+        vqd = vqd_m.group(1)
+        img_r = sd.get(
+            "https://duckduckgo.com/i.js",
+            params={"l":"il-he","o":"json","q":kw,"vqd":vqd,"f":",,,,,","p":"1"},
+            timeout=NET_TIMEOUT, verify=False, headers={
+                **API_HDRS, "Referer": "https://duckduckgo.com/"})
+        if img_r.status_code != 200: return None
+        results = img_r.json().get("results", [])
+        for res in results[:5]:
+            url = res.get("image", "")
+            w, h = res.get("width", 0), res.get("height", 0)
+            if url and w >= 300 and h >= 200:
+                return url
+    except Exception:
+        pass
+    return None
+
 def source_mealdb(query):
     """TheMealDB free API — real food photos, fast."""
     sd = preferred_sess()
@@ -1733,30 +1838,27 @@ def main():
         log("שלב 1 — הורדת תמונות")
         log("-" * 60)
         log(f"מתכונים: {total} | קיימים: {already} | OVERWRITE={OVERWRITE}")
-        log(f"מקורות: Hebrew → TheMealDB → Wikimedia → Openverse → Wikipedia → DDG → Flickr")
+        log(f"מקורות: IL-DDG → IL-Sites → Hebrew → TheMealDB → Wikimedia → Openverse → Wikipedia → DDG → Flickr")
         log(f"Ctrl+C = יציאה מיידית")
         log("")
 
         # ── Quick connectivity check ─────────────────────────────
         log("בודק חיבור רשת...")
-        _test_ok = False
-        try:
+        def _conn_test():
             sp, sd = get_sess()
-            # Try proxy first (corporate network), then direct
             for _lbl, _s in [("proxy", sp), ("direct", sd)]:
                 try:
                     _r = _s.get("https://commons.wikimedia.org/w/api.php?action=query&meta=siteinfo&format=json",
-                               timeout=(2, 4), verify=False)
+                               timeout=(2, 3), verify=False)
                     if _r.status_code == 200:
                         log(f"  {_lbl}: OK")
-                        _test_ok = True
-                        break
+                        return True
                     else:
                         log(f"  {_lbl}: HTTP {_r.status_code}")
                 except Exception as _e:
                     log(f"  {_lbl}: {type(_e).__name__}")
-        except Exception as _e:
-            log(f"  error: {type(_e).__name__}")
+            return False
+        _test_ok = _call_with_timeout(_conn_test, timeout_sec=8) or False
         if not _test_ok:
             log("  WARNING: אין חיבור לרשת — הסקריפט ינסה בכל זאת אבל רוב המקורות ייכשלו.")
             log("  TIP: בדוק proxy, VPN, או חיבור אינטרנט.")
@@ -1790,7 +1892,11 @@ def main():
             t0 = time.time()
 
             sources = [
+                # ── Israeli sources (searched FIRST) ──
+                ("il-ddg",    lambda t=title, q=query: source_israeli_ddg(t, q)),
+                ("il-sites",  lambda t=title, q=query: source_israeli_sites_direct(t, q)),
                 ("hebrew",    lambda t=title, q=query: source_hebrew_first(t, q)),
+                # ── International sources ──
                 ("mealdb",    lambda q=query: source_mealdb(q)),
                 ("wikimedia", lambda q=query: source_wikimedia_single(q)),
                 ("openverse", lambda q=query: source_openverse(q)),
