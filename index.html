@@ -598,7 +598,85 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 #back-top.on { opacity: .8; }
 #back-top:hover { opacity: 1; }
 
-/* ── Advanced filters ─────────────────────────────────────── */
+/* ── Header tools (theme + lang) ──────────────────────────── */
+.hdr-tools { display: flex; gap: .3rem; align-items: center; flex-shrink: 0; }
+.hdr-btn {
+  background: rgba(255,255,255,.06); border: 1px solid rgba(196,147,10,.25);
+  border-radius: 100px; padding: .25rem .5rem; color: var(--c-gold-d);
+  font-size: .72rem; cursor: pointer; font-family: inherit; transition: all var(--t-fast);
+  white-space: nowrap;
+}
+.hdr-btn:hover { background: rgba(196,147,10,.2); color: var(--c-gold-l); }
+
+/* ── Light Theme ─────────────────────────────────────────── */
+html.light { --c-bg: #fffcf5; --c-bg2: #f5ecd7; --c-bg3: #e8dcc0; --c-ink: #1c1008; --c-ink-m: #4a2a14; --c-ink-l: #8a6040; }
+html.light .casablanca-bg { opacity: .08; }
+html.light .hdr { background: linear-gradient(to bottom, #fdf8ee 0%, #f5ecd7 100%); border-bottom-color: rgba(196,147,10,.35); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+html.light .hdr-title { color: #4e2010; }
+html.light .hdr-subtitle { color: #7a3a18; }
+html.light .hdr-search { background: rgba(0,0,0,.04); border-color: rgba(196,147,10,.3); }
+html.light .hdr-search svg { color: #9a7208; }
+html.light #srch { color: #2a1508; }
+html.light #srch::placeholder { color: rgba(74,42,20,.4); }
+html.light .hdr-btn { background: rgba(0,0,0,.04); border-color: rgba(196,147,10,.3); color: #7a3a18; }
+html.light .cat-nav { background: #f5ecd7; border-bottom-color: rgba(196,147,10,.3); box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+html.light .nb { color: #4a2a14; }
+html.light .nb:hover, html.light .nb.active { color: #b84223; }
+html.light .nb.active { border-bottom-color: #b84223; }
+html.light .nb-cnt { background: rgba(196,147,10,.15); color: #7a3a18; }
+html.light .nav-panel { background: #fdf8ee; border-bottom-color: rgba(196,147,10,.2); }
+html.light .pc { background: rgba(0,0,0,.03); border-color: rgba(196,147,10,.25); color: #4a2a14; }
+html.light .pc:hover, html.light .pc.active { background: rgba(196,147,10,.15); color: #4e2010; }
+html.light .hero { background: linear-gradient(165deg, rgba(253,248,238,.85), rgba(245,236,215,.9)); }
+html.light .hero-h1 { color: #2a1508; }
+html.light .hero-h1 em { color: #b84223; }
+html.light .hero-tagline { color: #7a3a18; }
+html.light .hp { background: rgba(196,147,10,.12); border-color: rgba(196,147,10,.3); color: #4e2010; }
+html.light .hero-about-btn { color: #7a3a18; }
+html.light .about { background: #fdf8ee; }
+html.light .about-h { color: #4e2010; }
+html.light .about-memorial { color: #7a3a18; }
+html.light .about-p { color: #4a2a14; }
+html.light main { background: rgba(253,248,238,.6); }
+html.light .grid-header { background: rgba(245,236,215,.8); border-bottom-color: rgba(196,147,10,.15); }
+html.light .diff-btn { background: rgba(0,0,0,.03); color: #4a2a14; border-color: rgba(196,147,10,.2); }
+html.light .diff-btn.active { background: #c4930a; color: #fff; }
+html.light .time-filter { background: #fff; border-color: rgba(196,147,10,.3); color: #4a2a14; }
+html.light .card { background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+html.light .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+html.light .footer { background: #f5ecd7; border-top-color: rgba(196,147,10,.3); }
+html.light .footer-memorial { color: #4e2010; }
+html.light .footer-sub { color: #7a3a18; }
+html.light .footer-quote { color: #9a7208; }
+html.light #toast { background: #fff; color: #4e2010; border-color: #c4930a; }
+html.light #back-top { background: #4e2010; color: #fdf8ee; }
+html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10,.2); color: #4a2a14; }
+
+/* ── Cooking Timer ───────────────────────────────────────── */
+.step-timer-btn {
+  display: inline-flex; align-items: center; gap: .2rem;
+  background: rgba(196,147,10,.1); border: 1px solid rgba(196,147,10,.3);
+  border-radius: 100px; padding: .15rem .5rem; font-size: .7rem;
+  color: var(--c-gold); cursor: pointer; font-family: inherit;
+  margin-right: .4rem; transition: all var(--t-fast);
+}
+.step-timer-btn:hover { background: rgba(196,147,10,.25); }
+.step-timer-btn.running { background: rgba(61,110,58,.2); border-color: var(--c-herb); color: var(--c-herb); }
+.timer-float {
+  position: fixed; bottom: 5rem; right: 1.5rem; z-index: 700;
+  background: var(--c-dark); border: 2px solid var(--c-gold);
+  border-radius: var(--r-lg); padding: .8rem 1.2rem; color: var(--c-gold-l);
+  box-shadow: var(--sh-lg); display: none; direction: rtl; text-align: center;
+  min-width: 140px;
+}
+.timer-float.on { display: block; animation: pulse 1s ease-in-out infinite alternate; }
+.timer-float .tf-time { font-size: 1.6rem; font-weight: 900; font-variant-numeric: tabular-nums; }
+.timer-float .tf-label { font-size: .7rem; color: var(--c-gold-d); margin-top: .2rem; }
+.timer-float .tf-close {
+  position: absolute; top: .3rem; left: .3rem; background: none; border: none;
+  color: var(--c-gold-d); cursor: pointer; font-size: .8rem;
+}
+@keyframes pulse { from { box-shadow: 0 0 8px rgba(196,147,10,.3); } to { box-shadow: 0 0 20px rgba(196,147,10,.6); } }
 .filter-bar { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
 .time-filter {
   background: rgba(0,0,0,.3); border: 1px solid rgba(196,147,10,.3);
@@ -986,6 +1064,10 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
       <input type="search" id="srch" placeholder="חפש מתכון, מרכיב..." aria-label="חיפוש מתכון" autocomplete="off"/>
       <button id="srch-clr" hidden aria-label="נקה חיפוש">✕</button>
     </div>
+    <div class="hdr-tools">
+      <button id="theme-toggle" class="hdr-btn" aria-label="מצב בהיר" title="מצב בהיר/חשוך">☀</button>
+      <button id="lang-toggle" class="hdr-btn" aria-label="English" title="English / עברית">EN</button>
+    </div>
   </div>
 </header>
 
@@ -1149,11 +1231,19 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 <!-- ════════ TOAST ══════════════════════════════════════════ -->
 <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
+<!-- ════════ COOKING TIMER FLOAT ═══════════════════════════ -->
+<div id="timer-float" class="timer-float" role="timer" aria-live="polite">
+  <button class="tf-close" id="tf-close" aria-label="סגור טיימר">✕</button>
+  <div class="tf-time" id="tf-time">00:00</div>
+  <div class="tf-label" id="tf-label"></div>
+</div>
+
 <!-- ════════ FOOTER ════════════════════════════════════════ -->
 <footer class="footer" role="contentinfo">
-  <div class="footer-memorial">ספר הבישול של משפחת בן הראש</div>
+  <div class="footer-memorial" data-i18n="footer_title">ספר הבישול של משפחת בן הראש</div>
   <div class="footer-sub">לזכרם של פרלה ופנחס בן הראש ז״ל | קזבלנקה · מרקש · ירושלים</div>
   <div class="footer-quote">״האוכל שלה — הסיפור שלנו״</div>
+  <button id="full-pdf-btn" class="m-act-media" style="margin:1rem auto 0;display:inline-flex" aria-label="ייצא ספר בישול שלם">📖 <span data-i18n="full_cookbook">ייצא ספר בישול שלם (PDF)</span></button>
   <div class="footer-orn" aria-hidden="true">✦ ✦ ✦</div>
 </footer>
 
@@ -1892,6 +1982,22 @@ function openM(id) {
         tSpan.className = 'm-step-t';
         tSpan.textContent = s.t + ' — ';
         li.appendChild(tSpan);
+        // Add timer button if step has minutes
+        var mins = parseMinutes(s.t);
+        if (mins > 0) {
+          var timerBtn = document.createElement('button');
+          timerBtn.className = 'step-timer-btn';
+          timerBtn.textContent = t('start_timer') + ' ' + mins + "'";
+          (function(_m, _l) {
+            timerBtn.addEventListener('click', function(e) {
+              e.stopPropagation();
+              startTimer(_m, _l);
+              this.classList.add('running');
+              showToast((_LANG === 'en' ? 'Timer: ' : 'טיימר: ') + _m + (_LANG === 'en' ? ' min' : ' דקות'));
+            });
+          })(mins, s.t);
+          li.appendChild(timerBtn);
+        }
       }
       li.appendChild(document.createTextNode(s.s || ''));
       stepsEl.appendChild(li);
@@ -2606,9 +2712,283 @@ document.addEventListener('DOMContentLoaded', function() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(function() {});
   }
+
+  // ── Theme toggle ─────────────────────────────────────────
+  var themeBtn = document.getElementById('theme-toggle');
+  if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+  // Restore saved theme
+  if (localStorage.getItem('perla_theme') === 'light') {
+    document.documentElement.classList.add('light');
+    if (themeBtn) themeBtn.textContent = '🌙';
+  }
+
+  // ── Language toggle ──────────────────────────────────────
+  var langBtn = document.getElementById('lang-toggle');
+  if (langBtn) langBtn.addEventListener('click', toggleLang);
+  if (localStorage.getItem('perla_lang') === 'en') applyLang('en');
+
+  // ── Timer close ──────────────────────────────────────────
+  var tfClose = document.getElementById('tf-close');
+  if (tfClose) tfClose.addEventListener('click', stopTimer);
+
+  // ── Full cookbook PDF ─────────────────────────────────────
+  var fullPdfBtn = document.getElementById('full-pdf-btn');
+  if (fullPdfBtn) fullPdfBtn.addEventListener('click', exportFullCookbook);
 });
 
+/* ═══════════════════════════════════════════════
+   THEME TOGGLE — Dark / Light
+═══════════════════════════════════════════════ */
+function toggleTheme() {
+  var isLight = document.documentElement.classList.toggle('light');
+  var btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = isLight ? '🌙' : '☀';
+  try { localStorage.setItem('perla_theme', isLight ? 'light' : 'dark'); } catch(_) {}
+}
 
+/* ═══════════════════════════════════════════════
+   i18n — Hebrew / English UI
+═══════════════════════════════════════════════ */
+var _LANG = 'he';
+var I18N = {
+  // Header
+  hdr_title:     {he:'ספר הבישול של משפחת בן הראש', en:'The Ben-Harrosh Family Cookbook'},
+  hdr_subtitle:  {he:'לזכרם של פרלה ופנחס בן הראש ז״ל', en:'In memory of Perla & Pinchas Ben-Harrosh z"l'},
+  search_ph:     {he:'חפש מתכון, מרכיב...', en:'Search recipe, ingredient...'},
+  // Hero
+  hero_title:    {he:'המטבח של ', en:'The Kitchen of '},
+  hero_title_em: {he:'משפחת בן הראש', en:'the Ben-Harrosh Family'},
+  hero_tagline:  {he:'לזכרם של פרלה ופנחס בן הראש — טעמים שמעלים זכרונות שחשבנו שכבר שכחנו...', en:'In memory of Perla & Pinchas Ben-Harrosh — flavors that awaken memories we thought were lost...'},
+  // Grid
+  all_recipes:   {he:'כל המתכונים', en:'All Recipes'},
+  categories:    {he:'קטגוריות', en:'Categories'},
+  all_btn:       {he:'הכל', en:'All'},
+  easy:          {he:'קל', en:'Easy'},
+  medium:        {he:'בינוני', en:'Medium'},
+  advanced:      {he:'מתקדם', en:'Advanced'},
+  time_all:      {he:'כל הזמנים', en:'Any Time'},
+  time_30:       {he:'עד 30 דקות', en:'Up to 30 min'},
+  time_60:       {he:'עד שעה', en:'Up to 1 hour'},
+  time_120:      {he:'עד שעתיים', en:'Up to 2 hours'},
+  time_121:      {he:'מעל שעתיים', en:'Over 2 hours'},
+  // Modal
+  ingredients:   {he:'מרכיבים', en:'Ingredients'},
+  instructions:  {he:'אופן ההכנה', en:'Instructions'},
+  tip_label:     {he:'טיפ של פרלה', en:"Perla's Tip"},
+  print_btn:     {he:'🖨 הדפס', en:'🖨 Print'},
+  pdf_btn:       {he:'📄 PDF', en:'📄 PDF'},
+  share_btn:     {he:'⬆ שתף', en:'⬆ Share'},
+  photo_btn:     {he:'🖼 תמונה', en:'🖼 Photo'},
+  start_timer:   {he:'התחל', en:'Start'},
+  // Footer
+  footer_title:  {he:'ספר הבישול של משפחת בן הראש', en:'The Ben-Harrosh Family Cookbook'},
+  full_cookbook:  {he:'ייצא ספר בישול שלם (PDF)', en:'Export Full Cookbook (PDF)'},
+  // About
+  read_more:     {he:'קרא עוד על פרלה ופנחס בן הראש ז״ל', en:'Read more about Perla & Pinchas Ben-Harrosh z"l'},
+};
+
+function t(key) { return (I18N[key] && I18N[key][_LANG]) || key; }
+
+function applyLang(lang) {
+  _LANG = lang;
+  var btn = document.getElementById('lang-toggle');
+  if (btn) btn.textContent = lang === 'en' ? 'HE' : 'EN';
+  // Update data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (I18N[key]) el.textContent = I18N[key][lang];
+  });
+  // Update specific elements
+  var srch = document.getElementById('srch');
+  if (srch) srch.placeholder = t('search_ph');
+  var heroH1 = document.querySelector('.hero-h1');
+  if (heroH1) heroH1.innerHTML = t('hero_title') + '<em>' + t('hero_title_em') + '</em>';
+  var heroTag = document.querySelector('.hero-tagline');
+  if (heroTag) heroTag.textContent = t('hero_tagline');
+  var aboutBtn = document.getElementById('about-toggle');
+  if (aboutBtn) { var arr = document.getElementById('about-arrow'); aboutBtn.innerHTML = t('read_more') + (arr ? ' <span id="about-arrow" aria-hidden="true">' + arr.textContent + '</span>' : ''); }
+  // Difficulty buttons
+  var diffMap = {'all':'all_btn','קל':'easy','בינוני':'medium','מתקדם':'advanced'};
+  document.querySelectorAll('.diff-btn').forEach(function(b) {
+    var k = diffMap[b.getAttribute('data-diff')];
+    if (k) b.textContent = t(k);
+  });
+  // Time filter
+  var tf = document.getElementById('time-filter');
+  if (tf) {
+    tf.options[0].text = t('time_all');
+    tf.options[1].text = t('time_30');
+    tf.options[2].text = t('time_60');
+    tf.options[3].text = t('time_120');
+    tf.options[4].text = t('time_121');
+  }
+  // Modal section headers + buttons
+  document.querySelectorAll('.m-sec-h').forEach(function(h, i) {
+    h.textContent = i === 0 ? t('ingredients') : t('instructions');
+  });
+  var tipLabel = document.querySelector('.m-tip-label');
+  if (tipLabel) tipLabel.textContent = t('tip_label');
+  var mp = document.getElementById('m-print'); if (mp) mp.textContent = t('print_btn');
+  var mpdf = document.getElementById('m-pdf'); if (mpdf) mpdf.textContent = t('pdf_btn');
+  var ms = document.getElementById('m-share'); if (ms) ms.textContent = t('share_btn');
+  var mu = document.getElementById('m-upload-act'); if (mu) mu.textContent = t('photo_btn');
+  // Header
+  var ht = document.querySelector('.hdr-title');
+  if (ht) ht.textContent = t('hdr_title');
+  var hs = document.querySelector('.hdr-subtitle');
+  if (hs) hs.textContent = t('hdr_subtitle');
+  try { localStorage.setItem('perla_lang', lang); } catch(_) {}
+}
+
+function toggleLang() {
+  applyLang(_LANG === 'he' ? 'en' : 'he');
+}
+
+/* ═══════════════════════════════════════════════
+   COOKING TIMER — countdown per step
+═══════════════════════════════════════════════ */
+var _timerInterval = null;
+var _timerRemaining = 0;
+var _timerLabel = '';
+
+function parseMinutes(timeStr) {
+  if (!timeStr) return 0;
+  var m = timeStr.match(/(\d+)/);
+  return m ? parseInt(m[1]) : 0;
+}
+
+function startTimer(minutes, label) {
+  stopTimer();
+  if (minutes <= 0) return;
+  _timerRemaining = minutes * 60;
+  _timerLabel = label || '';
+  var floatEl = document.getElementById('timer-float');
+  if (floatEl) floatEl.classList.add('on');
+  updateTimerDisplay();
+  _timerInterval = setInterval(function() {
+    _timerRemaining--;
+    if (_timerRemaining <= 0) {
+      _timerRemaining = 0;
+      updateTimerDisplay();
+      clearInterval(_timerInterval);
+      _timerInterval = null;
+      // Alert
+      try { new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1sbW5ycX+LkYyAc2lqcHh+gIGBhYyTk4+HfHJqam90eX6Bg4WIjJOUk46HfHFpZ2txdn2ChIeKjpOVlJCKgHdua2pvdHp/goaJjZGUlZSSjYZ+dW5rbHF3fIGFiIyQk5WVk5CMhX13cG1udHl+goWIjI+SlJSSkY2Gg3x2cXBzeHyAhIeKjo+RkJCOi4eEgH18e3t8fX+BgoSFhoeHh4aFhIOCgYB/fn5+fn9/gICBgoODhISEhIODgoGBgH9/fn5+fn5/f4CAgYGCgoKCgoKBgYGAgH9/fn5+fn5/f4CAgIGBgYGBgYGBgICAf39/fn5+fn9/f4CAgICAgICAgICAgIB/f39/f39/f39/f4CAgICAgICAgICAgICAf39/f35+fn5+f39/f4CAgICAgICAgA==').play(); } catch(_) {}
+      showToast(_LANG === 'en' ? 'Timer done!' : 'הטיימר הסתיים!');
+    } else {
+      updateTimerDisplay();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (_timerInterval) { clearInterval(_timerInterval); _timerInterval = null; }
+  var floatEl = document.getElementById('timer-float');
+  if (floatEl) floatEl.classList.remove('on');
+}
+
+function updateTimerDisplay() {
+  var m = Math.floor(_timerRemaining / 60);
+  var s = _timerRemaining % 60;
+  var timeEl = document.getElementById('tf-time');
+  var labelEl = document.getElementById('tf-label');
+  if (timeEl) timeEl.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  if (labelEl) labelEl.textContent = _timerLabel;
+}
+
+/* ═══════════════════════════════════════════════
+   FULL COOKBOOK PDF EXPORT
+═══════════════════════════════════════════════ */
+function exportFullCookbook() {
+  showToast(_LANG === 'en' ? 'Generating cookbook...' : 'מייצר ספר בישול...');
+  setTimeout(function() {
+    var w = window.open('', '_blank');
+    if (!w) { showToast('לא ניתן לפתוח חלון'); return; }
+
+    var catOrder = ['soups','salads','veg','meat','chick','fish','hol','des','span',
+                    'iraq','kurd','ashk','yem','pers','buk','tun','isr','turk','nonkosher'];
+    var catNames = {};
+    CATS.forEach(function(c) { catNames[c.id] = c.lbl; });
+
+    var html = '<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8">'
+      + '<title>ספר הבישול של משפחת בן הראש — ספר מלא</title>'
+      + '<style>'
+      + '@import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&display=swap");'
+      + 'body{font-family:"Frank Ruhl Libre",serif;max-width:700px;margin:0 auto;padding:1.5rem;direction:rtl;color:#1c1008;font-size:11pt}'
+      + 'h1{text-align:center;color:#8c2e14;font-size:2rem;margin:2rem 0 .5rem;font-weight:900}'
+      + '.subtitle{text-align:center;color:#7a3a18;font-size:.9rem;margin-bottom:2rem}'
+      + '.toc{margin:1rem 0 2rem;page-break-after:always}'
+      + '.toc h2{color:#4e2010;border-bottom:2px solid #c4930a;padding-bottom:.3rem}'
+      + '.toc ul{list-style:none;padding:0}.toc li{padding:.15rem 0;font-size:.85rem;border-bottom:1px dotted #ddd}'
+      + '.toc a{color:#4e2010;text-decoration:none}'
+      + '.cat-title{color:#8c2e14;font-size:1.4rem;font-weight:900;margin:2rem 0 .5rem;border-bottom:2px solid #c4930a;padding-bottom:.3rem;page-break-before:always}'
+      + '.recipe{page-break-inside:avoid;margin:1rem 0 1.5rem;padding:1rem;border:1px solid #ede0c4;border-radius:8px}'
+      + '.recipe h3{color:#4e2010;font-size:1.1rem;margin:0 0 .3rem}'
+      + '.recipe .desc{color:#7a3a18;font-size:.8rem;margin-bottom:.5rem}'
+      + '.recipe .mem{background:#fdf8ee;border-right:3px solid #c4930a;padding:.5rem .8rem;margin:.5rem 0;font-style:italic;color:#4a2a14;font-size:.8rem}'
+      + '.recipe .meta{display:flex;gap:.5rem;margin:.4rem 0;flex-wrap:wrap}'
+      + '.recipe .chip{background:#f5ecd7;border:1px solid #c4930a;border-radius:100px;padding:.1rem .5rem;font-size:.7rem}'
+      + '.recipe table{width:100%;border-collapse:collapse;font-size:.8rem;margin:.3rem 0}'
+      + '.recipe td{padding:.15rem .3rem;border-bottom:1px solid #f0e8d0}'
+      + '.recipe ol{padding-right:1.2rem;font-size:.8rem;margin:.3rem 0}'
+      + '.recipe li{margin:.2rem 0;line-height:1.6}'
+      + '.recipe .tip{background:#fdf8ee;border:1px solid #c4930a;border-radius:6px;padding:.4rem .6rem;margin-top:.4rem;font-size:.78rem}'
+      + '.recipe .tip b{color:#9a7208}'
+      + '.footer-print{text-align:center;margin-top:2rem;padding-top:1rem;border-top:2px solid #c4930a;font-size:.8rem;color:#9a7208}'
+      + '@page{margin:1.2cm}'
+      + '</style></head><body>';
+
+    // Title page
+    html += '<h1>ספר הבישול של משפחת בן הראש</h1>';
+    html += '<div class="subtitle">לזכרם של פרלה ופנחס בן הראש ז״ל<br>קזבלנקה · מרקש · ירושלים<br><br>' + R.length + ' מתכונים אותנטיים</div>';
+
+    // Table of contents
+    html += '<div class="toc"><h2>תוכן עניינים</h2><ul>';
+    catOrder.forEach(function(cid) {
+      var name = catNames[cid] || cid;
+      var count = R.filter(function(r) { return r && r.cat === cid; }).length;
+      if (count > 0) html += '<li><a href="#cat-' + cid + '">' + esc(name) + ' (' + count + ')</a></li>';
+    });
+    html += '</ul></div>';
+
+    // Recipes by category
+    catOrder.forEach(function(cid) {
+      var recipes = R.filter(function(r) { return r && r.cat === cid; });
+      if (!recipes.length) return;
+      html += '<div class="cat-title" id="cat-' + cid + '">' + esc(catNames[cid] || cid) + '</div>';
+      recipes.forEach(function(r) {
+        var ingrs = (r.ingr || []).map(function(i) {
+          if (i.q && i.q.startsWith('---')) return '<tr><td colspan="2" style="font-weight:700;color:#8c2e14;border:none;padding-top:.4rem">' + esc(i.q.replace(/---/g,'').trim()) + '</td></tr>';
+          return '<tr><td style="font-weight:600;min-width:70px">' + esc(i.q) + '</td><td>' + esc(i.i) + '</td></tr>';
+        }).join('');
+        var steps = (r.steps || []).map(function(s) {
+          return '<li>' + (s.t ? '<strong style="color:#c4930a">' + esc(s.t) + ':</strong> ' : '') + esc(s.s) + '</li>';
+        }).join('');
+        html += '<div class="recipe">';
+        html += '<h3>' + esc(r.title) + '</h3>';
+        if (r.desc) html += '<div class="desc">' + esc(r.desc) + '</div>';
+        html += '<div class="meta">';
+        if (r.time) html += '<span class="chip">' + esc(r.time) + '</span>';
+        if (r.serv) html += '<span class="chip">' + esc(r.serv) + '</span>';
+        if (r.diff) html += '<span class="chip">' + esc(r.diff) + '</span>';
+        html += '</div>';
+        if (r.mem) html += '<div class="mem">' + esc(r.mem) + '</div>';
+        html += '<table>' + ingrs + '</table>';
+        html += '<ol>' + steps + '</ol>';
+        if (r.tip) html += '<div class="tip"><b>טיפ:</b> ' + esc(r.tip) + '</div>';
+        html += '</div>';
+      });
+    });
+
+    html += '<div class="footer-print">ספר הבישול של משפחת בן הראש — לזכרם של פרלה ופנחס ז״ל<br>״האוכל שלה — הסיפור שלנו״</div>';
+    html += '</body></html>';
+
+    w.document.write(html);
+    w.document.close();
+    showToast(_LANG === 'en' ? 'Cookbook ready — use Print > Save as PDF' : 'הספר מוכן — בחרו הדפסה > שמור כ-PDF');
+    setTimeout(function() { w.print(); }, 1000);
+  }, 100);
+}
 
 
 

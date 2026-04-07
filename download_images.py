@@ -135,7 +135,7 @@ PROXY       = "http://pac.gov.il:8080"
 
 DELAY       = 0.4    # seconds between recipes (rate limiting)
 NET_TIMEOUT = 4      # seconds per network request  (< socket global timeout=8)
-OVERWRITE   = True  # True = overwrite existing images
+OVERWRITE   = False  # True = overwrite existing images
 
 IMG_DIR.mkdir(parents=True, exist_ok=True)
 try:
@@ -217,12 +217,18 @@ def get_sess():
         _sess_direct = _make_sess(None)
     return _sess_proxy, _sess_direct
 
+def preferred_sess():
+    """Return the preferred session (proxy if configured, else direct)."""
+    sp, sd = get_sess()
+    return sp if PROXY else sd
+
 def _get(url, api=False, stream=False):
-    """Try direct first, then proxy. Returns response or None.
+    """Try proxy first (corporate network), then direct.
     Never hangs thanks to socket.setdefaulttimeout(5)."""
     sp, sd = get_sess()
     hdrs = API_HDRS if api else HDRS
-    for sess in [sd, sp]:
+    order = [sp, sd] if PROXY else [sd]
+    for sess in order:
         try:
             r = sess.get(url, timeout=(3, 6), stream=stream,
                          allow_redirects=True, headers=hdrs)
@@ -1249,7 +1255,7 @@ def source_hebrew_first(recipe_title, query_en):
     3. Wikimedia with Hebrew title alone
     Falls back to None so cascade continues to English sources.
     """
-    _, sd = get_sess()
+    sd = preferred_sess()
     from urllib.parse import quote_plus
 
     # Build Hebrew search variants (limit to 2 for speed)
@@ -1302,7 +1308,7 @@ def source_hebrew_first(recipe_title, query_en):
 
 def source_mealdb(query):
     """TheMealDB free API — real food photos, fast."""
-    _, sd = get_sess()
+    sd = preferred_sess()
     from urllib.parse import quote_plus
     # Try original query first, then simplified
     for q in [query, _best_keywords(query, 2)]:
@@ -1324,7 +1330,8 @@ def source_wikimedia_single(query):
     """Wikimedia Commons API — encyclopedic food photos."""
     sp, sd = get_sess()
     from urllib.parse import quote_plus
-    for sess in [sd, sp]:
+    order = [sp, sd] if PROXY else [sd]
+    for sess in order:
         for q in [query, _best_keywords(query, 2)]:
             try:
                 r = sess.get(
@@ -1366,7 +1373,7 @@ def source_wikimedia_single(query):
 def source_openverse(query):
     """Openverse CC image API — free open-licensed food photos.
     No API key needed for basic searches."""
-    _, sd = get_sess()
+    sd = preferred_sess()
     from urllib.parse import quote_plus
     for q in [query, _best_keywords(query, 3)]:
         try:
@@ -1396,7 +1403,7 @@ def source_openverse(query):
 
 def source_unsplash_search(query):
     """Wikipedia article images — reliable, free, high-quality food photos."""
-    _, sd = get_sess()
+    sd = preferred_sess()
     from urllib.parse import quote_plus
     kw = _best_keywords(query, 3)
     try:
@@ -1428,7 +1435,7 @@ def source_unsplash_search(query):
 
 def source_foodimages_scrape(query):
     """Scrape food image from a DuckDuckGo image search as last resort."""
-    _, sd = get_sess()
+    sd = preferred_sess()
     from urllib.parse import quote_plus
     kw = _best_keywords(query, 3) + " food recipe"
     try:
@@ -1527,7 +1534,8 @@ def download_and_save(img_url, dest):
         return False
 
     # Standard URL download
-    for sess in [sd, sp]:
+    order = [sp, sd] if PROXY else [sd]
+    for sess in order:
         try:
             r = sess.get(img_url, timeout=(3, 8), stream=False,
                          allow_redirects=True, verify=False)
@@ -1733,16 +1741,22 @@ def main():
         log("בודק חיבור רשת...")
         _test_ok = False
         try:
-            import urllib.request
-            _req = urllib.request.Request(
-                "https://commons.wikimedia.org/w/api.php?action=query&meta=siteinfo&format=json",
-                headers={"User-Agent": "PerlaCookbook/1.0"})
-            _resp = urllib.request.urlopen(_req, timeout=4)
-            if _resp.status == 200:
-                log("  direct: OK")
-                _test_ok = True
+            sp, sd = get_sess()
+            # Try proxy first (corporate network), then direct
+            for _lbl, _s in [("proxy", sp), ("direct", sd)]:
+                try:
+                    _r = _s.get("https://commons.wikimedia.org/w/api.php?action=query&meta=siteinfo&format=json",
+                               timeout=(2, 4), verify=False)
+                    if _r.status_code == 200:
+                        log(f"  {_lbl}: OK")
+                        _test_ok = True
+                        break
+                    else:
+                        log(f"  {_lbl}: HTTP {_r.status_code}")
+                except Exception as _e:
+                    log(f"  {_lbl}: {type(_e).__name__}")
         except Exception as _e:
-            log(f"  direct: {type(_e).__name__}")
+            log(f"  error: {type(_e).__name__}")
         if not _test_ok:
             log("  WARNING: אין חיבור לרשת — הסקריפט ינסה בכל זאת אבל רוב המקורות ייכשלו.")
             log("  TIP: בדוק proxy, VPN, או חיבור אינטרנט.")
