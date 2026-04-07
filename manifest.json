@@ -1,0 +1,18 @@
+{
+  "name": "ספר הבישול של משפחת בן הראש",
+  "short_name": "בן הראש",
+  "description": "1,054 מתכונים מרוקאיים, ספרדיים ויהודיים אותנטיים",
+  "start_url": "./",
+  "display": "standalone",
+  "dir": "rtl",
+  "lang": "he",
+  "background_color": "#fdf8ee",
+  "theme_color": "#130c05",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍲</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -11,3 +11,6 @@
 !images/**
 !.gitignore
 !data.js
+!sw.js
+!manifest.json
+!wedding.jpg

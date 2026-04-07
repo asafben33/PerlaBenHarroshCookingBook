@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="ספר הבישול של פרלה בן הראש ז״ל — 1,054 מתכונים מרוקאיים, ספרדיים ויהודיים אותנטיים: מרקים, תגינים, קציצות, קוסקוס, קינוחים ועוד. מורשת קזבלנקה ומרקש לדורות.">
+<meta name="theme-color" content="#130c05">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="בן הראש">
+<link rel="manifest" href="manifest.json">
 <!-- Security headers via meta -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="Content-Security-Policy"
@@ -593,6 +598,19 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 #back-top.on { opacity: .8; }
 #back-top:hover { opacity: 1; }
 
+/* ── Advanced filters ─────────────────────────────────────── */
+.filter-bar { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.time-filter {
+  background: rgba(0,0,0,.3); border: 1px solid rgba(196,147,10,.3);
+  border-radius: 100px; padding: .3rem .7rem; color: var(--c-gold-l);
+  font-family: inherit; font-size: .78rem; cursor: pointer; direction: rtl;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23c4930a'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: left .5rem center; padding-left: 1.4rem;
+}
+.time-filter:focus { outline: 2px solid var(--c-gold); }
+.time-filter option { background: #1a0c04; color: var(--c-gold-l); }
+
 /* ── Footer ───────────────────────────────────────────────── */
 .footer { background: rgba(2,5,15,.98); border-top: 1px solid rgba(196,147,10,.2); text-align: center; padding: 2rem 1.5rem; color: var(--c-gold-d); direction: rtl; }
 .footer-memorial { color: var(--c-gold-l); font-size: 1rem; font-weight: 700; margin-bottom: .4rem; }
@@ -607,6 +625,7 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
   .hero { padding: 2.5rem 1rem 2rem; }
   #mbox { border-radius: var(--r-lg); max-height: 95vh; }
   .about-inner { flex-direction: column; align-items: center; }
+  .filter-bar { justify-content: center; }
 }
 @media (max-width: 480px) {
   .grid { grid-template-columns: 1fr; gap: .6rem; padding: .6rem .8rem 1.2rem; }
@@ -617,10 +636,28 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* ── Print ────────────────────────────────────────────────── */
 @media print {
-  .hdr, .cat-nav, .nav-panel, #back-top, #ovl, .footer { display: none !important; }
-  .hero { background: none !important; color: #000 !important; }
-  .casablanca-bg { display: none !important; }
+  .hdr, .cat-nav, .nav-panel, #back-top, .footer, .casablanca-bg,
+  .m-nav, .m-hero-media, .m-actions, .m-vid-wrap, .m-src-box,
+  .hero, .grid-header, .grid, .about, #toast, .filter-bar { display: none !important; }
+  body { background: #fff !important; color: #1a1a1a !important; font-size: 12pt; }
+  #ovl { position: static !important; display: block !important; background: none !important;
+         backdrop-filter: none !important; padding: 0 !important; }
+  #mbox { position: static !important; max-width: 100% !important; max-height: none !important;
+          box-shadow: none !important; border-radius: 0 !important; overflow: visible !important; }
+  .m-hero { height: 200px !important; }
+  .m-hero img { filter: none !important; }
+  .m-body { padding: 1rem 0 !important; }
+  .m-title { color: #8c2e14 !important; font-size: 18pt !important; }
+  .m-mem { border-right-color: #c4930a !important; background: #f9f3e3 !important;
+           color: #4a2a14 !important; page-break-inside: avoid; }
+  .m-ingr-item { border-color: #ddd !important; }
+  .m-step { border-color: #ddd !important; }
+  .m-chip { background: #f0e8d0 !important; border-color: #c4930a !important; }
+  .m-tip-wrap { background: #f9f3e3 !important; border-color: #c4930a !important; page-break-inside: avoid; }
+  @page { margin: 1.5cm; }
 }
 
 </style>
@@ -1016,11 +1053,20 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
       <span id="sec-title">כל המתכונים</span>
       <span id="sec-cnt"></span>
     </div>
-    <div class="diff-btns" role="group" aria-label="סנן לפי רמת קושי">
-      <button class="diff-btn active" data-diff="all">הכל</button>
-      <button class="diff-btn" data-diff="קל">קל</button>
-      <button class="diff-btn" data-diff="בינוני">בינוני</button>
-      <button class="diff-btn" data-diff="מתקדם">מתקדם</button>
+    <div class="filter-bar">
+      <div class="diff-btns" role="group" aria-label="סנן לפי רמת קושי">
+        <button class="diff-btn active" data-diff="all">הכל</button>
+        <button class="diff-btn" data-diff="קל">קל</button>
+        <button class="diff-btn" data-diff="בינוני">בינוני</button>
+        <button class="diff-btn" data-diff="מתקדם">מתקדם</button>
+      </div>
+      <select id="time-filter" class="time-filter" aria-label="סנן לפי זמן הכנה">
+        <option value="all">כל הזמנים</option>
+        <option value="30">עד 30 דקות</option>
+        <option value="60">עד שעה</option>
+        <option value="120">עד שעתיים</option>
+        <option value="121">מעל שעתיים</option>
+      </select>
     </div>
   </div>
   <div id="grid" class="grid" role="list" aria-label="רשימת מתכונים" aria-busy="true"></div>
@@ -1091,6 +1137,7 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
       <!-- Actions (print / share / media) -->
       <div class="m-actions">
         <button id="m-print" class="m-act-media" aria-label="הדפס מתכון">🖨 הדפס</button>
+        <button id="m-pdf" class="m-act-media" aria-label="ייצא PDF">📄 PDF</button>
         <button id="m-share" class="m-act-media" aria-label="שתף מתכון">⬆ שתף</button>
         <button id="m-upload-act" class="m-act-media" aria-label="הוסף תמונה">🖼 תמונה</button>
         <button id="m-img-del-act" class="m-act-media del" aria-label="מחק תמונה" hidden>✕ מחק תמונה</button>
@@ -1190,6 +1237,7 @@ let ACT_CAT     = 'all';
 let ACT_CATS    = [];
 let ACT_HOLIDAY = null;
 let ACT_DIFF    = 'all';
+let ACT_TIME    = 'all';   // time filter: 'all', '30', '60', '120', '121'
 let SEARCH      = '';
 let SHOW_FAVS   = false;
 let ACT_IDS     = null;
@@ -1302,6 +1350,14 @@ function filtered() {
 
     // Difficulty
     if (ACT_DIFF !== 'all' && r.diff !== ACT_DIFF) return false;
+
+    // Time filter
+    if (ACT_TIME !== 'all') {
+      var mins = parseInt((r.time || '').replace(/[^\d]/g, '')) || 999;
+      var limit = parseInt(ACT_TIME);
+      if (limit === 121) { if (mins <= 120) return false; }
+      else { if (mins > limit) return false; }
+    }
 
     // Favourites
     if (SHOW_FAVS && !FAV.has(r.id)) return false;
@@ -2004,25 +2060,57 @@ function printRecipe() {
   if (!r) return;
   var w = window.open('', '_blank', 'noopener,noreferrer');
   if (!w) { showToast('לא ניתן לפתוח חלון — בדקו הגדרות דפדפן'); return; }
+  var img = getRecipeImg(r);
   var ingrs = (r.ingr || []).map(function(i) {
-    return '<li><strong>' + esc(i.q) + '</strong> ' + esc(i.i) + '</li>';
+    if (i.q && i.q.startsWith('---')) return '<tr><td colspan="2" style="font-weight:700;color:#8c2e14;padding:.6rem 0 .2rem;border:none">' + esc(i.q.replace(/---/g,'').trim()) + '</td></tr>';
+    return '<tr><td style="font-weight:600;min-width:90px;padding:.25rem .5rem;border-bottom:1px solid #e8e0d0">' + esc(i.q) + '</td><td style="padding:.25rem .5rem;border-bottom:1px solid #e8e0d0">' + esc(i.i) + '</td></tr>';
   }).join('');
   var steps = (r.steps || []).map(function(s, i) {
-    return '<li>' + (s.t ? '<strong>' + esc(s.t) + ':</strong> ' : '') + esc(s.s) + '</li>';
+    return '<li style="margin:.4rem 0;line-height:1.8">' + (s.t ? '<strong style="color:#c4930a">' + esc(s.t) + ':</strong> ' : '') + esc(s.s) + '</li>';
   }).join('');
   w.document.write('<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8">'
-    + '<title>' + esc(r.title) + '</title>'
-    + '<style>body{font-family:serif;max-width:700px;margin:2rem auto;direction:rtl;text-align:right}'
-    + 'h1{color:#b84223}ul,ol{padding-right:1.5rem}li{margin:.3rem 0}</style></head><body>'
-    + '<h1>' + esc(r.title) + '</h1>'
-    + (r.desc ? '<p>' + esc(r.desc) + '</p>' : '')
-    + (r.mem  ? '<blockquote><em>' + esc(r.mem) + '</em></blockquote>' : '')
-    + '<h2>רכיבים</h2><ul>' + ingrs + '</ul>'
-    + '<h2>הכנה</h2><ol>' + steps + '</ol>'
-    + (r.tip  ? '<p><strong>טיפ:</strong> ' + esc(r.tip) + '</p>' : '')
+    + '<title>' + esc(r.title) + ' — ספר הבישול של משפחת בן הראש</title>'
+    + '<style>'
+    + '@import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&display=swap");'
+    + 'body{font-family:"Frank Ruhl Libre",serif;max-width:680px;margin:0 auto;padding:2rem;direction:rtl;text-align:right;color:#1c1008}'
+    + '.header{text-align:center;border-bottom:2px solid #c4930a;padding-bottom:1rem;margin-bottom:1.5rem}'
+    + '.header h1{color:#8c2e14;font-size:1.8rem;font-weight:900;margin:0}'
+    + '.header p{color:#7a3a18;font-size:.85rem;margin:.3rem 0 0}'
+    + '.meta{display:flex;gap:.8rem;justify-content:center;margin:.8rem 0;flex-wrap:wrap}'
+    + '.chip{background:#f5ecd7;border:1px solid #c4930a;border-radius:100px;padding:.2rem .7rem;font-size:.8rem}'
+    + '.mem{background:linear-gradient(to left,#fdf8ee,#f5ecd7);border-right:3px solid #c4930a;padding:.8rem 1rem;margin:1rem 0;font-style:italic;color:#4a2a14;line-height:1.8}'
+    + 'table{width:100%;border-collapse:collapse;margin:.5rem 0}'
+    + 'ol{padding-right:1.3rem}li{line-height:1.8}'
+    + '.tip{background:#fdf8ee;border:1px solid #c4930a;border-radius:8px;padding:.7rem 1rem;margin-top:1rem}'
+    + '.tip-label{font-size:.75rem;font-weight:700;color:#9a7208}'
+    + '.footer{text-align:center;margin-top:2rem;padding-top:1rem;border-top:1px solid #c4930a;font-size:.75rem;color:#9a7208}'
+    + '.hero-img{width:100%;max-height:250px;object-fit:cover;border-radius:12px;margin-bottom:1rem}'
+    + '@page{margin:1.5cm}'
+    + '</style></head><body>'
+    + (img ? '<img class="hero-img" src="' + esc(img) + '" alt="' + esc(r.title) + '" onerror="this.remove()"/>' : '')
+    + '<div class="header"><h1>' + esc(r.title) + '</h1>'
+    + (r.desc ? '<p>' + esc(r.desc) + '</p>' : '') + '</div>'
+    + '<div class="meta">'
+    + (r.time ? '<span class="chip">' + esc(r.time) + '</span>' : '')
+    + (r.serv ? '<span class="chip">' + esc(r.serv) + '</span>' : '')
+    + (r.diff ? '<span class="chip">' + esc(r.diff) + '</span>' : '')
+    + '</div>'
+    + (r.mem ? '<div class="mem">' + esc(r.mem) + '</div>' : '')
+    + '<h2 style="color:#9a7208;font-size:1rem;border-bottom:1px solid #ede0c4;padding-bottom:.3rem">מרכיבים</h2>'
+    + '<table>' + ingrs + '</table>'
+    + '<h2 style="color:#9a7208;font-size:1rem;border-bottom:1px solid #ede0c4;padding-bottom:.3rem;margin-top:1.2rem">אופן ההכנה</h2>'
+    + '<ol>' + steps + '</ol>'
+    + (r.tip ? '<div class="tip"><div class="tip-label">טיפ של פרלה</div><p>' + esc(r.tip) + '</p></div>' : '')
+    + '<div class="footer">ספר הבישול של משפחת בן הראש — לזכרם של פרלה ופנחס ז״ל</div>'
     + '</body></html>');
   w.document.close();
-  setTimeout(function() { w.print(); }, 400);
+  setTimeout(function() { w.print(); }, 500);
+}
+
+function exportPDF() {
+  /* Uses the same beautiful print template, triggers Save as PDF */
+  showToast('מכין PDF — בחלון שייפתח בחרו "שמור כ-PDF"');
+  printRecipe();
 }
 
 function shareRecipe() {
@@ -2470,6 +2558,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // ── Time filter dropdown ──────────────────────────────
+  var timeFilter = document.getElementById('time-filter');
+  if (timeFilter) timeFilter.addEventListener('change', function() {
+    ACT_TIME = this.value;
+    renderGrid();
+  });
+
+  // ── PDF export button (modal) ─────────────────────────
+  var pdfBtn = document.getElementById('m-pdf');
+  if (pdfBtn) pdfBtn.addEventListener('click', exportPDF);
+
   // ── Delete image button (modal) ─────────────────────────
   var imgDelBtn = document.getElementById('m-img-del-act');
   if (imgDelBtn) imgDelBtn.addEventListener('click', function() {
@@ -2501,6 +2600,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var id = location.hash.slice(1);
     var r = R.find(function(x) { return x && x.id === id; });
     if (r) setTimeout(function() { openM(id); }, 300);
+  }
+
+  // ── Service Worker registration ─────────────────────────
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(function() {});
   }
 });
 
