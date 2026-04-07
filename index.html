@@ -1569,7 +1569,7 @@ function renderGrid() {
     if (r.time) {
       const t = document.createElement('span');
       t.className = 'c-time';
-      t.textContent = r.time;
+      t.textContent = translateHe(r.time);
       foot.appendChild(t);
     }
     if (r.time && r.diff) {
@@ -1578,7 +1578,7 @@ function renderGrid() {
     if (r.diff) {
       const d = document.createElement('span');
       d.className = 'c-diff ' + r.diff;
-      d.textContent = r.diff;
+      d.textContent = translateHe(r.diff);
       foot.appendChild(d);
     }
 
@@ -1927,7 +1927,7 @@ function openM(id) {
 
   // Badge, title, subdesc
   var badge = document.getElementById('m-badge');
-  if (badge) { badge.textContent = r.badge || ''; badge.hidden = !r.badge; }
+  if (badge) { badge.textContent = translateHe(r.badge || ''); badge.hidden = !r.badge; }
   setText('m-title', getEnTitle(r));
   setText('m-subdesc', getEnDesc(r));
 
@@ -1944,7 +1944,7 @@ function openM(id) {
       if (pair[1]) {
         var span = document.createElement('span');
         span.className = 'm-chip';
-        span.textContent = pair[0] + ' ' + pair[1];
+        span.textContent = pair[0] + ' ' + translateHe(pair[1]);
         meta.appendChild(span);
       }
     });
@@ -3999,7 +3999,47 @@ var _FOOD_DICT = {
   'חריימה':'chraime','חרימולה':'chermoula','מרוזייה':'mrouzia',
   'כדורים':'balls','עיגולים':'rounds','משולשים':'triangles',
   'פרוס':'sliced','קלוף':'peeled','שטוף':'washed','מנוקה':'cleaned',
-  'בינוני':'medium','גדול':'large','קטן':'small','דק':'thin','עבה':'thick'
+  'בינוני':'medium','גדול':'large','קטן':'small','דק':'thin','עבה':'thick',
+  'עם':'with','של':'of','או':'or','על':'on','את':'the','לפי':'per',
+  'ברוטב':'in sauce','בתנור':'baked','מבושל':'cooked','צלוי':'roasted','מטוגן':'fried',
+  'ממולאי':'stuffed','ממולאת':'stuffed','ממולאים':'stuffed',
+  'עוגיות':'cookies','עוגיית':'cookie','ריבת':'jam','פשטידת':'quiche',
+  'ועגבנייה':'and tomato','ולימון':'and lemon','ושקדים':'and almonds',
+  'ועגבניות':'and tomatoes','ועוף':'and chicken','וביצה':'and egg',
+  'ירוק':'green','ירוקה':'green','אדום':'red','אדומה':'red','לבנה':'white','לבן':'white',
+  'מרוקאית':'Moroccan','מרוקאיים':'Moroccan','מרוקאיות':'Moroccan',
+  'ספרדית':'Sephardic','ספרדיות':'Sephardic','ספרדיים':'Sephardic',
+  'כורדי':'Kurdish','כורדית':'Kurdish','עיראקי':'Iraqi','עיראקית':'Iraqi',
+  'תימני':'Yemeni','תימנית':'Yemeni','תימני)':'Yemeni)',
+  'אשכנזי':'Ashkenazi','אשכנזית':'Ashkenazi',
+  'פרסי':'Persian','פרסית':'Persian','טורקי':'Turkish','טורקית':'Turkish',
+  'בוכרי':'Bukharian','בוכרית':'Bukharian',
+  'טוניסאי':'Tunisian','טוניסאית':'Tunisian',
+  'ישראלי':'Israeli','ישראלית':'Israeli','ישראליים':'Israeli',
+  'חגיגי':'festive','חגיגית':'festive','ביתי':'homemade','ביתית':'homemade',
+  'אדמה':'earth','תפוחי אדמה':'potatoes','המדא יחופת':'potatoes',
+  'חציל':'eggplant','חצילים':'eggplant',
+  'גרגרי':'grains of','גרגירי':'grains of',
+  'כרישה':'leek','שורש':'root','תפוח':'apple',
+  'פרגיות':'cornish hens','עגל':'veal','כבוש':'pickled',
+  'ים':'sea','פירות ים':'seafood',
+  'שבת':'Shabbat','לחינה':'for henna',
+  'חיטה':'wheat','שעורה':'barley','ענבים':'grapes','ורדים':'roses',
+  'חרמולה':'chermoula','שמרים':'yeast',
+  'קון':'con','דה':'de',
+  'אבוקדו':'avocado','כרפס':'celery','חסה':'lettuce','רוקט':'arugula',
+  'אגס':'pear','אפרסק':'peach','מנגו':'mango','בננה':'banana',
+  'לוקום':'lokum','בקלאווה':'baklava','כנאפה':'kunafa','מעמול':'maamoul',
+  'ג׳חנון':'jachnun','מלאווח':'malawach','לחוח':'lahoh','קובה':'kubba',
+  'סמבוסק':'sambousak','בריק':'brik','מנטי':'manti','פלוב':'plov',
+  'גורמה':'gormeh','סבזי':'sabzi','פסנג׳ן':'fesenjan',
+  'טביט':'tbit','מסגוף':'masgouf','דולמה':'dolma',
+  'קרפלך':'kreplach','רוגלך':'rugelach','גפילטע':'gefilte',
+  'זחוק':'zhug','חילבה':'hilbeh','כובנה':'kubaneh',
+  'בורקס':'burekas','מוסקה':'moussaka','סיגרה':'sigara','ברק':'borek',
+  'רישה':'harissa','לבלבי':'lablabi','שכשוכה':'shakshuka',
+  'פודינג':'pudding','כיסוני':'dumplings','לחם':'bread',
+  'אורז':'rice','תבשיל':'stew','מרק':'soup','סלט':'salad'
 };
 
 // Sorted keys by length (longest first for greedy matching)
@@ -4256,6 +4296,9 @@ function applyLang(lang) {
 
   // Recipe count and section title
   updateTitle();
+
+  // Re-render grid with translated titles
+  renderGrid();
 
   try { localStorage.setItem('perla_lang', lang); } catch(_) {}
 }
