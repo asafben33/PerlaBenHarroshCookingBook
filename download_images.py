@@ -148,7 +148,7 @@ except Exception:
 # os._exit bypasses all cleanup (requests/urllib3 sessions) that cause hanging.
 # The log is already on disk after every recipe — nothing is lost.
 _STOP = False
-_size_index: dict = {}   # size→Path; built in main() for dedup
+_hash_index: dict = {}   # sha256→Path; built in main() for dedup
 def _sigint(sig, frame):
     print("\n\n[!] Ctrl+C — exiting...", flush=True)
     os._exit(0)   # immediate hard exit — no cleanup, no hang
@@ -1491,38 +1491,44 @@ def build_youtube_urls(title, query):
         "https://www.youtube.com/results?search_query=" + quote_plus(title + " " + query),
         "https://www.youtube.com/results?search_query=" + quote_plus(query + " recipe"),
     ]
+_dl_link_count = 0   # hard-links created during download
+
 def download_and_save(img_url, dest):
-    """Download image and validate magic bytes. Returns True on success."""
+    """Download image, validate, and deduplicate via SHA256.
+    Returns True on success."""
+    import hashlib
     sp, sd = get_sess()
-    # Handle pre-downloaded data (from source_unsplash_search)
+    global _hash_index, _dl_link_count
+
+    def _save_with_dedup(data, dest):
+        """Write data to dest, or hard-link if identical content exists."""
+        global _dl_link_count
+        h = hashlib.sha256(data).hexdigest()
+        existing = _hash_index.get(h)
+        if existing and existing != dest and existing.exists():
+            # Identical content already on disk — hard-link
+            try:
+                if dest.exists(): dest.unlink()
+                os.link(str(existing), str(dest))
+                _dl_link_count += 1
+            except OSError:
+                dest.write_bytes(data)   # fallback: write copy
+            return True
+        # New unique image — write and register
+        dest.write_bytes(data)
+        _hash_index[h] = dest
+        return True
+
+    # Handle pre-downloaded data (from Wikipedia source)
     if isinstance(img_url, tuple) and img_url[0] == "__DATA__":
         data = img_url[1]
         if len(data) > 3000 and (data[:2] == b'\xff\xd8' or data[:4] == b'\x89PNG'):
-            # ── Duplicate detection ────────────────────────────────
-            file_sz = len(data)
-            # Check global size-index (defined in main(), accessed via global)
-            global _size_index
-            existing = _size_index.get(file_sz)
-            if existing and existing != dest:
-                # Identical file already on disk — hard-link instead of writing
-                try:
-                    dest.hardlink_to(existing)   # Python 3.10+
-                except AttributeError:
-                    os.link(str(existing), str(dest))  # fallback
-                except OSError:
-                    dest.write_bytes(data)  # fallback: write normally
-                # Register in index (dest → existing, same size)
-                if file_sz not in _size_index:
-                    _size_index[file_sz] = dest
-                return True
-            # ── Normal write ───────────────────────────────────────
-            dest.write_bytes(data)
-            _size_index[file_sz] = dest   # register for future dedup
-            return True
+            return _save_with_dedup(data, dest)
         return False
+
+    # Standard URL download
     for sess in [sd, sp]:
         try:
-            # timeout=(connect, read) — read timeout prevents slow-drip hangs
             r = sess.get(img_url, timeout=(3, 8), stream=False,
                          allow_redirects=True, verify=False)
             if r.status_code != 200: continue
@@ -1531,22 +1537,7 @@ def download_and_save(img_url, dest):
             data = r.content
             if len(data) < 3000: continue
             if data[:2] == b'\xff\xd8' or data[:4] == b'\x89PNG' or ("image" in ct and len(data) > 10_000):
-                # ── Duplicate detection (same as __DATA__ path) ──
-                file_sz = len(data)
-                existing = _size_index.get(file_sz)
-                if existing and existing != dest:
-                    try:
-                        dest.hardlink_to(existing)
-                    except AttributeError:
-                        os.link(str(existing), str(dest))
-                    except OSError:
-                        dest.write_bytes(data)
-                    if file_sz not in _size_index:
-                        _size_index[file_sz] = dest
-                    return True
-                dest.write_bytes(data)
-                _size_index[file_sz] = dest
-                return True
+                return _save_with_dedup(data, dest)
         except Exception:
             continue
     return False
@@ -1709,16 +1700,26 @@ def main():
         total   = len(recipes)
         already = sum(1 for r in recipes if (IMG_DIR / f"r-{r['id']}.jpg").exists())
 
-        # בנה אינדקס גדלים מקבצים קיימים — למניעת כפילויות בזמן ריצה
-        global _size_index
-        _size_index = {}
+        # בנה אינדקס SHA256 מקבצים קיימים — למניעת כפילויות בזמן ריצה
+        import hashlib
+        global _hash_index
+        _hash_index = {}
+        log("בונה אינדקס תמונות קיימות (SHA256)...")
+        _existing_count = 0
+        _dup_existing = 0
         for _p in IMG_DIR.glob("r-*.jpg"):
             try:
-                _sz = _p.stat().st_size
-                if _sz > 0 and _sz not in _size_index:
-                    _size_index[_sz] = _p
+                _data = _p.read_bytes()
+                if len(_data) > 0:
+                    _h = hashlib.sha256(_data).hexdigest()
+                    if _h in _hash_index:
+                        _dup_existing += 1
+                    else:
+                        _hash_index[_h] = _p
+                    _existing_count += 1
             except OSError:
                 pass
+        log(f"  {_existing_count} קבצים, {len(_hash_index)} ייחודיים, {_dup_existing} כפילויות קיימות")
 
         log("")
         log("שלב 1 — הורדת תמונות")
@@ -1768,7 +1769,7 @@ def main():
 
             query = build_query(recipe)
             pct = (i + 1) * 100 // total
-            log(f"  >> [{i+1:4d}/{total}] {pct:3d}% [{rid:8s}] {title[:28]:28s} q=\"{query[:30]}\"")
+            log(f"  >> [{i+1:4d}/{total}] {pct:3d}% [{rid:8s}] \"{query[:35]}\"")
 
             saved  = False
             source = "?"
@@ -1827,13 +1828,13 @@ def main():
                 remaining = (total - skip_count - done) * avg_sec
                 eta_min = remaining / 60
                 src_summary = " ".join(f"{k}={v}" for k, v in sorted(source_counts.items()))
-                log(f"\n  === {pct}% ({i+1}/{total}) ok={ok_count} fail={fail_count} | ETA {eta_min:.0f}min | {src_summary} ===\n")
+                log(f"\n  === {pct}% ({i+1}/{total}) ok={ok_count} fail={fail_count} links={_dl_link_count} | ETA {eta_min:.0f}min | {src_summary} ===\n")
 
             time.sleep(DELAY)
 
         log("")
         log("-" * 60)
-        log(f"הורדה הושלמה: ok={ok_count}  skip={skip_count}  fail={fail_count}")
+        log(f"הורדה הושלמה: ok={ok_count}  skip={skip_count}  fail={fail_count}  links={_dl_link_count}")
         src_str = "  ".join(
             f"{k}={source_counts.get(k,0)}"
             for k in ["hebrew","wikimedia","mealdb","wikipedia2","openverse","ddg"]

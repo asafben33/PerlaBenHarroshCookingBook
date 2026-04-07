@@ -18771,7 +18771,7 @@ const MENU_STRUCTURE = [
 
   /* ── KATAMON NEIGHBOURS ── */
   {lbl:'שכנות הקטמון', key:'katamon', items:[
-    {ids:['iraq','kurd','ashk','yem','pers','buk','tun'], lbl:'הכל'},
+    {ids:['iraq','kurd','ashk','yem','pers','buk','tun','isr','turk'], lbl:'הכל'},
     {id:'iraq', lbl:'עיראק'},
     {id:'kurd', lbl:'כורדיסטן'},
     {id:'ashk', lbl:'אשכנז'},
@@ -18779,11 +18779,9 @@ const MENU_STRUCTURE = [
     {id:'pers', lbl:'פרס'},
     {id:'buk',  lbl:'בוכרה'},
     {id:'tun',  lbl:'טוניסיה'},
+    {id:'isr',  lbl:'מטבח ישראלי'},
+    {id:'turk', lbl:'יהדות טורקיה'},
   ]},
-
-  /* ── ISRAELI & TURKISH ── */
-  {id:'isr',  lbl:'מטבח ישראלי'},
-  {id:'turk', lbl:'יהדות טורקיה'},
 
   /* ── NON-KOSHER ── */
   {lbl:'מתכונים לא כשרים', key:'nonkosher_group', items:[
