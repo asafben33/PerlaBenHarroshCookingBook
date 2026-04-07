@@ -1558,11 +1558,11 @@ function renderGrid() {
 
     const badge = document.createElement('div');
     badge.className = 'c-badge';
-    badge.textContent = r.badge ? String(r.badge) : '';
+    badge.textContent = r.badge ? translateHe(String(r.badge)) : '';
 
     const title = document.createElement('div');
     title.className = 'c-title';
-    title.textContent = r.title;
+    title.textContent = getEnTitle(r);
 
     const foot = document.createElement('div');
     foot.className = 'c-foot';
@@ -1928,11 +1928,11 @@ function openM(id) {
   // Badge, title, subdesc
   var badge = document.getElementById('m-badge');
   if (badge) { badge.textContent = r.badge || ''; badge.hidden = !r.badge; }
-  setText('m-title', r.title);
-  setText('m-subdesc', r.desc || '');
+  setText('m-title', getEnTitle(r));
+  setText('m-subdesc', getEnDesc(r));
 
   // Memory
-  setText('m-mem-txt', r.mem || '');
+  setText('m-mem-txt', getEnMem(r));
   var memEl = document.getElementById('m-mem');
   if (memEl) memEl.hidden = !r.mem;
 
@@ -1960,10 +1960,10 @@ function openM(id) {
       row.setAttribute('role', 'listitem');
       var q = document.createElement('span');
       q.className = 'm-ingr-q';
-      q.textContent = item.q || '';
+      q.textContent = translateHe(item.q || '');
       var i = document.createElement('span');
       i.className = 'm-ingr-i';
-      i.textContent = item.i || '';
+      i.textContent = translateHe(item.i || '');
       row.appendChild(q);
       row.appendChild(i);
       ingrEl.appendChild(row);
@@ -1980,7 +1980,7 @@ function openM(id) {
       if (s.t) {
         var tSpan = document.createElement('span');
         tSpan.className = 'm-step-t';
-        tSpan.textContent = s.t + ' — ';
+        tSpan.textContent = translateHe(s.t) + ' — ';
         li.appendChild(tSpan);
         // Add timer button if step has minutes
         var mins = parseMinutes(s.t);
@@ -1999,7 +1999,7 @@ function openM(id) {
           li.appendChild(timerBtn);
         }
       }
-      li.appendChild(document.createTextNode(s.s || ''));
+      li.appendChild(document.createTextNode(translateHe(s.s || '')));
       stepsEl.appendChild(li);
     });
   }
@@ -2007,7 +2007,7 @@ function openM(id) {
   // Tip
   var tipWrap = document.getElementById('m-tip-wrap');
   if (tipWrap) tipWrap.hidden = !r.tip;
-  if (r.tip) setText('m-tip-txt', r.tip);
+  if (r.tip) setText('m-tip-txt', getEnTip(r));
 
   // Source
   var srcBox = document.getElementById('m-src-box');
@@ -2182,46 +2182,48 @@ function printRecipe() {
   if (!w) { showToast('לא ניתן לפתוח חלון — בדקו הגדרות דפדפן'); return; }
   var img = getRecipeImg(r);
   var ingrs = (r.ingr || []).map(function(i) {
-    if (i.q && i.q.startsWith('---')) return '<tr><td colspan="2" style="font-weight:700;color:#8c2e14;padding:.6rem 0 .2rem;border:none">' + esc(i.q.replace(/---/g,'').trim()) + '</td></tr>';
-    return '<tr><td style="font-weight:600;min-width:90px;padding:.25rem .5rem;border-bottom:1px solid #e8e0d0">' + esc(i.q) + '</td><td style="padding:.25rem .5rem;border-bottom:1px solid #e8e0d0">' + esc(i.i) + '</td></tr>';
+    if (i.q && i.q.startsWith('---')) return '<tr><td colspan="2" style="font-weight:700;color:#8c2e14;padding:.6rem 0 .2rem;border:none">' + esc(translateHe(i.q.replace(/---/g,'').trim())) + '</td></tr>';
+    return '<tr><td style="font-weight:600;min-width:90px;padding:.25rem .5rem;border-bottom:1px solid #e8e0d0">' + esc(translateHe(i.q)) + '</td><td style="padding:.25rem .5rem;border-bottom:1px solid #e8e0d0">' + esc(translateHe(i.i)) + '</td></tr>';
   }).join('');
   var steps = (r.steps || []).map(function(s, i) {
-    return '<li style="margin:.4rem 0;line-height:1.8">' + (s.t ? '<strong style="color:#c4930a">' + esc(s.t) + ':</strong> ' : '') + esc(s.s) + '</li>';
+    return '<li style="margin:.4rem 0;line-height:1.8">' + (s.t ? '<strong style="color:#c4930a">' + esc(translateHe(s.t)) + ':</strong> ' : '') + esc(translateHe(s.s)) + '</li>';
   }).join('');
-  w.document.write('<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8">'
-    + '<title>' + esc(r.title) + ' — ספר הבישול של משפחת בן הראש</title>'
+  var _dir = _LANG === 'en' ? 'ltr' : 'rtl';
+  var _align = _LANG === 'en' ? 'left' : 'right';
+  w.document.write('<!DOCTYPE html><html lang="' + _LANG + '" dir="' + _dir + '"><head><meta charset="UTF-8">'
+    + '<title>' + esc(getEnTitle(r)) + ' — ' + t('hdr_title') + '</title>'
     + '<style>'
     + '@import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&display=swap");'
-    + 'body{font-family:"Frank Ruhl Libre",serif;max-width:680px;margin:0 auto;padding:2rem;direction:rtl;text-align:right;color:#1c1008}'
+    + 'body{font-family:"Frank Ruhl Libre",serif;max-width:680px;margin:0 auto;padding:2rem;direction:'+_dir+';text-align:'+_align+';color:#1c1008}'
     + '.header{text-align:center;border-bottom:2px solid #c4930a;padding-bottom:1rem;margin-bottom:1.5rem}'
     + '.header h1{color:#8c2e14;font-size:1.8rem;font-weight:900;margin:0}'
     + '.header p{color:#7a3a18;font-size:.85rem;margin:.3rem 0 0}'
     + '.meta{display:flex;gap:.8rem;justify-content:center;margin:.8rem 0;flex-wrap:wrap}'
     + '.chip{background:#f5ecd7;border:1px solid #c4930a;border-radius:100px;padding:.2rem .7rem;font-size:.8rem}'
-    + '.mem{background:linear-gradient(to left,#fdf8ee,#f5ecd7);border-right:3px solid #c4930a;padding:.8rem 1rem;margin:1rem 0;font-style:italic;color:#4a2a14;line-height:1.8}'
+    + '.mem{background:linear-gradient(to left,#fdf8ee,#f5ecd7);border-'+(_LANG==='en'?'left':'right')+':3px solid #c4930a;padding:.8rem 1rem;margin:1rem 0;font-style:italic;color:#4a2a14;line-height:1.8}'
     + 'table{width:100%;border-collapse:collapse;margin:.5rem 0}'
-    + 'ol{padding-right:1.3rem}li{line-height:1.8}'
+    + 'ol{padding-'+(_LANG==='en'?'left':'right')+':1.3rem}li{line-height:1.8}'
     + '.tip{background:#fdf8ee;border:1px solid #c4930a;border-radius:8px;padding:.7rem 1rem;margin-top:1rem}'
     + '.tip-label{font-size:.75rem;font-weight:700;color:#9a7208}'
     + '.footer{text-align:center;margin-top:2rem;padding-top:1rem;border-top:1px solid #c4930a;font-size:.75rem;color:#9a7208}'
     + '.hero-img{width:100%;max-height:250px;object-fit:cover;border-radius:12px;margin-bottom:1rem}'
     + '@page{margin:1.5cm}'
     + '</style></head><body>'
-    + (img ? '<img class="hero-img" src="' + esc(img) + '" alt="' + esc(r.title) + '" onerror="this.remove()"/>' : '')
-    + '<div class="header"><h1>' + esc(r.title) + '</h1>'
-    + (r.desc ? '<p>' + esc(r.desc) + '</p>' : '') + '</div>'
+    + (img ? '<img class="hero-img" src="' + esc(img) + '" alt="' + esc(getEnTitle(r)) + '" onerror="this.remove()"/>' : '')
+    + '<div class="header"><h1>' + esc(getEnTitle(r)) + '</h1>'
+    + (r.desc ? '<p>' + esc(getEnDesc(r)) + '</p>' : '') + '</div>'
     + '<div class="meta">'
-    + (r.time ? '<span class="chip">' + esc(r.time) + '</span>' : '')
-    + (r.serv ? '<span class="chip">' + esc(r.serv) + '</span>' : '')
-    + (r.diff ? '<span class="chip">' + esc(r.diff) + '</span>' : '')
+    + (r.time ? '<span class="chip">' + esc(translateHe(r.time)) + '</span>' : '')
+    + (r.serv ? '<span class="chip">' + esc(translateHe(r.serv)) + '</span>' : '')
+    + (r.diff ? '<span class="chip">' + esc(translateHe(r.diff)) + '</span>' : '')
     + '</div>'
-    + (r.mem ? '<div class="mem">' + esc(r.mem) + '</div>' : '')
-    + '<h2 style="color:#9a7208;font-size:1rem;border-bottom:1px solid #ede0c4;padding-bottom:.3rem">מרכיבים</h2>'
+    + (r.mem ? '<div class="mem">' + esc(getEnMem(r)) + '</div>' : '')
+    + '<h2 style="color:#9a7208;font-size:1rem;border-bottom:1px solid #ede0c4;padding-bottom:.3rem">' + t('ingredients') + '</h2>'
     + '<table>' + ingrs + '</table>'
-    + '<h2 style="color:#9a7208;font-size:1rem;border-bottom:1px solid #ede0c4;padding-bottom:.3rem;margin-top:1.2rem">אופן ההכנה</h2>'
+    + '<h2 style="color:#9a7208;font-size:1rem;border-bottom:1px solid #ede0c4;padding-bottom:.3rem;margin-top:1.2rem">' + t('instructions') + '</h2>'
     + '<ol>' + steps + '</ol>'
-    + (r.tip ? '<div class="tip"><div class="tip-label">טיפ של פרלה</div><p>' + esc(r.tip) + '</p></div>' : '')
-    + '<div class="footer">ספר הבישול של משפחת בן הראש — לזכרם של פרלה ופנחס ז״ל</div>'
+    + (r.tip ? '<div class="tip"><div class="tip-label">' + t('tip_label') + '</div><p>' + esc(getEnTip(r)) + '</p></div>' : '')
+    + '<div class="footer">' + t('footer_title') + ' — ' + t('footer_sub') + '</div>'
     + '</body></html>');
   w.document.close();
   setTimeout(function() { w.print(); }, 500);
@@ -3979,7 +3981,25 @@ var _FOOD_DICT = {
   'סלט':'salad',
   'דג':'fish',
   'כף':'tablespoon',
-  'קל':'Easy'
+  'קל':'Easy',
+  'מרקים':'Soups','סלטים':'Salads','תבשילי ירקות':'Vegetable Stews',
+  'בשר וקציצות':'Meat & Meatballs','עוף ושבת':'Chicken & Shabbat',
+  'חגים וחינה':'Holidays & Henna','חגים ומועדים':'Holidays',
+  'מימונה וקינוחים':'Mimouna & Desserts','קינוחים ומאפים':'Desserts & Pastries',
+  'מורשת ספרד':'Spanish Heritage','ספרדי-מרוקאי':'Sephardic-Moroccan',
+  'שכנות הקטמון':'Katamon Neighbors',
+  'מטבח ישראלי':'Israeli Kitchen','יהדות טורקיה':'Turkish Jewish Cuisine',
+  'מתכונים לא כשרים':'Non-Kosher Recipes',
+  'פירות ים ודגים לא כשרים':'Non-Kosher Seafood & Fish',
+  'מנות עיקריות':'Main Courses','ירקות ותוספות':'Vegetables & Sides',
+  'חריף':'spicy','מתוק':'sweet','חמוץ':'sour','רותח':'boiling',
+  'חם':'hot','קר':'cold','בטורב':'in sauce','בטור':'in sauce',
+  'עוגה':'cake','עוגת':'cake','לחמנייה':'roll','לחמניות':'rolls',
+  'נוזל':'liquid','ממרח':'spread','מגולגל':'rolled','טחינה גולמית':'raw tahini',
+  'חריימה':'chraime','חרימולה':'chermoula','מרוזייה':'mrouzia',
+  'כדורים':'balls','עיגולים':'rounds','משולשים':'triangles',
+  'פרוס':'sliced','קלוף':'peeled','שטוף':'washed','מנוקה':'cleaned',
+  'בינוני':'medium','גדול':'large','קטן':'small','דק':'thin','עבה':'thick'
 };
 
 // Sorted keys by length (longest first for greedy matching)
@@ -4311,7 +4331,7 @@ function exportFullCookbook() {
     CATS.forEach(function(c) { catNames[c.id] = c.lbl; });
 
     var html = '<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8">'
-      + '<title>ספר הבישול של משפחת בן הראש — ספר מלא</title>'
+      + '<title>' + t('hdr_title') + '</title>'
       + '<style>'
       + '@import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&display=swap");'
       + 'body{font-family:"Frank Ruhl Libre",serif;max-width:700px;margin:0 auto;padding:1.5rem;direction:rtl;color:#1c1008;font-size:11pt}'
@@ -4339,15 +4359,15 @@ function exportFullCookbook() {
       + '</style></head><body>';
 
     // Title page
-    html += '<h1>ספר הבישול של משפחת בן הראש</h1>';
-    html += '<div class="subtitle">לזכרם של פרלה ופנחס בן הראש ז״ל<br>קזבלנקה · מרקש · ירושלים<br><br>' + R.length + ' מתכונים אותנטיים</div>';
+    html += '<h1>' + t('hdr_title') + '</h1>';
+    html += '<div class="subtitle">' + t('hdr_subtitle') + '<br>' + t('pill_cities') + '<br><br>' + R.length + t('recipes_count') + '</div>';
 
     // Table of contents
-    html += '<div class="toc"><h2>תוכן עניינים</h2><ul>';
+    html += '<div class="toc"><h2>' + (_LANG==='en'?'Table of Contents':'תוכן עניינים') + '</h2><ul>';
     catOrder.forEach(function(cid) {
       var name = catNames[cid] || cid;
       var count = R.filter(function(r) { return r && r.cat === cid; }).length;
-      if (count > 0) html += '<li><a href="#cat-' + cid + '">' + esc(name) + ' (' + count + ')</a></li>';
+      if (count > 0) html += '<li><a href="#cat-' + cid + '">' + esc(translateHe(name)) + ' (' + count + ')</a></li>';
     });
     html += '</ul></div>';
 
@@ -4355,32 +4375,32 @@ function exportFullCookbook() {
     catOrder.forEach(function(cid) {
       var recipes = R.filter(function(r) { return r && r.cat === cid; });
       if (!recipes.length) return;
-      html += '<div class="cat-title" id="cat-' + cid + '">' + esc(catNames[cid] || cid) + '</div>';
+      html += '<div class="cat-title" id="cat-' + cid + '">' + esc(translateHe(catNames[cid] || cid)) + '</div>';
       recipes.forEach(function(r) {
         var ingrs = (r.ingr || []).map(function(i) {
-          if (i.q && i.q.startsWith('---')) return '<tr><td colspan="2" style="font-weight:700;color:#8c2e14;border:none;padding-top:.4rem">' + esc(i.q.replace(/---/g,'').trim()) + '</td></tr>';
-          return '<tr><td style="font-weight:600;min-width:70px">' + esc(i.q) + '</td><td>' + esc(i.i) + '</td></tr>';
+          if (i.q && i.q.startsWith('---')) return '<tr><td colspan="2" style="font-weight:700;color:#8c2e14;border:none;padding-top:.4rem">' + esc(translateHe(i.q.replace(/---/g,'').trim())) + '</td></tr>';
+          return '<tr><td style="font-weight:600;min-width:70px">' + esc(translateHe(i.q)) + '</td><td>' + esc(translateHe(i.i)) + '</td></tr>';
         }).join('');
         var steps = (r.steps || []).map(function(s) {
-          return '<li>' + (s.t ? '<strong style="color:#c4930a">' + esc(s.t) + ':</strong> ' : '') + esc(s.s) + '</li>';
+          return '<li>' + (s.t ? '<strong style="color:#c4930a">' + esc(translateHe(s.t)) + ':</strong> ' : '') + esc(translateHe(s.s)) + '</li>';
         }).join('');
         html += '<div class="recipe">';
-        html += '<h3>' + esc(r.title) + '</h3>';
-        if (r.desc) html += '<div class="desc">' + esc(r.desc) + '</div>';
+        html += '<h3>' + esc(getEnTitle(r)) + '</h3>';
+        if (r.desc) html += '<div class="desc">' + esc(getEnDesc(r)) + '</div>';
         html += '<div class="meta">';
-        if (r.time) html += '<span class="chip">' + esc(r.time) + '</span>';
-        if (r.serv) html += '<span class="chip">' + esc(r.serv) + '</span>';
-        if (r.diff) html += '<span class="chip">' + esc(r.diff) + '</span>';
+        if (r.time) html += '<span class="chip">' + esc(translateHe(r.time)) + '</span>';
+        if (r.serv) html += '<span class="chip">' + esc(translateHe(r.serv)) + '</span>';
+        if (r.diff) html += '<span class="chip">' + esc(translateHe(r.diff)) + '</span>';
         html += '</div>';
-        if (r.mem) html += '<div class="mem">' + esc(r.mem) + '</div>';
+        if (r.mem) html += '<div class="mem">' + esc(getEnMem(r)) + '</div>';
         html += '<table>' + ingrs + '</table>';
         html += '<ol>' + steps + '</ol>';
-        if (r.tip) html += '<div class="tip"><b>טיפ:</b> ' + esc(r.tip) + '</div>';
+        if (r.tip) html += '<div class="tip"><b>' + t('tip_label') + ':</b> ' + esc(getEnTip(r)) + '</div>';
         html += '</div>';
       });
     });
 
-    html += '<div class="footer-print">ספר הבישול של משפחת בן הראש — לזכרם של פרלה ופנחס ז״ל<br>״האוכל שלה — הסיפור שלנו״</div>';
+    html += '<div class="footer-print">' + t('footer_title') + ' — ' + t('footer_sub') + '<br>' + t('footer_quote') + '</div>';
     html += '</body></html>';
 
     w.document.write(html);
