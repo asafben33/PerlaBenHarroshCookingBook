@@ -155,14 +155,16 @@ def _sigint(sig, frame):
 signal.signal(signal.SIGINT, _sigint)
 
 # ── log — writes to file immediately after each call ──
+_bar_active = False    # True while a progress bar is displayed
+
 def log(msg: str) -> None:
     """
     Write msg to console (BiDi-fixed for Windows) and to the log file (original).
     """
+    global _bar_active
     ts   = time.strftime('%H:%M:%S')
-    line = f"[{ts}] {msg}"                    # log file — original Hebrew
+    line = f"[{ts}] {msg}"
 
-    # Console — apply BiDi visual-order fix on Windows
     if sys.platform == 'win32':
         console_msg  = _bidi_for_console(msg)
     else:
@@ -170,9 +172,13 @@ def log(msg: str) -> None:
     console_line = f"[{ts}] {console_msg}"
 
     try:
+        if _bar_active:
+            # Clear the progress bar line first
+            sys.stdout.write("\r" + " " * 120 + "\r")
+            sys.stdout.flush()
+            _bar_active = False
         print(console_line, flush=True)
     except UnicodeEncodeError:
-        # Last-resort ASCII fallback
         print(f"[{ts}] {msg.encode('ascii', 'replace').decode()}", flush=True)
     try:
         with open(LOG_FILE, 'a', encoding='utf-8') as f:
@@ -180,23 +186,22 @@ def log(msg: str) -> None:
     except Exception:
         pass
 
-# ── inline progress bar — updates in-place on the same line ──
-_last_bar_len = 0
+# ── inline progress bar — stays fixed at the bottom of the terminal ──
 
 def progress_bar(current, total, ok=0, fail=0, skip=0, links=0, start_time=None, extra=""):
-    """Print a live-updating progress bar using \\r (carriage return).
-    Overwrites the current line in the terminal.
+    """Print a live-updating progress bar using \\r.
+    Only redrawn after each recipe completes — not after each log line.
     """
-    global _last_bar_len
+    global _bar_active
     if total <= 0:
         return
 
+    _bar_active = True
     pct = current * 100 // total
     bar_width = 30
     filled = bar_width * current // total
     bar = "\u2588" * filled + "\u2591" * (bar_width - filled)
 
-    # ETA calculation
     eta_str = ""
     if start_time and current > skip:
         elapsed = time.time() - start_time
@@ -209,23 +214,22 @@ def progress_bar(current, total, ok=0, fail=0, skip=0, links=0, start_time=None,
             else:
                 eta_str = f" | ETA {remaining:.0f}s"
 
-    line = f"\r  [{bar}] {pct:3d}% | {current}/{total} | ok={ok} fail={fail} skip={skip} links={links}{eta_str}"
+    line = f"\r  [{bar}] {pct:3d}% | {current}/{total} | ok={ok} fail={fail} skip={skip}{eta_str}"
     if extra:
         line += f" | {extra}"
-
-    # Pad with spaces to clear previous longer line
-    pad = max(0, _last_bar_len - len(line))
-    line += " " * pad
-    _last_bar_len = len(line) - pad
+    line += "          "  # pad to clear leftovers
 
     sys.stdout.write(line)
     sys.stdout.flush()
 
 
 def progress_bar_finish():
-    """Move to next line after the progress bar is complete."""
-    sys.stdout.write("\n")
-    sys.stdout.flush()
+    """Move to next line after the progress bar."""
+    global _bar_active
+    if _bar_active:
+        sys.stdout.write("\n")
+        sys.stdout.flush()
+    _bar_active = False
 
 # ══════════════════════════════════════════════════
 # HTTP sessions — proxy + direct
@@ -1755,19 +1759,14 @@ def download_and_save(img_url, dest):
     global _hash_index, _dl_link_count
 
     def _save_with_dedup(data, dest):
-        """Write data to dest, or hard-link if identical content exists."""
+        """Write data to dest, or skip if identical content exists (record alias)."""
         global _dl_link_count
         h = hashlib.sha256(data).hexdigest()
         existing = _hash_index.get(h)
         if existing and existing != dest and existing.exists():
-            # Identical content already on disk — hard-link
-            try:
-                if dest.exists(): dest.unlink()
-                os.link(str(existing), str(dest))
-                _dl_link_count += 1
-            except OSError:
-                dest.write_bytes(data)   # fallback: write copy
-            return True
+            # Identical content already on disk — skip download, record alias
+            _dl_link_count += 1
+            return True   # report success but don't write file
         # New unique image — write and register
         dest.write_bytes(data)
         _hash_index[h] = dest
@@ -1799,13 +1798,13 @@ def download_and_save(img_url, dest):
 
 
 def run_dedup(dry_run: bool = False) -> None:
-    """שלב 2 — ניקוי כפילויות דינמי.
+    """שלב 2 — ניקוי כפילויות.
 
     סורק את כל קבצי r-*.jpg לפי SHA256 hash.
     בכל קבוצה עם hash זהה:
-      • קנוני  = הקובץ הראשון אלפביתית בקבוצה (נשמר)
-      • שאר    = נמחקים ומוחלפים ב-Hard Link לקנוני
-    Hard Link = שם נוסף לאותו inode — אפס מקום נוסף.
+      - קנוני  = הקובץ הראשון אלפביתית (נשמר)
+      - שאר    = נמחקים לגמרי מהדיסק
+    מייצר קובץ _IMG_ALIAS.js עם מפת הפניות לאתר.
     """
     from collections import defaultdict
     import hashlib
@@ -1854,6 +1853,7 @@ def run_dedup(dry_run: bool = False) -> None:
     ok_count   = 0
     skip_count = 0
     freed      = 0
+    alias_map  = {}   # dup_name (no .jpg) → canon_name (no .jpg)
 
     for h, paths in sorted(dup_groups.items(), key=lambda x: -(len(x[1]) - 1)):
         canon = paths[0]          # קנוני = ראשון אלפביתית
@@ -1862,29 +1862,47 @@ def run_dedup(dry_run: bool = False) -> None:
             sz = canon.stat().st_size
         except OSError:
             sz = 0
+        canon_name = canon.stem   # 'r-add1-2' (no .jpg)
         for alias in aliases:
-            # SHA256 match guarantees identical content — safe to link
+            alias_name = alias.stem
             if dry_run:
                 log(f"  DRY   {alias.name:30s} → {canon.name}  ({sz/1024:.0f} KB)")
+                alias_map[alias_name] = canon_name
                 ok_count += 1
                 freed    += sz
                 continue
 
             try:
-                alias.unlink()
-                os.link(str(canon), str(alias))   # Hard link
+                alias.unlink()              # DELETE the duplicate file
+                alias_map[alias_name] = canon_name
                 ok_count += 1
                 freed    += sz
             except OSError as e:
                 log(f"  FAIL  {alias.name}: {e}")
                 skip_count += 1
 
-        # Live progress bar for dedup
+        # Live progress bar
         done = ok_count + skip_count
         progress_bar(done, total_dups, ok=ok_count, fail=skip_count,
-                     skip=0, links=ok_count, extra="dedup")
+                     skip=0, extra="dedup")
 
     progress_bar_finish()
+
+    # ── Write _IMG_ALIAS.js ──
+    alias_file = IMG_DIR.parent / "_IMG_ALIAS.js"
+    lines = [
+        "/* Auto-generated by download_images.py — do NOT edit manually */",
+        "/* Maps deleted duplicate images to their canonical file */",
+        f"/* {len(alias_map)} aliases, {freed / 1024 / 1024:.1f} MB freed */",
+        "var _IMG_ALIAS = {",
+    ]
+    for dup_name in sorted(alias_map.keys()):
+        lines.append(f"  '{dup_name}':'{alias_map[dup_name]}',")
+    lines.append("};")
+
+    alias_file.write_text("\n".join(lines), encoding="utf-8")
+    log(f"Alias map: {alias_file} ({len(alias_map)} entries)")
+
     log("")
     log("=" * 60)
     if dry_run:
@@ -1892,8 +1910,9 @@ def run_dedup(dry_run: bool = False) -> None:
         log(f"מקום שישוחרר: {freed / 1024 / 1024:.1f} MB")
         log("הרץ ללא --dry-run להחיל.")
     else:
-        log(f"Dedup הושלם: {ok_count} Hard Links נוצרו, {skip_count} דולגו")
+        log(f"Dedup הושלם: {ok_count} כפילויות נמחקו, {skip_count} דולגו")
         log(f"מקום שוחרר : {freed / 1024 / 1024:.1f} MB")
+        log(f"העתק את תוכן _IMG_ALIAS.js לתוך index.html")
     log("=" * 60)
 
 
@@ -2048,43 +2067,36 @@ def main():
                 return [r] if r else []
 
             sources_multi = [
-                # ── Israeli sources (8 groups × 5 domains = 42 domains, Hebrew search) ──
+                # ── Fast APIs FIRST (reliable, 1-2s each) ──
+                ("wikimedia",   lambda q=query: _wrap(lambda: source_wikimedia_single(q))),
+                ("hebrew",      lambda t=title, q=query: _wrap(lambda: source_hebrew_first(t, q))),
+                ("mealdb",      lambda q=query: _wrap(lambda: source_mealdb(q))),
+                ("openverse",   lambda q=query: _wrap(lambda: source_openverse(q))),
+                ("unsplash",    lambda q=query: _wrap(lambda: source_unsplash_search(q))),
+                # ── DDG Israeli (Hebrew search, 2 groups only — if both fail, skip rest) ──
                 ("il-1",        lambda t=title, q=query: source_il_group_a(t, q)),
                 ("il-2",        lambda t=title, q=query: source_il_group_b(t, q)),
-                ("il-3",        lambda t=title, q=query: source_il_group_c(t, q)),
-                ("il-4",        lambda t=title, q=query: source_il_group_d(t, q)),
-                ("il-5",        lambda t=title, q=query: source_il_group_e(t, q)),
-                ("il-6",        lambda t=title, q=query: source_il_group_f(t, q)),
-                ("il-7",        lambda t=title, q=query: source_il_group_g(t, q)),
-                ("il-8",        lambda t=title, q=query: source_il_group_h(t, q)),
                 ("il-general",  lambda t=title, q=query: source_il_general(t, q)),
-                ("hebrew",      lambda t=title, q=query: _wrap(lambda: source_hebrew_first(t, q))),
-                # ── International sources (8 groups × 5 domains = 41 domains, English search) ──
+                # ── DDG International (English search, 2 groups) ──
                 ("intl-1",      lambda q=query: source_intl_group_a(q)),
-                ("intl-2",      lambda q=query: source_intl_group_b(q)),
-                ("intl-3",      lambda q=query: source_intl_group_c(q)),
-                ("intl-4",      lambda q=query: source_intl_group_d(q)),
-                ("intl-5",      lambda q=query: source_intl_group_e(q)),
-                ("intl-6",      lambda q=query: source_intl_group_f(q)),
-                ("intl-7",      lambda q=query: source_intl_group_g(q)),
+                ("intl-mideast",lambda q=query: source_intl_group_d(q)),
                 ("intl-general",lambda q=query: source_intl_general(q)),
-                ("stock",       lambda q=query: source_stock_photos(q)),
-                # ── Structured APIs (English search) ──
-                ("mealdb",      lambda q=query: _wrap(lambda: source_mealdb(q))),
-                ("wikimedia",   lambda q=query: _wrap(lambda: source_wikimedia_single(q))),
-                ("openverse",   lambda q=query: _wrap(lambda: source_openverse(q))),
-                ("wikipedia2",  lambda q=query: _wrap(lambda: source_unsplash_search(q))),
             ]
 
-            # ═══ Collect URLs from ALL sources (no early break) ═══
+            # ═══ Collect URLs from sources — with DDG early-abort ═══
+            ddg_consecutive_fails = 0
             for si, (src_name, src_fn) in enumerate(sources_multi):
-                # Hard per-recipe timeout: 90s total across all sources
-                if time.time() - t0 > 90:
-                    log(f"     TIMEOUT — recipe took >90s, stopping collection")
+                # Hard per-recipe timeout
+                if time.time() - t0 > 45:
                     break
+                # DDG early-abort: if 2 DDG calls in a row fail, skip remaining DDG
+                is_ddg = src_name.startswith("il-") or src_name.startswith("intl-") or src_name == "stock"
+                if is_ddg and ddg_consecutive_fails >= 2:
+                    continue
                 t1 = time.time()
                 try:
-                    urls = _call_with_timeout(src_fn, timeout_sec=15)
+                    timeout = 8 if is_ddg else 10
+                    urls = _call_with_timeout(src_fn, timeout_sec=timeout)
                     dt = time.time() - t1
                     if urls and isinstance(urls, list):
                         new_urls = [u for u in urls if u and u not in collected_urls]
@@ -2092,14 +2104,13 @@ def main():
                         if new_urls:
                             source_counts[src_name] = source_counts.get(src_name, 0) + len(new_urls)
                             log(f"     {src_name}: +{len(new_urls)} URLs ({dt:.1f}s)")
-                    elif dt > 3:
-                        log(f"     {src_name}: no result ({dt:.1f}s)")
+                            if is_ddg: ddg_consecutive_fails = 0
+                    else:
+                        if is_ddg: ddg_consecutive_fails += 1
                 except Exception as e:
-                    dt = time.time() - t1
-                    if dt > 2:
-                        log(f"     {src_name} error ({dt:.1f}s): {type(e).__name__}")
+                    if is_ddg: ddg_consecutive_fails += 1
 
-                # If we already have enough URLs, skip remaining sources
+                # If we already have enough URLs, stop
                 if len(collected_urls) >= MAX_IMAGES_PER_RECIPE * 2:
                     break
 
