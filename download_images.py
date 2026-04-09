@@ -134,7 +134,7 @@ LOG_FILE    = LOG_DIR / f"download_images_{_ts}.log"
 PROXY       = "http://pac.gov.il:8080"
 
 DELAY       = 0.4    # seconds between recipes (rate limiting)
-NET_TIMEOUT = 8      # seconds per network request
+NET_TIMEOUT = 5      # seconds per network request
 OVERWRITE   = False  # True = overwrite existing images
 
 IMG_DIR.mkdir(parents=True, exist_ok=True)
@@ -179,6 +179,53 @@ def log(msg: str) -> None:
             f.write(line + '\n')
     except Exception:
         pass
+
+# ── inline progress bar — updates in-place on the same line ──
+_last_bar_len = 0
+
+def progress_bar(current, total, ok=0, fail=0, skip=0, links=0, start_time=None, extra=""):
+    """Print a live-updating progress bar using \\r (carriage return).
+    Overwrites the current line in the terminal.
+    """
+    global _last_bar_len
+    if total <= 0:
+        return
+
+    pct = current * 100 // total
+    bar_width = 30
+    filled = bar_width * current // total
+    bar = "\u2588" * filled + "\u2591" * (bar_width - filled)
+
+    # ETA calculation
+    eta_str = ""
+    if start_time and current > skip:
+        elapsed = time.time() - start_time
+        done_actual = current - skip
+        if done_actual > 0:
+            avg = elapsed / done_actual
+            remaining = (total - current) * avg
+            if remaining >= 60:
+                eta_str = f" | ETA {remaining/60:.0f}min"
+            else:
+                eta_str = f" | ETA {remaining:.0f}s"
+
+    line = f"\r  [{bar}] {pct:3d}% | {current}/{total} | ok={ok} fail={fail} skip={skip} links={links}{eta_str}"
+    if extra:
+        line += f" | {extra}"
+
+    # Pad with spaces to clear previous longer line
+    pad = max(0, _last_bar_len - len(line))
+    line += " " * pad
+    _last_bar_len = len(line) - pad
+
+    sys.stdout.write(line)
+    sys.stdout.flush()
+
+
+def progress_bar_finish():
+    """Move to next line after the progress bar is complete."""
+    sys.stdout.write("\n")
+    sys.stdout.flush()
 
 # ══════════════════════════════════════════════════
 # HTTP sessions — proxy + direct
@@ -1832,12 +1879,12 @@ def run_dedup(dry_run: bool = False) -> None:
                 log(f"  FAIL  {alias.name}: {e}")
                 skip_count += 1
 
-        # התקדמות ב-25% מהקבוצות
+        # Live progress bar for dedup
         done = ok_count + skip_count
-        if done > 0 and done % max(1, total_dups // 4) < len(aliases):
-            pct = done * 100 // total_dups
-            log(f"  -- {pct}% ({done}/{total_dups})")
+        progress_bar(done, total_dups, ok=ok_count, fail=skip_count,
+                     skip=0, links=ok_count, extra="dedup")
 
+    progress_bar_finish()
     log("")
     log("=" * 60)
     if dry_run:
@@ -2087,24 +2134,18 @@ def main():
                 fail_count += 1
                 log(f"     FAIL — no images from {len(collected_urls)} URLs ({elapsed:.0f}s)")
 
-            # ── Progress every 25 recipes or 10% ──
-            done = i + 1 - skip_count
-            if done > 0 and (done % 25 == 0 or (pct % 10 == 0 and pct > 0)):
-                avg_sec = (time.time() - _dl_start) / max(1, done)
-                remaining = (total - skip_count - done) * avg_sec
-                eta_min = remaining / 60
-                src_summary = " ".join(f"{k}={v}" for k, v in sorted(source_counts.items()))
-                log(f"\n  === {pct}% ({i+1}/{total}) ok={ok_count} fail={fail_count} links={_dl_link_count} | ETA {eta_min:.0f}min | {src_summary} ===\n")
+            # ── Live progress bar (updates in-place) ──
+            progress_bar(i + 1, total, ok=ok_count, fail=fail_count,
+                         skip=skip_count, links=_dl_link_count,
+                         start_time=_dl_start)
 
             time.sleep(DELAY)
 
+        progress_bar_finish()
         log("")
         log("-" * 60)
         log(f"הורדה הושלמה: ok={ok_count}  skip={skip_count}  fail={fail_count}  links={_dl_link_count}")
-        src_str = "  ".join(
-            f"{k}={source_counts.get(k,0)}"
-            for k in ["hebrew","wikimedia","mealdb","wikipedia2","openverse","ddg"]
-        )
+        src_str = "  ".join(f"{k}={v}" for k, v in sorted(source_counts.items()) if v > 0)
         log(f"מקורות: {src_str}")
         log("-" * 60)
 
