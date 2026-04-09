@@ -1,8 +1,9 @@
 /* ═══════════════════════════════════════════════
-   Service Worker — Perla Ben-Harrosh Cookbook
-   Offline-first: caches shell + data for instant load
+   Service Worker — Perla Ben-Harrosh Cookbook v8
+   Network-first for HTML/JS (always fresh code)
+   Cache-first for images (fast loading)
 ═══════════════════════════════════════════════ */
-const CACHE_NAME = 'perla-cookbook-v5';
+const CACHE_NAME = 'perla-cookbook-v8';
 const SHELL = [
   './',
   './index.html',
@@ -11,7 +12,7 @@ const SHELL = [
   'https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&display=swap'
 ];
 
-/* Install — cache shell */
+/* Install — cache shell, skip waiting immediately */
 self.addEventListener('install', function(e) {
   e.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
@@ -20,7 +21,7 @@ self.addEventListener('install', function(e) {
   );
 });
 
-/* Activate — clean old caches */
+/* Activate — clean ALL old caches, claim clients immediately */
 self.addEventListener('activate', function(e) {
   e.waitUntil(
     caches.keys().then(function(keys) {
@@ -32,37 +33,39 @@ self.addEventListener('activate', function(e) {
   );
 });
 
-/* Fetch — cache-first for shell, network-first for images */
+/* Fetch strategy:
+   - Images: cache-first (fast, images rarely change)
+   - Everything else: network-first (always get fresh HTML/JS/CSS) */
 self.addEventListener('fetch', function(e) {
   var url = new URL(e.request.url);
 
-  // Images: network-first, cache fallback
+  // Images: cache-first, network fallback
   if (url.pathname.match(/\.(jpg|jpeg|png|webp|gif)$/i) || url.pathname.includes('/images/')) {
     e.respondWith(
-      fetch(e.request).then(function(resp) {
-        if (resp && resp.status === 200) {
-          var clone = resp.clone();
-          caches.open(CACHE_NAME).then(function(c) { c.put(e.request, clone); });
-        }
-        return resp;
-      }).catch(function() {
-        return caches.match(e.request);
+      caches.match(e.request).then(function(cached) {
+        if (cached) return cached;
+        return fetch(e.request).then(function(resp) {
+          if (resp && resp.status === 200) {
+            var clone = resp.clone();
+            caches.open(CACHE_NAME).then(function(c) { c.put(e.request, clone); });
+          }
+          return resp;
+        });
       })
     );
     return;
   }
 
-  // Shell & data: cache-first, network fallback
+  // HTML, JS, CSS, fonts: network-first, cache fallback
   e.respondWith(
-    caches.match(e.request).then(function(cached) {
-      if (cached) return cached;
-      return fetch(e.request).then(function(resp) {
-        if (resp && resp.status === 200 && url.origin === self.location.origin) {
-          var clone = resp.clone();
-          caches.open(CACHE_NAME).then(function(c) { c.put(e.request, clone); });
-        }
-        return resp;
-      });
+    fetch(e.request).then(function(resp) {
+      if (resp && resp.status === 200 && url.origin === self.location.origin) {
+        var clone = resp.clone();
+        caches.open(CACHE_NAME).then(function(c) { c.put(e.request, clone); });
+      }
+      return resp;
+    }).catch(function() {
+      return caches.match(e.request);
     })
   );
 });

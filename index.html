@@ -2582,6 +2582,11 @@ function showToast(msg, duration) {
 ═══════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', function() {
 
+  // ── Set language FIRST (before ANY rendering) ───────────
+  if (localStorage.getItem('perla_lang') === 'en') {
+    _LANG = 'en';
+  }
+
   // Pill counter
   var pill = document.getElementById('pill-cnt');
   if (pill) pill.textContent = R.length + t('recipes_count');
@@ -2717,6 +2722,9 @@ document.addEventListener('DOMContentLoaded', function() {
   buildNav();
   renderGrid();
 
+  // ── Apply full language translation (UI labels, pills, about, footer) ──
+  if (_LANG === 'en') applyLang('en');
+
   // Handle URL hash deep-link
   if (location.hash && location.hash.length > 1) {
     var id = location.hash.slice(1);
@@ -2741,7 +2749,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // ── Language toggle ──────────────────────────────────────
   var langBtn = document.getElementById('lang-toggle');
   if (langBtn) langBtn.addEventListener('click', toggleLang);
-  if (localStorage.getItem('perla_lang') === 'en') applyLang('en');
 
   // ── Timer close ──────────────────────────────────────────
   var tfClose = document.getElementById('tf-close');
@@ -3729,7 +3736,103 @@ var _TITLE_EN = {
 'ye6':'Fried Dough',
 'ye7':'Shakshuka Eggs Tomatoes',
 'ye8':'Aseed Yemeni Cooked Dough',
-'ye9':'Lamb Head'
+'ye9':'Lamb Head',
+'fin30':'Charred Salad — Pickled Vegetables',
+'sv5':'Argan Oil and Barley Soup',
+'sv6':'Semolina and Honey Soup',
+'sv10':'Hsua — Bread Soup',
+'slv1':'Egg and Tomato Salad',
+'slv3':'Moroccan Green Salad',
+'slv4':'Moroccan Avocado Salad',
+'slv5':'Sesame and Tomato Salad',
+'slv8':'Warm Root Vegetable Salad',
+'slv10':'Celery and Apple Salad',
+'fv4':'Fish with Cabbage',
+'fv5':'Fish with Braised Vegetables',
+'sw2':'Shabbat Lentil and Sesame Soup',
+'sw5':'Moroccan Buckwheat Soup',
+'slw1':'Baloha Salad',
+'slw2':'Moroccan Squash Salad',
+'slw4':'Tomato and Garlic Sauce Salad',
+'slw5':'Moroccan Tabbouleh',
+'vw2':'Moroccan Vegetable Quiche',
+'fw2':'Fish with Root Vegetables',
+'fw4':'Fish with Green Pears',
+'fw5':'Fish Moussaka',
+'mw1':'Tongue in Vinaigrette',
+'mw3':'Beef with Peaches',
+'mw5':'Moroccan Cozido',
+'cw2':'Moroccan-Style Chicken',
+'cw3':'Chicken with Anchovy and Rosemary',
+'cw4':'Chicken with Figs and Nuts',
+'cw5':'Wings in Lemon Butter',
+'saxx5':'Loubia Bean Soup',
+'san19':'Date and Walnut Salad',
+'vef11':'Moroccan Spiced Olives',
+'fif10':'Fish with Carob Sauce',
+'mef8':'Beef with Dates and Almonds',
+'chfx1':'Chicken with Roasted Garlic and Lemon',
+'chfx2':'Chicken with Mustard Seeds',
+'def6':'Moroccan Caramel',
+'def7':'Fig and Almond Cake',
+'def9':'Moroccan Mousse',
+'sn15':'Wheat and Lentil Soup',
+'sn16':'Jshma Soup — Moroccan',
+'sn19':'Moroccan Green Soup',
+'sle11':'Moroccan Quinoa Salad',
+'sle13':'Avocado and Pomegranate Salad',
+'ve9':'Moroccan Provencal Tian',
+'ve11':'Sweet Potato with Cheese and Herbs',
+'ve12':'Arugula and Parmesan Moroccan',
+'fe9':'Fish with Kelp',
+'me6':'Beef with Moroccan Pasta',
+'me8':'Beef Tagine with Olives',
+'ce6':'Crispy Oven-Baked Chicken',
+'ce7':'Wings with Dates',
+'ce10':'South Moroccan Chicken',
+'dn13':'Rose Cream Mousse',
+'iq16':'Baghdadi Pickles (Mkhalal)',
+'iq17':'Baghdadi Chicken Soup with Cardamom',
+'iq18':'Krashi (Iraqi Biscuits)',
+'iq22':'Baghdadi Baklava',
+'iq23':'Reyhan (Herb Salad)',
+'iq24':'Iraqi Hareesa (Wheat and Chicken Porridge)',
+'iq26':'Fagal (Purple Pickled Turnip)',
+'iq27':'Um Ali (Bread Pudding)',
+'iq28':'Baghdadi Egg Rice (Hameedh)',
+'iq29':'Tamar (Iraqi Date Cookies)',
+'ku25':'Shurabat Nask (Grain Soup)',
+'ku26':'Chig Kofta (Raw Meat Balls)',
+'ku29':'Halim (Kurdish Halva)',
+'ye15':'Fahsa Soup (Bone Broth)',
+'ye30':'Man (Anise Sugar Bread)',
+'pe18':'Khoreshte (Plum and Beef Stew)',
+'pe19':'Jowz (Walnut Spread)',
+'pe20':'Musir (Persian Shallots in Butter)',
+'pe21':'Kotlet (Persian Vegetable Schnitzel)',
+'pe23':'Nan-e Berenji (Persian Rice Cookies)',
+'pe24':'Boorni (Eggplant and Yogurt Stew)',
+'pe25':'Margan (Flatbread)',
+'pe26':'Faloodeh (Sorbet Ice Cream)',
+'pe28':'Persian Eggplant Soup',
+'bu25':'Kokacha (Date and Nut Spread)',
+'bu26':'Lagman (Noodles in Meat Sauce)',
+'bu27':'Mashua (Eggplant in Oil)',
+'bu29':'Tamal (Butter Cookies)',
+'tn26':'Ojja (Vegetable Omelette)',
+'tn27':'Griwon (Oil Cookies)',
+'sn24':'Moroccan Chard and Tomato Soup',
+'ce12':'Classic Chicken Mchamar — Paprika and Saffron',
+'sn26':'Sharsham Soup — Rustic Moroccan Wheat',
+'sn27':'Veal Soup with Cilantro and Lemon',
+'sn28':'Moroccan Eggplant and Tomato Soup',
+'me16':'Kefta Baked with Eggs — Kefta with Kaifa',
+'me17':'Stuffed Karsha — Moroccan Stuffed Intestines',
+'me20':'Moroccan Beef Ragout with Root Vegetables',
+'sle23':'Moroccan Pickles — Mkhalal',
+'nk_cw3':'Chicken with Anchovy and Rosemary',
+'nk_chfx2':'Chicken with Mustard Seeds',
+'nk_ku25':'Shurabat Nask (Grain Soup)'
 };
 
 var _FOOD_DICT = {
@@ -4039,7 +4142,93 @@ var _FOOD_DICT = {
   'בורקס':'burekas','מוסקה':'moussaka','סיגרה':'sigara','ברק':'borek',
   'רישה':'harissa','לבלבי':'lablabi','שכשוכה':'shakshuka',
   'פודינג':'pudding','כיסוני':'dumplings','לחם':'bread',
-  'אורז':'rice','תבשיל':'stew','מרק':'soup','סלט':'salad'
+  'אורז':'rice','תבשיל':'stew','מרק':'soup','סלט':'salad',
+  'אמא':'Mom','אמרה':'said','לא':'not','עד':'until','כל':'all','יותר':'more',
+  'זה':'this','בצק':'dough','אש':'fire','תנור':'oven','נמוכה':'low',
+  'מנה':'serving','עמוק':'deep','ריח':'aroma','מילוי':'filling',
+  'כמו':'like','זהוב':'golden','ערבוב':'mixing','ספרד':'Spain',
+  'תוך':'within','צד':'side','שישי':'Friday','ללא':'without',
+  'אם':'if','פשוט':'simple','מרוקו':'Morocco','עוד':'more',
+  'טוב':'good','מיד':'immediately','לגמרי':'completely','שולחן':'table',
+  'צריך':'need','חלק':'smooth','תמיד':'always','רך':'soft',
+  'ארוחת':'meal of','אפייה':'baking','קינוח':'dessert','רק':'only',
+  'אחד':'one','עשיר':'rich','הסוד':'the secret','נותנים':'add',
+  'מים':'water','שמן':'oil','בצל':'onion','שום':'garlic',
+  'עגבניות':'tomatoes','גזר':'carrot','מלח':'salt','סוכר':'sugar',
+  'פפריקה':'paprika','כמון':'cumin','כורכום':'turmeric','קינמון':'cinnamon',
+  'דבש':'honey','קמח':'flour','ביצים':'eggs','ביצה':'egg',
+  'לימון':'lemon','שמן זית':'olive oil','מים פושרים':'lukewarm water',
+  'רסק עגבניות':'tomato paste','מיץ לימון':'lemon juice',
+  'פטרוזיליה':'parsley','כוסברה':'cilantro','נענע':'mint',
+  'שקדים':'almonds','אגוזים':'nuts','צימוקים':'raisins','תמרים':'dates',
+  'זיתים':'olives','חומוס':'chickpeas','עדשים':'lentils',
+  'בשר':'meat','עוף':'chicken','דג':'fish','כבש':'lamb',
+  'תפוחי אדמה':'potatoes','חצילים':'eggplant','קישואים':'zucchini',
+  'פלפלים':'peppers','כרוב':'cabbage','בטטה':'sweet potato',
+  'אורז':'rice','קוסקוס':'couscous','סולת':'semolina',
+  'חמאה':'butter','שמנת':'cream','יוגורט':'yogurt','טחינה':'tahini',
+  'הבית':'the house','ילדים':'children','משפחה':'family',
+  'בבית':'at home','הבישול':'the cooking','המטבח':'the kitchen',
+  'שבת':'Shabbat','חג':'holiday','ערב':'evening','בוקר':'morning',
+  'ירושלים':'Jerusalem','קזבלנקה':'Casablanca','מרקש':'Marrakech',
+  'סבתא':'grandmother','סבא':'grandfather','דודה':'aunt',
+  'שכנה':'neighbor','שכנים':'neighbors','שכנות':'neighbors',
+  'קטמון':'Katamon','שכונה':'neighborhood',
+  'אהבה':'love','חום':'warmth','זיכרון':'memory','זיכרונות':'memories',
+  'טעם':'taste','ריח':'aroma','צבע':'color','מרקם':'texture',
+  'מסורת':'tradition','מורשת':'heritage','דורות':'generations','דור':'generation',
+  'לבשל':'to cook','להכין':'to prepare','לטגן':'to fry','לאפות':'to bake',
+  'לצלות':'to roast','לערבב':'to mix','להוסיף':'to add','לחתוך':'to cut',
+  'לקלף':'to peel','לשטוף':'to wash','לגרד':'to grate',
+  'לכסות':'to cover','להוריד':'to lower','להגיש':'to serve',
+  'להרתיח':'to bring to a boil','לחמם':'to heat',
+  'מתבלים':'season','שופכים':'pour','מסירים':'remove',
+  'מניחים':'let rest','מגלגלים':'roll','יוצקים':'pour',
+  'מסננים':'strain','מקררים':'cool','מקפלים':'fold',
+  'מגישים חם':'serve hot','מגישים קר':'serve cold',
+  'מעל':'above','מתחת':'below','ליד':'next to','בתוך':'inside',
+  'מעט':'a little','הרבה':'a lot','מספיק':'enough','כדי':'in order to',
+  'כאשר':'when','לאחר':'after','לפני':'before','במשך':'during',
+  'בערך':'approximately','בנפרד':'separately','ביחד':'together',
+  'לאט':'slowly','מהר':'quickly','היטב':'well','קצת':'a bit',
+  'סיר':'pot','מחבת':'pan','קערה':'bowl','תבנית':'baking pan',
+  'כף עץ':'wooden spoon','מסננת':'strainer','מגבת':'towel',
+  'נייר אפייה':'parchment paper','תנור':'oven','כיריים':'stovetop',
+  'חצי':'half','רבע':'quarter','שלישית':'third',
+  'אותו':'it','אותה':'it','אותם':'them','אלה':'these',
+  'מוכן':'ready','מוכנה':'ready','מוכנים':'ready',
+  'בהתחלה':'at first','בסוף':'at the end','באמצע':'in the middle',
+  'טעים':'delicious','מושלם':'perfect','מיוחד':'special','נפלא':'wonderful',
+  'ראשון':'first','שני':'second','שלישי':'third',
+  'גבוהה':'high','חזקה':'strong','בינונית':'medium',
+  'שעון':'clock','דקה':'minute','שעה':'hour',
+  'ס"מ':'cm','מ"ל':'ml','ק"ג':'kg',
+  'מנות':'servings','כוס':'cup','כוסות':'cups',
+  'כף':'tablespoon','כפות':'tablespoons','כפית':'teaspoon','כפיות':'teaspoons',
+  'גרם':'grams','יחידה':'unit','יחידות':'units','קורט':'pinch',
+  'לפי הטעם':'to taste','פרוסות':'slices',
+  'קצוץ':'chopped','קצוצה':'chopped','כתוש':'crushed',
+  'מגורד':'grated','מגורדות':'grated','טחון':'ground',
+  'שלם':'whole','טרי':'fresh','יבש':'dried',
+  'גדול':'large','בינוני':'medium','קטן':'small',
+  'אחר כך':'then','כעת':'now','עכשיו':'now',
+  'כך':'so','גם':'also','אבל':'but','או':'or',
+  'הוא':'he','היא':'she','הם':'they','הן':'they',
+  'היה':'was','הייתה':'was','היו':'were',
+  'יש':'there is','אין':'there is no',
+  'מאוד':'very','ממש':'really','בדיוק':'exactly',
+  'שנה':'year','שנים':'years','פעם':'once','פעמים':'times',
+  'כדור':'ball','כדורים':'balls','עיגול':'circle','עיגולים':'circles',
+  'שכבה':'layer','שכבות':'layers','פרוסה':'slice',
+  'להגיש':'to serve','הגשה':'serving','צלחת':'plate','קערית':'bowl',
+  'מרכז':'center','קצה':'edge','שוליים':'edges',
+  'רותח':'boiling','חם':'hot','קר':'cold','פושר':'lukewarm',
+  'מטגנים':'fry','מבשלים':'cook','אופים':'bake','צולים':'roast',
+  'מערבבים':'mix','מוסיפים':'add','חותכים':'cut','קולפים':'peel',
+  'שוטפים':'wash','מנקים':'clean','ממלאים':'fill','מפזרים':'sprinkle',
+  'מורידים':'reduce','מכסים':'cover','טוחנים':'grind',
+  'מערבלים':'blend','ממיסים':'melt','מרתיחים':'bring to a boil',
+  'מחממים':'heat','מגלגלים':'roll','לשים':'knead'
 };
 
 // Sorted keys by length (longest first for greedy matching)
@@ -4047,13 +4236,40 @@ var _FOOD_KEYS = Object.keys(_FOOD_DICT).sort(function(a,b){return b.length-a.le
 
 function translateHe(text) {
   if (!text || _LANG !== 'en') return text;
+  // First pass: multi-word phrases (longest first)
   var result = text;
   for (var i = 0; i < _FOOD_KEYS.length; i++) {
     var he = _FOOD_KEYS[i];
-    if (result.indexOf(he) >= 0) {
+    if (he.length > 1 && result.indexOf(he) >= 0) {
       result = result.split(he).join(_FOOD_DICT[he]);
     }
   }
+  // Second pass: translate remaining single Hebrew words using prefix stripping
+  var _HE = /[\u0590-\u05FF\u05F3\u05F4]+/g;
+  result = result.replace(_HE, function(word) {
+    // Direct match
+    if (_FOOD_DICT[word]) return _FOOD_DICT[word];
+    // Strip common prefixes: ב,ה,ו,כ,ל,מ,ש
+    if (word.length > 2) {
+      var p1 = word[0], rest = word.slice(1);
+      if ('בהוכלמש'.indexOf(p1) >= 0) {
+        if (_FOOD_DICT[rest]) {
+          var pfx = {'\u05D1':'in ','\u05D4':'the ','\u05D5':'and ','\u05DB':'like ','\u05DC':'to ','\u05DE':'from ','\u05E9':'that '}[p1] || '';
+          return pfx + _FOOD_DICT[rest];
+        }
+        // Two-letter prefix: לה, מה, שה, בה
+        if (rest.length > 2 && 'בהוכלמש'.indexOf(rest[0]) >= 0) {
+          var rest2 = rest.slice(1);
+          if (_FOOD_DICT[rest2]) {
+            var pfx1 = {'\u05D1':'in ','\u05D4':'the ','\u05D5':'and ','\u05DB':'like ','\u05DC':'to ','\u05DE':'from ','\u05E9':'that '}[p1] || '';
+            var pfx2 = {'\u05D1':'in ','\u05D4':'the ','\u05D5':'and ','\u05DB':'like ','\u05DC':'to ','\u05DE':'from ','\u05E9':'that '}[rest[0]] || '';
+            return pfx1 + pfx2 + _FOOD_DICT[rest2];
+          }
+        }
+      }
+    }
+    return word; // keep original if no match
+  });
   return result;
 }
 
@@ -4304,7 +4520,9 @@ function applyLang(lang) {
 }
 
 function toggleLang() {
-  applyLang(_LANG === 'he' ? 'en' : 'he');
+  var newLang = _LANG === 'he' ? 'en' : 'he';
+  try { localStorage.setItem('perla_lang', newLang); } catch(_) {}
+  location.reload();  // Full re-render ensures everything translates cleanly
 }
 
 /* ═══════════════════════════════════════════════
