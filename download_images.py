@@ -110,7 +110,7 @@ def _bidi_for_console(text: str) -> str:
 
 # ── global socket timeout BEFORE any import of requests/urllib3 ──
 # This is the only reliable way to prevent hung network calls on Windows.
-socket.setdefaulttimeout(5)
+socket.setdefaulttimeout(12)
 
 try:
     import requests
@@ -134,7 +134,7 @@ LOG_FILE    = LOG_DIR / f"download_images_{_ts}.log"
 PROXY       = "http://pac.gov.il:8080"
 
 DELAY       = 0.4    # seconds between recipes (rate limiting)
-NET_TIMEOUT = 4      # seconds per network request  (< socket global timeout=8)
+NET_TIMEOUT = 8      # seconds per network request
 OVERWRITE   = False  # True = overwrite existing images
 
 IMG_DIR.mkdir(parents=True, exist_ok=True)
@@ -1307,109 +1307,204 @@ def source_hebrew_first(recipe_title, query_en):
 
 
 # ═══════════════════════════════════════════════════════════
-# ISRAELI FOOD SITES — searched FIRST before international
+# IMAGE SOURCE DOMAINS — 40 Israeli + 40 International
 # ═══════════════════════════════════════════════════════════
 
-# Top Israeli food domains (images from these sites are prioritized)
+MAX_IMAGES_PER_RECIPE = 3  # Download up to 3 images per recipe
+
+# 40 Israeli food domains
 _IL_FOOD_DOMAINS = [
+    # ── Major food portals ──
     "10dakot.co.il", "hashulchan.co.il", "foody.co.il",
     "food.walla.co.il", "mako.co.il", "ynet.co.il",
-    "shufersal.co.il", "machon-aviv.co.il", "tnuva.co.il",
-    "pnimi.co.il", "kinneret.co.il", "osem.co.il",
-    "krutit.co.il", "al-hashulchan.co.il", "cookieandkate.co.il",
-    "michalansky.com", "ilanab.co.il", "tapuz.co.il",
-    "ynetfood.co.il", "thekitchencoach.co.il",
+    # ── Supermarkets & brands ──
+    "shufersal.co.il", "tnuva.co.il", "osem.co.il",
+    "kinneret.co.il", "strauss-group.co.il", "tivall.co.il",
+    # ── Food blogs & chefs ──
+    "michalansky.com", "ilanab.co.il", "thekitchencoach.co.il",
+    "krutit.co.il", "pnimi.co.il", "al-hashulchan.co.il",
+    "savtabertha.co.il", "onlifood.co.il", "mamaleqet.com",
+    "litalsegal.co.il", "mealmasters.co.il", "yamit-cooking.co.il",
+    # ── Media food sections ──
+    "ynetfood.co.il", "tapuz.co.il", "rest.co.il",
+    "timeout.co.il", "foodis.co.il", "madabait.co.il",
+    # ── Recipe aggregators ──
+    "machon-aviv.co.il", "recipebook.co.il", "cookieandkate.co.il",
+    "mama-recipe.co.il", "bishulim.co.il", "matkonation.co.il",
+    # ── Specialty ──
+    "hakolboil.co.il", "gilisrecipes.com", "mehimtabahon.co.il",
+    "mevashlim.co.il", "hamitbach.co.il", "nowayhungry.co.il",
+]
+
+# 40 International food domains
+_INTL_FOOD_DOMAINS = [
+    # ── Major recipe sites ──
+    "allrecipes.com", "foodnetwork.com", "epicurious.com",
+    "bonappetit.com", "seriouseats.com", "simplyrecipes.com",
+    "food52.com", "tasteofhome.com", "delish.com",
+    "cookinglight.com", "myrecipes.com", "eatingwell.com",
+    # ── Specialty & ethnic ──
+    "thekitchn.com", "cookieandkate.com", "budgetbytes.com",
+    "pinchofyum.com", "minimalistbaker.com", "loveandlemons.com",
+    "smittenkitchen.com", "halfbakedharvest.com", "damndelicious.net",
+    # ── Middle Eastern / Moroccan ──
+    "toriavey.com", "ottolenghi.co.uk", "196flavors.com",
+    "themediterraneandish.com", "feastingathome.com",
+    "mymoroccanfood.com", "moroccanzest.com", "maroc-cuisine.com",
+    "tasteofmaroc.com", "moroccanfoodtour.com",
+    # ── Photography-focused ──
+    "foodgawker.com", "tastespotting.com", "foodporn.net",
+    "foodiesfeed.com", "unsplash.com", "pexels.com",
+    # ── International ──
+    "bbcgoodfood.com", "jamieoliver.com", "greatbritishchefs.com",
+    "ricardocuisine.com",
 ]
 
 
-def source_israeli_ddg(recipe_title, query_en):
-    """DuckDuckGo Hebrew image search — naturally surfaces Israeli food sites.
-
-    Searches for the Hebrew recipe title + 'מתכון' which surfaces
-    10dakot, hashulchan, walla, mako, shufersal etc. first.
-    """
+def _ddg_image_search(query, locale="us-en", max_results=5):
+    """Generic DuckDuckGo image search. Returns list of image URLs."""
     sd = preferred_sess()
     from urllib.parse import quote_plus
-
-    # Hebrew query prioritizes Israeli results naturally
-    kw = recipe_title + " מתכון אוכל"
+    urls = []
     try:
         vqd_r = sd.get(
-            f"https://duckduckgo.com/?q={quote_plus(kw)}&iax=images&ia=images",
-            timeout=NET_TIMEOUT, verify=False, headers={
-                **API_HDRS, "Accept": "text/html"})
-        if vqd_r.status_code != 200: return None
+            f"https://duckduckgo.com/?q={quote_plus(query)}&iax=images&ia=images",
+            timeout=NET_TIMEOUT, verify=False, headers={**API_HDRS, "Accept": "text/html"})
+        if vqd_r.status_code != 200: return urls
         vqd_m = re.search(r'vqd=([0-9-]+)', vqd_r.text) or re.search(r'"vqd":"([^"]+)"', vqd_r.text)
-        if not vqd_m: return None
+        if not vqd_m: return urls
         vqd = vqd_m.group(1)
         img_r = sd.get(
             "https://duckduckgo.com/i.js",
-            params={"l":"il-he","o":"json","q":kw,"vqd":vqd,"f":",,,,,","p":"1"},
-            timeout=NET_TIMEOUT, verify=False, headers={
-                **API_HDRS, "Referer": "https://duckduckgo.com/"})
-        if img_r.status_code != 200: return None
+            params={"l": locale, "o": "json", "q": query, "vqd": vqd, "f": ",,,,,", "p": "1"},
+            timeout=NET_TIMEOUT, verify=False, headers={**API_HDRS, "Referer": "https://duckduckgo.com/"})
+        if img_r.status_code != 200: return urls
         results = img_r.json().get("results", [])
-
-        # First pass: prefer Israeli domains
-        for res in results[:10]:
-            url = res.get("image", "")
-            src = res.get("source", "").lower()
-            w, h = res.get("width", 0), res.get("height", 0)
-            if url and w >= 300 and h >= 200:
-                if any(d in src for d in _IL_FOOD_DOMAINS):
-                    return url
-
-        # Second pass: any good result from Hebrew search
-        for res in results[:5]:
+        for res in results[:max_results * 2]:
             url = res.get("image", "")
             w, h = res.get("width", 0), res.get("height", 0)
             if url and w >= 300 and h >= 200:
-                return url
+                urls.append(url)
+                if len(urls) >= max_results:
+                    break
     except Exception:
         pass
-    return None
+    return urls
 
 
-def source_israeli_sites_direct(recipe_title, query_en):
-    """Direct search on Israeli food site APIs.
+def _ddg_site_search(query, domains, locale="us-en", max_results=3):
+    """DuckDuckGo image search scoped to specific domains."""
+    # Build site: query (max 5 domains per search to avoid truncation)
+    site_q = " OR ".join(f"site:{d}" for d in domains[:5])
+    full_q = f"{query} ({site_q})"
+    return _ddg_image_search(full_q, locale, max_results)
 
-    Searches Google Custom Search Engine scoped to Israeli food domains,
-    or scrapes search results from Israeli food portals.
-    Uses DuckDuckGo with site: operator for specific Israeli food sites.
-    """
-    sd = preferred_sess()
-    from urllib.parse import quote_plus
 
-    # DuckDuckGo with site: operators for top Israeli food sites
-    il_sites = ["10dakot.co.il", "hashulchan.co.il", "foody.co.il",
-                "food.walla.co.il", "mako.co.il"]
-    site_query = " OR ".join(f"site:{s}" for s in il_sites)
-    kw = f"{recipe_title} מתכון ({site_query})"
+def source_il_group_a(recipe_title, query_en):
+    """Israeli food sites — batch 1 (domains 0-4)"""
+    return _ddg_site_search(recipe_title + " מתכון",
+        _IL_FOOD_DOMAINS[0:5],
+        locale="il-he", max_results=3)
 
-    try:
-        vqd_r = sd.get(
-            f"https://duckduckgo.com/?q={quote_plus(kw)}&iax=images&ia=images",
-            timeout=NET_TIMEOUT, verify=False, headers={
-                **API_HDRS, "Accept": "text/html"})
-        if vqd_r.status_code != 200: return None
-        vqd_m = re.search(r'vqd=([0-9-]+)', vqd_r.text) or re.search(r'"vqd":"([^"]+)"', vqd_r.text)
-        if not vqd_m: return None
-        vqd = vqd_m.group(1)
-        img_r = sd.get(
-            "https://duckduckgo.com/i.js",
-            params={"l":"il-he","o":"json","q":kw,"vqd":vqd,"f":",,,,,","p":"1"},
-            timeout=NET_TIMEOUT, verify=False, headers={
-                **API_HDRS, "Referer": "https://duckduckgo.com/"})
-        if img_r.status_code != 200: return None
-        results = img_r.json().get("results", [])
-        for res in results[:5]:
-            url = res.get("image", "")
-            w, h = res.get("width", 0), res.get("height", 0)
-            if url and w >= 300 and h >= 200:
-                return url
-    except Exception:
-        pass
-    return None
+def source_il_group_b(recipe_title, query_en):
+    """Israeli food sites — batch 2 (domains 5-9)"""
+    return _ddg_site_search(recipe_title + " מתכון",
+        _IL_FOOD_DOMAINS[5:10],
+        locale="il-he", max_results=2)
+
+def source_il_group_c(recipe_title, query_en):
+    """Israeli food sites — batch 3 (domains 10-14)"""
+    return _ddg_site_search(recipe_title + " מתכון",
+        _IL_FOOD_DOMAINS[10:15],
+        locale="il-he", max_results=2)
+
+def source_il_group_d(recipe_title, query_en):
+    """Israeli food sites — batch 4 (domains 15-19)"""
+    return _ddg_site_search(recipe_title + " מתכון",
+        _IL_FOOD_DOMAINS[15:20],
+        locale="il-he", max_results=2)
+
+def source_il_general(recipe_title, query_en):
+    """General Hebrew DDG search — surfaces all Israeli sites naturally"""
+    return _ddg_image_search(recipe_title + " מתכון אוכל", locale="il-he", max_results=3)
+
+def source_intl_group_a(query_en):
+    """International recipe sites — batch 1 (domains 0-4)"""
+    return _ddg_site_search(query_en + " recipe food",
+        _INTL_FOOD_DOMAINS[0:5],
+        max_results=3)
+
+def source_intl_group_b(query_en):
+    """International recipe sites — batch 2 (domains 5-9)"""
+    return _ddg_site_search(query_en + " recipe",
+        _INTL_FOOD_DOMAINS[5:10],
+        max_results=2)
+
+def source_intl_group_c(query_en):
+    """International food blogs — batch 3 (domains 10-14)"""
+    return _ddg_site_search(query_en + " recipe",
+        _INTL_FOOD_DOMAINS[10:15],
+        max_results=2)
+
+def source_intl_group_d(query_en):
+    """Middle Eastern/Moroccan specialty — batch 4 (domains 15-19)"""
+    return _ddg_site_search(query_en + " recipe moroccan",
+        _INTL_FOOD_DOMAINS[15:20],
+        max_results=3)
+
+def source_intl_group_e(query_en):
+    """Moroccan & food sites — batch 5 (domains 20-24)"""
+    return _ddg_site_search(query_en + " moroccan recipe",
+        _INTL_FOOD_DOMAINS[20:25],
+        max_results=2)
+
+def source_intl_general(query_en):
+    """General English DDG image search"""
+    return _ddg_image_search(query_en + " food recipe", max_results=3)
+
+def source_stock_photos(query_en):
+    """Stock & photography sites — batch 6 (domains 25-29 + extras)"""
+    return _ddg_site_search(query_en + " food",
+        _INTL_FOOD_DOMAINS[25:30],
+        max_results=2)
+
+# ── Additional groups to cover ALL domains ──
+
+def source_il_group_e(recipe_title, query_en):
+    """Israeli food sites — batch 5 (domains 20-24)"""
+    return _ddg_site_search(recipe_title + " מתכון",
+        _IL_FOOD_DOMAINS[20:25],
+        locale="il-he", max_results=2)
+
+def source_il_group_f(recipe_title, query_en):
+    """Israeli food sites — batch 6 (domains 25-29)"""
+    return _ddg_site_search(recipe_title + " מתכון",
+        _IL_FOOD_DOMAINS[25:30],
+        locale="il-he", max_results=2)
+
+def source_il_group_g(recipe_title, query_en):
+    """Israeli food sites — batch 7 (domains 30-34)"""
+    return _ddg_site_search(recipe_title + " מתכון",
+        _IL_FOOD_DOMAINS[30:35],
+        locale="il-he", max_results=2)
+
+def source_il_group_h(recipe_title, query_en):
+    """Israeli food sites — batch 8 (domains 35-41)"""
+    return _ddg_site_search(recipe_title + " מתכון",
+        _IL_FOOD_DOMAINS[35:42],
+        locale="il-he", max_results=2)
+
+def source_intl_group_f(query_en):
+    """International sites — batch 7 (domains 30-34)"""
+    return _ddg_site_search(query_en + " recipe",
+        _INTL_FOOD_DOMAINS[30:35],
+        max_results=2)
+
+def source_intl_group_g(query_en):
+    """International sites — batch 8 (domains 35-40)"""
+    return _ddg_site_search(query_en + " recipe food",
+        _INTL_FOOD_DOMAINS[35:41],
+        max_results=2)
 
 def source_mealdb(query):
     """TheMealDB free API — real food photos, fast."""
@@ -1812,6 +1907,7 @@ def main():
         recipes = parse_recipes()
         total   = len(recipes)
         already = sum(1 for r in recipes if (IMG_DIR / f"r-{r['id']}.jpg").exists())
+        total_imgs = len(list(IMG_DIR.glob("r-*.jpg")))
 
         # בנה אינדקס SHA256 מקבצים קיימים — למניעת כפילויות בזמן ריצה
         import hashlib
@@ -1837,8 +1933,8 @@ def main():
         log("")
         log("שלב 1 — הורדת תמונות")
         log("-" * 60)
-        log(f"מתכונים: {total} | קיימים: {already} | OVERWRITE={OVERWRITE}")
-        log(f"מקורות: IL-DDG → IL-Sites → Hebrew → TheMealDB → Wikimedia → Openverse → Wikipedia → DDG → Flickr")
+        log(f"מתכונים: {total} | קיימים: {already} | תמונות בדיסק: {total_imgs} | MAX_PER_RECIPE={MAX_IMAGES_PER_RECIPE} | OVERWRITE={OVERWRITE}")
+        log(f"מקורות: IL×5 → Hebrew → INTL×5 → Stock → MealDB → Wikimedia → Openverse → Wikipedia")
         log(f"Ctrl+C = יציאה מיידית")
         log("")
 
@@ -1877,69 +1973,119 @@ def main():
             cat   = recipe["cat"]
             dest  = IMG_DIR / f"r-{rid}.jpg"
 
-            if dest.exists() and not OVERWRITE:
+            # Count existing images for this recipe (primary + extras)
+            existing_imgs = [dest] if dest.exists() else []
+            for ei in range(2, MAX_IMAGES_PER_RECIPE + 1):
+                ep = IMG_DIR / f"r-{rid}-{ei}.jpg"
+                if ep.exists():
+                    existing_imgs.append(ep)
+
+            if len(existing_imgs) >= MAX_IMAGES_PER_RECIPE and not OVERWRITE:
                 skip_count += 1
                 if skip_count <= 5 or skip_count % 100 == 0:
-                    log(f"  >> [{i+1:4d}/{total}] skip [{rid}]")
+                    log(f"  >> [{i+1:4d}/{total}] skip [{rid}] ({len(existing_imgs)} images)")
                 continue
 
             query = build_query(recipe)
             pct = (i + 1) * 100 // total
             log(f"  >> [{i+1:4d}/{total}] {pct:3d}% [{rid:8s}] \"{query[:35]}\"")
 
-            saved  = False
-            source = "?"
             t0 = time.time()
+            collected_urls = []  # All URLs found across all sources
 
-            sources = [
-                # ── Israeli sources (searched FIRST) ──
-                ("il-ddg",    lambda t=title, q=query: source_israeli_ddg(t, q)),
-                ("il-sites",  lambda t=title, q=query: source_israeli_sites_direct(t, q)),
-                ("hebrew",    lambda t=title, q=query: source_hebrew_first(t, q)),
-                # ── International sources ──
-                ("mealdb",    lambda q=query: source_mealdb(q)),
-                ("wikimedia", lambda q=query: source_wikimedia_single(q)),
-                ("openverse", lambda q=query: source_openverse(q)),
-                ("wikipedia2",lambda q=query, rid=rid: source_unsplash_search(q)),
-                ("ddg",       lambda q=query: source_foodimages_scrape(q)),
-                ("flickr",    lambda q=query, rid=rid: source_loremflickr(q, rid)),
+            # ═══ Source definitions: each returns a LIST of URLs ═══
+            # Single-URL sources are wrapped in lambda returning [url] or []
+            def _wrap(fn):
+                """Wrap single-URL source to return list."""
+                r = fn()
+                return [r] if r else []
+
+            sources_multi = [
+                # ── Israeli sources (8 groups × 5 domains = 42 domains, Hebrew search) ──
+                ("il-1",        lambda t=title, q=query: source_il_group_a(t, q)),
+                ("il-2",        lambda t=title, q=query: source_il_group_b(t, q)),
+                ("il-3",        lambda t=title, q=query: source_il_group_c(t, q)),
+                ("il-4",        lambda t=title, q=query: source_il_group_d(t, q)),
+                ("il-5",        lambda t=title, q=query: source_il_group_e(t, q)),
+                ("il-6",        lambda t=title, q=query: source_il_group_f(t, q)),
+                ("il-7",        lambda t=title, q=query: source_il_group_g(t, q)),
+                ("il-8",        lambda t=title, q=query: source_il_group_h(t, q)),
+                ("il-general",  lambda t=title, q=query: source_il_general(t, q)),
+                ("hebrew",      lambda t=title, q=query: _wrap(lambda: source_hebrew_first(t, q))),
+                # ── International sources (8 groups × 5 domains = 41 domains, English search) ──
+                ("intl-1",      lambda q=query: source_intl_group_a(q)),
+                ("intl-2",      lambda q=query: source_intl_group_b(q)),
+                ("intl-3",      lambda q=query: source_intl_group_c(q)),
+                ("intl-4",      lambda q=query: source_intl_group_d(q)),
+                ("intl-5",      lambda q=query: source_intl_group_e(q)),
+                ("intl-6",      lambda q=query: source_intl_group_f(q)),
+                ("intl-7",      lambda q=query: source_intl_group_g(q)),
+                ("intl-general",lambda q=query: source_intl_general(q)),
+                ("stock",       lambda q=query: source_stock_photos(q)),
+                # ── Structured APIs (English search) ──
+                ("mealdb",      lambda q=query: _wrap(lambda: source_mealdb(q))),
+                ("wikimedia",   lambda q=query: _wrap(lambda: source_wikimedia_single(q))),
+                ("openverse",   lambda q=query: _wrap(lambda: source_openverse(q))),
+                ("wikipedia2",  lambda q=query: _wrap(lambda: source_unsplash_search(q))),
             ]
 
-            for si, (src_name, src_fn) in enumerate(sources):
-                if saved: break
-                # Hard per-recipe timeout: 45s total across all sources
-                if time.time() - t0 > 45:
-                    log(f"     TIMEOUT — recipe took >45s, skipping remaining sources")
+            # ═══ Collect URLs from ALL sources (no early break) ═══
+            for si, (src_name, src_fn) in enumerate(sources_multi):
+                # Hard per-recipe timeout: 90s total across all sources
+                if time.time() - t0 > 90:
+                    log(f"     TIMEOUT — recipe took >90s, stopping collection")
                     break
                 t1 = time.time()
                 try:
-                    # Hard timeout per source: 10s max (prevents infinite hangs)
-                    url = _call_with_timeout(src_fn, timeout_sec=10)
-                    dt_find = time.time() - t1
-                    if url:
-                        dl_ok = _call_with_timeout(
-                            lambda u=url, d=dest: download_and_save(u, d),
-                            timeout_sec=10)
-                        dt = time.time() - t1
-                        if dl_ok:
-                            saved  = True
-                            source = src_name
-                            source_counts[src_name] = source_counts.get(src_name, 0) + 1
-                            log(f"     OK via {src_name} ({dt:.1f}s)")
-                        elif dt > 2:
-                            log(f"     {src_name}: download failed ({dt:.1f}s)")
-                    elif dt_find > 2:
-                        log(f"     {src_name}: no result ({dt_find:.1f}s)")
+                    urls = _call_with_timeout(src_fn, timeout_sec=15)
+                    dt = time.time() - t1
+                    if urls and isinstance(urls, list):
+                        new_urls = [u for u in urls if u and u not in collected_urls]
+                        collected_urls.extend(new_urls)
+                        if new_urls:
+                            source_counts[src_name] = source_counts.get(src_name, 0) + len(new_urls)
+                            log(f"     {src_name}: +{len(new_urls)} URLs ({dt:.1f}s)")
+                    elif dt > 3:
+                        log(f"     {src_name}: no result ({dt:.1f}s)")
                 except Exception as e:
                     dt = time.time() - t1
-                    log(f"     {src_name} error ({dt:.1f}s): {type(e).__name__}")
+                    if dt > 2:
+                        log(f"     {src_name} error ({dt:.1f}s): {type(e).__name__}")
+
+                # If we already have enough URLs, skip remaining sources
+                if len(collected_urls) >= MAX_IMAGES_PER_RECIPE * 2:
+                    break
+
+            # ═══ Download up to MAX_IMAGES_PER_RECIPE from collected URLs ═══
+            saved_count = 0
+            for ui, url in enumerate(collected_urls[:MAX_IMAGES_PER_RECIPE * 3]):
+                if saved_count >= MAX_IMAGES_PER_RECIPE:
+                    break
+                if saved_count == 0:
+                    img_dest = dest  # r-{id}.jpg (primary)
+                else:
+                    img_dest = IMG_DIR / f"r-{rid}-{saved_count + 1}.jpg"  # r-{id}-2.jpg, r-{id}-3.jpg
+
+                if img_dest.exists() and not OVERWRITE:
+                    saved_count += 1
+                    continue
+
+                try:
+                    dl_ok = _call_with_timeout(
+                        lambda u=url, d=img_dest: download_and_save(u, d),
+                        timeout_sec=10)
+                    if dl_ok:
+                        saved_count += 1
+                except Exception:
+                    pass
 
             elapsed = time.time() - t0
-            if saved:
+            if saved_count > 0:
                 ok_count += 1
+                log(f"     OK — {saved_count} images saved ({elapsed:.1f}s)")
             else:
                 fail_count += 1
-                log(f"     FAIL — all sources exhausted ({elapsed:.0f}s)")
+                log(f"     FAIL — no images from {len(collected_urls)} URLs ({elapsed:.0f}s)")
 
             # ── Progress every 25 recipes or 10% ──
             done = i + 1 - skip_count
