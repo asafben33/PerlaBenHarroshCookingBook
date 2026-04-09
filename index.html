@@ -1248,6 +1248,7 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
 </footer>
 
 <script src="data.js"></script>
+<script src="pre_en.js"></script>
 <script>
 
 
@@ -5422,16 +5423,19 @@ function getEnTitle(r) {
 
 function getEnDesc(r) {
   if (_LANG !== 'en') return r.desc || '';
+  if (typeof _PRE_EN !== 'undefined' && _PRE_EN[r.id] && _PRE_EN[r.id].d) return _PRE_EN[r.id].d;
   return translateHe(r.desc || '');
 }
 
 function getEnMem(r) {
   if (_LANG !== 'en') return r.mem || '';
+  if (typeof _PRE_EN !== 'undefined' && _PRE_EN[r.id] && _PRE_EN[r.id].m) return _PRE_EN[r.id].m;
   return translateHe(r.mem || '');
 }
 
 function getEnTip(r) {
   if (_LANG !== 'en') return r.tip || '';
+  if (typeof _PRE_EN !== 'undefined' && _PRE_EN[r.id] && _PRE_EN[r.id].t) return _PRE_EN[r.id].t;
   return translateHe(r.tip || '');
 }
 
