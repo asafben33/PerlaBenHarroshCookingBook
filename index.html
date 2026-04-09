@@ -4648,7 +4648,31 @@ var _FOOD_DICT = {
   'טמפרטורת':'temperature of','הדולמות':'the dolmas',
   'הכיסונים':'the dumplings','להיווצר':'to form',
   'בחשמלי':'in electric','תסמיך':'will thicken',
-  'השולחנה':'the table','כתום':'orange'
+  'השולחנה':'the table','כתום':'orange',
+  'ריר':'slime','נעלם':'disappears','קודם':'first/before',
+  'שובר':'breaks','מנענעים':'shake gently','מטוגן':'fried',
+  'למדה':'learned','שלמדה':'that she learned','הספרדייה':'the Sephardic woman',
+  'מחמותה':'from her mother-in-law','שיטה':'method',
+  'הוספת':'adding','הערבוב':'the mixing',
+  'הבמיה':'the okra','לבמיה':'to okra','אותה':'her/it',
+  'מטוגנת':'fried','מבושלת':'cooked','מלא':'full',
+  'מטגנים':'fry','מבשלים':'cook','לערבב':'to mix',
+  'לאחר':'after','מדי':'too much','נעלם':'disappears',
+  'אמרה':'said','הייתה':'was','אומרת':'says',
+  'עצמה':'herself','הראשון':'the first','שהגיע':'that arrived',
+  'מהמטבח':'from the kitchen','נוגעים':'touch',
+  'מכינה':'prepares','בישול':'cooking','איטי':'slow',
+  'ובסיום':'and at the end','שאי':'that not','לדמות':'to imagine',
+  'לקצר':'to shorten','יביא':'will bring','תוצאה':'result',
+  'חסרה':'lacking','שמרו':'keep','הנמוכה':'the low',
+  'הסופי':'the final','להיות':'to be','עבה':'thick',
+  'כריבה':'like jam','נוזלי':'liquid','ישירות':'directly',
+  'לסיר':'into pot','שטוח':'flat','ורחב':'and wide',
+  'גבוה':'high','שטח':'area','גדול':'large',
+  'פנים':'surface/inside','הנוזלים':'the liquids',
+  'למהר':'to rush','רוצים':'want','ממשיכים':'continue',
+  'מאוד':'very','ערבוב':'mixing','תכוף':'frequent',
+  'הסופי':'the final','כריבה':'like jam'
 };
 
 // Sorted keys by length (longest first for greedy matching)
@@ -4694,15 +4718,33 @@ function translateHe(text) {
     // Strip common suffixes: ים, ות, ה, ת, י, ן
     if (w.length > 3) {
       var suffixes = ['ים','ות','ה','ת','י','ן'];
+      // Hebrew final letters: when stripping suffix, convert last char to final form
+      var _FINAL = {'\u05E0':'\u05DF','\u05DE':'\u05DD','\u05E6':'\u05E5','\u05E4':'\u05E3','\u05DB':'\u05DA'};
+      // נ→ן  מ→ם  צ→ץ  פ→ף  כ→ך
       for (var si = 0; si < suffixes.length; si++) {
         var sf = suffixes[si];
         if (w.length > sf.length + 1 && w.slice(-sf.length) === sf) {
           var stem = w.slice(0, -sf.length);
           if (_FOOD_DICT[stem]) return _FOOD_DICT[stem];
+          // Convert last char to final form and try
+          var lastChar = stem[stem.length - 1];
+          if (_FINAL[lastChar]) {
+            var stemF = stem.slice(0, -1) + _FINAL[lastChar];
+            if (_FOOD_DICT[stemF]) return _FOOD_DICT[stemF];
+            // prefix + final-form stem
+            if (stemF.length > 2 && _PFX[stemF[0]] && _FOOD_DICT[stemF.slice(1)]) {
+              return _PFX[stemF[0]] + _FOOD_DICT[stemF.slice(1)];
+            }
+          }
           // prefix + suffix
           if (stem.length > 2 && _PFX[stem[0]]) {
             var ps = stem.slice(1);
             if (_FOOD_DICT[ps]) return _PFX[stem[0]] + _FOOD_DICT[ps];
+            // prefix + final-form
+            if (ps.length > 1 && _FINAL[ps[ps.length-1]]) {
+              var psF = ps.slice(0,-1) + _FINAL[ps[ps.length-1]];
+              if (_FOOD_DICT[psF]) return _PFX[stem[0]] + _FOOD_DICT[psF];
+            }
           }
           // Try adding common endings to stem: ה, ן, ת
           var endings = ['\u05D4','\u05DF','\u05EA'];
