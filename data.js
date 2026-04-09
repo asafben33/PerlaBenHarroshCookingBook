@@ -18768,7 +18768,7 @@ const MENU_STRUCTURE = [
   ]},
 
   /* ── KATAMON NEIGHBOURS ── */
-  {lbl:'שכנות הקטמון', key:'katamon', items:[
+  {lbl:'מתכונים מכל העדות שנלמדו מהשכנים ומהחברים', key:'katamon', items:[
     {ids:['iraq','kurd','ashk','yem','pers','buk','tun','isr','turk'], lbl:'הכל'},
     {id:'iraq', lbl:'עיראק'},
     {id:'kurd', lbl:'כורדיסטן'},
