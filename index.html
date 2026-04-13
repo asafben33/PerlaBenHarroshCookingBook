@@ -403,6 +403,22 @@ ol { padding-right: 1.2rem; }
 }
 .about-body { flex: 1; }
 
+.book-section { margin-top: 1.5rem; }
+.book-main-title { text-align: center; font-size: 1.3rem; color: var(--c-gold-l); margin-bottom: .3rem; }
+.book-chapter { margin: 1.2rem 0; padding: 1rem 0; border-bottom: 1px solid var(--c-bdr); }
+.book-chapter:last-child { border-bottom: none; }
+.book-ch-title { color: var(--c-gold); font-size: 1.1rem; font-weight: 700; margin: 0 0 .2rem; direction: rtl; text-align: right; }
+.book-ch-page { font-size: .7rem; color: rgba(237,224,196,.45); margin: 0 0 .6rem; direction: rtl; text-align: right; }
+html.light .book-ch-page { color: #8a6040; }
+.book-p { line-height: 1.9; margin: .5rem 0; text-align: justify; direction: rtl; color: rgba(237,224,196,.88); }
+html.light .book-p { color: #4a2a14; }
+.book-placeholder { font-style: italic; color: rgba(237,224,196,.4); }
+html.light .book-placeholder { color: #bba080; }
+.book-photo { margin: 1rem auto; text-align: center; }
+.book-photo img { max-width: 100%; border-radius: 8px; border: 2px solid var(--c-bdr); }
+.book-photo-caption { font-size: .75rem; color: var(--c-gold-d); margin-top: .3rem; font-style: italic; }
+
+
 
 .about-h { direction: rtl; text-align: right; font-size: 1.12rem; font-weight: 700; color: var(--c-gold-l); margin-bottom: .6rem; }
 .about-p { direction: rtl; text-align: right; font-size: .9rem; line-height: 1.8; color: rgba(237,224,196,.88); margin-bottom: .8rem; }
@@ -1125,7 +1141,159 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
         הסיפור המלא של פרלה ופנחס בן הראש ז״ל — בקרוב
       </p>
     </div>
-    <div class="about-tags" role="list"><div class="about-tags" role="list">
+    
+    <div class="book-section" id="book-content">
+      <h2 class="about-h book-main-title">
+        על שביל האהבה ממרוקו לירושלים
+      </h2>
+      <p class="about-p" style="font-style:italic;text-align:center">
+        מתוך הספר שכתב פנחס בן הראש ז״ל, ירושלים 2013
+      </p>
+
+      <div class="book-chapter" id="book-prologue">
+        <h3 class="book-ch-title">פרולוג</h3>
+        <p class="book-ch-page">עמוד 5</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch1">
+        <h3 class="book-ch-title">פרק א': שורשים באדמת מרוקו</h3>
+        <p class="book-ch-page">עמוד 7</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch2">
+        <h3 class="book-ch-title">פרק ב': מעגל השנה</h3>
+        <p class="book-ch-page">עמוד 19</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch3">
+        <h3 class="book-ch-title">פרק ג': מרוקו של ילדותי</h3>
+        <p class="book-ch-page">עמוד 25</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch4">
+        <h3 class="book-ch-title">פרק ד': כמיהה ציונית</h3>
+        <p class="book-ch-page">עמוד 35</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch5">
+        <h3 class="book-ch-title">פרק ה': אל הדרור</h3>
+        <p class="book-ch-page">עמוד 43</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch6">
+        <h3 class="book-ch-title">פרק ו': ימים ראשונים בארץ</h3>
+        <p class="book-ch-page">עמוד 51</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch7">
+        <h3 class="book-ch-title">פרק ז': סיפורה של פרלה</h3>
+        <p class="book-ch-page">עמוד 57</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch8">
+        <h3 class="book-ch-title">פרק ח': בית ומשפחה</h3>
+        <p class="book-ch-page">עמוד 67</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch9">
+        <h3 class="book-ch-title">פרק ט': במדים</h3>
+        <p class="book-ch-page">עמוד 77</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch10">
+        <h3 class="book-ch-title">פרק י': המבט לעבר, הפנים לעתיד</h3>
+        <p class="book-ch-page">עמוד 85</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+    </div>
+
+    <div class="about-tags" role="list">
+    <div class="book-section" id="book-content">
+      <h2 class="about-h book-main-title">
+        על שביל האהבה ממרוקו לירושלים
+      </h2>
+      <p class="about-p" style="font-style:italic;text-align:center">
+        מתוך הספר שכתב פנחס בן הראש ז״ל, ירושלים 2013
+      </p>
+
+      <div class="book-chapter" id="book-prologue">
+        <h3 class="book-ch-title">פרולוג</h3>
+        <p class="book-ch-page">עמוד 5</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch1">
+        <h3 class="book-ch-title">פרק א': שורשים באדמת מרוקו</h3>
+        <p class="book-ch-page">עמוד 7</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch2">
+        <h3 class="book-ch-title">פרק ב': מעגל השנה</h3>
+        <p class="book-ch-page">עמוד 19</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch3">
+        <h3 class="book-ch-title">פרק ג': מרוקו של ילדותי</h3>
+        <p class="book-ch-page">עמוד 25</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch4">
+        <h3 class="book-ch-title">פרק ד': כמיהה ציונית</h3>
+        <p class="book-ch-page">עמוד 35</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch5">
+        <h3 class="book-ch-title">פרק ה': אל הדרור</h3>
+        <p class="book-ch-page">עמוד 43</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch6">
+        <h3 class="book-ch-title">פרק ו': ימים ראשונים בארץ</h3>
+        <p class="book-ch-page">עמוד 51</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch7">
+        <h3 class="book-ch-title">פרק ז': סיפורה של פרלה</h3>
+        <p class="book-ch-page">עמוד 57</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch8">
+        <h3 class="book-ch-title">פרק ח': בית ומשפחה</h3>
+        <p class="book-ch-page">עמוד 67</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch9">
+        <h3 class="book-ch-title">פרק ט': במדים</h3>
+        <p class="book-ch-page">עמוד 77</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+
+      <div class="book-chapter" id="book-ch10">
+        <h3 class="book-ch-title">פרק י': המבט לעבר, הפנים לעתיד</h3>
+        <p class="book-ch-page">עמוד 85</p>
+        <p class="book-p book-placeholder">הטקסט ייטען בקרוב...</p>
+      </div>
+    </div>
+
+    <div class="about-tags" role="list">
         <span class="at" role="listitem" data-i18n="tag_moroccan">מטבח מרוקאי</span>
         <span class="at" role="listitem" data-i18n="tag_spain">מורשת ספרד</span>
         <span class="at" role="listitem" data-i18n="tag_1492">מגורשי ספרד 1492</span>
