@@ -7,6 +7,7 @@ download_images.py — Perla Ben-Harrosh z"l Cookbook
 
 שלב 1 — Download:
   מוריד תמונות ל-1,014 מתכונים מקוריים + 40 לא-כשרים = 1,054 סה"כ.
+  עד 10 תמונות לכל מתכון — עובר על כל 13 המקורות ללא עצירה מוקדמת.
   מקורות בסדר עדיפות: עברית-ראשון → TheMealDB → Wikimedia →
                          Openverse → Unsplash → DuckDuckGo → Loremflickr
   בטוח מפני תלייה: socket timeout גלובלי, Ctrl+C = יציאה מיידית.
@@ -32,6 +33,20 @@ Log: SCRIPT_DIR/logs/download_images_YYYY-MM-DD_HH.MM.log
 import os, re, sys, time, signal, socket, argparse
 from datetime import datetime
 from pathlib import Path
+
+# ══════════════════════════════════════════════════
+# MENU STRUCTURE REFERENCE (v37)
+# ══════════════════════════════════════════════════
+# כל המתכונים (1054)
+# └─ מטעמים של אמא ממרוקו
+#    ├─ מרקים(103) סלטים(103) מנות עיקריות: בשר(82) עוף(66) דגים(70)
+#    ├─ ירקות(87) חגים(80) קינוחים(80)
+#    ├─ מורשת ספרד(73): מרקים ומינסטרות, בשר ספרדי, דגים ספרדיים,
+#    │  ירקות ספרדיים, שבת וחגים, רטבים, לחמים ספרדיים, קינוחים
+#    ├─ מתכונים מהעדות(270): עיראק כורדיסטן אשכנז תימן פרס
+#    │  בוכרה טוניסיה טורקיה + מטבח ישראלי(30)
+#    └─ לא כשרים(40): פירות ים(14) בשר+חלב(26)
+# ══════════════════════════════════════════════════
 
 # ── Fix Windows PowerShell: UTF-8 encoding + Hebrew RTL display ─────────────
 # Problem: PowerShell is an LTR terminal. Hebrew is stored in logical order
