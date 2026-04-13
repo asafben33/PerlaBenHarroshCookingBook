@@ -1366,7 +1366,7 @@ def source_hebrew_first(recipe_title, query_en):
 # IMAGE SOURCE DOMAINS — 40 Israeli + 40 International
 # ═══════════════════════════════════════════════════════════
 
-MAX_IMAGES_PER_RECIPE = 3  # Download up to 3 images per recipe
+MAX_IMAGES_PER_RECIPE = 10  # Download up to 10 images per recipe (search ALL sources)
 
 # 40 Israeli food domains
 _IL_FOOD_DOMAINS = [
@@ -2113,13 +2113,12 @@ def main():
                 except Exception as e:
                     if is_ddg: ddg_consecutive_fails += 1
 
-                # If we already have enough URLs, stop
-                if len(collected_urls) >= MAX_IMAGES_PER_RECIPE * 2:
-                    break
+                # Continue searching all sources — collect as many URLs as possible
+                # (no early break — we want images from all sources)
 
             # ═══ Download up to MAX_IMAGES_PER_RECIPE from collected URLs ═══
             saved_count = 0
-            for ui, url in enumerate(collected_urls[:MAX_IMAGES_PER_RECIPE * 3]):
+            for ui, url in enumerate(collected_urls[:MAX_IMAGES_PER_RECIPE * 5]):  # Try more URLs
                 if saved_count >= MAX_IMAGES_PER_RECIPE:
                     break
                 if saved_count == 0:
