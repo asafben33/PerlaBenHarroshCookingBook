@@ -5624,13 +5624,22 @@ var I18N = {
   nav_salads:    {he:'סלטים ומזות', en:'Salads & Appetizers'},
   nav_main:      {he:'מנות עיקריות', en:'Main Courses'},
   nav_meat:      {he:'בשר וקציצות', en:'Meat & Meatballs'},
-  nav_chick:     {he:'עוף', en:'Chicken'},
+  nav_chick:     {he:'עוף ושבת', en:'Chicken & Shabbat'},
   nav_fish:      {he:'דגים', en:'Fish'},
   nav_veg:       {he:'ירקות ותוספות', en:'Vegetables & Sides'},
   nav_hol:       {he:'חגים ומועדים', en:'Holidays'},
   nav_des:       {he:'קינוחים ומאפים', en:'Desserts & Pastries'},
   nav_all_sub:   {he:'הכל', en:'All'},
   // Nonkosher sub-categories
+
+  nav_moroccan:  {he:'מטעמים של אמא ממרוקו', en:"Mom's Moroccan Delicacies"},
+  nav_span_soups:{he:'מרקים ומינסטרות', en:'Soups & Minestrones'},
+  nav_span_hol:  {he:'שבת וחגים', en:'Shabbat & Holidays'},
+  nav_span_sauce:{he:'רטבים ותבלינים', en:'Sauces & Spices'},
+  nav_span_bread:{he:'לחמים ומאפים', en:'Breads & Pastries'},
+  nav_span_des:  {he:'קינוחים ומתוקים', en:'Desserts & Sweets'},
+  nav_isr_street:{he:'מאכלי רחוב ישראליים', en:'Israeli Street Food'},
+  nav_isr_des:   {he:'קינוחים ועוגות', en:'Desserts & Cakes'},
   nav_seafood:   {he:'פירות ים ודגים לא כשרים', en:'Non-Kosher Seafood & Fish'},
   nav_meatdairy: {he:'בשר וחלב', en:'Meat & Dairy'},
   // Modal
@@ -5677,7 +5686,7 @@ var _NAV_I18N = {
   'עיראק':'nav_iraq','כורדיסטן':'nav_kurd','אשכנז':'nav_ashk',
   'תימן':'nav_yem','פרס':'nav_pers','בוכרה':'nav_buk','טוניסיה':'nav_tun',
   'מטבח ישראלי':'nav_isr','יהדות טורקיה':'nav_turk',
-  'מרקים':'nav_soups','סלטים ומזות':'nav_salads','מנות עיקריות':'nav_main',
+  'מרקים':'nav_soups','סלטים ומזות':'nav_salads','סלטים':'nav_salads','מנות עיקריות':'nav_main',
   'בשר וקציצות':'nav_meat','עוף':'nav_chick','דגים':'nav_fish',
   'ירקות ותוספות':'nav_veg','חגים ומועדים':'nav_hol','קינוחים ומאפים':'nav_des',
   'הכל':'nav_all_sub',
@@ -5686,6 +5695,7 @@ var _NAV_I18N = {
   'פסח':'hol_pesach','מימונה':'hol_mimouna','חנוכה':'hol_hanukkah',
   'פורים':'hol_purim','שבועות':'hol_shavuot','סוכות':'hol_sukkot','חינה':'hol_henna',
   'כל החגים':'hol_all',
+  'מטעמים של אמא ממרוקו':'nav_moroccan','מרקים ומינסטרות':'nav_span_soups','שבת וחגים':'nav_span_hol','רטבים ותבלינים':'nav_span_sauce','לחמים ומאפים':'nav_span_bread','קינוחים ומתוקים':'nav_span_des','מאכלי רחוב ישראליים':'nav_isr_street','קינוחים ועוגות':'nav_isr_des','עוף ושבת':'nav_chick',
 };
 
 function t(key) { return (I18N[key] && I18N[key][_LANG]) || key; }
