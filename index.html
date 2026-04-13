@@ -1775,8 +1775,10 @@ function buildNav() {
   bar.innerHTML = '';
 
   function catCnt(id) {
-    if (typeof id === 'string') return id === 'all' ? R.length : R.filter(function(r) { return r.cat === id; }).length;
-    return R.filter(function(r) { return id.indexOf(r.cat) >= 0; }).length;
+    if (!id) return 0;
+    if (typeof id === 'string') return id === 'all' ? R.length : R.filter(function(r) { return r && r.cat === id; }).length;
+    if (Array.isArray(id)) return R.filter(function(r) { return r && id.indexOf(r.cat) >= 0; }).length;
+    return 0;
   }
 
   function isActiveLeaf(catId, hol, ids) {
@@ -1854,6 +1856,14 @@ function buildNav() {
     row.className = 'panel-row';
 
     (node.items || []).forEach(function(item) {
+      // Separator
+      if (item.sep) {
+        var hr = document.createElement('div');
+        hr.className = 'acc-sep';
+        row.appendChild(hr);
+        return;
+      }
+
       // Accordion group (has sub-items)
       if (item.items || item.sub) {
         var subItems = item.items || item.sub || [];
@@ -1973,7 +1983,7 @@ function buildNav() {
     // Group with dropdown
     // Compute correct group total — use the 'הכל' item to avoid double-counting
     var total = (function() {
-      if (node.key === 'all_group') return R.length;
+      if (node.key === 'all_group' || node.key === 'all_master') return R.length;
       // Find the 'הכל' aggregate item
       var allItem = (node.items || []).find(function(it) { return it.lbl === 'הכל' && it.ids; });
       if (allItem) {
