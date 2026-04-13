@@ -135,7 +135,7 @@ PROXY       = "http://pac.gov.il:8080"
 
 DELAY       = 0.4    # seconds between recipes (rate limiting)
 NET_TIMEOUT = 5      # seconds per network request
-OVERWRITE   = False  # True = overwrite existing images
+OVERWRITE   = True  # True = overwrite existing images
 
 IMG_DIR.mkdir(parents=True, exist_ok=True)
 try:

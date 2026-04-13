@@ -18735,12 +18735,10 @@ const HOLIDAY_TAGS = {
 
 
 const MENU_STRUCTURE = [
-  /* ── ALL RECIPES ── */
-  {id:'all', lbl:'כל המתכונים'},
-
-  /* ── BY DISH TYPE — single dropdown with all Moroccan-Sephardic categories ── */
-  {lbl:'לפי סוג מנה', key:'by_type', items:[
-    {ids:['soups','salads','veg','meat','chick','fish','des','span'], lbl:'הכל'},
+  /* ── Single top-level: ALL RECIPES with all categories as sub-items ── */
+  {lbl:'כל המתכונים', key:'all_master', items:[
+    {id:'all', lbl:'הכל'},
+    {sep:true},
     {id:'soups',  lbl:'מרקים'},
     {id:'salads', lbl:'סלטים ומזות'},
     {id:'meat',   lbl:'בשר וקציצות'},
@@ -18749,27 +18747,9 @@ const MENU_STRUCTURE = [
     {id:'veg',    lbl:'ירקות ותוספות'},
     {id:'des',    lbl:'קינוחים ומאפים'},
     {id:'span',   lbl:'מורשת ספרד'},
-  ]},
-
-  /* ── HOLIDAYS — dropdown with holiday sub-filters ── */
-  {id:'hol', lbl:'חגים ומועדים', key:'holidays', sub:[
-    {id:'hol', h:null,       lbl:'כל החגים'},
+    {id:'hol',    lbl:'חגים ומועדים'},
     {sep:true},
-    {id:'hol', h:'shabbat',  lbl:'שבת'},
-    {id:'hol', h:'rosh',     lbl:'ראש השנה'},
-    {id:'hol', h:'kippur',   lbl:'יום כיפור'},
-    {id:'hol', h:'pesach',   lbl:'פסח'},
-    {id:'hol', h:'mimouna',  lbl:'מימונה'},
-    {id:'hol', h:'hanukkah', lbl:'חנוכה'},
-    {id:'hol', h:'purim',    lbl:'פורים'},
-    {id:'hol', h:'shavuot',  lbl:'שבועות'},
-    {id:'hol', h:'sukkot',   lbl:'סוכות'},
-    {id:'hol', h:'henna',    lbl:'חינה'},
-  ]},
-
-  /* ── BY ORIGIN — dropdown with all neighbor cuisines ── */
-  {lbl:'מתכונים מהעדות', key:'katamon', items:[
-    {ids:['iraq','kurd','ashk','yem','pers','buk','tun','isr','turk'], lbl:'הכל'},
+    {ids:['iraq','kurd','ashk','yem','pers','buk','tun','isr','turk'], lbl:'מתכונים מהעדות'},
     {id:'iraq', lbl:'עיראק'},
     {id:'kurd', lbl:'כורדיסטן'},
     {id:'ashk', lbl:'אשכנז'},
@@ -18779,13 +18759,8 @@ const MENU_STRUCTURE = [
     {id:'tun',  lbl:'טוניסיה'},
     {id:'isr',  lbl:'מטבח ישראלי'},
     {id:'turk', lbl:'יהדות טורקיה'},
-  ]},
-
-  /* ── NON-KOSHER — dropdown with sub-types ── */
-  {lbl:'מתכונים לא כשרים', key:'nonkosher_group', items:[
-    {ids:['nk_fn3','nk_fn4','nk_fe3','nk_fe5','nk_add34','nk_ex19','nk_hv3','nk_spv2','nk_fe10','nk_ku25','nk_tr8','nk_bu2','nk_bu4','nk_spx3','nk_c5','nk_h2','nk_sp2','nk_sp4','nk_hn15','nk_hn16','nk_rn7','nk_cne4','nk_se9','nk_chf3','nk_chf4','nk_add43','nk_add44','nk_ex26','nk_ex31','nk_fin13','nk_cw3','nk_chfx2','nk_holfx4','nk_me9','nk_hn18','nk_ku3','nk_ku30','nk_ye19','nk_tr26','nk_sn23'], lbl:'הכל'},
-    {ids:['nk_fn3','nk_fn4','nk_fe3','nk_fe5','nk_add34','nk_ex19','nk_hv3','nk_spv2','nk_fe10','nk_ku25','nk_tr8','nk_bu2','nk_bu4','nk_spx3'], lbl:'פירות ים'},
-    {ids:['nk_c5','nk_h2','nk_sp2','nk_sp4','nk_hn15','nk_hn16','nk_rn7','nk_cne4','nk_se9','nk_chf3','nk_chf4','nk_add43','nk_add44','nk_ex26','nk_ex31','nk_fin13','nk_cw3','nk_chfx2','nk_holfx4','nk_me9','nk_hn18','nk_ku3','nk_ku30','nk_ye19','nk_tr26','nk_sn23'], lbl:'בשר וחלב'},
+    {sep:true},
+    {ids:['nk_fn3','nk_fn4','nk_fe3','nk_fe5','nk_add34','nk_ex19','nk_hv3','nk_spv2','nk_fe10','nk_ku25','nk_tr8','nk_bu2','nk_bu4','nk_spx3','nk_c5','nk_h2','nk_sp2','nk_sp4','nk_hn15','nk_hn16','nk_rn7','nk_cne4','nk_se9','nk_chf3','nk_chf4','nk_add43','nk_add44','nk_ex26','nk_ex31','nk_fin13','nk_cw3','nk_chfx2','nk_holfx4','nk_me9','nk_hn18','nk_ku3','nk_ku30','nk_ye19','nk_tr26','nk_sn23'], lbl:'מתכונים לא כשרים'},
   ]},
 ];
 
