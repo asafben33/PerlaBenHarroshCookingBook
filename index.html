@@ -407,8 +407,10 @@ ol { padding-right: 1.2rem; }
 .book-chapter { margin: 1.5rem 0; padding: 1rem 0; border-bottom: 1px solid var(--c-bdr); }
 .book-chapter:last-child { border-bottom: none; }
 .book-ch-title { color: var(--c-gold); font-size: 1.15rem; font-weight: 700; margin: 0 0 .3rem; }
-.book-ch-page { font-size: .75rem; color: var(--c-ink-l); margin: 0 0 .8rem; }
-.book-p { line-height: 1.9; margin: .6rem 0; text-align: justify; direction: rtl; }
+.book-ch-page { font-size: .75rem; color: rgba(237,224,196,.5); margin: 0 0 .8rem; }
+html.light .book-ch-page { color: #8a6040; }
+.book-p { line-height: 1.9; margin: .6rem 0; text-align: justify; direction: rtl; color: rgba(237,224,196,.88); }
+html.light .book-p { color: #4a2a14; }
 
 .about-h { direction: rtl; text-align: right; font-size: 1.12rem; font-weight: 700; color: var(--c-gold-l); margin-bottom: .6rem; }
 .about-p { direction: rtl; text-align: right; font-size: .9rem; line-height: 1.8; color: rgba(237,224,196,.88); margin-bottom: .8rem; }
@@ -1133,10 +1135,10 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
       <p class="about-p" data-i18n="about_p2">עם העלייה לישראל הגיעו לשכונת הקטמון בירושלים. שם, בין שכנות מעיראק, כורדיסטן, אשכנז, תימן, פרס ובוכרה — הפך מטבחה לפסיפס שלם. כאן תמצאו 1,054 מתכונים שנשמרו לדורות.</p>
       
     <div class="book-section" id="book-content">
-      <h2 class="about-h" style="margin-top:2rem;border-top:2px solid var(--c-gold);padding-top:1.5rem">
+      <h2 class="about-h" style="margin-top:2rem;border-top:2px solid var(--c-gold);padding-top:1.5rem;color:var(--c-gold)">
         מתוך הספר שכתב פנחס בן הראש ז״ל — סיפור חייה של פרלה
       </h2>
-      <p class="about-p" style="font-style:italic;color:var(--c-ink-m)">
+      <p class="about-p" class="about-p" style="font-style:italic">
         הטקסט להלן מתוך ספר שכתב פנחס בן הראש לפני כ-12 שנים, המספר את סיפור חייה של פרלה מילדותה בקזבלנקה ועד חייהם המשותפים בירושלים.
       </p>
       
