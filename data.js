@@ -18778,12 +18778,11 @@ const MENU_STRUCTURE = [
         {ids:['spn2','spf1','spf5','add29','add56','spw1','spw2','spx5','rare10'], lbl:'לחמים ומאפים'},
         {ids:['sp9','spn3','spn5','ex42','ex43','ex45','fin19','fin20','spv5','spx4','spx7','spe9','spe10'], lbl:'קינוחים ומתוקים'},
       ]},
-    ]},
 
 
-
-    /* ── מתכונים מהעדות (9 cuisines + Israeli sub-categories) ── */
-    {lbl:'מתכונים מהעדות', ids:['iraq','kurd','ashk','yem','pers','buk','tun','turk','isr'], items:[
+      {sep:true},
+      /* ── מתכונים מהעדות (9 cuisines + Israeli sub-categories) ── */
+      {lbl:'מתכונים מהעדות', ids:['iraq','kurd','ashk','yem','pers','buk','tun','turk','isr'], items:[
       {ids:['iraq','kurd','ashk','yem','pers','buk','tun','turk','isr'], lbl:'הכל'},
       {id:'iraq', lbl:'עיראק'},
       {id:'kurd', lbl:'כורדיסטן'},
@@ -18802,12 +18801,19 @@ const MENU_STRUCTURE = [
       ]},
     ]},
 
-    /* ── מתכונים לא כשרים (corrected: 14 seafood + 26 meat+dairy) ── */
-    {lbl:'מתכונים לא כשרים', ids:['nk_fn3','nk_fn4','nk_fe3','nk_fe5','nk_add34','nk_ex19','nk_hv3','nk_spv2','nk_fe10','nk_ku25','nk_tr8','nk_bu2','nk_bu4','nk_spx3','nk_c5','nk_h2','nk_sp2','nk_sp4','nk_hn15','nk_hn16','nk_rn7','nk_cne4','nk_se9','nk_chf3','nk_chf4','nk_add43','nk_add44','nk_ex26','nk_ex31','nk_fin13','nk_cw3','nk_chfx2','nk_holfx4','nk_me9','nk_hn18','nk_ku3','nk_ku30','nk_ye19','nk_tr26','nk_sn23'], items:[
+      {sep:true},
+      /* ── מתכונים לא כשרים (corrected: 14 seafood + 26 meat+dairy) ── */
+      {lbl:'מתכונים לא כשרים', ids:['nk_fn3','nk_fn4','nk_fe3','nk_fe5','nk_add34','nk_ex19','nk_hv3','nk_spv2','nk_fe10','nk_ku25','nk_tr8','nk_bu2','nk_bu4','nk_spx3','nk_c5','nk_h2','nk_sp2','nk_sp4','nk_hn15','nk_hn16','nk_rn7','nk_cne4','nk_se9','nk_chf3','nk_chf4','nk_add43','nk_add44','nk_ex26','nk_ex31','nk_fin13','nk_cw3','nk_chfx2','nk_holfx4','nk_me9','nk_hn18','nk_ku3','nk_ku30','nk_ye19','nk_tr26','nk_sn23'], items:[
       {ids:['nk_fn3','nk_fn4','nk_fe3','nk_fe5','nk_add34','nk_ex19','nk_hv3','nk_spv2','nk_fe10','nk_ku25','nk_tr8','nk_bu2','nk_bu4','nk_spx3','nk_c5','nk_h2','nk_sp2','nk_sp4','nk_hn15','nk_hn16','nk_rn7','nk_cne4','nk_se9','nk_chf3','nk_chf4','nk_add43','nk_add44','nk_ex26','nk_ex31','nk_fin13','nk_cw3','nk_chfx2','nk_holfx4','nk_me9','nk_hn18','nk_ku3','nk_ku30','nk_ye19','nk_tr26','nk_sn23'], lbl:'הכל'},
       {ids:['nk_fn3','nk_fn4','nk_fe3','nk_fe5','nk_add34','nk_ex19','nk_hv3','nk_spv2','nk_fe10','nk_ku25','nk_tr8','nk_bu2','nk_bu4','nk_spx3'], lbl:'פירות ים'},
       {ids:['nk_c5','nk_h2','nk_sp2','nk_sp4','nk_hn15','nk_hn16','nk_rn7','nk_cne4','nk_se9','nk_chf3','nk_chf4','nk_add43','nk_add44','nk_ex26','nk_ex31','nk_fin13','nk_cw3','nk_chfx2','nk_holfx4','nk_me9','nk_hn18','nk_ku3','nk_ku30','nk_ye19','nk_tr26','nk_sn23'], lbl:'בשר וחלב'},
     ]},
+    ]},
+
+
+
+
+
   ]},
 ];
 
