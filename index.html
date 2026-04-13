@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="ספר הבישול של פרלה בן הראש ז״ל — 1,054 מתכונים מרוקאיים, ספרדיים ויהודיים אותנטיים: מרקים, תגינים, קציצות, קוסקוס, קינוחים ועוד. מורשת קזבלנקה ומרקש לדורות.">
 <meta name="theme-color" content="#130c05">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="בן הראש">
 <link rel="manifest" href="manifest.json">
@@ -1744,7 +1744,7 @@ var _navKey = null;
 
 function closePanel() {
   var panel = document.getElementById('nav-panel');
-  if (panel) { panel.classList.remove('open'); panel.setAttribute('aria-hidden', 'true'); }
+  if (panel) { var _f = panel.querySelector(':focus'); if (_f) _f.blur(); panel.classList.remove('open'); panel.setAttribute('aria-hidden', 'true'); }
   document.querySelectorAll('.nb').forEach(function(b) { b.classList.remove('panel-open'); });
   _navKey = null;
 }
@@ -1893,6 +1893,96 @@ function buildNav() {
             hr.className = 'acc-sep';
             body.appendChild(hr); return;
           }
+
+          // ── Nested accordion (e.g. מתכונים מהעדות inside מטעמים, מטבח ישראלי inside עדות) ──
+          if (s.items || s.sub) {
+            var nestedItems = s.items || s.sub || [];
+            var nic = s.ids ? catCnt(s.ids) : (s.id ? catCnt(s.id) : 0);
+            var nhdr = document.createElement('button');
+            nhdr.className = 'acc-hdr';
+            nhdr.setAttribute('aria-expanded', 'false');
+            nhdr.innerHTML = esc(s.lbl)
+              + (nic ? ' <span class="pc-cnt">(' + nic + ')</span>' : '')
+              + '<span class="acc-a" aria-hidden="true">&#9662;</span>';
+
+            var nbody = document.createElement('div');
+            nbody.className = 'acc-body';
+
+            if (s.ids && !s.sub) {
+              var _nids = s.ids, _nlbl = s.lbl;
+              var isNR = _nids.length > 0 && /[0-9]/.test(_nids[0]);
+              nbody.appendChild(makeChip('הכל ב' + s.lbl, isNR ? _nids.length : catCnt(_nids),
+                function() { if (isNR) selectByIds(_nids, _nlbl, node.key); else selectMulti(_nids, _nlbl, node.key); },
+                isActiveLeaf(null, null, _nids)));
+            }
+
+            nestedItems.forEach(function(ns) {
+              if (ns.sep) { var nhr = document.createElement('div'); nhr.className = 'acc-sep'; nbody.appendChild(nhr); return; }
+              if (ns.ids && !ns.h) {
+                var isNR2 = ns.ids.length > 0 && /[0-9]/.test(ns.ids[0]);
+                if (isNR2) {
+                  var _nr = ns.ids, _nl = ns.lbl;
+                  nbody.appendChild(makeChip(ns.lbl, ns.ids.length,
+                    function() { selectByIds(_nr, _nl, node.key); },
+                    ACT_IDS && _nr.every(function(r){ return ACT_IDS.has(r); }) && _nr.length === ACT_IDS.size));
+                } else {
+                  nbody.appendChild(makeChip(ns.lbl, catCnt(ns.ids),
+                    function() { selectMulti(ns.ids, ns.lbl, node.key); },
+                    isActiveLeaf(null, null, ns.ids)));
+                }
+                return;
+              }
+              if (ns.items || ns.sub) {
+                // 3rd level: render as expandable too
+                var deep = ns.items || ns.sub || [];
+                var dic = ns.ids ? catCnt(ns.ids) : (ns.id ? catCnt(ns.id) : 0);
+                var dhdr = document.createElement('button');
+                dhdr.className = 'acc-hdr';
+                dhdr.setAttribute('aria-expanded', 'false');
+                dhdr.innerHTML = esc(ns.lbl) + (dic ? ' <span class="pc-cnt">(' + dic + ')</span>' : '') + '<span class="acc-a" aria-hidden="true">&#9662;</span>';
+                var dbody = document.createElement('div');
+                dbody.className = 'acc-body';
+                deep.forEach(function(ds) {
+                  if (ds.sep) return;
+                  if (ds.ids) {
+                    var isdr = ds.ids.length > 0 && /[0-9]/.test(ds.ids[0]);
+                    var _dr = ds.ids, _dl = ds.lbl;
+                    dbody.appendChild(makeChip(ds.lbl, isdr ? ds.ids.length : catCnt(ds.ids),
+                      function() { if (isdr) selectByIds(_dr, _dl, node.key); else selectMulti(_dr, _dl, node.key); },
+                      false));
+                  } else if (ds.id) {
+                    dbody.appendChild(makeChip(ds.lbl, catCnt(ds.id),
+                      function() { selectCat(ds.id, ds.h || null, node.key); },
+                      isActiveLeaf(ds.id, ds.h || null, null)));
+                  }
+                });
+                dhdr.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  var o = dbody.classList.toggle('open');
+                  dhdr.classList.toggle('open', o);
+                  dhdr.setAttribute('aria-expanded', o);
+                });
+                nbody.appendChild(dhdr);
+                nbody.appendChild(dbody);
+                return;
+              }
+              var nsc = ns.h ? (HOLIDAY_TAGS[ns.h] || []).length : catCnt(ns.id);
+              nbody.appendChild(makeChip(ns.lbl, nsc || null,
+                function() { selectCat(ns.id, ns.h || null, node.key); },
+                isActiveLeaf(ns.id, ns.h || null, null)));
+            });
+
+            nhdr.addEventListener('click', function(e) {
+              e.stopPropagation();
+              var o = nbody.classList.toggle('open');
+              nhdr.classList.toggle('open', o);
+              nhdr.setAttribute('aria-expanded', o);
+            });
+            body.appendChild(nhdr);
+            body.appendChild(nbody);
+            return;
+          }
+
           // Handle recipe-ID arrays (isr/span subcategories)
           if (s.ids && !s.h) {
             var isRecipeIds = s.ids.length > 0 && /[0-9]/.test(s.ids[0]);

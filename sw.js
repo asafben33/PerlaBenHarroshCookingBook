@@ -1,24 +1,29 @@
 /* ═══════════════════════════════════════════════
-   Service Worker — Perla Ben-Harrosh Cookbook v9
+   Service Worker — Perla Ben-Harrosh Cookbook v10
    Network-first for HTML/JS (always fresh code)
    Cache-first for images (fast loading)
 ═══════════════════════════════════════════════ */
-const CACHE_NAME = 'perla-cookbook-v9';
+const CACHE_NAME = 'perla-cookbook-v10';
 const SHELL = [
   './',
   './index.html',
   './data.js',
   './pre_en.js',
   './manifest.json',
-  './wedding.jpg',
-  'https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&display=swap'
+  './wedding.jpg'
 ];
 
-/* Install — cache shell, skip waiting immediately */
+/* Install — cache shell individually (resilient to 404s) */
 self.addEventListener('install', function(e) {
   e.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll(SHELL);
+      return Promise.all(
+        SHELL.map(function(url) {
+          return cache.add(url).catch(function() {
+            /* Skip files that fail to fetch (e.g. wedding.jpg not yet uploaded) */
+          });
+        })
+      );
     }).then(function() { self.skipWaiting(); })
   );
 });
