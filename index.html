@@ -1971,16 +1971,17 @@ function openM(id) {
   var ingrEl = document.getElementById('m-ingr');
   if (ingrEl) {
     ingrEl.innerHTML = '';
-    (r.ingr || []).forEach(function(item) {
+    var preIngr = (typeof _PRE_EN !== 'undefined' && _PRE_EN[r.id] && _PRE_EN[r.id].ig) ? _PRE_EN[r.id].ig : null;
+    (r.ingr || []).forEach(function(item, idx) {
       var row = document.createElement('div');
       row.className = 'm-ingr-item';
       row.setAttribute('role', 'listitem');
       var q = document.createElement('span');
       q.className = 'm-ingr-q';
-      q.textContent = translateHe(item.q || '');
+      q.textContent = (_LANG === 'en' && preIngr && preIngr[idx]) ? preIngr[idx].q : translateHe(item.q || '');
       var i = document.createElement('span');
       i.className = 'm-ingr-i';
-      i.textContent = translateHe(item.i || '');
+      i.textContent = (_LANG === 'en' && preIngr && preIngr[idx]) ? preIngr[idx].i : translateHe(item.i || '');
       row.appendChild(q);
       row.appendChild(i);
       ingrEl.appendChild(row);
@@ -1991,15 +1992,16 @@ function openM(id) {
   var stepsEl = document.getElementById('m-steps');
   if (stepsEl) {
     stepsEl.innerHTML = '';
-    (r.steps || []).forEach(function(s) {
+    var preSteps = (_LANG === 'en' && typeof _PRE_EN !== 'undefined' && _PRE_EN[r.id] && _PRE_EN[r.id].st) ? _PRE_EN[r.id].st : null;
+    (r.steps || []).forEach(function(s, idx) {
       var li = document.createElement('li');
       li.className = 'm-step';
       if (s.t) {
         var tSpan = document.createElement('span');
         tSpan.className = 'm-step-t';
-        tSpan.textContent = translateHe(s.t) + ' — ';
+        var tText = (preSteps && preSteps[idx]) ? preSteps[idx].t : translateHe(s.t);
+        tSpan.textContent = tText + ' — ';
         li.appendChild(tSpan);
-        // Add timer button if step has minutes
         var mins = parseMinutes(s.t);
         if (mins > 0) {
           var timerBtn = document.createElement('button');
@@ -2016,7 +2018,8 @@ function openM(id) {
           li.appendChild(timerBtn);
         }
       }
-      li.appendChild(document.createTextNode(translateHe(s.s || '')));
+      var sText = (preSteps && preSteps[idx]) ? preSteps[idx].s : translateHe(s.s || '');
+      li.appendChild(document.createTextNode(sText));
       stepsEl.appendChild(li);
     });
   }
@@ -2067,18 +2070,7 @@ function openM(id) {
 }
 
 function appendUploadWrap(hero, recipeId) {
-  var wrap = document.createElement('div');
-  wrap.className = 'm-upload-wrap';
-  var btn = document.createElement('button');
-  btn.className = 'm-upload-btn';
-  btn.textContent = '📷 הוסף תמונה';
-  btn.addEventListener('click', function() { addImg(recipeId); });
-  var hint = document.createElement('p');
-  hint.className = 'm-upload-hint';
-  hint.textContent = 'תמונה תישמר בדפדפן זה';
-  wrap.appendChild(btn);
-  wrap.appendChild(hint);
-  hero.appendChild(wrap);
+  // Removed: photo upload is handled by m-upload-act button in action bar only
 }
 function closeM() {
   var ovl = document.getElementById('ovl');
@@ -2198,12 +2190,17 @@ function printRecipe() {
   var w = window.open('', '_blank', 'noopener,noreferrer');
   if (!w) { showToast('לא ניתן לפתוח חלון — בדקו הגדרות דפדפן'); return; }
   var img = getRecipeImg(r);
-  var ingrs = (r.ingr || []).map(function(i) {
-    if (i.q && i.q.startsWith('---')) return '<tr><td colspan="2" style="font-weight:700;color:#8c2e14;padding:.6rem 0 .2rem;border:none">' + esc(translateHe(i.q.replace(/---/g,'').trim())) + '</td></tr>';
-    return '<tr><td style="font-weight:600;min-width:90px;padding:.25rem .5rem;border-bottom:1px solid #e8e0d0">' + esc(translateHe(i.q)) + '</td><td style="padding:.25rem .5rem;border-bottom:1px solid #e8e0d0">' + esc(translateHe(i.i)) + '</td></tr>';
+  var _pre = (_LANG === 'en' && typeof _PRE_EN !== 'undefined' && _PRE_EN[r.id]) ? _PRE_EN[r.id] : null;
+  var ingrs = (r.ingr || []).map(function(i, idx) {
+    var qi = (_pre && _pre.ig && _pre.ig[idx]) ? _pre.ig[idx].q : translateHe(i.q);
+    var ii = (_pre && _pre.ig && _pre.ig[idx]) ? _pre.ig[idx].i : translateHe(i.i);
+    if (i.q && i.q.startsWith('---')) return '<tr><td colspan="2" style="font-weight:700;color:#8c2e14;padding:.6rem 0 .2rem;border:none">' + esc(qi.replace(/---/g,'').trim()) + '</td></tr>';
+    return '<tr><td style="font-weight:600;min-width:90px;padding:.25rem .5rem;border-bottom:1px solid #e8e0d0">' + esc(qi) + '</td><td style="padding:.25rem .5rem;border-bottom:1px solid #e8e0d0">' + esc(ii) + '</td></tr>';
   }).join('');
   var steps = (r.steps || []).map(function(s, i) {
-    return '<li style="margin:.4rem 0;line-height:1.8">' + (s.t ? '<strong style="color:#c4930a">' + esc(translateHe(s.t)) + ':</strong> ' : '') + esc(translateHe(s.s)) + '</li>';
+    var st = (_pre && _pre.st && _pre.st[i]) ? _pre.st[i].t : translateHe(s.t);
+    var ss = (_pre && _pre.st && _pre.st[i]) ? _pre.st[i].s : translateHe(s.s);
+    return '<li style="margin:.4rem 0;line-height:1.8">' + (s.t ? '<strong style="color:#c4930a">' + esc(st) + ':</strong> ' : '') + esc(ss) + '</li>';
   }).join('');
   var _dir = _LANG === 'en' ? 'ltr' : 'rtl';
   var _align = _LANG === 'en' ? 'left' : 'right';
@@ -5784,12 +5781,17 @@ function exportFullCookbook() {
       if (!recipes.length) return;
       html += '<div class="cat-title" id="cat-' + cid + '">' + esc(translateHe(catNames[cid] || cid)) + '</div>';
       recipes.forEach(function(r) {
-        var ingrs = (r.ingr || []).map(function(i) {
-          if (i.q && i.q.startsWith('---')) return '<tr><td colspan="2" style="font-weight:700;color:#8c2e14;border:none;padding-top:.4rem">' + esc(translateHe(i.q.replace(/---/g,'').trim())) + '</td></tr>';
-          return '<tr><td style="font-weight:600;min-width:70px">' + esc(translateHe(i.q)) + '</td><td>' + esc(translateHe(i.i)) + '</td></tr>';
+        var _pre = (_LANG === 'en' && typeof _PRE_EN !== 'undefined' && _PRE_EN[r.id]) ? _PRE_EN[r.id] : null;
+        var ingrs = (r.ingr || []).map(function(i, idx) {
+          var qi = (_pre && _pre.ig && _pre.ig[idx]) ? _pre.ig[idx].q : translateHe(i.q);
+          var ii = (_pre && _pre.ig && _pre.ig[idx]) ? _pre.ig[idx].i : translateHe(i.i);
+          if (i.q && i.q.startsWith('---')) return '<tr><td colspan="2" style="font-weight:700;color:#8c2e14;border:none;padding-top:.4rem">' + esc(qi.replace(/---/g,'').trim()) + '</td></tr>';
+          return '<tr><td style="font-weight:600;min-width:70px">' + esc(qi) + '</td><td>' + esc(ii) + '</td></tr>';
         }).join('');
-        var steps = (r.steps || []).map(function(s) {
-          return '<li>' + (s.t ? '<strong style="color:#c4930a">' + esc(translateHe(s.t)) + ':</strong> ' : '') + esc(translateHe(s.s)) + '</li>';
+        var steps = (r.steps || []).map(function(s, si) {
+          var st = (_pre && _pre.st && _pre.st[si]) ? _pre.st[si].t : translateHe(s.t);
+          var ss = (_pre && _pre.st && _pre.st[si]) ? _pre.st[si].s : translateHe(s.s);
+          return '<li>' + (s.t ? '<strong style="color:#c4930a">' + esc(st) + ':</strong> ' : '') + esc(ss) + '</li>';
         }).join('');
         html += '<div class="recipe">';
         html += '<h3>' + esc(getEnTitle(r)) + '</h3>';
