@@ -521,6 +521,13 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 .m-hero { height: 240px; overflow: hidden; position: relative;
   background: linear-gradient(135deg, var(--c-dark), var(--c-mid)); }
 .m-hero img { width: 100%; height: 100%; object-fit: cover; }
+.m-hero-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,.45); color: #fff; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; z-index: 3; display: none; align-items: center; justify-content: center; transition: background .2s; }
+.m-hero-nav:hover { background: rgba(196,147,10,.7); }
+.m-hero-nav.prev { left: .5rem; }
+.m-hero-nav.next { right: .5rem; }
+.m-hero-dots { position: absolute; bottom: .5rem; left: 50%; transform: translateX(-50%); display: none; gap: 6px; z-index: 3; }
+.m-hero-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.5); border: none; padding: 0; cursor: pointer; transition: background .2s; }
+.m-hero-dot.active { background: #fff; }
 .m-hero-media { position: absolute; top: .5rem; left: .5rem; display: flex; gap: .35rem; z-index: 2; }
 .m-hero-change, .m-hero-del {
   background: rgba(0,0,0,.5); border: 1px solid rgba(196,147,10,.3);
@@ -718,7 +725,7 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
 /* ── Print ────────────────────────────────────────────────── */
 @media print {
   .hdr, .cat-nav, .nav-panel, #back-top, .footer, .casablanca-bg,
-  .m-nav, .m-hero-media, .m-actions, .m-vid-wrap, .m-src-box,
+  .m-nav, .m-hero-media, .m-hero-nav, .m-hero-dots, .m-actions, .m-vid-wrap, .m-src-box,
   .hero, .grid-header, .grid, .about, #toast, .filter-bar { display: none !important; }
   body { background: #fff !important; color: #1a1a1a !important; font-size: 12pt; }
   #ovl { position: static !important; display: block !important; background: none !important;
@@ -1164,6 +1171,9 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
 
     <!-- Hero image -->
     <div class="m-hero" id="m-hero">
+      <button class="m-hero-nav prev" id="m-hero-prev" aria-label="Previous image">&#8249;</button>
+      <button class="m-hero-nav next" id="m-hero-next" aria-label="Next image">&#8250;</button>
+      <div class="m-hero-dots" id="m-hero-dots"></div>
       <div class="m-hero-media">
         <button id="m-hero-change" class="m-hero-change" aria-label="שנה תמונה" hidden>🖼</button>
         <button id="m-hero-del" class="m-hero-del" aria-label="מחק תמונה" hidden>✕</button>
@@ -1424,7 +1434,6 @@ function getRecipeImg(r) {
 /* Fallback sources for onerror (tried in order) */
 function _getImgFallbacks(r) {
   var fb = [];
-  // Try alternate images (-2, -3) with alias resolution
   for (var n = 2; n <= 3; n++) {
     fb.push(_resolveImg('r-' + r.id + '-' + n));
   }
@@ -1432,6 +1441,92 @@ function _getImgFallbacks(r) {
   var cat = CAT_IMG[r.cat] || CAT_IMG._def;
   if (cat) fb.push(cat);
   return fb;
+}
+
+/* Get ALL available images for a recipe (for gallery) */
+function _getAllRecipeImages(r) {
+  var imgs = [];
+  var media = getMedia(r.id);
+  // Custom uploaded images first
+  if (media.imgs.length) {
+    media.imgs.forEach(function(src) { imgs.push(src); });
+  }
+  // Primary downloaded image
+  imgs.push(_resolveImg('r-' + r.id));
+  // Alternate images (-2, -3)
+  for (var n = 2; n <= 3; n++) {
+    imgs.push(_resolveImg('r-' + r.id + '-' + n));
+  }
+  // Original URL from recipe data
+  if (r.img) imgs.push(r.img);
+  return imgs;
+}
+
+/* ── Hero Gallery State ── */
+var _heroGallery = { imgs: [], idx: 0, validated: [] };
+
+function _heroGalleryInit(r) {
+  var all = _getAllRecipeImages(r);
+  _heroGallery = { imgs: all, idx: 0, validated: [], loading: true };
+
+  // Validate each image (check if it loads)
+  var hero = document.getElementById('m-hero');
+  var imgEl = hero ? hero.querySelector('img') : null;
+
+  all.forEach(function(src, i) {
+    var test = new Image();
+    test.onload = function() {
+      _heroGallery.validated.push(src);
+      _heroGalleryUpdateNav();
+      // If first valid image and gallery not yet showing
+      if (_heroGallery.validated.length === 1 && imgEl) {
+        imgEl.src = src;
+        _heroGallery.idx = 0;
+      }
+    };
+    test.onerror = function() { /* skip invalid */ };
+    test.src = src;
+  });
+}
+
+function _heroGalleryUpdateNav() {
+  var count = _heroGallery.validated.length;
+  var prevBtn = document.getElementById('m-hero-prev');
+  var nextBtn = document.getElementById('m-hero-next');
+  var dotsEl  = document.getElementById('m-hero-dots');
+
+  if (count <= 1) {
+    if (prevBtn) prevBtn.style.display = 'none';
+    if (nextBtn) nextBtn.style.display = 'none';
+    if (dotsEl) dotsEl.style.display = 'none';
+    return;
+  }
+
+  if (prevBtn) prevBtn.style.display = 'flex';
+  if (nextBtn) nextBtn.style.display = 'flex';
+  if (dotsEl) {
+    dotsEl.style.display = 'flex';
+    dotsEl.innerHTML = '';
+    for (var i = 0; i < count; i++) {
+      var dot = document.createElement('button');
+      dot.className = 'm-hero-dot' + (i === _heroGallery.idx ? ' active' : '');
+      dot.setAttribute('aria-label', 'Image ' + (i+1));
+      (function(idx) {
+        dot.addEventListener('click', function() { _heroGalleryGo(idx); });
+      })(i);
+      dotsEl.appendChild(dot);
+    }
+  }
+}
+
+function _heroGalleryGo(idx) {
+  var v = _heroGallery.validated;
+  if (!v.length) return;
+  _heroGallery.idx = ((idx % v.length) + v.length) % v.length;
+  var hero = document.getElementById('m-hero');
+  var imgEl = hero ? hero.querySelector('img') : null;
+  if (imgEl) imgEl.src = v[_heroGallery.idx];
+  _heroGalleryUpdateNav();
 }
 
 /* ═══════════════════════════════════════════════
@@ -2454,21 +2549,15 @@ function refreshModalMedia(r) {
     img.alt = r.title;
     img.onload  = function() { this.classList.add('loaded'); };
     img.onerror = function() {
-      var self = this;
-      if (!self._fbIdx) self._fbIdx = 0;
-      var fbs = _getImgFallbacks(r);
-      if (self._fbIdx < fbs.length) {
-        self.src = fbs[self._fbIdx++];
-        return;
-      }
+      // Gallery handles fallbacks — just remove broken image
       this.remove();
-      if (!hasCustom) appendUploadWrap(hero, r.id);
     };
     img.src = imgSrc;
     hero.insertBefore(img, hero.firstChild);
-  } else {
-    appendUploadWrap(hero, r.id);
   }
+
+  // ── Init image gallery (async validates all images) ──
+  _heroGalleryInit(r);
 
   // ── Hero media controls ───────────────────────────────────────
   var delBtn   = document.getElementById('m-hero-del');
@@ -2634,6 +2723,25 @@ document.addEventListener('DOMContentLoaded', function() {
   var next = document.getElementById('m-next');
   if (prev) prev.addEventListener('click', function() { navRecipe(-1); });
   if (next) next.addEventListener('click', function() { navRecipe(1); });
+
+  // Hero image gallery nav
+  var heroPrev = document.getElementById('m-hero-prev');
+  var heroNext = document.getElementById('m-hero-next');
+  if (heroPrev) heroPrev.addEventListener('click', function(e) { e.stopPropagation(); _heroGalleryGo(_heroGallery.idx - 1); });
+  if (heroNext) heroNext.addEventListener('click', function(e) { e.stopPropagation(); _heroGalleryGo(_heroGallery.idx + 1); });
+
+  // Swipe on hero image to change photo
+  var heroEl = document.getElementById('m-hero');
+  if (heroEl) {
+    var _hx = 0;
+    heroEl.addEventListener('touchstart', function(e) { _hx = e.touches[0].clientX; }, {passive:true});
+    heroEl.addEventListener('touchend', function(e) {
+      var dx = e.changedTouches[0].clientX - _hx;
+      if (Math.abs(dx) > 50 && _heroGallery.validated.length > 1) {
+        _heroGalleryGo(_heroGallery.idx + (dx > 0 ? -1 : 1));
+      }
+    }, {passive:true});
+  }
 
   // Modal actions
   var printBtn = document.getElementById('m-print');

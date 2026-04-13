@@ -13,4 +13,6 @@
 !data.js
 !sw.js
 !manifest.json
-!wedding.jpg
+!_IMG_ALIAS.js
+!cleanup_hardlinks.py
+!pre_en.js
