@@ -1759,15 +1759,13 @@ def download_and_save(img_url, dest):
     global _hash_index, _dl_link_count
 
     def _save_with_dedup(data, dest):
-        """Write data to dest, or skip if identical content exists (record alias)."""
+        """Write data to dest. Track duplicates for later dedup."""
         global _dl_link_count
         h = hashlib.sha256(data).hexdigest()
         existing = _hash_index.get(h)
         if existing and existing != dest and existing.exists():
-            # Identical content already on disk — skip download, record alias
-            _dl_link_count += 1
-            return True   # report success but don't write file
-        # New unique image — write and register
+            _dl_link_count += 1  # count as duplicate (will be cleaned by run_dedup)
+        # Always write — run_dedup will clean duplicates later
         dest.write_bytes(data)
         _hash_index[h] = dest
         return True
