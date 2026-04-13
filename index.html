@@ -141,42 +141,7 @@ ol { padding-right: 1.2rem; }
   gap: 1rem;
 }
 
-/* ── Hamburger Menu Button ── */
-.menu-btn { font-size: 1.3rem; order: -1; }
 
-/* ── Drill-Down Tree Menu ── */
-.tree-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:900; }
-.tree-overlay.open { display:block; }
-.tree-menu { position:fixed; top:0; right:-320px; width:300px; max-width:85vw; height:100vh;
-  background:var(--c-bg); z-index:901; transition:right .3s ease; overflow:hidden;
-  box-shadow:-4px 0 20px rgba(0,0,0,.3); direction:rtl; display:flex; flex-direction:column; }
-.tree-menu.open { right:0; }
-html.light .tree-menu { background:#fdf8ee; }
-.tree-hdr { display:flex; justify-content:space-between; align-items:center;
-  padding:.7rem 1rem; border-bottom:1px solid var(--c-bg3); flex-shrink:0; }
-.tree-hdr-title { font-weight:700; color:var(--c-gold); font-size:.95rem; }
-.tree-close { background:none; border:none; color:var(--c-ink-m); font-size:1.3rem; cursor:pointer; padding:.3rem; }
-.tree-close:hover { color:var(--c-gold); }
-.tree-back { background:none; border:none; color:var(--c-gold); font-size:.85rem; cursor:pointer;
-  padding:.5rem 1rem; display:flex; align-items:center; gap:.4rem; border-bottom:1px solid var(--c-bg3);
-  width:100%; font-family:inherit; flex-shrink:0; }
-.tree-back:hover { background:rgba(196,147,10,.08); }
-.tree-back-arrow { font-size:1rem; }
-.tree-viewport { flex:1; overflow-y:auto; overflow-x:hidden; position:relative; }
-.tree-panel { width:100%; min-height:100%; }
-.tree-list { list-style:none; padding:0; margin:0; }
-.tree-item { border-bottom:1px solid var(--c-bg3); }
-.tree-btn { display:flex; justify-content:space-between; align-items:center; width:100%;
-  padding:.75rem 1rem; background:none; border:none; color:var(--c-ink); font-size:.9rem;
-  font-family:inherit; cursor:pointer; text-align:right; transition:background .15s; gap:.5rem; }
-.tree-btn:hover { background:rgba(196,147,10,.1); }
-.tree-btn.active { color:var(--c-gold); font-weight:700; background:rgba(196,147,10,.08); }
-.tree-lbl { flex:1; }
-.tree-cnt { font-size:.72rem; color:var(--c-ink-m); background:var(--c-bg3);
-  padding:.15rem .5rem; border-radius:10px; min-width:24px; text-align:center; }
-.tree-btn.active .tree-cnt { background:var(--c-gold); color:#fff; }
-.tree-drill { font-size:.7rem; color:var(--c-ink-m); }
-.tree-sep { height:1px; background:var(--c-bg3); margin:.2rem 1rem; }
 
 .hdr-brand { flex: 1; min-width: 0; }
 .hdr-title {
@@ -1100,7 +1065,6 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
 <!-- ════════ HEADER ════════════════════════════════════════ -->
 <header class="hdr" role="banner">
   <div class="hdr-inner">
-    <button id="menu-toggle" class="hdr-btn menu-btn" aria-label="תפריט" title="תפריט מתכונים">☰</button>
     <div class="hdr-search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="search" id="srch" placeholder="חפש מתכון, מרכיב..." aria-label="חיפוש מתכון" autocomplete="off"/>
@@ -1113,28 +1077,16 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
   </div>
 </header>
 
-<!-- ════════ TREE MENU SIDEBAR ═════════════════════════════ -->
-<div id="tree-overlay" class="tree-overlay"></div>
-<aside id="tree-menu" class="tree-menu" role="navigation" aria-label="תפריט מתכונים">
-  <div class="tree-hdr">
-    <span class="tree-hdr-title" data-i18n="tree_title">תפריט מתכונים</span>
-    <button id="tree-close" class="tree-close" aria-label="סגור תפריט">✕</button>
-  </div>
-  <button id="tree-back" class="tree-back" style="display:none">
-    <span class="tree-back-arrow">&#8250;</span>
-    <span id="tree-back-lbl">חזרה</span>
-  </button>
-  <div class="tree-viewport">
-    <div id="tree-panel" class="tree-panel">
-      <ul id="tree-list" class="tree-list"></ul>
-    </div>
-  </div>
-</aside>
 
-<!-- Hidden cat-nav for backwards compat (renderNav still needs cat-inner) -->
-<nav class="cat-nav" style="display:none" aria-hidden="true">
-  <div class="cat-nav-inner"><div id="cat-inner"></div></div>
-  <div id="nav-panel" class="nav-panel"><div id="nav-panel-inner"></div></div>
+
+<!-- ════════ NAVIGATION ════════════════════════════════════ -->
+<nav class="cat-nav" role="navigation" aria-label="קטגוריות מתכונים">
+  <div class="cat-nav-inner">
+    <div id="cat-inner" role="menubar" aria-label="קטגוריות"></div>
+  </div>
+  <div id="nav-panel" class="nav-panel" dir="rtl" role="region" aria-label="תת-קטגוריות">
+    <div id="nav-panel-inner" class="nav-panel-inner"></div>
+  </div>
 </nav>
 
 <!-- ════════ HERO ══════════════════════════════════════════ -->
@@ -1814,7 +1766,7 @@ if (!window._navInit) {
   document.addEventListener('click', function(e) {
     if (!e.target.closest('#cat-inner') && !e.target.closest('#nav-panel')) closePanel();
   });
-  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closePanel(); closeTree(); } });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closePanel(); } });
 }
 
 function buildNav() {
@@ -2070,211 +2022,8 @@ function updateNavActive() {
   var bar = document.getElementById('cat-inner');
   if (!bar) return;
   buildNav();
-  buildTreeMenu();
 }
 
-/* ═══════════════════════════════════════════════
-   TREE MENU (Drill-Down)
-═══════════════════════════════════════════════ */
-function openTree() {
-  var m = document.getElementById('tree-menu');
-  var o = document.getElementById('tree-overlay');
-  if (m) m.classList.add('open');
-  if (o) o.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  // Always reset to root level when opening
-  _treeStack = [];
-  buildTreeMenu();
-}
-function closeTree() {
-  var m = document.getElementById('tree-menu');
-  var o = document.getElementById('tree-overlay');
-  if (m) m.classList.remove('open');
-  if (o) o.classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-var _treeStack = []; // navigation history for back button
-
-function _treeCatCnt(id) {
-  if (id === 'all') return R.length;
-  return R.filter(function(r) { return r && r.cat === id; }).length;
-}
-function _treeMultiCnt(ids) {
-  if (!ids || !ids.length) return 0;
-  if (/[0-9]/.test(ids[0])) return ids.length;
-  var t = 0; ids.forEach(function(c) { t += _treeCatCnt(c); }); return t;
-}
-function _treeLbl(lbl) {
-  return (_LANG === 'en' && _NAV_I18N[lbl]) ? t(_NAV_I18N[lbl]) : lbl;
-}
-
-function _treeRenderList(items) {
-  var ul = document.getElementById('tree-list');
-  if (!ul) return;
-  ul.innerHTML = '';
-
-  items.forEach(function(item) {
-    if (item.sep) {
-      var sep = document.createElement('li');
-      sep.className = 'tree-sep';
-      ul.appendChild(sep);
-      return;
-    }
-
-    var li = document.createElement('li');
-    li.className = 'tree-item';
-    var btn = document.createElement('button');
-    btn.className = 'tree-btn';
-
-    var lbl = document.createElement('span');
-    lbl.className = 'tree-lbl';
-    lbl.textContent = _treeLbl(item.lbl);
-    btn.appendChild(lbl);
-
-    // Count
-    var cnt = 0;
-    if (item.id === 'all') cnt = R.length;
-    else if (item.id) cnt = _treeCatCnt(item.id);
-    else if (item.ids) cnt = _treeMultiCnt(item.ids);
-
-    if (cnt > 0) {
-      var cntEl = document.createElement('span');
-      cntEl.className = 'tree-cnt';
-      cntEl.textContent = cnt;
-      btn.appendChild(cntEl);
-    }
-
-    // Has children? Show drill arrow
-    var hasChildren = item.items || item.sub;
-    if (hasChildren) {
-      var arrow = document.createElement('span');
-      arrow.className = 'tree-drill';
-      arrow.textContent = '\u25C0'; // ◀
-      btn.appendChild(arrow);
-    }
-
-    // Click handler
-    if (hasChildren) {
-      // Drill down into children
-      (function(_item) {
-        btn.addEventListener('click', function() {
-          _treeStack.push({ items: items, title: null });
-          var children = [];
-
-          if (_item.items) {
-            _item.items.forEach(function(sub) { children.push(sub); });
-          }
-          if (_item.sub) {
-            _item.sub.forEach(function(sub) { children.push(sub); });
-          }
-
-          // Show back button
-          var backBtn = document.getElementById('tree-back');
-          var backLbl = document.getElementById('tree-back-lbl');
-          if (backBtn) backBtn.style.display = '';
-          if (backLbl) backLbl.textContent = _treeLbl(_item.lbl);
-
-          _treeRenderList(children);
-        });
-      })(item);
-    } else {
-      // Leaf — select and close
-      (function(_item) {
-        btn.addEventListener('click', function() {
-          var key = _item._parentKey || '';
-          if (_item.id && _item.h !== undefined) {
-            selectCat(_item.id, _item.h, key);
-          } else if (_item.id) {
-            selectCat(_item.id, null, key);
-          } else if (_item.ids) {
-            var isRecipeIds = _item.ids.length > 0 && /[0-9]/.test(_item.ids[0]);
-            if (isRecipeIds) selectByIds(_item.ids, _item.lbl, key);
-            else selectMulti(_item.ids, _item.lbl, key);
-          }
-          closeTree();
-        });
-      })(item);
-
-      // Mark active
-      if (item.id && ACT_CAT === item.id && (!item.h || ACT_HOL === item.h)) {
-        btn.classList.add('active');
-      }
-    }
-
-    li.appendChild(btn);
-    ul.appendChild(li);
-  });
-
-  // Scroll to top
-  var vp = document.getElementById('tree-viewport') || ul.parentElement;
-  if (vp) vp.scrollTop = 0;
-}
-
-function _treeGoBack() {
-  if (!_treeStack.length) return;
-  var prev = _treeStack.pop();
-
-  if (_treeStack.length === 0) {
-    // Back to root
-    var backBtn = document.getElementById('tree-back');
-    if (backBtn) backBtn.style.display = 'none';
-    buildTreeMenu();
-  } else {
-    // Back to parent level
-    var parent = _treeStack[_treeStack.length - 1];
-    var backLbl = document.getElementById('tree-back-lbl');
-    if (backLbl) backLbl.textContent = parent.title || _LANG === 'en' ? 'Back' : 'חזרה';
-    _treeRenderList(prev.items);
-  }
-}
-
-function buildTreeMenu() {
-  // Build root level items from MENU_STRUCTURE
-  var rootItems = [];
-
-  MENU_STRUCTURE.forEach(function(node, idx) {
-    var key = node.key || node.id || ('g' + idx);
-
-    // Simple leaf (e.g. "כל המתכונים", "מרקים", "סלטים")
-    if (node.id && !node.items && !node.sub) {
-      rootItems.push({ id: node.id, lbl: node.lbl, _parentKey: key });
-      return;
-    }
-
-    // Node with sub-menu (holidays)
-    if (node.id && node.sub) {
-      var subItems = node.sub.map(function(s) {
-        s._parentKey = key;
-        return s;
-      });
-      rootItems.push({ lbl: node.lbl, id: node.id, sub: subItems, _parentKey: key });
-      return;
-    }
-
-    // Group with items (מנות עיקריות, מכל העדות, לא כשרים)
-    if (node.items) {
-      var childItems = node.items.map(function(it) {
-        it._parentKey = key;
-        // If nested items (e.g. מנות עיקריות → sub-group)
-        if (it.items) {
-          it.items.forEach(function(si) { si._parentKey = key; });
-        }
-        if (it.sub) {
-          it.sub.forEach(function(si) { si._parentKey = key; });
-        }
-        return it;
-      });
-      rootItems.push({ lbl: node.lbl, items: childItems, _parentKey: key });
-    }
-  });
-
-  // Hide back button at root
-  var backBtn = document.getElementById('tree-back');
-  if (backBtn) backBtn.style.display = 'none';
-
-  _treeRenderList(rootItems);
-}
 
 /* ═══════════════════════════════════════════════
    MODAL
@@ -3097,18 +2846,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // ── Build and render ─────────────────────────────────────
   buildNav();
-  buildTreeMenu();
   renderGrid();
 
-  // ── Tree menu controls ─────────────────────────────────
-  var menuToggle = document.getElementById('menu-toggle');
-  if (menuToggle) menuToggle.addEventListener('click', openTree);
-  var treeCloseBtn = document.getElementById('tree-close');
-  if (treeCloseBtn) treeCloseBtn.addEventListener('click', closeTree);
-  var treeOvl = document.getElementById('tree-overlay');
-  if (treeOvl) treeOvl.addEventListener('click', closeTree);
-  var treeBackBtn = document.getElementById('tree-back');
-  if (treeBackBtn) treeBackBtn.addEventListener('click', _treeGoBack);
+
 
   // ── Apply full language translation (UI labels, pills, about, footer) ──
   if (_LANG === 'en') applyLang('en');
