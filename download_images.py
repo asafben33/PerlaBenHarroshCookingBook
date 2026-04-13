@@ -134,7 +134,7 @@ LOG_FILE    = LOG_DIR / f"download_images_{_ts}.log"
 PROXY       = "http://pac.gov.il:8080"
 
 DELAY       = 0.4    # seconds between recipes (rate limiting)
-NET_TIMEOUT = 5      # seconds per network request
+NET_TIMEOUT = 6      # seconds per network request
 OVERWRITE   = False  # True = overwrite existing images
 
 IMG_DIR.mkdir(parents=True, exist_ok=True)
@@ -1313,9 +1313,10 @@ def source_hebrew_first(recipe_title, query_en):
     sd = preferred_sess()
     from urllib.parse import quote_plus
 
-    # Build Hebrew search variants (limit to 2 for speed)
+    # Build Hebrew search variants
     he_queries = [
         recipe_title + " מאכל",          # title + "food" in Hebrew
+        recipe_title + " מתכון",          # title + "recipe" in Hebrew
         recipe_title,                      # title alone
     ]
 
@@ -2084,6 +2085,9 @@ def main():
                 ("intl-1",      lambda q=query: source_intl_group_a(q)),
                 ("intl-mideast",lambda q=query: source_intl_group_d(q)),
                 ("intl-general",lambda q=query: source_intl_general(q)),
+                # ── Restored from original — extra sources ──
+                ("ddg-scrape",  lambda q=query: _wrap(lambda: source_foodimages_scrape(q))),
+                ("flickr",      lambda q=query, rid=rid: [source_loremflickr(q, rid)]),
             ]
 
             # ═══ Collect URLs from sources — with DDG early-abort ═══
