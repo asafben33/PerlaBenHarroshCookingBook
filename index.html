@@ -140,6 +140,44 @@ ol { padding-right: 1.2rem; }
   align-items: center;
   gap: 1rem;
 }
+
+/* ── Hamburger Menu Button ── */
+.menu-btn { font-size: 1.3rem; order: -1; }
+
+/* ── Tree Menu Sidebar ── */
+.tree-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:900; }
+.tree-overlay.open { display:block; }
+.tree-menu { position:fixed; top:0; right:-320px; width:300px; max-width:85vw; height:100vh;
+  background:var(--c-bg); z-index:901; transition:right .3s ease; overflow-y:auto;
+  box-shadow:-4px 0 20px rgba(0,0,0,.3); direction:rtl; }
+.tree-menu.open { right:0; }
+html.light .tree-menu { background:#fdf8ee; }
+.tree-hdr { display:flex; justify-content:space-between; align-items:center;
+  padding:.8rem 1rem; border-bottom:1px solid var(--c-bg3); }
+.tree-hdr-title { font-weight:700; color:var(--c-gold); font-size:1rem; }
+.tree-close { background:none; border:none; color:var(--c-ink-m); font-size:1.3rem; cursor:pointer; padding:.3rem; }
+.tree-close:hover { color:var(--c-gold); }
+.tree-list { list-style:none; padding:0; margin:0; }
+.tree-item { border-bottom:1px solid var(--c-bg3); }
+.tree-item:last-child { border-bottom:none; }
+.tree-btn { display:flex; justify-content:space-between; align-items:center; width:100%;
+  padding:.65rem 1rem; background:none; border:none; color:var(--c-ink); font-size:.88rem;
+  font-family:inherit; cursor:pointer; text-align:right; transition:background .15s; gap:.4rem; }
+.tree-btn:hover { background:rgba(196,147,10,.1); }
+.tree-btn.active { color:var(--c-gold); font-weight:700; background:rgba(196,147,10,.08); }
+.tree-lbl { flex:1; }
+.tree-cnt { font-size:.72rem; color:var(--c-ink-m); background:var(--c-bg3);
+  padding:.1rem .4rem; border-radius:10px; min-width:20px; text-align:center; }
+.tree-btn.active .tree-cnt { background:var(--c-gold); color:#fff; }
+.tree-arrow { font-size:.65rem; color:var(--c-ink-m); transition:transform .2s; }
+.tree-item.expanded > .tree-btn .tree-arrow { transform:rotate(-90deg); }
+.tree-sub { list-style:none; padding:0; margin:0; display:none; background:rgba(0,0,0,.03); }
+html.light .tree-sub { background:rgba(196,147,10,.04); }
+.tree-item.expanded > .tree-sub { display:block; }
+.tree-sub .tree-btn { padding-right:2rem; font-size:.84rem; }
+.tree-sub .tree-sub .tree-btn { padding-right:3rem; font-size:.82rem; }
+.tree-sep { height:1px; background:var(--c-bg3); margin:.2rem 2rem; }
+
 .hdr-brand { flex: 1; min-width: 0; }
 .hdr-title {
   font-size: 1.05rem;
@@ -1062,10 +1100,7 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
 <!-- ════════ HEADER ════════════════════════════════════════ -->
 <header class="hdr" role="banner">
   <div class="hdr-inner">
-    <div class="hdr-brand">
-      <div class="hdr-title">ספר הבישול של משפחת בן הראש</div>
-      <div class="hdr-subtitle" title="לזכרם של פרלה ופנחס בן הראש שזכרונם יהיה לברכה וגאווה לדורי דורות">לזכרם של פרלה ופנחס בן הראש ז״ל</div>
-    </div>
+    <button id="menu-toggle" class="hdr-btn menu-btn" aria-label="תפריט" title="תפריט מתכונים">☰</button>
     <div class="hdr-search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="search" id="srch" placeholder="חפש מתכון, מרכיב..." aria-label="חיפוש מתכון" autocomplete="off"/>
@@ -1078,14 +1113,20 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
   </div>
 </header>
 
-<!-- ════════ NAVIGATION ════════════════════════════════════ -->
-<nav class="cat-nav" role="navigation" aria-label="קטגוריות מתכונים">
-  <div class="cat-nav-inner">
-    <div id="cat-inner" role="menubar" aria-label="קטגוריות"></div>
+<!-- ════════ TREE MENU SIDEBAR ═════════════════════════════ -->
+<div id="tree-overlay" class="tree-overlay"></div>
+<aside id="tree-menu" class="tree-menu" role="navigation" aria-label="תפריט מתכונים">
+  <div class="tree-hdr">
+    <span class="tree-hdr-title" data-i18n="tree_title">תפריט מתכונים</span>
+    <button id="tree-close" class="tree-close" aria-label="סגור תפריט">✕</button>
   </div>
-  <div id="nav-panel" class="nav-panel" dir="rtl" role="region" aria-label="תת-קטגוריות">
-    <div id="nav-panel-inner" class="nav-panel-inner"></div>
-  </div>
+  <ul id="tree-list" class="tree-list"></ul>
+</aside>
+
+<!-- Hidden cat-nav for backwards compat (renderNav still needs cat-inner) -->
+<nav class="cat-nav" style="display:none" aria-hidden="true">
+  <div class="cat-nav-inner"><div id="cat-inner"></div></div>
+  <div id="nav-panel" class="nav-panel"><div id="nav-panel-inner"></div></div>
 </nav>
 
 <!-- ════════ HERO ══════════════════════════════════════════ -->
@@ -1623,6 +1664,8 @@ function renderGrid() {
       const img = document.createElement('img');
       img.setAttribute('data-src', imgSrc);
       img.loading = 'lazy';
+      img.decoding = 'async';
+      img.fetchPriority = 'low';
       img.alt = r.title;
       img.onload  = function() { this.classList.add('loaded'); };
       img.onerror = function() {
@@ -1763,7 +1806,7 @@ if (!window._navInit) {
   document.addEventListener('click', function(e) {
     if (!e.target.closest('#cat-inner') && !e.target.closest('#nav-panel')) closePanel();
   });
-  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePanel(); });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closePanel(); closeTree(); } });
 }
 
 function buildNav() {
@@ -2018,8 +2061,244 @@ function buildNav() {
 function updateNavActive() {
   var bar = document.getElementById('cat-inner');
   if (!bar) return;
-  // Rebuild is the simplest way to refresh active states
   buildNav();
+  buildTreeMenu();
+}
+
+/* ═══════════════════════════════════════════════
+   TREE MENU
+═══════════════════════════════════════════════ */
+function openTree() {
+  var m = document.getElementById('tree-menu');
+  var o = document.getElementById('tree-overlay');
+  if (m) m.classList.add('open');
+  if (o) o.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeTree() {
+  var m = document.getElementById('tree-menu');
+  var o = document.getElementById('tree-overlay');
+  if (m) m.classList.remove('open');
+  if (o) o.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function buildTreeMenu() {
+  var ul = document.getElementById('tree-list');
+  if (!ul) return;
+  ul.innerHTML = '';
+
+  function catCnt(id) {
+    if (id === 'all') return R.length;
+    return R.filter(function(r) { return r && r.cat === id; }).length;
+  }
+  function multiCnt(ids) {
+    if (!ids) return 0;
+    // Check if recipe IDs (contain digits) vs cat IDs
+    if (ids.length > 0 && /[0-9]/.test(ids[0])) return ids.length;
+    var total = 0;
+    ids.forEach(function(cid) { total += catCnt(cid); });
+    return total;
+  }
+
+  function makeBtn(lbl, cnt, onClick, isActive) {
+    var btn = document.createElement('button');
+    btn.className = 'tree-btn' + (isActive ? ' active' : '');
+    var lblSpan = document.createElement('span');
+    lblSpan.className = 'tree-lbl';
+    lblSpan.textContent = (_LANG === 'en' && _NAV_I18N[lbl]) ? t(_NAV_I18N[lbl]) : lbl;
+    btn.appendChild(lblSpan);
+    if (cnt > 0) {
+      var cntSpan = document.createElement('span');
+      cntSpan.className = 'tree-cnt';
+      cntSpan.textContent = cnt;
+      btn.appendChild(cntSpan);
+    }
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      onClick();
+      closeTree();
+    });
+    return btn;
+  }
+
+  function addArrow(btn) {
+    var arrow = document.createElement('span');
+    arrow.className = 'tree-arrow';
+    arrow.textContent = '\u25C0'; // ◀
+    btn.insertBefore(arrow, btn.firstChild);
+  }
+
+  MENU_STRUCTURE.forEach(function(node, idx) {
+    var key = node.key || node.id || ('g' + idx);
+    var li = document.createElement('li');
+    li.className = 'tree-item';
+
+    // ── Leaf node (e.g. "כל המתכונים") ──
+    if (node.id && !node.items) {
+      var c = catCnt(node.id);
+      li.appendChild(makeBtn(node.lbl, c, function() {
+        selectCat(node.id, null, key);
+      }, ACT_CAT === node.id));
+      ul.appendChild(li);
+      return;
+    }
+
+    // ── Group node with items ──
+    var groupCnt = 0;
+    if (node.items) {
+      // Find the "הכל" item to get total count
+      var allItem = node.items.find(function(it) { return it.lbl === 'הכל'; });
+      if (allItem) {
+        groupCnt = allItem.ids ? multiCnt(allItem.ids) : 0;
+      } else {
+        node.items.forEach(function(it) {
+          if (it.id) groupCnt += catCnt(it.id);
+          else if (it.ids) groupCnt += multiCnt(it.ids);
+        });
+      }
+    }
+
+    var groupBtn = document.createElement('button');
+    groupBtn.className = 'tree-btn';
+    var glbl = document.createElement('span');
+    glbl.className = 'tree-lbl';
+    glbl.textContent = (_LANG === 'en' && _NAV_I18N[node.lbl]) ? t(_NAV_I18N[node.lbl]) : node.lbl;
+    groupBtn.appendChild(glbl);
+    if (groupCnt) {
+      var gc = document.createElement('span');
+      gc.className = 'tree-cnt';
+      gc.textContent = groupCnt;
+      groupBtn.appendChild(gc);
+    }
+    addArrow(groupBtn);
+
+    groupBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      li.classList.toggle('expanded');
+    });
+    li.appendChild(groupBtn);
+
+    // ── Sub-items ──
+    var subUl = document.createElement('ul');
+    subUl.className = 'tree-sub';
+
+    (node.items || []).forEach(function(item) {
+      // Separator
+      if (item.sep) {
+        var sep = document.createElement('li');
+        sep.className = 'tree-sep';
+        subUl.appendChild(sep);
+        return;
+      }
+
+      var subLi = document.createElement('li');
+      subLi.className = 'tree-item';
+
+      // ── Sub-group with nested items (e.g. מנות עיקריות → בשר, עוף, דגים) ──
+      if (item.items) {
+        var subCnt = 0;
+        item.items.forEach(function(si) {
+          if (si.id) subCnt += catCnt(si.id);
+        });
+        var subBtn = document.createElement('button');
+        subBtn.className = 'tree-btn';
+        var sl = document.createElement('span');
+        sl.className = 'tree-lbl';
+        sl.textContent = (_LANG === 'en' && _NAV_I18N[item.lbl]) ? t(_NAV_I18N[item.lbl]) : item.lbl;
+        subBtn.appendChild(sl);
+        var sc = document.createElement('span');
+        sc.className = 'tree-cnt';
+        sc.textContent = subCnt;
+        subBtn.appendChild(sc);
+        addArrow(subBtn);
+        subBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          subLi.classList.toggle('expanded');
+        });
+        subLi.appendChild(subBtn);
+
+        var subSubUl = document.createElement('ul');
+        subSubUl.className = 'tree-sub';
+        item.items.forEach(function(si) {
+          var ssLi = document.createElement('li');
+          ssLi.className = 'tree-item';
+          ssLi.appendChild(makeBtn(si.lbl, catCnt(si.id), function() {
+            selectCat(si.id, null, key);
+          }, ACT_CAT === si.id));
+          subSubUl.appendChild(ssLi);
+        });
+        subLi.appendChild(subSubUl);
+        subUl.appendChild(subLi);
+        return;
+      }
+
+      // ── Holiday sub-menu ──
+      if (item.sub) {
+        var holCnt = catCnt(item.id);
+        var subBtn2 = document.createElement('button');
+        subBtn2.className = 'tree-btn';
+        var hl = document.createElement('span');
+        hl.className = 'tree-lbl';
+        hl.textContent = (_LANG === 'en' && _NAV_I18N[item.lbl]) ? t(_NAV_I18N[item.lbl]) : item.lbl;
+        subBtn2.appendChild(hl);
+        var hc = document.createElement('span');
+        hc.className = 'tree-cnt';
+        hc.textContent = holCnt;
+        subBtn2.appendChild(hc);
+        addArrow(subBtn2);
+        subBtn2.addEventListener('click', function(e) {
+          e.stopPropagation();
+          subLi.classList.toggle('expanded');
+        });
+        subLi.appendChild(subBtn2);
+
+        var holUl = document.createElement('ul');
+        holUl.className = 'tree-sub';
+        item.sub.forEach(function(si) {
+          if (si.sep) {
+            var sep = document.createElement('li');
+            sep.className = 'tree-sep';
+            holUl.appendChild(sep);
+            return;
+          }
+          var hLi = document.createElement('li');
+          hLi.className = 'tree-item';
+          var hLbl = si.lbl;
+          hLi.appendChild(makeBtn(hLbl, 0, function() {
+            selectCat(si.id, si.h, key);
+          }, ACT_CAT === si.id && ACT_HOL === si.h));
+          holUl.appendChild(hLi);
+        });
+        subLi.appendChild(holUl);
+        subUl.appendChild(subLi);
+        return;
+      }
+
+      // ── IDs-based item (recipe IDs or multi-cat) ──
+      if (item.ids) {
+        var cnt = multiCnt(item.ids);
+        var isRecipeIds = item.ids.length > 0 && /[0-9]/.test(item.ids[0]);
+        subLi.appendChild(makeBtn(item.lbl, cnt, function() {
+          if (isRecipeIds) selectByIds(item.ids, item.lbl, key);
+          else selectMulti(item.ids, item.lbl, key);
+        }, false));
+        subUl.appendChild(subLi);
+        return;
+      }
+
+      // ── Simple category item ──
+      if (item.id) {
+        subLi.appendChild(makeBtn(item.lbl, catCnt(item.id), function() {
+          selectCat(item.id, null, key);
+        }, ACT_CAT === item.id));
+        subUl.appendChild(subLi);
+      }
+    });
+
+    li.appendChild(subUl);
+    ul.appendChild(li);
+  });
 }
 
 /* ═══════════════════════════════════════════════
@@ -2547,6 +2826,7 @@ function refreshModalMedia(r) {
   if (imgSrc) {
     var img = document.createElement('img');
     img.alt = r.title;
+    img.loading = 'lazy';
     img.onload  = function() { this.classList.add('loaded'); };
     img.onerror = function() {
       // Gallery handles fallbacks — just remove broken image
@@ -2842,7 +3122,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // ── Build and render ─────────────────────────────────────
   buildNav();
+  buildTreeMenu();
   renderGrid();
+
+  // ── Tree menu controls ─────────────────────────────────
+  var menuToggle = document.getElementById('menu-toggle');
+  if (menuToggle) menuToggle.addEventListener('click', openTree);
+  var treeCloseBtn = document.getElementById('tree-close');
+  if (treeCloseBtn) treeCloseBtn.addEventListener('click', closeTree);
+  var treeOvl = document.getElementById('tree-overlay');
+  if (treeOvl) treeOvl.addEventListener('click', closeTree);
 
   // ── Apply full language translation (UI labels, pills, about, footer) ──
   if (_LANG === 'en') applyLang('en');
@@ -5548,6 +5837,7 @@ var _LANG = 'he';
 var I18N = {
   // Header
   hdr_title:     {he:'ספר הבישול של משפחת בן הראש', en:'The Ben-Harrosh Family Cookbook'},
+  tree_title:    {he:'תפריט מתכונים', en:'Recipe Menu'},
   hdr_subtitle:  {he:'לזכרם של פרלה ופנחס בן הראש ז״ל', en:'In memory of Perla & Pinchas Ben-Harrosh z"l'},
   search_ph:     {he:'חפש מתכון, מרכיב...', en:'Search recipe, ingredient...'},
   // Hero
