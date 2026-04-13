@@ -3,16 +3,15 @@
 
 # Allow only project files
 !index.html
+!data.js
+!pre_en.js
+!sw.js
+!manifest.json
 !download_images.py
+!cleanup_hardlinks.py
 !README.md
+!.gitignore
 !docs/
 !docs/**
 !images/
 !images/**
-!.gitignore
-!data.js
-!sw.js
-!manifest.json
-!_IMG_ALIAS.js
-!cleanup_hardlinks.py
-!pre_en.js

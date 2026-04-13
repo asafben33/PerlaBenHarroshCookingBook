@@ -1,13 +1,15 @@
 /* ═══════════════════════════════════════════════
-   Service Worker — Perla Ben-Harrosh Cookbook v8
+   Service Worker — Perla Ben-Harrosh Cookbook v9
    Network-first for HTML/JS (always fresh code)
    Cache-first for images (fast loading)
 ═══════════════════════════════════════════════ */
-const CACHE_NAME = 'perla-cookbook-v8';
+const CACHE_NAME = 'perla-cookbook-v9';
 const SHELL = [
   './',
   './index.html',
   './data.js',
+  './pre_en.js',
+  './manifest.json',
   './wedding.jpg',
   'https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&display=swap'
 ];
