@@ -18770,12 +18770,12 @@ const MENU_STRUCTURE = [
       {lbl:'מורשת ספרד', ids:['sp3','spf2','spe3','sp2','sp4','sp6','spne3','spf3','ex41','fin18','spx3','spn1','spe1','spv1','spx1','spn4','spv3','spx2','sp1','sp5','sp7','sp8','spne1','spne2','spne4','spe2','spe4','spe5','spf4','add20','add38','add47','ex44','spv4','spw3','spw4','spw5','spnx1','spnx2','spnx3','spnx4','spnx5','spe6','spe7','spe8','spx6','sau1','sau2','sau3','sau4','spn2','spf1','spf5','add29','add56','spw1','spw2','spx5','rare10','sp9','spn3','spn5','ex42','ex43','ex45','fin19','fin20','spv5','spx4','spx7','spe9','spe10','spv2'], items:[
         {ids:['sp3','spf2','spe3','sp2','sp4','sp6','spne3','spf3','ex41','fin18','spx3','spn1','spe1','spv1','spx1','spn4','spv3','spx2','sp1','sp5','sp7','sp8','spne1','spne2','spne4','spe2','spe4','spe5','spf4','add20','add38','add47','ex44','spv4','spw3','spw4','spw5','spnx1','spnx2','spnx3','spnx4','spnx5','spe6','spe7','spe8','spx6','sau1','sau2','sau3','sau4','spn2','spf1','spf5','add29','add56','spw1','spw2','spx5','rare10','sp9','spn3','spn5','ex42','ex43','ex45','fin19','fin20','spv5','spx4','spx7','spe9','spe10','spv2'], lbl:'הכל'},
         {ids:['sp3','spf2','spe3'], lbl:'מרקים ומינסטרות'},
-        {ids:['sp2','sp4','sp6','spne3','spf3','ex41','fin18','spx3'], lbl:'בשר וקציצות'},
-        {ids:['spn4','spv3','spx2','spv2'], lbl:'דגים'},
-        {ids:['sp1','sp5','sp7','sp8','spne1','spne2','spne4','spe2','spe4','spe5','spf4','add20','add38','add47','ex44','spv4','spw3','spw4','spw5','spnx1','spnx2','spnx3','spnx4','spnx5','spe6','spe7','spe8','spx6'], lbl:'ירקות ותוספות'},
+        {ids:['sp2','sp4','sp6','spne3','spf3','ex41','fin18','spx3'], lbl:'בשר ספרדי'},
+        {ids:['spn4','spv3','spx2','spv2'], lbl:'דגים ספרדיים'},
+        {ids:['sp1','sp5','sp7','sp8','spne1','spne2','spne4','spe2','spe4','spe5','spf4','add20','add38','add47','ex44','spv4','spw3','spw4','spw5','spnx1','spnx2','spnx3','spnx4','spnx5','spe6','spe7','spe8','spx6'], lbl:'ירקות ספרדיים'},
         {ids:['spn1','spe1','spv1','spx1'], lbl:'שבת וחגים'},
         {ids:['sau1','sau2','sau3','sau4'], lbl:'רטבים ותבלינים'},
-        {ids:['spn2','spf1','spf5','add29','add56','spw1','spw2','spx5','rare10'], lbl:'לחמים ומאפים'},
+        {ids:['spn2','spf1','spf5','add29','add56','spw1','spw2','spx5','rare10'], lbl:'לחמים ספרדיים'},
         {ids:['sp9','spn3','spn5','ex42','ex43','ex45','fin19','fin20','spv5','spx4','spx7','spe9','spe10'], lbl:'קינוחים ומתוקים'},
       ]},
 
@@ -18795,8 +18795,8 @@ const MENU_STRUCTURE = [
       {lbl:'מטבח ישראלי', ids:['isr'], items:[
         {ids:['is1','is2','is3','is4','is5','is6','is7','is8','is9','is10','is11','is12','is13','is14','is15','is16','is17','is18','is19','is20','is21','is22','is23','is24','is25','is26','is27','is28','is29','is30'], lbl:'הכל'},
         {ids:['is1','is2','is3','is5','is7','is8','is12','is13','is21','is23'], lbl:'מאכלי רחוב ישראליים'},
-        {ids:['is4','is9','is10','is14','is15','is16','is18','is26','is28'], lbl:'מנות עיקריות'},
-        {ids:['is6','is19','is22','is24'], lbl:'לחמים ומאפים'},
+        {ids:['is4','is9','is10','is14','is15','is16','is18','is26','is28'], lbl:'מנות ישראליות'},
+        {ids:['is6','is19','is22','is24'], lbl:'לחמים ישראליים'},
         {ids:['is11','is17','is20','is25','is27','is29','is30'], lbl:'קינוחים ועוגות'},
       ]},
     ]},
