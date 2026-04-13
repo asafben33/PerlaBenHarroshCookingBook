@@ -1,18 +1,33 @@
 {
   "name": "ספר הבישול של משפחת בן הראש",
   "short_name": "בן הראש",
-  "description": "1,054 מתכונים מרוקאיים, ספרדיים ויהודיים אותנטיים",
+  "description": "1,054 מתכונים מרוקאיים, ספרדיים ויהודיים אותנטיים — לזכרם של פרלה ופנחס בן הראש ז״ל",
   "start_url": "./",
   "display": "standalone",
   "dir": "rtl",
   "lang": "he",
   "background_color": "#fdf8ee",
   "theme_color": "#130c05",
+  "orientation": "any",
+  "categories": ["food"],
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍲</text></svg>",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🍲%3C/text%3E%3C/svg%3E",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='64' fill='%23130c05'/%3E%3Ctext x='256' y='380' font-size='360' text-anchor='middle'%3E🍲%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='64' fill='%23130c05'/%3E%3Ctext x='256' y='380' font-size='360' text-anchor='middle'%3E🍲%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ]
 }
