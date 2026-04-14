@@ -10,7 +10,8 @@ const SHELL = [
   './data.js',
   './pre_en.js',
   './manifest.json',
-  './images/wedding.jpg'
+  './images/wedding.jpg',
+  './book_data.js'
 ];
 
 /* Install — cache shell individually (resilient to 404s) */
