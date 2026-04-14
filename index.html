@@ -6109,7 +6109,13 @@ function exportFullCookbook() {
 
 <script src="book_data.js"></script>
 <script>
-if(typeof BOOK_HTML!=='undefined'){var bc=document.getElementById('book-content');if(bc)bc.outerHTML=BOOK_HTML;}
+if(typeof BOOK_HTML!=='undefined'){
+  var bc=document.getElementById('book-content');
+  if(bc){
+    var bk=(typeof _LANG!=='undefined'&&_LANG==='en'&&typeof BOOK_HTML_EN!=='undefined')?BOOK_HTML_EN:BOOK_HTML;
+    bc.outerHTML=bk;
+  }
+}
 </script>
 </body>
 </html>
