@@ -3,6 +3,7 @@
 
 # Allow only project files
 !index.html
+!book_data.js
 !data.js
 !pre_en.js
 !sw.js
