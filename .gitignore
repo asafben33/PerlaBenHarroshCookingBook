@@ -12,8 +12,6 @@
 !cleanup_hardlinks.py
 !README.md
 !.gitignore
-!book_images/
-!book_images/**
 !docs/
 !docs/**
 !images/
