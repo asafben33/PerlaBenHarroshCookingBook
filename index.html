@@ -367,7 +367,7 @@ ol { padding-right: 1.2rem; }
   visibility: hidden;
   transition: max-height .4s var(--ease), visibility .4s;
 }
-.about[aria-hidden="false"] { max-height: 800px; visibility: visible; }
+.about[aria-hidden="false"] { max-height: 50000px; visibility: visible; }
 .about-inner {
   max-width: 800px;
   direction: rtl; text-align: right; margin: 0 auto;
@@ -417,6 +417,13 @@ html.light .book-sub { color:#7a3a18; }
 html.light .book-p { color:#3a2010; }
 .book-placeholder { font-style:italic; text-align:center; color:rgba(237,224,196,.25); font-size:.82rem; }
 html.light .book-placeholder { color:#bba080; }
+.book-nav { display:flex; flex-wrap:wrap; gap:.4rem; justify-content:center; margin:0 0 1.2rem; padding:.8rem 0; border-bottom:1px solid rgba(196,147,10,.15); position:sticky; top:100px; z-index:50; background:var(--c-deep); border-radius:8px; padding:.6rem; }
+html.light .book-nav { background:#fdf8ee; }
+.book-nav-btn { background:rgba(196,147,10,.1); border:1px solid rgba(196,147,10,.2); color:rgba(237,224,196,.7); padding:.25rem .6rem; border-radius:100px; font-size:.7rem; cursor:pointer; transition:all .2s; font-family:inherit; direction:rtl; }
+.book-nav-btn:hover { background:rgba(196,147,10,.2); color:var(--c-gold-l); }
+.book-nav-btn.active { background:rgba(196,147,10,.3); color:var(--c-gold-l); border-color:var(--c-gold); }
+html.light .book-nav-btn { background:rgba(196,147,10,.08); color:#7a5a30; border-color:rgba(196,147,10,.15); }
+html.light .book-nav-btn:hover, html.light .book-nav-btn.active { background:rgba(196,147,10,.2); color:#4e2010; }
 .about-h { direction: rtl; text-align: right; font-size: 1.12rem; font-weight: 700; color: var(--c-gold-l); margin-bottom: .6rem; }
 .about-p { direction: rtl; text-align: right; font-size: .9rem; line-height: 1.8; color: rgba(237,224,196,.88); margin-bottom: .8rem; }
 .about-memorial {
@@ -1143,6 +1150,19 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
   <div class="book-section" id="book-content">
     <h2 class="book-main-title">על שביל האהבה ממרוקו לירושלים</h2>
     <p class="book-subtitle">מתוך הספר שכתב פנחס בן הראש ז״ל, ירושלים 2013</p>
+    <div class="book-nav" id="book-nav">
+      <button class="book-nav-btn active" onclick="document.getElementById('book-prologue').scrollIntoView({behavior:'smooth',block:'start'})">פרולוג</button>
+      <button class="book-nav-btn" onclick="document.getElementById('book-ch1').scrollIntoView({behavior:'smooth',block:'start'})">א': שורשים באדמת מרוקו</button>
+      <button class="book-nav-btn" onclick="document.getElementById('book-ch2').scrollIntoView({behavior:'smooth',block:'start'})">ב': מעגל השנה</button>
+      <button class="book-nav-btn" onclick="document.getElementById('book-ch3').scrollIntoView({behavior:'smooth',block:'start'})">ג': מרוקו של ילדותי</button>
+      <button class="book-nav-btn" onclick="document.getElementById('book-ch4').scrollIntoView({behavior:'smooth',block:'start'})">ד': כמיהה ציונית</button>
+      <button class="book-nav-btn" onclick="document.getElementById('book-ch5').scrollIntoView({behavior:'smooth',block:'start'})">ה': אל הדרור</button>
+      <button class="book-nav-btn" onclick="document.getElementById('book-ch6').scrollIntoView({behavior:'smooth',block:'start'})">ו': ימים ראשונים</button>
+      <button class="book-nav-btn" onclick="document.getElementById('book-ch7').scrollIntoView({behavior:'smooth',block:'start'})">ז': סיפורה של פרלה</button>
+      <button class="book-nav-btn" onclick="document.getElementById('book-ch8').scrollIntoView({behavior:'smooth',block:'start'})">ח': בית ומשפחה</button>
+      <button class="book-nav-btn" onclick="document.getElementById('book-ch9').scrollIntoView({behavior:'smooth',block:'start'})">ט': במדים</button>
+      <button class="book-nav-btn" onclick="document.getElementById('book-ch10').scrollIntoView({behavior:'smooth',block:'start'})">י': המבט לעבר</button>
+    </div>
     <div class="book-chapter" id="book-prologue">
       <h3 class="book-ch-title">פרולוג</h3>
       <p class="book-ch-page">עמוד 5</p>
