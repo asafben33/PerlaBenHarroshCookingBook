@@ -10,7 +10,7 @@ const SHELL = [
   './data.js',
   './pre_en.js',
   './manifest.json',
-  './images/wedding.jpg',
+  './images/book_images/wedding.jpg',
   './book_data.js'
 ];
 

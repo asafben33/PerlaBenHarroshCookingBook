@@ -1456,8 +1456,8 @@ var _IMG_ALIAS = {};
 
 function _resolveImg(name) {
   // name = 'r-s1' or 'r-s1-2' (without .jpg)
-  if (_IMG_ALIAS[name]) return 'images/' + _IMG_ALIAS[name] + '.jpg';
-  return 'images/' + name + '.jpg';
+  if (_IMG_ALIAS[name]) return 'images/recipes_images/' + _IMG_ALIAS[name] + '.jpg';
+  return 'images/recipes_images/' + name + '.jpg';
 }
 
 function getRecipeImg(r) {
@@ -2629,7 +2629,7 @@ function refreshCardImg(recipeId) {
   if (!imgDiv) return;
   var media  = getMedia(recipeId);
   var r      = R.find(function(x) { return x && x.id === recipeId; });
-  var imgSrc = media.imgs.length ? media.imgs[0] : (r ? 'images/r-' + r.id + '.jpg' : null);
+  var imgSrc = media.imgs.length ? media.imgs[0] : (r ? 'images/recipes_images/r-' + r.id + '.jpg' : null);
   var hasCustom = media.imgs.length > 0;
 
   // Rebuild img element
@@ -2698,7 +2698,7 @@ function refreshModalMedia(r) {
   // Remove all existing img and upload-wrap elements
   hero.querySelectorAll('img, .m-upload-wrap').forEach(function(el) { el.remove(); });
 
-  var imgSrc = hasCustom ? media.imgs[0] : 'images/r-' + r.id + '.jpg';
+  var imgSrc = hasCustom ? media.imgs[0] : 'images/recipes_images/r-' + r.id + '.jpg';
 
   if (imgSrc) {
     var img = document.createElement('img');
