@@ -424,6 +424,14 @@ html.light .book-sub{color:#7a3a18}
 html.light .book-p{color:#3a2010}
 .book-placeholder{font-style:italic;text-align:center;color:rgba(237,224,196,.25);font-size:.82rem}
 html.light .book-placeholder{color:#bba080}
+.book-photo{margin:1.2rem auto;max-width:500px;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.3);border:2px solid rgba(196,147,10,.25);position:relative}
+.book-photo img{width:100%;height:auto;display:block;transition:transform .3s}
+.book-photo:hover img{transform:scale(1.02)}
+.book-photo-cap{padding:.5rem .8rem;background:rgba(0,0,0,.6);color:rgba(237,224,196,.9);font-size:.78rem;text-align:center;direction:rtl;line-height:1.5;backdrop-filter:blur(4px)}
+html.light .book-photo{border-color:rgba(196,147,10,.2);box-shadow:0 4px 16px rgba(0,0,0,.1)}
+html.light .book-photo-cap{background:rgba(255,255,255,.85);color:#4a2a14}
+.book-photo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
+.book-photo-grid .book-photo{margin:0}
 .about-h { direction: rtl; text-align: right; font-size: 1.12rem; font-weight: 700; color: var(--c-gold-l); margin-bottom: .6rem; }
 .about-p { direction: rtl; text-align: right; font-size: .9rem; line-height: 1.8; color: rgba(237,224,196,.88); margin-bottom: .8rem; }
 .about-memorial {
@@ -1734,6 +1742,24 @@ function renderGrid() {
     card.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openM(r.id); } });
 
     fragment.appendChild(card);
+    // Insert family photo card every 12 recipes
+    if (typeof BOOK_RECIPE_PHOTOS!=='undefined' && i>0 && i%12===0) {
+      var pi=Math.floor(i/12)-1;
+      if(pi>=0 && pi<BOOK_RECIPE_PHOTOS.length){
+        var fp=BOOK_RECIPE_PHOTOS[pi];
+        var fcard=document.createElement('article');
+        fcard.className='card family-photo-card';
+        fcard.style.animationDelay=(Math.min(i*20,300)+10)+'ms';
+        var fcap=(_LANG==='en'?fp.cap_en:fp.cap_he);
+        fcard.innerHTML='<div class="c-img"><img src="'+fp.img+'" alt="'+fcap+'" loading="lazy" style="object-fit:cover;height:100%"></div>'
+          +'<div class="c-body" style="background:linear-gradient(135deg,rgba(196,147,10,.15),rgba(196,147,10,.05));padding:.6rem;text-align:center;direction:rtl">'
+          +'<div style="color:var(--c-gold);font-size:.75rem;font-weight:700;margin-bottom:.2rem">'+(_LANG==='en'?'From the Family Album':'מאלבום המשפחה')+'</div>'
+          +'<div style="color:var(--c-txt);font-size:.8rem;line-height:1.4">'+fcap+'</div>'
+          +'<a href="#book-'+fp.chapter+'" onclick="document.querySelector(\'[data-sec=about]\').click();setTimeout(function(){document.getElementById(\'book-'+fp.chapter+'\').scrollIntoView({behavior:\'smooth\'})},400);return false" style="color:var(--c-gold-l);font-size:.7rem;margin-top:.3rem;display:inline-block">'+(_LANG==='en'?'Read in the book':'קראו בספר')+'</a>'
+          +'</div>';
+        fragment.appendChild(fcard);
+      }
+    }
   });
 
   grid.innerHTML = '';
