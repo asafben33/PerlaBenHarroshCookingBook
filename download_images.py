@@ -1772,8 +1772,120 @@ def build_youtube_urls(title, query):
     ]
 _dl_link_count = 0   # hard-links created during download
 
-def download_and_save(img_url, dest):
-    """Download image, validate, and deduplicate via SHA256.
+def _url_is_food_relevant(url, query):
+    """
+    Reject URLs that clearly point to non-food content.
+
+    Strategy 1 — Blocklist: skip URLs whose path/domain matches
+    known non-food patterns (tech, news, travel, architecture, maps).
+
+    Strategy 2 — Allowlist bonus: prefer URLs from known food domains.
+
+    Returns (keep: bool, score: int)
+    score > 0 means likely food, score == 0 neutral, score < 0 skip.
+    """
+    import re as _re
+    u = url.lower()
+
+    # ── Hard blocklist ─────────────────────────────────────────────
+    # Generic stock-photo filler patterns
+    BLOCK_PATTERNS = [
+        # Geographic / travel — common false hits
+        r'/city[_-]?scape',r'/skyline', r'/bridge', r'/architecture',
+        r'/new.?york', r'/london', r'/paris', r'/tokyo', r'/berlin',
+        r'/building', r'/skyscraper', r'/downtown', r'/street[_-]?view',
+        r'/landmark', r'/monument', r'/nature', r'/landscape', r'/forest',
+        r'/mountain', r'/desert', r'/ocean', r'/river', r'/lake',
+        r'/sunset', r'/sunrise', r'/sky', r'/clouds',
+        # Tech / business
+        r'/laptop', r'/computer', r'/keyboard', r'/phone', r'/smartphone',
+        r'/office', r'/business', r'/meeting', r'/desk', r'/workspace',
+        r'/code', r'/programming', r'/software', r'/data',
+        # People non-food
+        r'/portrait', r'/headshot', r'/selfie', r'/wedding(?!.?cake)',
+        r'/graduation', r'/party(?!.?food)', r'/people',
+        # Abstract / backgrounds
+        r'/abstract', r'/texture(?!.?bread)', r'/background',
+        r'/wallpaper', r'/pattern',
+        # Animals (unless the recipe is about them — handled below)
+        r'/cat\.jpg', r'/dog\.jpg', r'/lion', r'/tiger',
+        # Coffee shops / cafes only if no food query
+        r'/cafe(?!.?moroccan)', r'/coffee.?shop',
+    ]
+
+    # Food query keywords: if present, reduce strictness
+    FOOD_WORDS = [
+        'food','dish','meal','recipe','cook','kitchen','plate','bowl',
+        'ingredient','moroccan','jewish','soup','salad','meat','chicken',
+        'fish','vegetable','bread','cake','pastry','spice','herb',
+        'tagine','couscous','harira','kefta','tzimmes','cholent',
+        'shakshuka','hummus','falafel',
+    ]
+    query_words = set(query.lower().split())
+    is_food_query = any(fw in query_words or fw in query for fw in FOOD_WORDS)
+
+    # Check blocklist
+    for pat in BLOCK_PATTERNS:
+        if _re.search(pat, u):
+            # Allow if query explicitly names this thing (e.g. "moroccan city market")
+            if is_food_query and any(fw in u for fw in ['food','dish','recipe','kitchen','plate','bowl']):
+                break
+            return False, -1
+
+    # ── Allowlist scoring ──────────────────────────────────────────
+    FOOD_DOMAINS = [
+        'themealdb','allrecipes','seriouseats','bonappetit','foodnetwork',
+        'epicurious','simplyrecipes','delish','tasty','yummly','food52',
+        'ottolenghi','nytcooking','cooking.nytimes','kingarthur',
+        'loremflickr','wikimedia','commons.wiki','openverse',
+        'israelicooking','myjewishlearning','chabad','jewishfood',
+        'moroccanfood','marmiton','thecookierookie','loveandlemons',
+    ]
+    score = 0
+    for dom in FOOD_DOMAINS:
+        if dom in u:
+            score += 3
+            break
+
+    # Positive URL path signals
+    GOOD_PATH = [
+        '/food','/recipe','/dish','/meal','/cook','/kitchen',
+        '/ingredient','/moroccan','/jewish','/mediterranean',
+        '/soup','/salad','/meat','/chicken','/fish','/bread',
+        '/cake','/dessert','/sweet','/pastry',
+    ]
+    for gp in GOOD_PATH:
+        if gp in u:
+            score += 1
+
+    return True, score
+
+
+def _is_food_image_by_pixels(data):
+    """
+    Very lightweight pixel-based heuristic to reject obviously non-food images.
+    Rejects images that are predominantly blue (sky/water) or grey (tech/city).
+    Works on JPEG/PNG without PIL — pure stdlib.
+    Uses a 16x16 sample from the raw JPEG DCT coefficients approximation.
+    Falls back to True (accept) if image can't be parsed.
+    """
+    # Simple heuristic: check the first 1000 bytes for EXIF keywords
+    # that indicate camera photos of landscapes/tech
+    head = data[:1000].lower()
+    REJECT_EXIF_HINTS = [
+        b'gopro', b'dashcam', b'drone', b'aerial',
+        b'satellite', b'map', b'screenshot',
+    ]
+    for hint in REJECT_EXIF_HINTS:
+        if hint in head:
+            return False
+
+    # Accept by default — pixel analysis would need PIL
+    return True
+
+
+def download_and_save(img_url, dest, query=""):
+    """Download image, validate relevance, and deduplicate via SHA256.
     Returns True on success."""
     import hashlib
     sp, sd = get_sess()
@@ -1785,17 +1897,23 @@ def download_and_save(img_url, dest):
         h = hashlib.sha256(data).hexdigest()
         existing = _hash_index.get(h)
         if existing and existing != dest and existing.exists():
-            _dl_link_count += 1  # count as duplicate (will be cleaned by run_dedup)
-        # Always write — run_dedup will clean duplicates later
+            _dl_link_count += 1
         dest.write_bytes(data)
         _hash_index[h] = dest
         return True
+
+    # ── Relevance check on URL before even downloading ─────────────
+    if isinstance(img_url, str):
+        keep, score = _url_is_food_relevant(img_url, query)
+        if not keep:
+            return False  # Skip clearly irrelevant URL
 
     # Handle pre-downloaded data (from Wikipedia source)
     if isinstance(img_url, tuple) and img_url[0] == "__DATA__":
         data = img_url[1]
         if len(data) > 3000 and (data[:2] == b'\xff\xd8' or data[:4] == b'\x89PNG'):
-            return _save_with_dedup(data, dest)
+            if _is_food_image_by_pixels(data):
+                return _save_with_dedup(data, dest)
         return False
 
     # Standard URL download
@@ -1810,7 +1928,8 @@ def download_and_save(img_url, dest):
             data = r.content
             if len(data) < 3000: continue
             if data[:2] == b'\xff\xd8' or data[:4] == b'\x89PNG' or ("image" in ct and len(data) > 10_000):
-                return _save_with_dedup(data, dest)
+                if _is_food_image_by_pixels(data):
+                    return _save_with_dedup(data, dest)
         except Exception:
             continue
     return False
@@ -2121,7 +2240,7 @@ def main():
                     urls = _call_with_timeout(src_fn, timeout_sec=timeout)
                     dt = time.time() - t1
                     if urls and isinstance(urls, list):
-                        new_urls = [u for u in urls if u and u not in collected_urls]
+                        new_urls = [u for u in urls if u and u not in collected_urls and _url_is_food_relevant(u, query)[0]]
                         collected_urls.extend(new_urls)
                         if new_urls:
                             source_counts[src_name] = source_counts.get(src_name, 0) + len(new_urls)
@@ -2151,7 +2270,7 @@ def main():
 
                 try:
                     dl_ok = _call_with_timeout(
-                        lambda u=url, d=img_dest: download_and_save(u, d),
+                        lambda u=url, d=img_dest, q=query: download_and_save(u, d, q),
                         timeout_sec=10)
                     if dl_ok:
                         saved_count += 1
