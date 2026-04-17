@@ -415,11 +415,39 @@ html.light .acc-a { color: #7a4010; }
   line-height: 1;
 }
 .hero-about-btn {
-  display: inline-flex;
-  direction: rtl; align-items: center; gap: .5rem;
-  color: var(--c-gold-d); font-size: .84rem; cursor: pointer;
-  background: none; border: none; font-family: inherit;
-  text-decoration: underline;
+  display: inline-flex; align-items: center;
+  direction: rtl;
+  gap: .5rem;
+  background: rgba(196,147,10,.12);
+  border: 1px solid rgba(196,147,10,.35);
+  color: var(--c-gold-l);
+  border-radius: 100px;
+  padding: .4rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  font-family: inherit;
+  margin-top: .8rem;
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+}
+.hero-about-btn:hover {
+  background: rgba(196,147,10,.22);
+  border-color: var(--c-gold);
+  color: var(--c-gold);
+}
+.hero-about-btn[aria-expanded="true"] {
+  background: var(--c-gold);
+  color: #fff;
+  border-color: var(--c-gold);
+}
+#about-arrow {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: .85rem; font-weight: 700;
+  transition: transform .2s;
+}
+.hero-about-btn[aria-expanded="true"] #about-arrow {
+  transform: rotate(180deg);
 }
 .hero-about-btn:hover { color: var(--c-gold-l); }
 
