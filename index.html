@@ -18,7 +18,7 @@
 <meta property="og:title" content="ספר הבישול של פרלה בן הראש ז״ל">
 <meta property="og:description" content="1,054 מתכונים מרוקאיים וספרדיים אותנטיים">
 <meta property="og:type"  content="website">
-<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/320px-Tajine_mix.jpg">
+<meta property="og:image" content="https://picsum.photos/seed/perla_og/600/400">
 <meta property="og:image:width"  content="320">
 <meta property="og:image:height" content="240">
 <title>ספר הבישול של משפחת בן הראש</title>
@@ -59,8 +59,10 @@
   --r-sm:   6px;  --r-md: 12px;  --r-lg: 18px;  --r-xl: 24px;
   --ease:   cubic-bezier(.4,0,.2,1);
   --t-fast: .15s;  --t-med: .25s;
-  --hdr-h:  56px;  --nav-h: 44px;
+  --hdr-h:  56px;  --nav-h: 66px;
 }
+html { font-size: 17px; }  /* global scale +6% */
+
 
 
 /* ── Global RTL reinforcement ─────────────────────────────── */
@@ -152,7 +154,7 @@ ol { padding-right: 1.2rem; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.hdr-subtitle { font-size: .68rem; color: var(--c-gold-d); margin-top: .05rem; opacity: .8; }
+.hdr-subtitle { font-size: .95rem; font-weight: 500; color: var(--c-gold-d); margin-top: .1rem; opacity: .85; }
 .hdr-search {
   display: flex;
   align-items: center;
@@ -169,8 +171,8 @@ ol { padding-right: 1.2rem; }
   outline: none;
   color: var(--c-gold-l);
   font-family: inherit;
-  font-size: .85rem;
-  width: 180px;
+  font-size: 1.05rem;
+  width: 220px;
   direction: rtl;
 }
 #srch::placeholder { color: rgba(196,147,10,.45); }
@@ -217,25 +219,36 @@ ol { padding-right: 1.2rem; }
   padding: 0 1rem;
   height: var(--nav-h);
   color: rgba(245,236,215,.65);
-  font-size: .82rem;
+  font-size: 1.1rem;
+  font-weight: 700;
   white-space: nowrap;
   background: none;
   border: none;
-  border-bottom: 2px solid transparent;
+  border-bottom: 3px solid transparent;
   cursor: pointer;
   transition: color var(--t-fast), border-color var(--t-fast);
 }
 .nb:hover { color: var(--c-gold-l); }
 .nb.active { color: var(--c-gold-l); border-bottom-color: var(--c-gold); }
 .nb-cnt {
-  font-size: .65rem;
-  font-weight: 500;
-  background: rgba(196,147,10,.2);
+  font-size: .95rem;
+  font-weight: 700;
+  background: rgba(196,147,10,.22);
+  border: 1px solid rgba(196,147,10,.3);
   border-radius: 100px;
-  padding: .1rem .4rem;
+  padding: .15rem .6rem;
   color: var(--c-gold-d);
 }
-.nb-arr { font-size: .6rem; opacity: .6; transition: transform var(--t-med); }
+.nb-arr {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; font-size: 1.15rem; font-weight: 900;
+  color: var(--c-gold); background: rgba(196,147,10,.12);
+  border: 1px solid rgba(196,147,10,.3); border-radius: 4px;
+  transition: transform .2s, background .15s; flex-shrink: 0;
+}
+.nb:hover .nb-arr { background: rgba(196,147,10,.22); color: var(--c-gold-l); }
+.nb.panel-open .nb-arr { transform: rotate(180deg); background: rgba(196,147,10,.3); }
+html.light .nb-arr { color: #7a4010; background: rgba(196,147,10,.1); }
 .nb.panel-open .nb-arr { transform: rotate(180deg); }
 .nav-panel {
   position: absolute;
@@ -253,54 +266,63 @@ ol { padding-right: 1.2rem; }
 .nav-panel-inner {
   max-width: 1440px;
   margin: 0 auto;
-  padding: .8rem 1.5rem 1rem;
+  padding: 1.6rem 2.2rem 1.8rem;
 }
-.panel-row { display: flex; direction: rtl; text-align: right; flex-wrap: wrap; gap: .5rem; align-items: flex-start; }
+.panel-row { display: flex; direction: rtl; text-align: right; flex-wrap: wrap; gap: .9rem; align-items: flex-start; padding: .3rem 0; }
 .pc {
-  display: inline-flex;
-  direction: rtl;
-  align-items: center;
-  gap: .3rem;
+  display: inline-flex; direction: rtl; align-items: center;
+  gap: .5rem;
   background: rgba(255,255,255,.05);
-  border: 1px solid rgba(196,147,10,.2);
+  border: 1.5px solid rgba(196,147,10,.3);
   border-radius: 100px;
-  padding: .3rem .85rem;
-  font-size: .78rem;
-  color: rgba(245,236,215,.75);
+  padding: .6rem 1.35rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: rgba(245,236,215,.88);
   cursor: pointer;
   font-family: inherit;
-  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast), transform .1s;
 }
-.pc:hover { background: rgba(196,147,10,.18); color: var(--c-gold-l); border-color: rgba(196,147,10,.45); }
+.pc:hover { background: rgba(196,147,10,.22); color: var(--c-gold-l); border-color: rgba(196,147,10,.6); transform: translateY(-1px); }
 .pc.active { background: rgba(196,147,10,.25); border-color: rgba(196,147,10,.6); color: var(--c-gold-l); }
-.pc-cnt { font-size: .66rem; opacity: .5; }
+.pc-cnt { font-size: .92rem; font-weight: 700; opacity: .7; }
 .acc-hdr {
-  display: inline-flex;
-  direction: rtl;
-  align-items: center;
-  gap: .3rem;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(196,147,10,.18);
-  border-radius: 100px;
-  padding: .3rem .85rem;
-  font-size: .78rem;
-  color: rgba(245,236,215,.7);
+  display: inline-flex; direction: rtl; align-items: center;
+  gap: .55rem;
+  background: rgba(196,147,10,.1);
+  border: 1.5px solid rgba(196,147,10,.35);
+  border-radius: 10px;
+  padding: .7rem 1.4rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: rgba(245,236,215,.92);
   cursor: pointer;
   font-family: inherit;
+  width: 100%;
+  justify-content: flex-end;
   transition: background var(--t-fast), color var(--t-fast);
 }
 .acc-hdr:hover, .acc-hdr.open { background: rgba(196,147,10,.15); color: var(--c-gold-l); }
-.acc-a { font-size: .6rem; opacity: .6; transition: transform var(--t-med); }
+.acc-a {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; font-size: 1.05rem; font-weight: 900;
+  color: var(--c-gold); background: rgba(196,147,10,.1);
+  border: 1px solid rgba(196,147,10,.25); border-radius: 3px;
+  transition: transform .2s, background .15s; flex-shrink: 0;
+  margin-right: auto;
+}
+.acc-hdr.open .acc-a { transform: rotate(90deg); background: rgba(196,147,10,.25); color: var(--c-gold-l); }
+html.light .acc-a { color: #7a4010; background: rgba(196,147,10,.08); }
 .acc-hdr.open .acc-a { transform: rotate(180deg); }
 .acc-body {
   display: none;
   direction: rtl; text-align: right;
   width: 100%;
   flex-wrap: wrap;
-  gap: .4rem;
-  background: rgba(0,0,0,.2);
-  border-radius: var(--r-sm);
-  padding: .5rem .7rem;
+  gap: .8rem;
+  background: rgba(0,0,0,.18);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
   margin-top: .3rem;
 }
 .acc-body.open { display: flex; }
@@ -337,7 +359,7 @@ ol { padding-right: 1.2rem; }
 }
 .hero-h1 em { font-style: normal; color: var(--c-gold-l); }
 .hero-tagline {
-  direction: rtl; text-align: right; font-size: .96rem; color: var(--c-gold-l); margin-bottom: .9rem; letter-spacing: .03em; }
+  direction: rtl; text-align: right; font-size: 1.15rem; color: var(--c-gold-l); margin-bottom: 1rem; letter-spacing: .02em; line-height: 1.55; }
 .hero-pills {
   direction: rtl; display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.3rem; }
 .hp {
@@ -407,27 +429,27 @@ ol { padding-right: 1.2rem; }
 html.light .book-subtitle{color:#7a5a30}
 .book-nav{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:0 0 1.2rem;padding:.6rem;position:sticky;top:100px;z-index:50;background:var(--c-deep);border-radius:8px;border-bottom:1px solid rgba(196,147,10,.15)}
 html.light .book-nav{background:#fdf8ee}
-.book-nav-btn{background:rgba(196,147,10,.1);border:1px solid rgba(196,147,10,.2);color:rgba(237,224,196,.7);padding:.25rem .6rem;border-radius:100px;font-size:.7rem;cursor:pointer;transition:all .2s;font-family:inherit;direction:rtl}
+.book-nav-btn{background:rgba(196,147,10,.1);border:1px solid rgba(196,147,10,.25);color:rgba(237,224,196,.8);padding:.4rem .85rem;border-radius:100px;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;direction:rtl}
 .book-nav-btn:hover{background:rgba(196,147,10,.2);color:var(--c-gold-l)}
 .book-nav-btn.active{background:rgba(196,147,10,.3);color:var(--c-gold-l);border-color:var(--c-gold)}
 html.light .book-nav-btn{background:rgba(196,147,10,.08);color:#7a5a30;border-color:rgba(196,147,10,.15)}
 html.light .book-nav-btn:hover,html.light .book-nav-btn.active{background:rgba(196,147,10,.2);color:#4e2010}
 .book-chapter{margin:0;padding:1.5rem 0;border-bottom:1px solid rgba(196,147,10,.12)}
 .book-chapter:last-child{border-bottom:none}
-.book-ch-title{color:var(--c-gold);font-size:1.15rem;font-weight:700;margin:0 0 .1rem;direction:rtl;text-align:right}
-.book-ch-page{font-size:.65rem;color:rgba(237,224,196,.3);margin:0 0 .6rem;direction:rtl;text-align:right}
+.book-ch-title{color:var(--c-gold);font-size:1.6rem;font-weight:900;margin:0 0 .1rem;direction:rtl;text-align:right}
+.book-ch-page{font-size:.88rem;color:rgba(237,224,196,.5);margin:0 0 .6rem;direction:rtl;text-align:right}
 html.light .book-ch-page{color:#a08060}
-.book-sub{color:var(--c-gold-l);font-size:.95rem;font-weight:700;margin:1.2rem 0 .3rem;padding-top:.6rem;border-top:1px solid rgba(196,147,10,.08);direction:rtl;text-align:right}
+.book-sub{color:var(--c-gold-l);font-size:1.25rem;font-weight:800;margin:1.2rem 0 .3rem;padding-top:.6rem;border-top:1px solid rgba(196,147,10,.08);direction:rtl;text-align:right}
 .book-sub:first-child{border-top:none;padding-top:0}
 html.light .book-sub{color:#7a3a18}
-.book-p{line-height:1.95;margin:.5rem 0;text-align:justify;direction:rtl;color:rgba(237,224,196,.85);font-size:.92rem}
+.book-p{line-height:1.95;margin:.6rem 0;text-align:justify;direction:rtl;color:rgba(237,224,196,.9);font-size:1.08rem}
 html.light .book-p{color:#3a2010}
 .book-placeholder{font-style:italic;text-align:center;color:rgba(237,224,196,.25);font-size:.82rem}
 html.light .book-placeholder{color:#bba080}
 .book-photo{margin:1.2rem auto;max-width:500px;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.3);border:2px solid rgba(196,147,10,.25);position:relative}
 .book-photo img{width:100%;height:auto;display:block;transition:transform .3s}
 .book-photo:hover img{transform:scale(1.02)}
-.book-photo-cap{padding:.5rem .8rem;background:rgba(0,0,0,.6);color:rgba(237,224,196,.9);font-size:.78rem;text-align:center;direction:rtl;line-height:1.5;backdrop-filter:blur(4px)}
+.book-photo-cap{padding:.7rem 1rem;background:rgba(0,0,0,.7);color:rgba(237,224,196,.95);font-size:1rem;font-weight:500;text-align:center;direction:rtl;line-height:1.5;backdrop-filter:blur(4px)}
 html.light .book-photo{border-color:rgba(196,147,10,.2);box-shadow:0 4px 16px rgba(0,0,0,.1)}
 html.light .book-photo-cap{background:rgba(255,255,255,.85);color:#4a2a14}
 .book-photo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
@@ -454,20 +476,20 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 .grid-header {
   display: flex;
   direction: rtl; align-items: center; justify-content: space-between;
-  padding: .7rem 1.5rem;
+  padding: 1.2rem 1.6rem;
   border-bottom: 1px solid rgba(196,147,10,.12);
   background: rgba(0,0,0,.25);
 }
-#sec-title { direction: rtl; text-align: right; font-size: 1rem; font-weight: 700; color: var(--c-gold-l); }
-#sec-cnt { font-size: .8rem; color: var(--c-gold-d); margin-right: .4rem; }
+#sec-title { direction: rtl; text-align: right; font-size: 2.4rem; font-weight: 900; color: var(--c-gold-l); letter-spacing:-.02em; }
+#sec-cnt { font-size: 1.5rem; font-weight: 800; color: var(--c-gold-d); margin-right: .7rem; background: rgba(196,147,10,.2); border: 1px solid rgba(196,147,10,.35); border-radius: 100px; padding: .1rem .9rem; }
 .diff-btns { direction: rtl; display: flex; gap: .4rem; padding: .5rem 1.5rem; border-bottom: 1px solid rgba(196,147,10,.1); }
 .diff-btn {
   direction: rtl;
   background: rgba(255,255,255,.04);
   border: 1px solid rgba(196,147,10,.2);
   color: rgba(245,236,215,.6);
-  border-radius: 100px; padding: .25rem .7rem;
-  font-size: .73rem; cursor: pointer; font-family: inherit;
+  border-radius: 100px; padding: .45rem 1rem;
+  font-size: 1rem; font-weight: 600; cursor: pointer; font-family: inherit;
 }
 .diff-btn.active { background: rgba(196,147,10,.2); border-color: rgba(196,147,10,.5); color: var(--c-gold-l); }
 .grid {
@@ -512,20 +534,20 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 .c-badge {
   direction: rtl;
   display: inline-block; background: var(--c-spice); color: #fff;
-  font-size: .64rem; font-weight: 700; border-radius: 100px;
-  padding: .15rem .5rem; margin-bottom: .35rem;
+  font-size: .88rem; font-weight: 700; border-radius: 100px;
+  padding: .25rem .7rem; margin-bottom: .4rem;
 }
 .c-title {
   direction: rtl; text-align: right;
-  font-size: .85rem; font-weight: 700; color: var(--c-ink); line-height: 1.3; margin-bottom: .25rem;
+  font-size: 1.15rem; font-weight: 800; color: var(--c-ink); line-height: 1.3; margin-bottom: .3rem;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .c-desc {
   direction: rtl; text-align: right;
-  font-size: .74rem; color: var(--c-ink-m); line-height: 1.5;
+  font-size: .92rem; color: var(--c-ink-m); line-height: 1.55;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.c-meta { direction: rtl; display: flex; gap: .4rem; font-size: .69rem; color: var(--c-ink-l); margin-top: .4rem; flex-wrap: wrap; }
+.c-meta { direction: rtl; display: flex; gap: .5rem; font-size: .95rem; font-weight: 600; color: var(--c-ink-l); margin-top: .5rem; flex-wrap: wrap; }
 .c-tag { background: var(--c-bg2); border: 1px solid var(--c-bdr2); border-radius: 100px; padding: .1rem .4rem; }
 .c-diff-קל { background: #e8f5e9; color: #2e7d32; border-radius: 100px; padding: .1rem .4rem; }
 .c-diff-בינוני { background: #fff3e0; color: #e65100; border-radius: 100px; padding: .1rem .4rem; }
@@ -592,7 +614,7 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
   display: inline-flex;
   direction: rtl; align-items: center; gap: .3rem;
   background: rgba(196,147,10,.12); border: 1px solid rgba(196,147,10,.25);
-  border-radius: 100px; padding: .22rem .65rem; font-size: .78rem; color: var(--c-ink);
+  border-radius: 100px; padding: .35rem .9rem; font-size: 1rem; font-weight: 600; color: var(--c-ink);
 }
 .m-mem {
   direction: rtl; text-align: right;
@@ -601,12 +623,12 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
   padding: .7rem .9rem; margin-bottom: 1rem;
   font-style: italic; color: var(--c-ink-m); font-size: .88rem; line-height: 1.7;
 }
-.m-sec-h { direction: rtl; text-align: right; font-size: .78rem; font-weight: 700; color: var(--c-gold-d); text-transform: uppercase; letter-spacing: .06em; margin: .8rem 0 .4rem; }
+.m-sec-h { direction: rtl; text-align: right; font-size: 1.05rem; font-weight: 800; color: var(--c-gold-d); text-transform: uppercase; letter-spacing: .08em; margin: 1rem 0 .6rem; border-bottom: 1px solid rgba(196,147,10,.2); padding-bottom: .4rem; }
 .m-ingr-item { direction: rtl; display: flex; justify-content: space-between; align-items: baseline; padding: .3rem 0; border-bottom: 1px solid var(--c-bg3); }
-.m-ingr-q { direction: rtl; text-align: right; font-weight: 600; min-width: 80px; color: var(--c-ink); font-size: .88rem; }
-.m-ingr-i { direction: rtl; text-align: right; color: var(--c-ink-m); font-size: .88rem; }
+.m-ingr-q { direction: rtl; text-align: right; font-weight: 700; min-width: 95px; color: var(--c-ink); font-size: 1.08rem; }
+.m-ingr-i { direction: rtl; text-align: right; color: var(--c-ink-m); font-size: 1.08rem; line-height: 1.55; }
 .m-steps { padding-right: 1.3rem; margin: .5rem 0; }
-.m-step { direction: rtl; text-align: right; padding: .4rem 0; border-bottom: 1px solid var(--c-bg3); line-height: 1.7; font-size: .88rem; color: var(--c-ink-m); }
+.m-step { direction: rtl; text-align: right; padding: .4rem 0; border-bottom: 1px solid var(--c-bg3); line-height: 1.75; font-size: 1.08rem; color: var(--c-ink-m); }
 .m-step-t { color: var(--c-gold); font-weight: 700; }
 .m-tip-wrap { direction: rtl; text-align: right; background: rgba(196,147,10,.07); border: 1px solid rgba(196,147,10,.25); border-radius: var(--r-md); padding: .7rem 1rem; margin-top: .8rem; }
 .m-tip-label { direction: rtl; text-align: right; font-size: .72rem; font-weight: 700; color: var(--c-gold-d); margin-bottom: .3rem; }
@@ -643,8 +665,8 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 .hdr-tools { display: flex; gap: .3rem; align-items: center; flex-shrink: 0; }
 .hdr-btn {
   background: rgba(255,255,255,.06); border: 1px solid rgba(196,147,10,.25);
-  border-radius: 100px; padding: .25rem .5rem; color: var(--c-gold-d);
-  font-size: .72rem; cursor: pointer; font-family: inherit; transition: all var(--t-fast);
+  border-radius: 100px; padding: .4rem .85rem; color: var(--c-gold-d);
+  font-size: .95rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all var(--t-fast);
   white-space: nowrap;
 }
 .hdr-btn:hover { background: rgba(196,147,10,.2); color: var(--c-gold-l); }
@@ -787,7 +809,7 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
   "description": "1,054 מתכונים אותנטיים מהמטבח המרוקאי, הספרדי-יהודי ומטבחי יהדות המזרח — לזכרם של פרלה ופנחס בן הראש שזכרונם יהיה לברכה וגאווה לדורי דורות דרך הטעם המעלה...",
   "url": "https://perlabenharrosh-cookingbook.netlify.app/",
   "inLanguage": "he",
-  "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/320px-Tajine_mix.jpg",
+  "image": "https://picsum.photos/seed/perla_og/600/400",
   "author": {
     "@type": "Person",
     "name": "אסף בן ארוש"
@@ -1426,27 +1448,7 @@ function hide(id) { const el = document.getElementById(id); if (el) el.hidden = 
    IMAGES
 ═══════════════════════════════════════════════ */
 /* Category fallback images — Wikimedia Commons (CC licensed, extremely stable) */
-var CAT_IMG = {
-  soups:  'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  salads: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  veg:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  meat:   'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Moroccan_TAGINE.JPG/640px-Moroccan_TAGINE.JPG',
-  chick:  'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Couscous_Royal_Marocain.JPG/640px-Couscous_Royal_Marocain.JPG',
-  fish:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  hol:    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Couscous_Royal_Marocain.JPG/640px-Couscous_Royal_Marocain.JPG',
-  des:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  span:   'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Moroccan_TAGINE.JPG/640px-Moroccan_TAGINE.JPG',
-  iraq:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  kurd:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  ashk:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  yem:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  pers:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  buk:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  tun:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  turk:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  isr:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  _def:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg'
-};
+var CAT_IMG = {}; // no fallbacks;
 
 /* _IMG_ALIAS: maps duplicate image names to canonical file.
    Generated by cleanup_hardlinks.ps1 — paste content here after running.
@@ -1469,13 +1471,11 @@ function getRecipeImg(r) {
 
 /* Fallback sources for onerror (tried in order) */
 function _getImgFallbacks(r) {
+  // Only try local alternate images — NEVER random stock photos
   var fb = [];
   for (var n = 2; n <= 3; n++) {
     fb.push(_resolveImg('r-' + r.id + '-' + n));
   }
-  if (r.img) fb.push(r.img);
-  var cat = CAT_IMG[r.cat] || CAT_IMG._def;
-  if (cat) fb.push(cat);
   return fb;
 }
 
