@@ -140,7 +140,7 @@ except ImportError:
 # CONFIG
 # ══════════════════════════════════════════════════
 SCRIPT_DIR  = Path(__file__).parent
-IMG_DIR     = SCRIPT_DIR / "images"        # output directory — always images/
+IMG_DIR     = SCRIPT_DIR / "images" / "recipes_images"  # recipe images → images/recipes_images/
 LOG_DIR     = Path(r"C:\Users\isasaf\Assi-ProjectsWorkFolder\PerlaBenHarroshCookingBook\logs") if sys.platform == 'win32' else SCRIPT_DIR / "logs"
 _ts         = datetime.now().strftime("%Y-%m-%d_%H.%M")
 LOG_FILE    = LOG_DIR / f"download_images_{_ts}.log"
@@ -1772,32 +1772,8 @@ def build_youtube_urls(title, query):
     ]
 _dl_link_count = 0   # hard-links created during download
 
-def _url_is_food_relevant(url, query):
-    """Reject URLs that clearly point to non-food images."""
-    import re as _re
-    u = url.lower()
-    BLOCK = [
-        r'/skyline',r'/bridge',r'/city[_-]?scape',r'/landscape',r'/mountain',
-        r'/building',r'/skyscraper',r'/downtown',r'/forest',r'/desert',
-        r'/ocean',r'/river',r'/lake',r'/sunset',r'/sunrise',r'/sky(?!line)',
-        r'/laptop',r'/computer',r'/keyboard',r'/smartphone',r'/office',
-        r'/meeting',r'/workspace',r'/code',r'/software',r'/data[-_]?center',
-        r'/portrait(?!.?food)',r'/headshot',r'/selfie',r'/graduation',
-        r'/abstract',r'/wallpaper',r'/pattern(?!.?bread)',
-    ]
-    for pat in BLOCK:
-        if _re.search(pat, u):
-            # Allow if URL also contains food keywords
-            if any(fw in u for fw in ['food','recipe','dish','meal','cook','kitchen',
-                                       'plate','bowl','moroccan','jewish','tagine',
-                                       'couscous','harira','soup','salad','fish']):
-                break
-            return False
-    return True
-
-
-def download_and_save(img_url, dest, query=""):
-    """Download image, validate relevance, and deduplicate via SHA256.
+def download_and_save(img_url, dest):
+    """Download image, validate, and deduplicate via SHA256.
     Returns True on success."""
     import hashlib
     sp, sd = get_sess()
@@ -1820,10 +1796,6 @@ def download_and_save(img_url, dest, query=""):
         data = img_url[1]
         if len(data) > 3000 and (data[:2] == b'\xff\xd8' or data[:4] == b'\x89PNG'):
             return _save_with_dedup(data, dest)
-        return False
-
-    # Pre-check URL relevance before downloading
-    if isinstance(img_url, str) and not _url_is_food_relevant(img_url, query):
         return False
 
     # Standard URL download
@@ -2149,7 +2121,7 @@ def main():
                     urls = _call_with_timeout(src_fn, timeout_sec=timeout)
                     dt = time.time() - t1
                     if urls and isinstance(urls, list):
-                        new_urls = [u for u in urls if u and u not in collected_urls and _url_is_food_relevant(u, query)]
+                        new_urls = [u for u in urls if u and u not in collected_urls]
                         collected_urls.extend(new_urls)
                         if new_urls:
                             source_counts[src_name] = source_counts.get(src_name, 0) + len(new_urls)
@@ -2179,7 +2151,7 @@ def main():
 
                 try:
                     dl_ok = _call_with_timeout(
-                        lambda u=url, d=img_dest, q=query: download_and_save(u, d, q),
+                        lambda u=url, d=img_dest: download_and_save(u, d),
                         timeout_sec=10)
                     if dl_ok:
                         saved_count += 1
