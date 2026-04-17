@@ -9,6 +9,7 @@
 !sw.js
 !manifest.json
 !download_images.py
+!clean_bad_images.py
 !cleanup_hardlinks.py
 !README.md
 !.gitignore

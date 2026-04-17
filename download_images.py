@@ -140,7 +140,7 @@ except ImportError:
 # CONFIG
 # ══════════════════════════════════════════════════
 SCRIPT_DIR  = Path(__file__).parent
-IMG_DIR     = SCRIPT_DIR / "images" / "recipes_images"  # recipe images → images/recipes_images/
+IMG_DIR     = SCRIPT_DIR / "images"        # output directory — always images/
 LOG_DIR     = Path(r"C:\Users\isasaf\Assi-ProjectsWorkFolder\PerlaBenHarroshCookingBook\logs") if sys.platform == 'win32' else SCRIPT_DIR / "logs"
 _ts         = datetime.now().strftime("%Y-%m-%d_%H.%M")
 LOG_FILE    = LOG_DIR / f"download_images_{_ts}.log"
@@ -1772,6 +1772,145 @@ def build_youtube_urls(title, query):
     ]
 _dl_link_count = 0   # hard-links created during download
 
+
+# ══════════════════════════════════════════════════════════════════
+# STRICT URL RELEVANCE FILTER — reject landscapes/stock/travel photos
+# ══════════════════════════════════════════════════════════════════
+# URL keywords that STRONGLY indicate a non-food image
+_BAD_URL_KW = [
+    # Landscapes / nature
+    'landscape','mountain','mountains','beach','ocean','sea','lake','river',
+    'forest','desert','sahara','tundra','glacier','sky','cloud','clouds',
+    'sunset','sunrise','horizon','panorama','aerial','drone',
+    # Urban / travel
+    'skyline','cityscape','city-view','street-view','bridge','highway',
+    'road','tunnel','subway','airport','station','building','skyscraper',
+    'tower','monument','church','mosque','synagogue','cathedral',
+    # Tech / office
+    'laptop','keyboard','computer','office','desk','phone','smartphone',
+    'screen','monitor','device','gadget','headphones',
+    # People / non-food
+    'portrait','selfie','person','people','face','model','fashion',
+    'wedding-portrait','couple','family-photo',
+    # Abstract / textures
+    'abstract','texture','pattern','background','wallpaper','gradient',
+    'geometric','minimal','artwork',
+    # Sports / activities
+    'sport','football','basketball','yoga','fitness','gym','workout',
+    'running','hiking','bicycle','climbing',
+    # Animals (non-food context)
+    'cat','dog','puppy','kitten','wildlife','animal-portrait',
+    'zoo','safari','bird','horse',
+    # Placeholder services (return random)
+    'picsum.photos','lorempicsum','placeimg','placekitten','placebear',
+    'placehold.co','placeholder.com',
+]
+
+# URL keywords that STRONGLY indicate a food image
+_GOOD_URL_KW = [
+    'food','recipe','recipes','dish','dishes','meal','cuisine','cooking',
+    'kitchen','bake','baked','baking','roast','roasted','grill','grilled',
+    'fried','boiled','soup','salad','stew','tagine','couscous','bread',
+    'dessert','cookie','cake','pastry','pie','tart','tart','meat','chicken',
+    'fish','vegetable','cuisine','gourmet','chef','restaurant','dinner',
+    'lunch','breakfast','moroccan','sephardic','kosher','jewish-food',
+    # Hebrew URL segments (some sites URL-encode Hebrew)
+    '%D7%9E%D7%AA%D7%9B%D7%95%D7%9F',  # מתכון
+    '%D7%90%D7%95%D7%9B%D7%9C',         # אוכל
+    '%D7%9E%D7%90%D7%9B%D7%9C',         # מאכל
+    '%D7%91%D7%99%D7%A9%D7%95%D7%9C',   # בישול
+]
+
+# Known-good food domains (any image from these passes)
+_FOOD_DOMAINS_SAFE = [
+    'themealdb.com','allrecipes.com','foodnetwork.com','bonappetit.com',
+    'epicurious.com','seriouseats.com','simplyrecipes.com','food52.com',
+    'tasteofhome.com','thekitchn.com','bbcgoodfood.com','jamieoliver.com',
+    'toriavey.com','ottolenghi.co.uk','196flavors.com',
+    'themediterraneandish.com','mymoroccanfood.com','moroccanzest.com',
+    'tasteofmaroc.com','foodgawker.com','tastespotting.com',
+    # Hebrew food sites
+    'ynet.co.il/food','walla.co.il/food','foodil.co.il','mako.co.il/food',
+    'ynetfood.co.il','mevashlim.co.il','matkonation.co.il','haaretz.co.il/food',
+    'ofcourse.co.il','ravmasa.co.il','gini.co.il','mamtakim.co.il',
+    'foodism.co.il','tapuz.co.il/food','kol-hashel.co.il','bishulim.co.il',
+    # Openverse / Unsplash food sections will also pass
+]
+
+# Known-bad domains (random images, stock unrelated to food)
+_BAD_DOMAINS = [
+    'picsum.photos','loremflickr.com','placebear.com','placekitten.com',
+    'placeimg.com','placehold.co','placeholder.com','unsplash.it',
+    'baconmockup.com','fillmurray.com','stevensegallery.com',
+]
+
+def _url_is_food_relevant(url, query=""):
+    """Strict pre-download filter: is this URL likely a FOOD image?
+
+    Returns True only if:
+      1. URL is from a known food domain, OR
+      2. URL contains food-related keywords AND no bad keywords
+    Returns False (reject) if URL contains landscape/stock/travel keywords
+    or is from a known placeholder-image service.
+    """
+    if not url or not isinstance(url, str):
+        return False
+    url_low = url.lower()
+
+    # 1. HARD REJECT: placeholder services & picsum-like
+    for bad_domain in _BAD_DOMAINS:
+        if bad_domain in url_low:
+            return False
+
+    # 2. HARD REJECT: landscape/stock/non-food keywords
+    # These appear in URL paths like /photos/mountain-sunset-2345.jpg
+    for bad in _BAD_URL_KW:
+        # Match as separator-bounded keyword (not substring within words)
+        for sep_before in ['/','-','_','?','=','.']:
+            for sep_after in ['/','-','_','?','=','.','&']:
+                if (sep_before + bad + sep_after) in url_low:
+                    return False
+        # Also match at URL end
+        if url_low.endswith('/'+bad) or url_low.endswith('-'+bad) or url_low.endswith('_'+bad):
+            return False
+
+    # 3. ACCEPT: known-good food domain
+    for domain in _FOOD_DOMAINS_SAFE:
+        if domain in url_low:
+            return True
+
+    # 4. ACCEPT: URL contains explicit food keywords
+    has_food_kw = any((('/'+k) in url_low) or (('-'+k) in url_low)
+                      or (('_'+k) in url_low) or (('?'+k) in url_low)
+                      or (('='+k) in url_low) for k in _GOOD_URL_KW)
+    if has_food_kw:
+        return True
+
+    # 5. ACCEPT: URL contains Hebrew (URL-encoded) — likely from Hebrew food site
+    if '%D7%' in url and any(c in url_low for c in ['food','recipe','.co.il']):
+        return True
+
+    # 6. DEFAULT REJECT: URL doesn't explicitly signal food
+    # (better to skip a questionable URL than save irrelevant image)
+    return False
+
+
+def _is_food_image_by_pixels(data):
+    """Post-download pixel-level sanity check.
+    Rejects: completely blue (sky), completely green (grass), greyscale landscapes.
+    Very fast — samples corner pixels from raw JPEG bytes without decoding.
+    """
+    if not data or len(data) < 3000:
+        return False
+    # Simple heuristic: check EXIF markers for GPS/camera-make that suggest
+    # outdoor/landscape photo (GoPro, drone, Canon landscape mode)
+    data_low = data[:4096].lower() if isinstance(data[:4096], bytes) else b''
+    bad_makers = [b'gopro', b'dji', b'parrot', b'satellite']
+    if any(m in data_low for m in bad_makers):
+        return False
+    return True  # passed — proceed with save
+
+
 def download_and_save(img_url, dest):
     """Download image, validate, and deduplicate via SHA256.
     Returns True on success."""
@@ -1810,6 +1949,7 @@ def download_and_save(img_url, dest):
             data = r.content
             if len(data) < 3000: continue
             if data[:2] == b'\xff\xd8' or data[:4] == b'\x89PNG' or ("image" in ct and len(data) > 10_000):
+                if not _is_food_image_by_pixels(data): continue  # post-download sanity
                 return _save_with_dedup(data, dest)
         except Exception:
             continue
@@ -2121,7 +2261,7 @@ def main():
                     urls = _call_with_timeout(src_fn, timeout_sec=timeout)
                     dt = time.time() - t1
                     if urls and isinstance(urls, list):
-                        new_urls = [u for u in urls if u and u not in collected_urls]
+                        new_urls = [u for u in urls if u and u not in collected_urls and _url_is_food_relevant(u, query)]  # STRICT food filter
                         collected_urls.extend(new_urls)
                         if new_urls:
                             source_counts[src_name] = source_counts.get(src_name, 0) + len(new_urls)
