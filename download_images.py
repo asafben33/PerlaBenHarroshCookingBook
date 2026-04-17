@@ -2163,29 +2163,54 @@ def main():
         log(f"Ctrl+C = יציאה מיידית")
         log("")
 
-        # ── Quick connectivity check ─────────────────────────────
-        log("בודק חיבור רשת...")
+        # ── Robust connectivity check — try MULTIPLE endpoints ──
+        log("בודק חיבור רשת (מספר endpoints)...")
+        # Try diverse endpoints — if ALL fail, network is truly blocked
+        TEST_URLS = [
+            ("TheMealDB",  "https://www.themealdb.com/api/json/v1/1/search.php?s=soup"),
+            ("DuckDuckGo", "https://duckduckgo.com/?q=food&iax=images"),
+            ("Wikipedia",  "https://en.wikipedia.org/wiki/Main_Page"),
+            ("Openverse",  "https://api.openverse.engineering/v1/images/?q=food"),
+        ]
         def _conn_test():
             sp, sd = get_sess()
-            for _lbl, _s in [("proxy", sp), ("direct", sd)]:
-                try:
-                    _r = _s.get("https://commons.wikimedia.org/w/api.php?action=query&meta=siteinfo&format=json",
-                               timeout=(2, 3), verify=False)
-                    if _r.status_code == 200:
-                        log(f"  {_lbl}: OK")
-                        return True
-                    else:
-                        log(f"  {_lbl}: HTTP {_r.status_code}")
-                except Exception as _e:
-                    log(f"  {_lbl}: {type(_e).__name__}")
-            return False
-        _test_ok = _call_with_timeout(_conn_test, timeout_sec=8) or False
+            any_ok = False
+            for _lbl, _s in [("direct", sd), ("proxy", sp)] if not PROXY else [("proxy", sp), ("direct", sd)]:
+                ok_count = 0
+                for url_lbl, url in TEST_URLS:
+                    try:
+                        _r = _s.get(url, timeout=(3, 5), verify=False)
+                        if _r.status_code == 200:
+                            ok_count += 1
+                    except Exception:
+                        pass
+                log(f"  {_lbl}: {ok_count}/{len(TEST_URLS)} endpoints reachable")
+                if ok_count >= 2:   # at least 2 endpoints working
+                    any_ok = True
+                    return True
+            return any_ok
+        _test_ok = _call_with_timeout(_conn_test, timeout_sec=30) or False
+
         if not _test_ok:
-            log("  WARNING: אין חיבור לרשת — הסקריפט ינסה בכל זאת אבל רוב המקורות ייכשלו.")
-            log("  TIP: בדוק proxy, VPN, או חיבור אינטרנט.")
+            log("")
+            log("  ════════════════════════════════════════════════════════")
+            log("  ✗ חיבור לרשת חסום לחלוטין — הסקריפט יעצור כדי לא לבזבז זמן.")
+            log("  ════════════════════════════════════════════════════════")
+            log("")
+            log("  פתרונות:")
+            log("  1. הרץ עם דילוג על proxy:   python download_images.py --no-proxy")
+            log("  2. עבור לרשת פרטית (בית) ולא רשת עבודה")
+            log("  3. נתק VPN או firewall חסום")
+            log("  4. אם כל האפשרויות נכשלות — הסקריפט לא יכול להוריד תמונות")
+            log("     השתמש ב-clean_bad_images.py למחוק תמונות רעות קיימות")
+            log("     ובהרצת הסקריפט אח״כ מרשת פרטית.")
+            log("")
+            return  # EXIT main — don't run the useless 27-hour loop
+        log("  ✓ חיבור לרשת תקין")
         log("")
 
         ok_count = skip_count = fail_count = 0
+        _consec_fails = 0  # auto-bail counter
         source_counts: dict = {}
         _dl_start = time.time()
 
@@ -2268,7 +2293,7 @@ def main():
             ddg_consecutive_fails = 0
             for si, (src_name, src_fn) in enumerate(sources_multi):
                 # Hard per-recipe timeout
-                if time.time() - t0 > 90:
+                if time.time() - t0 > 30:  # hard cap per recipe
                     break
                 # DDG early-abort: if 2 DDG calls in a row fail, skip remaining DDG
                 is_ddg = src_name.startswith("il-") or src_name.startswith("intl-") or src_name == "stock"
@@ -2280,7 +2305,7 @@ def main():
                     log(f"     ─── PHASE 2: חיפוש באנגלית ב-40 אתרים בינלאומיים ───")
                 t1 = time.time()
                 try:
-                    timeout = 8 if is_ddg else 10
+                    timeout = 4 if is_ddg else 6  # shorter per-source
                     urls = _call_with_timeout(src_fn, timeout_sec=timeout)
                     dt = time.time() - t1
                     if urls and isinstance(urls, list):
@@ -2326,10 +2351,20 @@ def main():
             elapsed = time.time() - t0
             if saved_count > 0:
                 ok_count += 1
+                _consec_fails = 0  # reset streak on success
                 log(f"     OK — {saved_count} images saved ({elapsed:.1f}s)")
             else:
                 fail_count += 1
+                _consec_fails += 1
                 log(f"     FAIL — no images from {len(collected_urls)} URLs ({elapsed:.0f}s)")
+                # Auto-bail: if 10 consecutive recipes yielded 0 URLs, network is blocked
+                if _consec_fails >= 10:
+                    log("")
+                    log("     ════════════════════════════════════════════════════════")
+                    log(f"     ✗ 10 מתכונים רצופים ללא אף URL — כנראה רשת חסומה.")
+                    log(f"     ✗ מפסיק למנוע בזבוז זמן. נסה שוב מרשת אחרת.")
+                    log("     ════════════════════════════════════════════════════════")
+                    break
 
             # ── Live progress bar (updates in-place) ──
             progress_bar(i + 1, total, ok=ok_count, fail=fail_count,
