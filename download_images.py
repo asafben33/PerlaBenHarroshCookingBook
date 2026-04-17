@@ -1,34 +1,39 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-download_images.py — Perla Ben-Harrosh z"l Cookbook
-====================================================
-סקריפט מאוחד: הורדת תמונות + ניקוי כפילויות (dedup) — הכל בריצה אחת.
+download_images.py — Perla Ben-Harrosh z"l Cookbook  (v4.0)
+============================================================
+סקריפט מאוחד מקצה-לקצה: Proxy Auto-Detect + Download + Dedup.
+
+שלב 0 — Proxy Auto-Detection (רץ אוטומטית בכל פעולה):
+  סדר עדיפות: proxy_config.txt → ENV → Windows Registry (IE/WinINET)
+  → PAC file (pac.gov.il) → Windows system proxy → fallback proxies.
+  עובד בסנכרון מלא עם רשת gov.il.
 
 שלב 1 — Download:
-  מוריד תמונות ל-1,014 מתכונים מקוריים + 40 לא-כשרים = 1,054 סה"כ.
-  עד 10 תמונות לכל מתכון — עובר על כל 13 המקורות ללא עצירה מוקדמת.
-  מקורות בסדר עדיפות: עברית-ראשון → TheMealDB → Wikimedia →
-                         Openverse → Unsplash → DuckDuckGo → Loremflickr
-  בטוח מפני תלייה: socket timeout גלובלי, Ctrl+C = יציאה מיידית.
+  מוריד תמונות ל-1,054 מתכונים.
+  Phase 1: חיפוש עברית ב-42 אתרים ישראלים (ynet, walla, mako, foodil...).
+  Phase 2: חיפוש אנגלית ב-40 אתרים בינלאומיים (allrecipes, foodnetwork...).
+  פילטר קפדני _url_is_food_relevant: דוחה landscape / stock / picsum.
+  שומר ב-images/recipes_images/r-{id}.jpg (עד 10 תמונות למתכון).
 
-שלב 2 — Dedup (ניקוי כפילויות דינמי):
-  סורק את תיקיית images/ לפי גודל קובץ.
-  כל קבוצת קבצים עם גודל זהה = תמונה כפולה.
-  מחליף כפילויות ב-Hard Link לקובץ הקנוני — אפס מקום נוסף,
-  כל מתכון ממשיך לראות r-{id}.jpg שלו ללא שינוי באתר.
+שלב 2 — Dedup (ניקוי כפילויות):
+  SHA256 hashing → hardlinks, אפס מקום נוסף.
 
 Usage:
-    python download_images.py                    # הורדה + dedup (ברירת מחדל)
-    python download_images.py --skip-download    # רק dedup
-    python download_images.py --skip-dedup       # רק הורדה
-    python download_images.py --dry-run          # תצוגה מקדימה של dedup
-    python download_images.py --overwrite        # הורד מחדש גם קיימות
+    python download_images.py                      # הורדה + dedup (דיפולט)
+    python download_images.py --detect-only        # רק גלה proxy ושמור
+    python download_images.py --test-proxy         # בודק באקטיביות כל מועמד
+    python download_images.py --proxy URL          # הגדרה ידנית
+    python download_images.py --no-proxy           # חיבור ישיר ללא proxy
+    python download_images.py --skip-download      # רק dedup
+    python download_images.py --skip-dedup         # רק הורדה
+    python download_images.py --dry-run            # תצוגה מקדימה של dedup
+    python download_images.py --overwrite          # הורד מחדש גם קיימות
 
-Requirements:
-    pip install requests
-
-Log: SCRIPT_DIR/logs/download_images_YYYY-MM-DD_HH.MM.log
+Requirements: pip install requests
+Log: SCRIPT_DIR/logs/download_images_DD-MM-YYYY_HH.MM.log
+Config: proxy_config.txt (נוצר אוטומטית — ה-proxy שנבחר נשמר לריצות הבאות)
 """
 import os, re, sys, time, signal, socket, argparse
 from datetime import datetime
@@ -140,13 +145,240 @@ except ImportError:
 # CONFIG
 # ══════════════════════════════════════════════════
 SCRIPT_DIR  = Path(__file__).parent
-IMG_DIR     = SCRIPT_DIR / "images"        # output directory — always images/
+IMG_DIR     = SCRIPT_DIR / "images" / "recipes_images"   # output directory for recipe photos
 LOG_DIR     = Path(r"C:\Users\isasaf\Assi-ProjectsWorkFolder\PerlaBenHarroshCookingBook\logs") if sys.platform == 'win32' else SCRIPT_DIR / "logs"
 _ts         = datetime.now().strftime("%Y-%m-%d_%H.%M")
 LOG_FILE    = LOG_DIR / f"download_images_{_ts}.log"
 
 # Proxy for network requests only.  None = no proxy
-PROXY       = "http://pac.gov.il:8080"
+# ══════════════════════════════════════════════════════════════════
+# PROXY AUTO-DETECTION (merged from detect_proxy.py)
+# ══════════════════════════════════════════════════════════════════
+# מזהה אוטומטית את ה-proxy של המחשב, כולל תמיכה ב:
+#   • proxy_config.txt (נשמר מהרצה קודמת)
+#   • משתני סביבה HTTPS_PROXY / HTTP_PROXY
+#   • Windows Registry (IE/WinINET)
+#   • קובץ PAC (pac.gov.il) — הורדה וחילוץ PROXY directives
+#   • Windows system proxy API
+#   • Fallback proxies (proxy.gov.il, web-proxy.gov.il וכו')
+# ══════════════════════════════════════════════════════════════════
+
+PROXY       = None       # populated at module load by _detect_proxy_full()
+PROXY_CANDIDATES: list[str] = []   # ranked list of candidates (for --test-proxy)
+PROXY_CFG    = Path(__file__).parent / "proxy_config.txt"
+
+
+def _read_windows_proxy_registry() -> dict:
+    """Read IE/WinINET proxy settings from Windows Registry.
+    Returns dict with ProxyEnable, ProxyServer, AutoConfigURL, ProxyOverride.
+    Returns empty defaults on non-Windows or on error.
+    """
+    result = {"ProxyEnable": 0, "ProxyServer": "", "AutoConfigURL": "", "ProxyOverride": ""}
+    if sys.platform != "win32":
+        return result
+    try:
+        import winreg
+        key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            r"Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+        )
+        for name in result.keys():
+            try:
+                value, _ = winreg.QueryValueEx(key, name)
+                result[name] = value
+            except FileNotFoundError:
+                pass
+        winreg.CloseKey(key)
+    except Exception:
+        pass
+    return result
+
+
+def _download_pac_file(pac_url: str, timeout: int = 5) -> str | None:
+    """Download PAC file (JavaScript). Returns text content or None on failure."""
+    try:
+        from urllib.request import Request, urlopen
+        req = Request(pac_url, headers={"User-Agent": "Mozilla/5.0"})
+        resp = urlopen(req, timeout=timeout)
+        raw = resp.read()
+        for enc in ("utf-8", "latin-1", "cp1255"):
+            try:
+                return raw.decode(enc)
+            except UnicodeDecodeError:
+                continue
+        return raw.decode("utf-8", errors="replace")
+    except Exception:
+        return None
+
+
+def _extract_pac_proxies(pac_text: str) -> list[str]:
+    """Parse PAC JavaScript text, extract unique PROXY host:port directives."""
+    if not pac_text:
+        return []
+    matches = re.findall(r"PROXY\s+([\w.-]+:\d+)", pac_text, re.IGNORECASE)
+    seen = set()
+    unique = []
+    for m in matches:
+        if m not in seen:
+            seen.add(m)
+            unique.append(m)
+    return unique
+
+
+def _test_proxy(proxy_url: str, test_url: str = "http://www.google.com/generate_204",
+                timeout: int = 5) -> tuple[bool, str]:
+    """Test if a proxy successfully forwards a request.
+    Any HTTP response (incl. 4xx) = proxy works (server-side rejection is separate).
+    Returns (works, message).
+    """
+    try:
+        from urllib.request import Request, ProxyHandler, build_opener
+        from urllib.error import HTTPError, URLError
+        handler = ProxyHandler({"http": proxy_url, "https": proxy_url})
+        opener = build_opener(handler)
+        req = Request(test_url, headers={"User-Agent": "Mozilla/5.0"})
+        resp = opener.open(req, timeout=timeout)
+        return (resp.status < 500, f"HTTP {resp.status}")
+    except HTTPError as e:
+        # HTTPError → proxy forwarded, origin rejected. Proxy still works.
+        return (True, f"HTTP {e.code} (proxy forwards OK)")
+    except URLError as e:
+        return (False, f"URLError: {e.reason}")
+    except Exception as e:
+        return (False, f"{type(e).__name__}: {e}")
+
+
+def _collect_proxy_candidates(verbose: bool = False) -> list[str]:
+    """Build ranked list of proxy URLs to try, from all available sources."""
+    vprint = print if verbose else (lambda *a, **k: None)
+    candidates: list[str] = []
+    seen: set[str] = set()
+
+    def _add(url: str, source: str) -> None:
+        """Add URL to candidates (deduplicated)."""
+        if not url:
+            return
+        url = url.strip()
+        if not url.startswith("http"):
+            url = "http://" + url
+        if url in seen:
+            return
+        seen.add(url)
+        candidates.append(url)
+        vprint(f"  + {url:<40} (source: {source})")
+
+    # ── Priority 1: proxy_config.txt ──────────────────────────────
+    try:
+        if PROXY_CFG.exists():
+            val = PROXY_CFG.read_text(encoding="utf-8").strip()
+            if val and val.lower() not in ("none", "off", "false"):
+                _add(val, "proxy_config.txt")
+    except Exception:
+        pass
+
+    # ── Priority 2: Environment variables ────────────────────────
+    for env_var in ("HTTPS_PROXY", "HTTP_PROXY", "https_proxy", "http_proxy"):
+        val = os.environ.get(env_var, "").strip()
+        if val and val.lower() not in ("none", "off", "false"):
+            _add(val, f"env:{env_var}")
+
+    # ── Priority 3: Windows Registry IE settings ─────────────────
+    reg = _read_windows_proxy_registry()
+    vprint(f"  registry: ProxyEnable={reg['ProxyEnable']} ProxyServer={reg['ProxyServer'] or '(none)'} AutoConfigURL={reg['AutoConfigURL'] or '(none)'}")
+    if reg["ProxyEnable"] == 1 and reg["ProxyServer"]:
+        server = reg["ProxyServer"]
+        # Format: "host:port" or "https=host:port;http=host:port"
+        if "=" in server:
+            for part in server.split(";"):
+                if "=" in part:
+                    scheme, addr = part.split("=", 1)
+                    if scheme.strip().lower() in ("http", "https"):
+                        _add(addr.strip(), f"registry:{scheme.strip()}")
+        else:
+            _add(server, "registry:ProxyServer")
+
+    # ── Priority 4: Parse PAC file (from Registry or known URLs) ──
+    pac_urls: list[str] = []
+    if reg["AutoConfigURL"]:
+        pac_urls.append(reg["AutoConfigURL"])
+    pac_urls += [
+        "http://pac.gov.il:8080/proxy.pac",
+        "http://pac.gov.il:8080/wpad.dat",
+        "http://pac.gov.il:8080/pac.pac",
+        "http://pac.gov.il/proxy.pac",
+        "http://pac.gov.il/wpad.dat",
+        "http://wpad/wpad.dat",                     # DHCP-distributed WPAD
+    ]
+    pac_seen: set[str] = set()
+    pac_urls = [u for u in pac_urls if not (u in pac_seen or pac_seen.add(u))]
+    for pac_url in pac_urls:
+        pac_text = _download_pac_file(pac_url, timeout=4)
+        if pac_text:
+            found = _extract_pac_proxies(pac_text)
+            if found:
+                vprint(f"  PAC[{pac_url}]: {len(found)} proxies found")
+                for proxy in found:
+                    _add(proxy, f"pac:{pac_url.split('/')[-1]}")
+                break   # first working PAC wins
+
+    # ── Priority 5: Windows system proxy (.NET / getproxies) ─────
+    try:
+        import urllib.request
+        sys_proxies = urllib.request.getproxies()
+        for scheme in ("https", "http"):
+            val = sys_proxies.get(scheme, "")
+            if val and "pac" not in val.lower():
+                _add(val, f"system:{scheme}")
+    except Exception:
+        pass
+
+    # ── Priority 6: Known gov.il fallback proxies ────────────────
+    for fb in ("proxy.gov.il:8080", "proxy1.gov.il:8080",
+               "web-proxy.gov.il:8080", "pac.gov.il:8080"):
+        _add(fb, "fallback")
+
+    return candidates
+
+
+def _detect_proxy_full(test: bool = False, verbose: bool = False) -> str | None:
+    """Full proxy auto-detection.
+    If test=True, each candidate is probed; first working one is returned.
+    If test=False, the first candidate (highest priority) is returned as-is.
+    Populates module-level PROXY_CANDIDATES for later inspection.
+    """
+    global PROXY_CANDIDATES
+    vprint = print if verbose else (lambda *a, **k: None)
+
+    vprint("[proxy] Collecting candidates...")
+    PROXY_CANDIDATES = _collect_proxy_candidates(verbose=verbose)
+    if not PROXY_CANDIDATES:
+        vprint("[proxy] No candidates found — will use direct connection")
+        return None
+
+    if not test:
+        chosen = PROXY_CANDIDATES[0]
+        print(f"[proxy] Using: {chosen}  (highest priority, not tested)")
+        return chosen
+
+    vprint("[proxy] Testing each candidate...")
+    for candidate in PROXY_CANDIDATES:
+        ok, msg = _test_proxy(candidate)
+        symbol = "✓" if ok else "✗"
+        vprint(f"  {symbol} {candidate:<40} — {msg}")
+        if ok:
+            print(f"[proxy] Using: {candidate}  (tested working)")
+            return candidate
+
+    print("[proxy] All candidates failed — will use direct connection")
+    return None
+
+
+# ── Run proxy detection at module load (non-testing mode) ──────────
+try:
+    PROXY = _detect_proxy_full(test=False, verbose=False)
+except Exception as _proxy_err:
+    print(f"[proxy] Detection error: {_proxy_err}")
+    PROXY = None
 
 DELAY       = 0.4    # seconds between recipes (rate limiting)
 NET_TIMEOUT = 6      # seconds per network request
@@ -2104,18 +2336,59 @@ def main():
                         help="הורד מחדש גם תמונות קיימות (OVERWRITE=True)")
     parser.add_argument("--no-proxy",      action="store_true",
                         help="התעלם מה-proxy — חיבור ישיר בלבד")
+    parser.add_argument("--proxy", type=str, default=None,
+                        help="הגדר proxy ידנית (למשל: http://proxy.gov.il:8080)")
+    parser.add_argument("--detect-only",   action="store_true",
+                        help="רק גלה proxy, הצג ממצאים, ושמור ל-proxy_config.txt — אין הורדה")
+    parser.add_argument("--test-proxy",    action="store_true",
+                        help="בדוק באופן אקטיבי את כל המועמדים ל-proxy (איטי יותר אבל בטוח יותר)")
     args = parser.parse_args()
 
     if args.overwrite:
         OVERWRITE = True
+    global PROXY
+
+    # ── Handle proxy configuration with priority ──────────────────
     if args.no_proxy:
-        global PROXY
         PROXY = None
+        log("[proxy] Mode: --no-proxy (direct connection)")
+    elif args.proxy:
+        PROXY = args.proxy
+        log(f"[proxy] Mode: --proxy override → {PROXY}")
+    elif args.test_proxy or args.detect_only:
+        # Re-run detection with active testing
+        log("[proxy] Mode: active detection with testing")
+        PROXY = _detect_proxy_full(test=True, verbose=True)
+    else:
+        log(f"[proxy] Mode: auto-detected → {PROXY or 'direct'}")
+        log(f"[proxy] Candidates found: {len(PROXY_CANDIDATES)}")
+
+    # ── Save chosen proxy to proxy_config.txt for next runs ──────
+    if PROXY and not args.no_proxy:
+        try:
+            PROXY_CFG.write_text(PROXY + "\n", encoding="utf-8")
+            log(f"[proxy] Saved to: {PROXY_CFG.name}")
+        except Exception as _e:
+            log(f"[proxy] Save failed: {_e}")
+
+    # ── If --detect-only, print summary and exit ─────────────────
+    if args.detect_only:
+        log("")
+        log("=" * 60)
+        log("סיכום --detect-only:")
+        log(f"  Chosen proxy: {PROXY or '(none, direct)'}")
+        log(f"  Candidates   : {len(PROXY_CANDIDATES)}")
+        for i, c in enumerate(PROXY_CANDIDATES[:10], 1):
+            log(f"    {i}. {c}")
+        log("")
+        log(f"לשימוש: python {Path(__file__).name}")
+        log("(ה-proxy נשמר ל-proxy_config.txt וייקרא אוטומטית)")
+        return 0
 
     # ── אתחול לוג ────────────────────────────────────────────
     LOG_FILE.write_text("", encoding="utf-8")
     log("=" * 60)
-    log("Perla Ben-Harrosh z\"l Cookbook — v3.0 (Download + Dedup)")
+    log("Perla Ben-Harrosh z\"l Cookbook — v4.0 (Proxy + Download + Dedup)")
     log("=" * 60)
     mode_parts = []
     if not args.skip_download: mode_parts.append("Download")
@@ -2176,16 +2449,18 @@ def main():
             sp, sd = get_sess()
             any_ok = False
             for _lbl, _s in [("direct", sd), ("proxy", sp)] if not PROXY else [("proxy", sp), ("direct", sd)]:
-                ok_count = 0
+                http_resp = 0  # ANY HTTP response = network works (even 429/403)
                 for url_lbl, url in TEST_URLS:
                     try:
                         _r = _s.get(url, timeout=(3, 5), verify=False)
-                        if _r.status_code == 200:
-                            ok_count += 1
+                        # ANY status code = TCP connection succeeded + server responded
+                        # 429 means rate-limited, not "no network"
+                        if _r.status_code < 600:
+                            http_resp += 1
                     except Exception:
                         pass
-                log(f"  {_lbl}: {ok_count}/{len(TEST_URLS)} endpoints reachable")
-                if ok_count >= 2:   # at least 2 endpoints working
+                log(f"  {_lbl}: {http_resp}/{len(TEST_URLS)} endpoints responded")
+                if http_resp >= 1:   # even ONE HTTP response = can continue
                     any_ok = True
                     return True
             return any_ok
@@ -2197,13 +2472,11 @@ def main():
             log("  ✗ חיבור לרשת חסום לחלוטין — הסקריפט יעצור כדי לא לבזבז זמן.")
             log("  ════════════════════════════════════════════════════════")
             log("")
-            log("  פתרונות:")
-            log("  1. הרץ עם דילוג על proxy:   python download_images.py --no-proxy")
-            log("  2. עבור לרשת פרטית (בית) ולא רשת עבודה")
-            log("  3. נתק VPN או firewall חסום")
-            log("  4. אם כל האפשרויות נכשלות — הסקריפט לא יכול להוריד תמונות")
-            log("     השתמש ב-clean_bad_images.py למחוק תמונות רעות קיימות")
-            log("     ובהרצת הסקריפט אח״כ מרשת פרטית.")
+            log("  פתרונות (בסדר העדפה):")
+            log("  1. הרץ ללא proxy:           python download_images.py --no-proxy")
+            log("  2. חבר את המחשב ל-HOTSPOT של הטלפון (עוקף gov.il firewall)")
+            log("  3. הרץ מרשת ביתית פרטית")
+            log("  4. (לא מומלץ) VPN לרשת אחרת")
             log("")
             return  # EXIT main — don't run the useless 27-hour loop
         log("  ✓ חיבור לרשת תקין")
@@ -2358,7 +2631,7 @@ def main():
                 _consec_fails += 1
                 log(f"     FAIL — no images from {len(collected_urls)} URLs ({elapsed:.0f}s)")
                 # Auto-bail: if 10 consecutive recipes yielded 0 URLs, network is blocked
-                if _consec_fails >= 10:
+                if _consec_fails >= 20:
                     log("")
                     log("     ════════════════════════════════════════════════════════")
                     log(f"     ✗ 10 מתכונים רצופים ללא אף URL — כנראה רשת חסומה.")
