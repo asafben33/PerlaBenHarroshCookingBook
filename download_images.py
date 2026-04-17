@@ -2159,7 +2159,7 @@ def main():
         log("שלב 1 — הורדת תמונות")
         log("-" * 60)
         log(f"מתכונים: {total} | קיימים: {already} | תמונות בדיסק: {total_imgs} | MAX_PER_RECIPE={MAX_IMAGES_PER_RECIPE} | OVERWRITE={OVERWRITE}")
-        log(f"מקורות: IL×5 → Hebrew → INTL×5 → Stock → MealDB → Wikimedia → Openverse → Wikipedia")
+        log(f"מקורות: PHASE 1 עברית (9 מקורות IL + HE-Wiki) → PHASE 2 אנגלית (11 מקורות INTL + APIs)")
         log(f"Ctrl+C = יציאה מיידית")
         log("")
 
@@ -2213,7 +2213,7 @@ def main():
 
             query = build_query(recipe)
             pct = (i + 1) * 100 // total
-            log(f"  >> [{i+1:4d}/{total}] {pct:3d}% [{rid:8s}] \"{query[:35]}\"")
+            log(f"  >> [{i+1:4d}/{total}] {pct:3d}% [{rid:8s}] עברית: \"{title[:30]}\"  |  EN: \"{query[:30]}\"")
 
             t0 = time.time()
             collected_urls = []  # All URLs found across all sources
@@ -2226,35 +2226,58 @@ def main():
                 return [r] if r else []
 
             sources_multi = [
-                # ── Fast APIs FIRST (reliable, 1-2s each) ──
-                ("wikimedia",   lambda q=query: _wrap(lambda: source_wikimedia_single(q))),
-                ("hebrew",      lambda t=title, q=query: _wrap(lambda: source_hebrew_first(t, q))),
+                # ═══════════ PHASE 1: HEBREW SEARCH (Israeli sites first) ═══════════
+                # 1a. Hebrew Wikimedia/Wikipedia with Hebrew recipe title
+                ("he-wikimedia",lambda t=title, q=query: _wrap(lambda: source_hebrew_first(t, q))),
+                # 1b. ALL 42 Israeli food sites — Hebrew title + "מתכון"
+                ("il-a",        lambda t=title, q=query: source_il_group_a(t, q)),
+                ("il-b",        lambda t=title, q=query: source_il_group_b(t, q)),
+                ("il-c",        lambda t=title, q=query: source_il_group_c(t, q)),
+                ("il-d",        lambda t=title, q=query: source_il_group_d(t, q)),
+                ("il-e",        lambda t=title, q=query: source_il_group_e(t, q)),
+                ("il-f",        lambda t=title, q=query: source_il_group_f(t, q)),
+                ("il-g",        lambda t=title, q=query: source_il_group_g(t, q)),
+                ("il-h",        lambda t=title, q=query: source_il_group_h(t, q)),
+                # 1c. General Hebrew DDG search (surfaces all IL sites)
+                ("il-general",  lambda t=title, q=query: source_il_general(t, q)),
+
+                # ═══════════ PHASE 2: ENGLISH SEARCH (international sites) ═══════════
+                # 2a. Fast English APIs
                 ("mealdb",      lambda q=query: _wrap(lambda: source_mealdb(q))),
                 ("openverse",   lambda q=query: _wrap(lambda: source_openverse(q))),
                 ("unsplash",    lambda q=query: _wrap(lambda: source_unsplash_search(q))),
-                # ── DDG Israeli (Hebrew search, 2 groups only — if both fail, skip rest) ──
-                ("il-1",        lambda t=title, q=query: source_il_group_a(t, q)),
-                ("il-2",        lambda t=title, q=query: source_il_group_b(t, q)),
-                ("il-general",  lambda t=title, q=query: source_il_general(t, q)),
-                # ── DDG International (English search, 2 groups) ──
-                ("intl-1",      lambda q=query: source_intl_group_a(q)),
-                ("intl-mideast",lambda q=query: source_intl_group_d(q)),
+                ("en-wikimedia",lambda q=query: _wrap(lambda: source_wikimedia_single(q))),
+                # 2b. ALL 40 international food sites — English query
+                ("intl-a",      lambda q=query: source_intl_group_a(q)),
+                ("intl-b",      lambda q=query: source_intl_group_b(q)),
+                ("intl-c",      lambda q=query: source_intl_group_c(q)),
+                ("intl-d",      lambda q=query: source_intl_group_d(q)),
+                ("intl-e",      lambda q=query: source_intl_group_e(q)),
+                ("intl-f",      lambda q=query: source_intl_group_f(q)),
+                ("intl-g",      lambda q=query: source_intl_group_g(q)),
+                # 2c. Stock photo food sections
+                ("stock",       lambda q=query: source_stock_photos(q)),
+                # 2d. General English DDG search
                 ("intl-general",lambda q=query: source_intl_general(q)),
-                # ── Restored from original — extra sources ──
+                # 2e. Food-blog scrape
                 ("ddg-scrape",  lambda q=query: _wrap(lambda: source_foodimages_scrape(q))),
-                ("flickr",      lambda q=query, rid=rid: [source_loremflickr(q, rid)]),
+                # Note: loremflickr removed — it returned random placeholder images
             ]
 
             # ═══ Collect URLs from sources — with DDG early-abort ═══
             ddg_consecutive_fails = 0
             for si, (src_name, src_fn) in enumerate(sources_multi):
                 # Hard per-recipe timeout
-                if time.time() - t0 > 45:
+                if time.time() - t0 > 90:
                     break
                 # DDG early-abort: if 2 DDG calls in a row fail, skip remaining DDG
                 is_ddg = src_name.startswith("il-") or src_name.startswith("intl-") or src_name == "stock"
-                if is_ddg and ddg_consecutive_fails >= 2:
-                    continue
+                # NOTE: DDG early-abort REMOVED — user wants ALL sources tried
+                # Phase banner
+                if src_name == "he-wikimedia":
+                    log(f"     ─── PHASE 1: חיפוש בעברית ב-42 אתרים ישראלים ───")
+                elif src_name == "mealdb":
+                    log(f"     ─── PHASE 2: חיפוש באנגלית ב-40 אתרים בינלאומיים ───")
                 t1 = time.time()
                 try:
                     timeout = 8 if is_ddg else 10
@@ -2263,9 +2286,11 @@ def main():
                     if urls and isinstance(urls, list):
                         new_urls = [u for u in urls if u and u not in collected_urls and _url_is_food_relevant(u, query)]  # STRICT food filter
                         collected_urls.extend(new_urls)
+                        # Phase indicator: he=Hebrew search, en=English search
+                        _phase = "עברית" if src_name.startswith("il-") or src_name == "he-wikimedia" else "EN"
                         if new_urls:
                             source_counts[src_name] = source_counts.get(src_name, 0) + len(new_urls)
-                            log(f"     {src_name}: +{len(new_urls)} URLs ({dt:.1f}s)")
+                            log(f"     [{_phase}] {src_name}: +{len(new_urls)} URLs ({dt:.1f}s)")
                             if is_ddg: ddg_consecutive_fails = 0
                     else:
                         if is_ddg: ddg_consecutive_fails += 1
