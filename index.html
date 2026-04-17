@@ -427,43 +427,31 @@ html.light .book-placeholder{color:#bba080}
 .book-photo{position:relative;margin:1.4rem auto;display:block}
 .book-photo img{width:100%;height:auto;display:block;transition:transform .35s cubic-bezier(.25,.46,.45,.94)}
 .book-photo:hover img{transform:scale(1.03)}
-/* bp-rect: default rectangular with antique border */
+/* bp-rect: rectangular with antique gold border */
 .book-photo.bp-rect{max-width:460px;border-radius:3px;overflow:hidden;
-  box-shadow:0 6px 32px rgba(0,0,0,.55);
-  border:5px solid rgba(196,147,10,.38);
-  outline:1px solid rgba(196,147,10,.15);
-  outline-offset:3px}
-/* bp-diamond: 45° rotated square frame */
-.book-photo.bp-diamond{max-width:300px;overflow:visible;
-  display:flex;flex-direction:column;align-items:center}
-.book-photo.bp-diamond .bp-inner{
-  width:100%;aspect-ratio:1;overflow:hidden;border-radius:3px;
-  transform:rotate(45deg);
-  box-shadow:0 8px 40px rgba(0,0,0,.6);
-  border:4px solid rgba(196,147,10,.5)}
-.book-photo.bp-diamond .bp-inner img{
-  width:145%;height:145%;object-fit:cover;object-position:center;
-  transform:rotate(-45deg) translate(-21%,-21%);
-  transition:transform .4s}
+  box-shadow:0 6px 32px rgba(0,0,0,.55);border:5px solid rgba(196,147,10,.38);
+  outline:1px solid rgba(196,147,10,.15);outline-offset:3px}
+/* bp-diamond: 45deg rotated — like the green diamond mark in screenshot */
+.book-photo.bp-diamond{max-width:300px;overflow:visible;display:flex;flex-direction:column;align-items:center}
+.book-photo.bp-diamond .bp-inner{width:100%;aspect-ratio:1;overflow:hidden;border-radius:3px;
+  transform:rotate(45deg);box-shadow:0 8px 40px rgba(0,0,0,.6);border:4px solid rgba(196,147,10,.5)}
+.book-photo.bp-diamond .bp-inner img{width:145%;height:145%;object-fit:cover;object-position:center;
+  transform:rotate(-45deg) translate(-21%,-21%);transition:transform .4s}
 .book-photo.bp-diamond:hover .bp-inner img{transform:rotate(-45deg) translate(-21%,-21%) scale(1.08)}
-/* bp-oval: portrait-oval for single-subject photos */
-.book-photo.bp-oval{max-width:260px;overflow:hidden;
-  border-radius:50%;
-  box-shadow:0 6px 36px rgba(0,0,0,.6);
-  border:5px solid rgba(196,147,10,.45);
-  aspect-ratio:3/4}
+/* bp-oval: portrait oval — like the green circle mark in screenshot */
+.book-photo.bp-oval{max-width:260px;overflow:hidden;border-radius:50%;
+  box-shadow:0 6px 36px rgba(0,0,0,.6);border:5px solid rgba(196,147,10,.45);aspect-ratio:3/4}
 .book-photo.bp-oval img{width:100%;height:100%;object-fit:cover;object-position:top center}
-/* bp-wide: panoramic spanning photo */
+/* bp-wide: full-width panoramic */
 .book-photo.bp-wide{max-width:100%;border-radius:4px;overflow:hidden;
-  box-shadow:0 8px 48px rgba(0,0,0,.5);
-  border:3px solid rgba(196,147,10,.3)}
+  box-shadow:0 8px 48px rgba(0,0,0,.5);border:3px solid rgba(196,147,10,.3)}
 .book-photo.bp-wide img{aspect-ratio:16/7;object-fit:cover;width:100%}
 /* captions */
 .book-photo-cap{font-size:.77rem;text-align:center;direction:rtl;line-height:1.55;
   color:rgba(237,224,196,.75);font-style:italic;padding:.45rem .5rem 0;font-family:inherit}
 .book-photo.bp-diamond .book-photo-cap{margin-top:.9rem}
 html.light .book-photo-cap{color:#7a5030}
-/* sepia vintage look */
+/* sepia vintage filter */
 .book-photo.sepia img{filter:sepia(.55) contrast(1.08) brightness(.97)}
 .book-photo.sepia:hover img{filter:sepia(.15) contrast(1.03) brightness(1.01)}
 /* grid layouts */
@@ -472,7 +460,6 @@ html.light .book-photo-cap{color:#7a5030}
 .book-photo-grid.bpg-3{grid-template-columns:1fr 1fr 1fr}
 .book-photo-grid.bpg-center{justify-items:center}
 .book-photo-grid .book-photo{margin:0}
-/* float alongside text */
 .book-photo.bp-float-r{float:left;margin:0 0 1.2rem 1.8rem;clear:left}
 .book-photo.bp-float-l{float:right;margin:0 1.8rem 1.2rem 0;clear:right}
 .bpclear::after{content:'';display:block;clear:both}
@@ -1163,7 +1150,7 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
     </div>
     <div class="hdr-tools">
       <button id="pwa-install-btn" class="hdr-btn hdr-btn-install" aria-label="התקן אפליקציה" title="התקן אפליקציה" style="display:none">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
         <span class="pwa-label">התקן</span>
       </button>
       <button id="theme-toggle" class="hdr-btn" aria-label="מצב בהיר" title="מצב בהיר/חשוך">☀</button>
@@ -6208,34 +6195,9 @@ if(typeof BOOK_HTML!=='undefined'){
 }
 </script>
 
-<!-- ── PWA Install ── -->
+<!-- PWA -->
 <script>
-(function(){
-  var _prompt=null;
-  function _btn(){return document.getElementById('pwa-install-btn');}
-  function _show(){var b=_btn();if(b)b.style.display='flex';}
-  function _hide(){var b=_btn();if(b)b.style.display='none';}
-  window.addEventListener('beforeinstallprompt',function(e){
-    e.preventDefault();_prompt=e;_show();
-  });
-  window.addEventListener('appinstalled',function(){_hide();_prompt=null;});
-  document.addEventListener('click',function(e){
-    if(!e.target.closest('#pwa-install-btn'))return;
-    if(_prompt){
-      _prompt.prompt();
-      _prompt.userChoice.then(function(r){
-        if(r.outcome==='accepted')_hide();
-        _prompt=null;
-      });
-    } else {
-      var he=navigator.language&&navigator.language.startsWith('he');
-      alert(he?'ב-iOS: לחץ "שתף" ← "הוסף למסך הבית"\nב-Android: תפריט ← "הוסף למסך הבית"':'Browser menu → "Add to Home Screen"');
-    }
-  });
-  // iOS: no beforeinstallprompt — show always
-  if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.navigator.standalone)
-    window.addEventListener('load',function(){setTimeout(_show,1200);});
-})();
+(function(){var _p=null;function _b(){return document.getElementById('pwa-install-btn');}function _show(){var b=_b();if(b)b.style.display='flex';}function _hide(){var b=_b();if(b)b.style.display='none';}window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();_p=e;_show();});window.addEventListener('appinstalled',function(){_hide();_p=null;});document.addEventListener('click',function(e){if(!e.target.closest('#pwa-install-btn'))return;if(_p){_p.prompt();_p.userChoice.then(function(r){if(r.outcome==='accepted')_hide();_p=null;});}else{var he=navigator.language&&navigator.language.startsWith('he');alert(he?'ב-iOS: לחץ "שתף" ← "הוסף למסך הבית"\nב-Android: תפריט ← "הוסף למסך הבית"':"Browser menu → Add to Home Screen");}});if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.navigator.standalone)window.addEventListener('load',function(){setTimeout(_show,1200);});})();
 </script>
 </body>
 </html>
