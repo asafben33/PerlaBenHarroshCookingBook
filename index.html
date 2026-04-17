@@ -18,7 +18,7 @@
 <meta property="og:title" content="ספר הבישול של פרלה בן הראש ז״ל">
 <meta property="og:description" content="1,054 מתכונים מרוקאיים וספרדיים אותנטיים">
 <meta property="og:type"  content="website">
-<meta property="og:image" content="https://picsum.photos/seed/perla_og/600/400">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/320px-Tajine_mix.jpg">
 <meta property="og:image:width"  content="320">
 <meta property="og:image:height" content="240">
 <title>ספר הבישול של משפחת בן הראש</title>
@@ -59,7 +59,7 @@
   --r-sm:   6px;  --r-md: 12px;  --r-lg: 18px;  --r-xl: 24px;
   --ease:   cubic-bezier(.4,0,.2,1);
   --t-fast: .15s;  --t-med: .25s;
-  --hdr-h:  56px;  --nav-h: 64px;
+  --hdr-h:  56px;  --nav-h: 44px;
 }
 
 
@@ -213,49 +213,29 @@ ol { padding-right: 1.2rem; }
   direction: rtl;
   text-align: right;
   align-items: center;
-  gap: .5rem;
-  padding: 0 1.1rem;
+  gap: .4rem;
+  padding: 0 1rem;
   height: var(--nav-h);
-  color: rgba(245,236,215,.8);
-  font-size: 1.05rem;
-  font-weight: 600;
+  color: rgba(245,236,215,.65);
+  font-size: .82rem;
   white-space: nowrap;
   background: none;
   border: none;
-  border-bottom: 3px solid transparent;
+  border-bottom: 2px solid transparent;
   cursor: pointer;
   transition: color var(--t-fast), border-color var(--t-fast);
 }
 .nb:hover { color: var(--c-gold-l); }
 .nb.active { color: var(--c-gold-l); border-bottom-color: var(--c-gold); }
 .nb-cnt {
-  font-size: .88rem;
-  font-weight: 700;
-  background: rgba(196,147,10,.22);
-  border: 1px solid rgba(196,147,10,.3);
+  font-size: .65rem;
+  font-weight: 500;
+  background: rgba(196,147,10,.2);
   border-radius: 100px;
-  padding: .15rem .55rem;
+  padding: .1rem .4rem;
   color: var(--c-gold-d);
 }
-.nb-arr {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  font-size: 1.1rem;
-  font-weight: 900;
-  opacity: .9;
-  color: var(--c-gold);
-  background: rgba(196,147,10,.12);
-  border: 1px solid rgba(196,147,10,.3);
-  border-radius: 4px;
-  transition: transform .2s ease, background .15s;
-  flex-shrink: 0;
-}
-.nb:hover .nb-arr { background: rgba(196,147,10,.22); color: var(--c-gold-l); }
-.nb.panel-open .nb-arr { transform: rotate(180deg); background: rgba(196,147,10,.3); color: var(--c-gold-l); }
-html.light .nb-arr { color: #7a4010; background: rgba(196,147,10,.1); border-color: rgba(196,147,10,.25); }
+.nb-arr { font-size: .6rem; opacity: .6; transition: transform var(--t-med); }
 .nb.panel-open .nb-arr { transform: rotate(180deg); }
 .nav-panel {
   position: absolute;
@@ -273,79 +253,58 @@ html.light .nb-arr { color: #7a4010; background: rgba(196,147,10,.1); border-col
 .nav-panel-inner {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 1.4rem 2rem 1.6rem;
+  padding: .8rem 1.5rem 1rem;
 }
-.panel-row { display: flex; direction: rtl; text-align: right; flex-wrap: wrap; gap: .8rem; align-items: flex-start; padding: .3rem 0; }
+.panel-row { display: flex; direction: rtl; text-align: right; flex-wrap: wrap; gap: .5rem; align-items: flex-start; }
 .pc {
   display: inline-flex;
   direction: rtl;
   align-items: center;
-  gap: .45rem;
+  gap: .3rem;
   background: rgba(255,255,255,.05);
-  border: 1px solid rgba(196,147,10,.25);
+  border: 1px solid rgba(196,147,10,.2);
   border-radius: 100px;
-  padding: .55rem 1.2rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: rgba(245,236,215,.85);
+  padding: .3rem .85rem;
+  font-size: .78rem;
+  color: rgba(245,236,215,.75);
   cursor: pointer;
   font-family: inherit;
-  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast), transform .1s;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
 }
-.pc:hover { background: rgba(196,147,10,.2); color: var(--c-gold-l); border-color: rgba(196,147,10,.55); transform: translateY(-1px); }
+.pc:hover { background: rgba(196,147,10,.18); color: var(--c-gold-l); border-color: rgba(196,147,10,.45); }
 .pc.active { background: rgba(196,147,10,.25); border-color: rgba(196,147,10,.6); color: var(--c-gold-l); }
-.pc-cnt { font-size: .88rem; font-weight: 700; opacity: .65; }
+.pc-cnt { font-size: .66rem; opacity: .5; }
 .acc-hdr {
   display: inline-flex;
   direction: rtl;
   align-items: center;
-  gap: .5rem;
-  background: rgba(196,147,10,.08);
-  border: 1.5px solid rgba(196,147,10,.3);
-  border-radius: 10px;
-  padding: .65rem 1.3rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: rgba(245,236,215,.9);
+  gap: .3rem;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(196,147,10,.18);
+  border-radius: 100px;
+  padding: .3rem .85rem;
+  font-size: .78rem;
+  color: rgba(245,236,215,.7);
   cursor: pointer;
   font-family: inherit;
-  width: 100%;
-  justify-content: flex-end;
   transition: background var(--t-fast), color var(--t-fast);
 }
 .acc-hdr:hover, .acc-hdr.open { background: rgba(196,147,10,.15); color: var(--c-gold-l); }
-.acc-a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  font-size: 1rem;
-  font-weight: 900;
-  color: var(--c-gold);
-  background: rgba(196,147,10,.1);
-  border: 1px solid rgba(196,147,10,.25);
-  border-radius: 3px;
-  transition: transform .2s ease, background .15s;
-  flex-shrink: 0;
-  margin-right: auto;
-}
-.acc-hdr.open .acc-a { transform: rotate(90deg); background: rgba(196,147,10,.25); color: var(--c-gold-l); }
-html.light .acc-a { color: #7a4010; background: rgba(196,147,10,.08); }
+.acc-a { font-size: .6rem; opacity: .6; transition: transform var(--t-med); }
 .acc-hdr.open .acc-a { transform: rotate(180deg); }
 .acc-body {
   display: none;
   direction: rtl; text-align: right;
   width: 100%;
   flex-wrap: wrap;
-  gap: .7rem;
-  background: rgba(0,0,0,.18);
-  border-radius: 8px;
-  padding: .8rem 1rem;
+  gap: .4rem;
+  background: rgba(0,0,0,.2);
+  border-radius: var(--r-sm);
+  padding: .5rem .7rem;
   margin-top: .3rem;
 }
 .acc-body.open { display: flex; }
-.acc-sep { width: 100%; height: 1px; background: rgba(196,147,10,.18); margin: .5rem 0; }
+.acc-sep { width: 100%; height: 1px; background: rgba(196,147,10,.12); margin: .2rem 0; }
 
 /* ── Hero ─────────────────────────────────────────────────── */
 .hero {
@@ -499,8 +458,8 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
   border-bottom: 1px solid rgba(196,147,10,.12);
   background: rgba(0,0,0,.25);
 }
-#sec-title { direction: rtl; text-align: right; font-size: 2.4rem; font-weight: 900; color: var(--c-gold-l); letter-spacing:-.02em; }
-#sec-cnt { font-size: 1.5rem; font-weight: 800; color: var(--c-gold-d); margin-right: .7rem; background: rgba(196,147,10,.2); border: 1px solid rgba(196,147,10,.35); border-radius: 100px; padding: .1rem .9rem; }
+#sec-title { direction: rtl; text-align: right; font-size: 1rem; font-weight: 700; color: var(--c-gold-l); }
+#sec-cnt { font-size: .8rem; color: var(--c-gold-d); margin-right: .4rem; }
 .diff-btns { direction: rtl; display: flex; gap: .4rem; padding: .5rem 1.5rem; border-bottom: 1px solid rgba(196,147,10,.1); }
 .diff-btn {
   direction: rtl;
@@ -817,19 +776,7 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
   .m-step { border-color: #ddd !important; }
   .m-chip { background: #f0e8d0 !important; border-color: #c4930a !important; }
   .m-tip-wrap { background: #f9f3e3 !important; border-color: #c4930a !important; page-break-inside: avoid; }
-  
-/* Light theme overrides for enlarged nav panel */
-html.light .pc { color: #3a1a08; border-color: rgba(196,147,10,.3); }
-html.light .pc:hover { background: rgba(196,147,10,.15); color: #1c0a02; }
-html.light .pc.active { background: rgba(196,147,10,.2); color: #1c0a02; border-color: rgba(196,147,10,.6); }
-html.light .acc-hdr { color: #3a1a08; border-color: rgba(196,147,10,.3); background: rgba(196,147,10,.07); }
-html.light .acc-hdr:hover, html.light .acc-hdr.open { background: rgba(196,147,10,.15); color: #1c0a02; }
-
-/* Folder icon on nav dropdown buttons */
-.nb-folder { font-size: 1rem; color: var(--c-gold); opacity: .8; flex-shrink: 0; transition: color .15s; }
-.nb:hover .nb-folder, .nb.panel-open .nb-folder { color: var(--c-gold-l); opacity: 1; }
-html.light .nb-folder { color: #8a5020; }
-@page { margin: 1.5cm; }
+  @page { margin: 1.5cm; }
 }
 
 </style>
@@ -840,7 +787,7 @@ html.light .nb-folder { color: #8a5020; }
   "description": "1,054 מתכונים אותנטיים מהמטבח המרוקאי, הספרדי-יהודי ומטבחי יהדות המזרח — לזכרם של פרלה ופנחס בן הראש שזכרונם יהיה לברכה וגאווה לדורי דורות דרך הטעם המעלה...",
   "url": "https://perlabenharrosh-cookingbook.netlify.app/",
   "inLanguage": "he",
-  "image": "https://picsum.photos/seed/perla_og/600/400",
+  "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/320px-Tajine_mix.jpg",
   "author": {
     "@type": "Person",
     "name": "אסף בן ארוש"
@@ -1479,7 +1426,27 @@ function hide(id) { const el = document.getElementById(id); if (el) el.hidden = 
    IMAGES
 ═══════════════════════════════════════════════ */
 /* Category fallback images — Wikimedia Commons (CC licensed, extremely stable) */
-var CAT_IMG = {}; // no generic fallback — show no-image state
+var CAT_IMG = {
+  soups:  'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  salads: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  veg:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  meat:   'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Moroccan_TAGINE.JPG/640px-Moroccan_TAGINE.JPG',
+  chick:  'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Couscous_Royal_Marocain.JPG/640px-Couscous_Royal_Marocain.JPG',
+  fish:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  hol:    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Couscous_Royal_Marocain.JPG/640px-Couscous_Royal_Marocain.JPG',
+  des:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  span:   'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Moroccan_TAGINE.JPG/640px-Moroccan_TAGINE.JPG',
+  iraq:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  kurd:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  ashk:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  yem:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  pers:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  buk:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  tun:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  turk:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  isr:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  _def:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg'
+};
 
 /* _IMG_ALIAS: maps duplicate image names to canonical file.
    Generated by cleanup_hardlinks.ps1 — paste content here after running.
@@ -1506,7 +1473,9 @@ function _getImgFallbacks(r) {
   for (var n = 2; n <= 3; n++) {
     fb.push(_resolveImg('r-' + r.id + '-' + n));
   }
-  // No random stock photo fallbacks — local files only
+  if (r.img) fb.push(r.img);
+  var cat = CAT_IMG[r.cat] || CAT_IMG._def;
+  if (cat) fb.push(cat);
   return fb;
 }
 
@@ -2187,10 +2156,9 @@ function buildNav() {
     btn.className = 'nb' + (grpActive ? ' active' : '');
     btn.setAttribute('role', 'menuitem');
     btn.setAttribute('aria-haspopup', 'true');
-    btn.innerHTML = '<span class="nb-folder" aria-hidden="true">▸</span>'
-      + esc(node.lbl)
+    btn.innerHTML = esc(node.lbl)
       + (total ? '<span class="nb-cnt">' + total + '</span>' : '')
-      + '<span class="nb-arr" aria-hidden="true">⌄</span>';
+      + '<span class="nb-arr" aria-hidden="true">▾</span>';
 
     var _k = key;
     var _n = node;
