@@ -12,7 +12,7 @@
 <!-- Security headers via meta -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="Content-Security-Policy"
-  content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com; media-src 'self' blob:; connect-src 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';">
+  content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com; media-src 'self' blob:; connect-src 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta name="referrer" content="no-referrer">
 <meta property="og:title" content="ספר הבישול של פרלה בן הראש ז״ל">
@@ -2189,11 +2189,11 @@ function getRecipeImg(r) {
 
 /* Fallback sources for onerror (tried in order) */
 function _getImgFallbacks(r) {
+  /* v6.2: Simplified fallback chain to reduce 404 spam.
+     r.img removed (picsum CSP-blocked).
+     -2, -3 removed from FALLBACK (still used for gallery in _getAllRecipeImages).
+     If primary r-{id}.jpg fails, go straight to CAT_IMG. */
   var fb = [];
-  for (var n = 2; n <= 3; n++) {
-    fb.push(_resolveImg('r-' + r.id + '-' + n));
-  }
-  if (r.img) fb.push(r.img);
   var cat = CAT_IMG[r.cat] || CAT_IMG._def;
   if (cat) fb.push(cat);
   return fb;
@@ -2213,8 +2213,7 @@ function _getAllRecipeImages(r) {
   for (var n = 2; n <= 3; n++) {
     imgs.push(_resolveImg('r-' + r.id + '-' + n));
   }
-  // Original URL from recipe data
-  if (r.img) imgs.push(r.img);
+  // v6.1: r.img removed (picsum URLs blocked by CSP)
   return imgs;
 }
 
@@ -2475,7 +2474,7 @@ function renderGrid() {
           +'<div class="c-body" style="background:linear-gradient(135deg,rgba(196,147,10,.15),rgba(196,147,10,.05));padding:.6rem;text-align:center;direction:rtl">'
           +'<div style="color:var(--c-gold);font-size:.75rem;font-weight:700;margin-bottom:.2rem">'+(_LANG==='en'?'From the Family Album':'מאלבום המשפחה')+'</div>'
           +'<div style="color:var(--c-txt);font-size:.8rem;line-height:1.4">'+fcap+'</div>'
-          +'<a href="#book-'+fp.chapter+'" onclick="document.querySelector(\'[data-sec=about]\').click();setTimeout(function(){document.getElementById(\'book-'+fp.chapter+'\').scrollIntoView({behavior:\'smooth\'})},400);return false" style="color:var(--c-gold-l);font-size:.7rem;margin-top:.3rem;display:inline-block">'+(_LANG==='en'?'Read in the book':'קראו בספר')+'</a>'
+          +'<a href="#book-'+fp.chapter+'" onclick="(function(){var s=document.getElementById(\'about\');var b=document.getElementById(\'about-toggle\');if(b&&s&&!s.classList.contains(\'open\'))b.click();})();setTimeout(function(){document.getElementById(\'book-'+fp.chapter+'\').scrollIntoView({behavior:\'smooth\'})},400);return false" style="color:var(--c-gold-l);font-size:.7rem;margin-top:.3rem;display:inline-block">'+(_LANG==='en'?'Read in the book':'קראו בספר')+'</a>'
           +'</div>';
         fragment.appendChild(fcard);
       }
