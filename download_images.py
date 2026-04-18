@@ -1562,9 +1562,9 @@ def source_hebrew_first(recipe_title, query_en):
 
     # Build Hebrew search variants
     he_queries = [
-        recipe_title + " מאכל",          # title + "food" in Hebrew
-        recipe_title + " מתכון",          # title + "recipe" in Hebrew
-        recipe_title,                      # title alone
+        "מתכון ל" + recipe_title,          # "recipe for" + title (primary)
+        "מתכון ל" + recipe_title + " אוכל",  # "recipe for" + title + "food"
+        recipe_title + " מתכון",             # fallback: title + "recipe"
     ]
 
     for q in he_queries:
@@ -1665,6 +1665,56 @@ _INTL_FOOD_DOMAINS = [
 ]
 
 
+
+def _bing_image_search(query, mkt="he-IL", count=8):
+    """Bing image search — more permissive than DDG, works through corporate proxies.
+    Scrapes image JSON from Bing's image search HTML page.
+    Returns list of image URLs that pass url_is_food filter.
+    """
+    sd = preferred_sess()
+    from urllib.parse import quote_plus
+    urls = []
+    try:
+        # Bing's image search page includes JSON data with full-size image URLs
+        url = f"https://www.bing.com/images/search?q={quote_plus(query)}&form=HDRSC2&first=1&mkt={mkt}"
+        r = sd.get(url, timeout=NET_TIMEOUT, verify=False,
+                   headers={**API_HDRS, "Accept": "text/html,application/xhtml+xml",
+                            "Accept-Language": "he-IL,he;q=0.9,en;q=0.8" if mkt=="he-IL" else "en-US,en;q=0.9"})
+        if r.status_code != 200:
+            return urls
+        # Bing embeds image metadata in `murl` attributes: murl="https://..."
+        # or in m= JSON blocks: {"murl":"https://...","turl":"..."}
+        html = r.text
+        # Strategy 1: extract murl= attributes
+        murl_pattern = re.compile(r'murl&quot;:&quot;([^&]+?)&quot;')
+        for m in murl_pattern.finditer(html):
+            u = m.group(1).replace('\\/', '/')
+            if u not in urls:
+                urls.append(u)
+            if len(urls) >= count * 2:
+                break
+        # Strategy 2: direct murl=" ... "
+        if not urls:
+            alt_pattern = re.compile(r'"murl":"([^"]+)"')
+            for m in alt_pattern.finditer(html):
+                u = m.group(1).replace('\\/', '/')
+                if u not in urls:
+                    urls.append(u)
+                if len(urls) >= count * 2:
+                    break
+    except Exception:
+        pass
+    return urls[:count]
+
+
+def _bing_site_search(query, domains, mkt="he-IL", max_results=3):
+    """Bing image search scoped to specific domains via site: operator."""
+    # Bing accepts site: but not OR grouping same way as Google
+    # Use multiple site: prefixes separated by spaces
+    site_q = " OR ".join(f"site:{d}" for d in domains[:5])
+    full_q = f"{query} ({site_q})"
+    return _bing_image_search(full_q, mkt=mkt, count=max_results)
+
 def _ddg_image_search(query, locale="us-en", max_results=5):
     """Generic DuckDuckGo image search. Returns list of image URLs."""
     sd = preferred_sess()
@@ -1705,110 +1755,166 @@ def _ddg_site_search(query, domains, locale="us-en", max_results=3):
 
 
 def source_il_group_a(recipe_title, query_en):
-    """Israeli food sites — batch 1 (domains 0-4)"""
-    return _ddg_site_search(recipe_title + " מתכון",
-        _IL_FOOD_DOMAINS[0:5],
-        locale="il-he", max_results=3)
+    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
+    he_query = "מתכון ל" + recipe_title
+    # Bing first (works better through corporate proxies)
+    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[0:5], mkt="he-IL", max_results=3)
+    # If Bing yielded nothing, try DDG as fallback
+    if not urls:
+        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[0:5], locale="il-he", max_results=3)
+    return urls
 
 def source_il_group_b(recipe_title, query_en):
-    """Israeli food sites — batch 2 (domains 5-9)"""
-    return _ddg_site_search(recipe_title + " מתכון",
-        _IL_FOOD_DOMAINS[5:10],
-        locale="il-he", max_results=2)
+    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
+    he_query = "מתכון ל" + recipe_title
+    # Bing first (works better through corporate proxies)
+    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[5:10], mkt="he-IL", max_results=3)
+    # If Bing yielded nothing, try DDG as fallback
+    if not urls:
+        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[5:10], locale="il-he", max_results=3)
+    return urls
 
 def source_il_group_c(recipe_title, query_en):
-    """Israeli food sites — batch 3 (domains 10-14)"""
-    return _ddg_site_search(recipe_title + " מתכון",
-        _IL_FOOD_DOMAINS[10:15],
-        locale="il-he", max_results=2)
+    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
+    he_query = "מתכון ל" + recipe_title
+    # Bing first (works better through corporate proxies)
+    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[10:15], mkt="he-IL", max_results=3)
+    # If Bing yielded nothing, try DDG as fallback
+    if not urls:
+        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[10:15], locale="il-he", max_results=3)
+    return urls
 
 def source_il_group_d(recipe_title, query_en):
-    """Israeli food sites — batch 4 (domains 15-19)"""
-    return _ddg_site_search(recipe_title + " מתכון",
-        _IL_FOOD_DOMAINS[15:20],
-        locale="il-he", max_results=2)
+    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
+    he_query = "מתכון ל" + recipe_title
+    # Bing first (works better through corporate proxies)
+    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[15:20], mkt="he-IL", max_results=3)
+    # If Bing yielded nothing, try DDG as fallback
+    if not urls:
+        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[15:20], locale="il-he", max_results=3)
+    return urls
 
 def source_il_general(recipe_title, query_en):
-    """General Hebrew DDG search — surfaces all Israeli sites naturally"""
-    return _ddg_image_search(recipe_title + " מתכון אוכל", locale="il-he", max_results=3)
+    """General Hebrew image search — Bing primary + DDG fallback."""
+    he_query = "מתכון ל" + recipe_title
+    urls = _bing_image_search(he_query, mkt="he-IL", count=4)
+    if not urls:
+        urls = _ddg_image_search(he_query, locale="il-he", max_results=4)
+    return urls
 
 def source_intl_group_a(query_en):
-    """International recipe sites — batch 1 (domains 0-4)"""
-    return _ddg_site_search(query_en + " recipe food",
-        _INTL_FOOD_DOMAINS[0:5],
-        max_results=3)
+    """International sites — Bing (primary) + DDG (fallback) with 'recipe' prefix."""
+    en_query = "recipe " + query_en
+    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[0:5], mkt="en-US", max_results=3)
+    if not urls:
+        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[0:5], max_results=3)
+    return urls
 
 def source_intl_group_b(query_en):
-    """International recipe sites — batch 2 (domains 5-9)"""
-    return _ddg_site_search(query_en + " recipe",
-        _INTL_FOOD_DOMAINS[5:10],
-        max_results=2)
+    """International sites — Bing (primary) + DDG (fallback) with 'recipe' prefix."""
+    en_query = "recipe " + query_en
+    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[5:10], mkt="en-US", max_results=3)
+    if not urls:
+        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[5:10], max_results=3)
+    return urls
 
 def source_intl_group_c(query_en):
-    """International food blogs — batch 3 (domains 10-14)"""
-    return _ddg_site_search(query_en + " recipe",
-        _INTL_FOOD_DOMAINS[10:15],
-        max_results=2)
+    """International sites — Bing (primary) + DDG (fallback) with 'recipe' prefix."""
+    en_query = "recipe " + query_en
+    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[10:15], mkt="en-US", max_results=3)
+    if not urls:
+        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[10:15], max_results=3)
+    return urls
 
 def source_intl_group_d(query_en):
-    """Middle Eastern/Moroccan specialty — batch 4 (domains 15-19)"""
-    return _ddg_site_search(query_en + " recipe moroccan",
-        _INTL_FOOD_DOMAINS[15:20],
-        max_results=3)
+    """International sites — Bing (primary) + DDG (fallback) with 'recipe' prefix."""
+    en_query = "recipe " + query_en
+    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[15:20], mkt="en-US", max_results=3)
+    if not urls:
+        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[15:20], max_results=3)
+    return urls
 
 def source_intl_group_e(query_en):
-    """Moroccan & food sites — batch 5 (domains 20-24)"""
-    return _ddg_site_search(query_en + " moroccan recipe",
-        _INTL_FOOD_DOMAINS[20:25],
-        max_results=2)
+    """International sites — Bing (primary) + DDG (fallback) with 'recipe' prefix."""
+    en_query = "recipe " + query_en
+    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[20:25], mkt="en-US", max_results=3)
+    if not urls:
+        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[20:25], max_results=3)
+    return urls
 
 def source_intl_general(query_en):
-    """General English DDG image search"""
-    return _ddg_image_search(query_en + " food recipe", max_results=3)
+    """General English image search — Bing primary."""
+    en_query = "recipe " + query_en
+    urls = _bing_image_search(en_query, mkt="en-US", count=4)
+    if not urls:
+        urls = _ddg_image_search(en_query, max_results=4)
+    return urls
 
 def source_stock_photos(query_en):
-    """Stock & photography sites — batch 6 (domains 25-29 + extras)"""
-    return _ddg_site_search(query_en + " food",
-        _INTL_FOOD_DOMAINS[25:30],
-        max_results=2)
+    """Stock photography sites — Bing scoped to photo domains."""
+    en_query = "recipe " + query_en
+    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[25:30], mkt="en-US", max_results=2)
+    if not urls:
+        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[25:30], max_results=2)
+    return urls
 
 # ── Additional groups to cover ALL domains ──
 
 def source_il_group_e(recipe_title, query_en):
-    """Israeli food sites — batch 5 (domains 20-24)"""
-    return _ddg_site_search(recipe_title + " מתכון",
-        _IL_FOOD_DOMAINS[20:25],
-        locale="il-he", max_results=2)
+    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
+    he_query = "מתכון ל" + recipe_title
+    # Bing first (works better through corporate proxies)
+    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[20:25], mkt="he-IL", max_results=3)
+    # If Bing yielded nothing, try DDG as fallback
+    if not urls:
+        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[20:25], locale="il-he", max_results=3)
+    return urls
 
 def source_il_group_f(recipe_title, query_en):
-    """Israeli food sites — batch 6 (domains 25-29)"""
-    return _ddg_site_search(recipe_title + " מתכון",
-        _IL_FOOD_DOMAINS[25:30],
-        locale="il-he", max_results=2)
+    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
+    he_query = "מתכון ל" + recipe_title
+    # Bing first (works better through corporate proxies)
+    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[25:30], mkt="he-IL", max_results=3)
+    # If Bing yielded nothing, try DDG as fallback
+    if not urls:
+        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[25:30], locale="il-he", max_results=3)
+    return urls
 
 def source_il_group_g(recipe_title, query_en):
-    """Israeli food sites — batch 7 (domains 30-34)"""
-    return _ddg_site_search(recipe_title + " מתכון",
-        _IL_FOOD_DOMAINS[30:35],
-        locale="il-he", max_results=2)
+    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
+    he_query = "מתכון ל" + recipe_title
+    # Bing first (works better through corporate proxies)
+    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[30:35], mkt="he-IL", max_results=3)
+    # If Bing yielded nothing, try DDG as fallback
+    if not urls:
+        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[30:35], locale="il-he", max_results=3)
+    return urls
 
 def source_il_group_h(recipe_title, query_en):
-    """Israeli food sites — batch 8 (domains 35-41)"""
-    return _ddg_site_search(recipe_title + " מתכון",
-        _IL_FOOD_DOMAINS[35:42],
-        locale="il-he", max_results=2)
+    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
+    he_query = "מתכון ל" + recipe_title
+    # Bing first (works better through corporate proxies)
+    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[35:42], mkt="he-IL", max_results=3)
+    # If Bing yielded nothing, try DDG as fallback
+    if not urls:
+        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[35:42], locale="il-he", max_results=3)
+    return urls
 
 def source_intl_group_f(query_en):
-    """International sites — batch 7 (domains 30-34)"""
-    return _ddg_site_search(query_en + " recipe",
-        _INTL_FOOD_DOMAINS[30:35],
-        max_results=2)
+    """International sites — Bing (primary) + DDG (fallback) with 'recipe' prefix."""
+    en_query = "recipe " + query_en
+    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[30:35], mkt="en-US", max_results=3)
+    if not urls:
+        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[30:35], max_results=3)
+    return urls
 
 def source_intl_group_g(query_en):
-    """International sites — batch 8 (domains 35-40)"""
-    return _ddg_site_search(query_en + " recipe food",
-        _INTL_FOOD_DOMAINS[35:41],
-        max_results=2)
+    """International sites — Bing (primary) + DDG (fallback) with 'recipe' prefix."""
+    en_query = "recipe " + query_en
+    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[35:41], mkt="en-US", max_results=3)
+    if not urls:
+        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[35:41], max_results=3)
+    return urls
 
 def source_mealdb(query):
     """TheMealDB free API — real food photos, fast."""
@@ -2566,16 +2672,32 @@ def main():
             ddg_consecutive_fails = 0
             for si, (src_name, src_fn) in enumerate(sources_multi):
                 # Hard per-recipe timeout
-                if time.time() - t0 > 30:  # hard cap per recipe
+                if time.time() - t0 > 45:  # hard cap per recipe (with Bing+DDG fallback)
                     break
                 # DDG early-abort: if 2 DDG calls in a row fail, skip remaining DDG
                 is_ddg = src_name.startswith("il-") or src_name.startswith("intl-") or src_name == "stock"
                 # NOTE: DDG early-abort REMOVED — user wants ALL sources tried
-                # Phase banner
+                # Phase banner + early-stop optimization
                 if src_name == "he-wikimedia":
                     log(f"     ─── PHASE 1: חיפוש בעברית ב-42 אתרים ישראלים ───")
+                    _phase1_urls_at_start = len(collected_urls)
                 elif src_name == "mealdb":
                     log(f"     ─── PHASE 2: חיפוש באנגלית ב-40 אתרים בינלאומיים ───")
+                    # Skip Phase 1 source early-stop when entering Phase 2
+
+                # Early-stop: if we already have plenty of URLs from this phase, skip rest
+                # Phase 1: sources starting with "il-" or "he-"
+                # Phase 2: sources not matching Phase 1 pattern
+                _is_phase1_src = src_name.startswith("il-") or src_name.startswith("he-")
+                _current_count = len(collected_urls)
+                # Need at least 6 URLs before attempting Phase 2 skip; 3 URLs for Phase 1 skip
+                if _is_phase1_src and _current_count >= 6:
+                    log(f"     [עברית] {src_name}: skipped ({_current_count} URLs already)")
+                    continue
+                if not _is_phase1_src and src_name != "mealdb" and _current_count >= 10:
+                    log(f"     [EN] {src_name}: skipped ({_current_count} URLs already)")
+                    continue
+
                 t1 = time.time()
                 try:
                     timeout = 4 if is_ddg else 6  # shorter per-source
