@@ -18,22 +18,15 @@
 <meta property="og:title" content="ספר הבישול של פרלה בן הראש ז״ל">
 <meta property="og:description" content="1,054 מתכונים מרוקאיים וספרדיים אותנטיים">
 <meta property="og:type"  content="website">
-<meta property="og:image" content="https://asafben33.github.io/PerlaBenHarroshCookingBook/images/site_images/og-image.jpg">
-  <meta property="og:image:width"  content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt"    content="פרלה ופנחס בן הראש ביום חתונתם">
-  <meta name="twitter:card"        content="summary_large_image">
-  <meta name="twitter:image"       content="https://asafben33.github.io/PerlaBenHarroshCookingBook/images/site_images/og-image.jpg">
-  <meta name="twitter:image:alt"   content="פרלה ופנחס בן הראש ביום חתונתם">
-  <title>ספר הבישול של משפחת בן הראש</title>
-<link rel="icon" type="image/png" sizes="32x32" href="images/site_images/favicon-32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="images/site_images/favicon-16.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="images/site_images/favicon-192.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="images/site_images/apple-touch-icon.png">
-  <link rel="shortcut icon" href="images/site_images/favicon.ico"><text y='.9em' font-size='90'>🍲</text></svg>">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/320px-Tajine_mix.jpg">
+<meta property="og:image:width"  content="320">
+<meta property="og:image:height" content="240">
+<title>ספר הבישול של משפחת בן הראש</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍲</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="about_redesigned.css">
 <style>
 /* ═══════════════════════════════════════════════
    DESIGN TOKENS
@@ -67,10 +60,8 @@
   --r-sm:   6px;  --r-md: 12px;  --r-lg: 18px;  --r-xl: 24px;
   --ease:   cubic-bezier(.4,0,.2,1);
   --t-fast: .15s;  --t-med: .25s;
-  --hdr-h:  56px;  --nav-h: 66px;
+  --hdr-h:  56px;  --nav-h: 44px;
 }
-html { font-size: 17px; }  /* global scale +6% */
-
 
 
 /* ── Global RTL reinforcement ─────────────────────────────── */
@@ -162,7 +153,7 @@ ol { padding-right: 1.2rem; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.hdr-subtitle { font-size: .95rem; font-weight: 500; color: var(--c-gold-d); margin-top: .1rem; opacity: .85; }
+.hdr-subtitle { font-size: .68rem; color: var(--c-gold-d); margin-top: .05rem; opacity: .8; }
 .hdr-search {
   display: flex;
   align-items: center;
@@ -179,8 +170,8 @@ ol { padding-right: 1.2rem; }
   outline: none;
   color: var(--c-gold-l);
   font-family: inherit;
-  font-size: 1.05rem;
-  width: 220px;
+  font-size: .85rem;
+  width: 180px;
   direction: rtl;
 }
 #srch::placeholder { color: rgba(196,147,10,.45); }
@@ -227,151 +218,90 @@ ol { padding-right: 1.2rem; }
   padding: 0 1rem;
   height: var(--nav-h);
   color: rgba(245,236,215,.65);
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: .82rem;
   white-space: nowrap;
   background: none;
   border: none;
-  border-bottom: 3px solid transparent;
+  border-bottom: 2px solid transparent;
   cursor: pointer;
   transition: color var(--t-fast), border-color var(--t-fast);
 }
 .nb:hover { color: var(--c-gold-l); }
 .nb.active { color: var(--c-gold-l); border-bottom-color: var(--c-gold); }
 .nb-cnt {
-  font-size: .95rem;
-  font-weight: 700;
-  background: rgba(196,147,10,.22);
-  border: 1px solid rgba(196,147,10,.3);
+  font-size: .65rem;
+  font-weight: 500;
+  background: rgba(196,147,10,.2);
   border-radius: 100px;
-  padding: .15rem .6rem;
+  padding: .1rem .4rem;
   color: var(--c-gold-d);
 }
-.nb-arr {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 24px; height: 24px; font-size: 1.15rem; font-weight: 900;
-  color: var(--c-gold); background: rgba(196,147,10,.12);
-  border: 1px solid rgba(196,147,10,.3); border-radius: 4px;
-  transition: transform .2s, background .15s; flex-shrink: 0;
-}
-.nb:hover .nb-arr { background: rgba(196,147,10,.22); color: var(--c-gold-l); }
-.nb.panel-open .nb-arr { transform: rotate(180deg); background: rgba(196,147,10,.3); }
-html.light .nb-arr { color: #7a4010; background: rgba(196,147,10,.1); }
+.nb-arr { font-size: .6rem; opacity: .6; transition: transform var(--t-med); }
 .nb.panel-open .nb-arr { transform: rotate(180deg); }
 .nav-panel {
-  position: fixed;
+  position: absolute;
   direction: rtl;
   top: calc(var(--hdr-h) + var(--nav-h));
   right: 0;
   left: 0;
-  width: 100%;
-  max-height: calc(100vh - var(--hdr-h) - var(--nav-h));
-  overflow-y: auto;
-  z-index: 495;
-  background: #030814;              /* SOLID opaque (no alpha) */
-  border-bottom: 2px solid rgba(196,147,10,.4);
-  box-shadow: 0 12px 32px rgba(0,0,0,.5), 0 4px 8px rgba(196,147,10,.1);
+  z-index: 490;
+  background: rgba(3,8,20,.98);
+  border-bottom: 2px solid rgba(196,147,10,.2);
+  box-shadow: var(--sh-lg);
   display: none;
 }
-/* Backdrop overlay — dims the rest of the page when panel is open */
-.nav-backdrop {
-  position: fixed;
-  top: calc(var(--hdr-h) + var(--nav-h));
-  right: 0;
-  left: 0;
-  bottom: 0;
-  background: rgba(0,0,0,.55);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  z-index: 494;
-  display: none;
-  cursor: pointer;
-}
-.nav-panel.open ~ .nav-backdrop,
-.nav-backdrop.open { display: block; }
-html.light .nav-backdrop { background: rgba(60,40,20,.4); }
 .nav-panel.open { display: block; }
 .nav-panel-inner {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 1.6rem 2.2rem 1.8rem;
+  padding: .8rem 1.5rem 1rem;
 }
-
-html.light .acc-hdr { color: #7a3a18; border-bottom-color: rgba(196,147,10,.2); }
-html.light .acc-hdr:hover, html.light .acc-hdr.open { color: #4e2010; }
-html.light .acc-a { color: #7a4010; }
-.panel-row { display: flex; direction: rtl; text-align: right; flex-wrap: wrap; gap: .5rem .8rem; align-items: flex-start; padding: .3rem 0; }
+.panel-row { display: flex; direction: rtl; text-align: right; flex-wrap: wrap; gap: .5rem; align-items: flex-start; }
 .pc {
-  display: inline-flex; direction: rtl; align-items: center;
-  gap: .5rem;
-  background: rgba(255,255,255,.05);
-  border: 1.5px solid rgba(196,147,10,.3);
-  border-radius: 100px;
-  padding: .6rem 1.35rem;
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: rgba(245,236,215,.88);
-  cursor: pointer;
-  font-family: inherit;
-  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast), transform .1s;
-}
-.pc:hover { background: rgba(196,147,10,.22); color: var(--c-gold-l); border-color: rgba(196,147,10,.6); transform: translateY(-1px); }
-.pc.active { background: rgba(196,147,10,.25); border-color: rgba(196,147,10,.6); color: var(--c-gold-l); }
-.pc-cnt { font-size: .92rem; font-weight: 700; opacity: .7; }
-.acc-hdr {
-  display: flex;
+  display: inline-flex;
   direction: rtl;
   align-items: center;
-  gap: .5rem;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid rgba(196,147,10,.15);
-  border-radius: 0;
-  padding: .55rem .25rem;
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--c-gold-l);
+  gap: .3rem;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(196,147,10,.2);
+  border-radius: 100px;
+  padding: .3rem .85rem;
+  font-size: .78rem;
+  color: rgba(245,236,215,.75);
   cursor: pointer;
   font-family: inherit;
-  width: 100%;
-  justify-content: flex-start;        /* RTL text starts at right */
-  text-align: right;
-  flex-wrap: nowrap;                   /* don't wrap children */
-  white-space: nowrap;                 /* don't wrap text characters */
-  overflow: hidden;                    /* clip if too long */
-  text-overflow: ellipsis;
-  transition: color var(--t-fast), background var(--t-fast);
-  margin: 0;                           /* no extra spacing */
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
 }
-.acc-hdr > .pc-cnt { margin-right: .25rem; margin-left: auto; }   /* count stays next to label, arrow flows to other end */
-.acc-hdr, .acc-body { flex-basis: 100%; }   /* each accordion section = own full-width row */
-.acc-body { padding: .2rem 1rem .7rem 1rem; display: flex; flex-wrap: wrap; gap: .55rem; }
-.acc-hdr:hover { color: var(--c-gold); }
-.acc-hdr.open { color: var(--c-gold); }
-.acc-hdr:hover, 
-.acc-a {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 20px; height: 20px;
-  font-size: .9rem; font-weight: 700;
-  color: var(--c-gold-d); opacity: .65;
-  transition: transform .2s, opacity .15s, color .15s;
-  flex-shrink: 0;
-  /* margin-left auto pushes arrow to the far LEFT edge in RTL — visual "end" */
-  margin-left: auto;
-  margin-right: 0;
+.pc:hover { background: rgba(196,147,10,.18); color: var(--c-gold-l); border-color: rgba(196,147,10,.45); }
+.pc.active { background: rgba(196,147,10,.25); border-color: rgba(196,147,10,.6); color: var(--c-gold-l); }
+.pc-cnt { font-size: .66rem; opacity: .5; }
+.acc-hdr {
+  display: inline-flex;
+  direction: rtl;
+  align-items: center;
+  gap: .3rem;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(196,147,10,.18);
+  border-radius: 100px;
+  padding: .3rem .85rem;
+  font-size: .78rem;
+  color: rgba(245,236,215,.7);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--t-fast), color var(--t-fast);
 }
-.acc-hdr:hover .acc-a, .acc-hdr.open .acc-a { color: var(--c-gold); opacity: 1; }
-.acc-hdr.open .acc-a { transform: rotate(180deg); }
+.acc-hdr:hover, .acc-hdr.open { background: rgba(196,147,10,.15); color: var(--c-gold-l); }
+.acc-a { font-size: .6rem; opacity: .6; transition: transform var(--t-med); }
 .acc-hdr.open .acc-a { transform: rotate(180deg); }
 .acc-body {
   display: none;
   direction: rtl; text-align: right;
   width: 100%;
   flex-wrap: wrap;
-  gap: .8rem;
-  background: rgba(0,0,0,.18);
-  border-radius: 10px;
-  padding: 1rem 1.2rem;
+  gap: .4rem;
+  background: rgba(0,0,0,.2);
+  border-radius: var(--r-sm);
+  padding: .5rem .7rem;
   margin-top: .3rem;
 }
 .acc-body.open { display: flex; }
@@ -408,54 +338,23 @@ html.light .acc-a { color: #7a4010; }
 }
 .hero-h1 em { font-style: normal; color: var(--c-gold-l); }
 .hero-tagline {
-  direction: rtl; text-align: right; font-size: 1.15rem; color: var(--c-gold-l); margin-bottom: 1rem; letter-spacing: .02em; line-height: 1.55; }
+  direction: rtl; text-align: right; font-size: .96rem; color: var(--c-gold-l); margin-bottom: .9rem; letter-spacing: .03em; }
 .hero-pills {
   direction: rtl; display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.3rem; }
 .hp {
-  display: inline-flex; align-items: center;
-  background: rgba(196,147,10,.12);
-  border: 1px solid rgba(196,147,10,.35);
+  background: rgba(196,147,10,.18);
+  border: 1px solid rgba(196,147,10,.45);
   color: var(--c-gold-l);
   border-radius: 100px;
-  padding: .4rem 1rem;
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1;
+  padding: .28rem .8rem;
+  font-size: .76rem;
 }
 .hero-about-btn {
-  display: inline-flex; align-items: center;
-  direction: rtl;
-  gap: .5rem;
-  background: rgba(196,147,10,.12);
-  border: 1px solid rgba(196,147,10,.35);
-  color: var(--c-gold-l);
-  border-radius: 100px;
-  padding: .4rem 1rem;
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1;
-  cursor: pointer;
-  font-family: inherit;
-  margin-top: .8rem;
-  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
-}
-.hero-about-btn:hover {
-  background: rgba(196,147,10,.22);
-  border-color: var(--c-gold);
-  color: var(--c-gold);
-}
-.hero-about-btn[aria-expanded="true"] {
-  background: var(--c-gold);
-  color: #fff;
-  border-color: var(--c-gold);
-}
-#about-arrow {
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: .85rem; font-weight: 700;
-  transition: transform .2s;
-}
-.hero-about-btn[aria-expanded="true"] #about-arrow {
-  transform: rotate(180deg);
+  display: inline-flex;
+  direction: rtl; align-items: center; gap: .5rem;
+  color: var(--c-gold-d); font-size: .84rem; cursor: pointer;
+  background: none; border: none; font-family: inherit;
+  text-decoration: underline;
 }
 .hero-about-btn:hover { color: var(--c-gold-l); }
 
@@ -509,27 +408,27 @@ html.light .acc-a { color: #7a4010; }
 html.light .book-subtitle{color:#7a5a30}
 .book-nav{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:0 0 1.2rem;padding:.6rem;position:sticky;top:100px;z-index:50;background:var(--c-deep);border-radius:8px;border-bottom:1px solid rgba(196,147,10,.15)}
 html.light .book-nav{background:#fdf8ee}
-.book-nav-btn{background:rgba(196,147,10,.1);border:1px solid rgba(196,147,10,.25);color:rgba(237,224,196,.8);padding:.4rem .85rem;border-radius:100px;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;direction:rtl}
+.book-nav-btn{background:rgba(196,147,10,.1);border:1px solid rgba(196,147,10,.2);color:rgba(237,224,196,.7);padding:.25rem .6rem;border-radius:100px;font-size:.7rem;cursor:pointer;transition:all .2s;font-family:inherit;direction:rtl}
 .book-nav-btn:hover{background:rgba(196,147,10,.2);color:var(--c-gold-l)}
 .book-nav-btn.active{background:rgba(196,147,10,.3);color:var(--c-gold-l);border-color:var(--c-gold)}
 html.light .book-nav-btn{background:rgba(196,147,10,.08);color:#7a5a30;border-color:rgba(196,147,10,.15)}
 html.light .book-nav-btn:hover,html.light .book-nav-btn.active{background:rgba(196,147,10,.2);color:#4e2010}
 .book-chapter{margin:0;padding:1.5rem 0;border-bottom:1px solid rgba(196,147,10,.12)}
 .book-chapter:last-child{border-bottom:none}
-.book-ch-title{color:var(--c-gold);font-size:1.6rem;font-weight:900;margin:0 0 .1rem;direction:rtl;text-align:right}
-.book-ch-page{font-size:.88rem;color:rgba(237,224,196,.5);margin:0 0 .6rem;direction:rtl;text-align:right}
+.book-ch-title{color:var(--c-gold);font-size:1.15rem;font-weight:700;margin:0 0 .1rem;direction:rtl;text-align:right}
+.book-ch-page{font-size:.65rem;color:rgba(237,224,196,.3);margin:0 0 .6rem;direction:rtl;text-align:right}
 html.light .book-ch-page{color:#a08060}
-.book-sub{color:var(--c-gold-l);font-size:1.25rem;font-weight:800;margin:1.2rem 0 .3rem;padding-top:.6rem;border-top:1px solid rgba(196,147,10,.08);direction:rtl;text-align:right}
+.book-sub{color:var(--c-gold-l);font-size:.95rem;font-weight:700;margin:1.2rem 0 .3rem;padding-top:.6rem;border-top:1px solid rgba(196,147,10,.08);direction:rtl;text-align:right}
 .book-sub:first-child{border-top:none;padding-top:0}
 html.light .book-sub{color:#7a3a18}
-.book-p{line-height:1.95;margin:.6rem 0;text-align:justify;direction:rtl;color:rgba(237,224,196,.9);font-size:1.08rem}
+.book-p{line-height:1.95;margin:.5rem 0;text-align:justify;direction:rtl;color:rgba(237,224,196,.85);font-size:.92rem}
 html.light .book-p{color:#3a2010}
 .book-placeholder{font-style:italic;text-align:center;color:rgba(237,224,196,.25);font-size:.82rem}
 html.light .book-placeholder{color:#bba080}
 .book-photo{margin:1.2rem auto;max-width:500px;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.3);border:2px solid rgba(196,147,10,.25);position:relative}
 .book-photo img{width:100%;height:auto;display:block;transition:transform .3s}
 .book-photo:hover img{transform:scale(1.02)}
-.book-photo-cap{padding:.7rem 1rem;background:rgba(0,0,0,.7);color:rgba(237,224,196,.95);font-size:1rem;font-weight:500;text-align:center;direction:rtl;line-height:1.5;backdrop-filter:blur(4px)}
+.book-photo-cap{padding:.5rem .8rem;background:rgba(0,0,0,.6);color:rgba(237,224,196,.9);font-size:.78rem;text-align:center;direction:rtl;line-height:1.5;backdrop-filter:blur(4px)}
 html.light .book-photo{border-color:rgba(196,147,10,.2);box-shadow:0 4px 16px rgba(0,0,0,.1)}
 html.light .book-photo-cap{background:rgba(255,255,255,.85);color:#4a2a14}
 .book-photo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
@@ -545,15 +444,10 @@ html.light .book-photo-cap{background:rgba(255,255,255,.85);color:#4a2a14}
 }
 .about-tags { direction: rtl; display: flex; flex-wrap: wrap; gap: .4rem; }
 .at {
-  display: inline-flex; align-items: center;
-  background: rgba(196,147,10,.1);
-  border: 1px solid rgba(196,147,10,.28);
+  background: rgba(196,147,10,.12);
+  border: 1px solid rgba(196,147,10,.3);
   color: var(--c-gold-l);
-  border-radius: 100px;
-  padding: .3rem .85rem;
-  font-size: .88rem;
-  font-weight: 600;
-  line-height: 1;
+  border-radius: 100px; padding: .2rem .65rem; font-size: .72rem;
 }
 
 /* ── Main / Grid ──────────────────────────────────────────── */
@@ -561,41 +455,21 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 .grid-header {
   display: flex;
   direction: rtl; align-items: center; justify-content: space-between;
-  padding: 1.2rem 1.6rem;
+  padding: .7rem 1.5rem;
   border-bottom: 1px solid rgba(196,147,10,.12);
   background: rgba(0,0,0,.25);
 }
-#sec-title { direction: rtl; text-align: right; font-size: 1.7rem; font-weight: 800; color: var(--c-gold-l); letter-spacing:-.01em; }
-#sec-cnt {
-  display: inline-flex; align-items: center;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--c-gold-l);
-  margin-right: .8rem;
-  background: rgba(196,147,10,.12);
-  border: 1px solid rgba(196,147,10,.35);
-  border-radius: 100px;
-  padding: .35rem 1rem;
-  line-height: 1;
-}
+#sec-title { direction: rtl; text-align: right; font-size: 1rem; font-weight: 700; color: var(--c-gold-l); }
+#sec-cnt { font-size: .8rem; color: var(--c-gold-d); margin-right: .4rem; }
 .diff-btns { direction: rtl; display: flex; gap: .4rem; padding: .5rem 1.5rem; border-bottom: 1px solid rgba(196,147,10,.1); }
 .diff-btn {
   direction: rtl;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: transparent;
-  border: 1px solid rgba(196,147,10,.35);
-  color: var(--c-gold-l);
-  border-radius: 100px;
-  padding: .4rem 1rem;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
-  line-height: 1;
-  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(196,147,10,.2);
+  color: rgba(245,236,215,.6);
+  border-radius: 100px; padding: .25rem .7rem;
+  font-size: .73rem; cursor: pointer; font-family: inherit;
 }
-.diff-btn:hover { background: rgba(196,147,10,.12); border-color: var(--c-gold); }
-.diff-btn.active { background: var(--c-gold); color: #fff; border-color: var(--c-gold); }
 .diff-btn.active { background: rgba(196,147,10,.2); border-color: rgba(196,147,10,.5); color: var(--c-gold-l); }
 .grid {
   display: grid;
@@ -638,27 +512,21 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 .c-info { direction: rtl; text-align: right; padding: .65rem .7rem; }
 .c-badge {
   direction: rtl;
-  display: inline-flex; align-items: center;
-  background: var(--c-spice);
-  color: #fff;
-  font-size: .82rem;
-  font-weight: 700;
-  border-radius: 100px;
-  padding: .3rem .8rem;
-  margin-bottom: .4rem;
-  line-height: 1;
+  display: inline-block; background: var(--c-spice); color: #fff;
+  font-size: .64rem; font-weight: 700; border-radius: 100px;
+  padding: .15rem .5rem; margin-bottom: .35rem;
 }
 .c-title {
   direction: rtl; text-align: right;
-  font-size: 1.15rem; font-weight: 800; color: var(--c-ink); line-height: 1.3; margin-bottom: .3rem;
+  font-size: .85rem; font-weight: 700; color: var(--c-ink); line-height: 1.3; margin-bottom: .25rem;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .c-desc {
   direction: rtl; text-align: right;
-  font-size: .92rem; color: var(--c-ink-m); line-height: 1.55;
+  font-size: .74rem; color: var(--c-ink-m); line-height: 1.5;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.c-meta { direction: rtl; display: flex; gap: .5rem; font-size: .95rem; font-weight: 600; color: var(--c-ink-l); margin-top: .5rem; flex-wrap: wrap; }
+.c-meta { direction: rtl; display: flex; gap: .4rem; font-size: .69rem; color: var(--c-ink-l); margin-top: .4rem; flex-wrap: wrap; }
 .c-tag { background: var(--c-bg2); border: 1px solid var(--c-bdr2); border-radius: 100px; padding: .1rem .4rem; }
 .c-diff-קל { background: #e8f5e9; color: #2e7d32; border-radius: 100px; padding: .1rem .4rem; }
 .c-diff-בינוני { background: #fff3e0; color: #e65100; border-radius: 100px; padding: .1rem .4rem; }
@@ -725,7 +593,7 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
   display: inline-flex;
   direction: rtl; align-items: center; gap: .3rem;
   background: rgba(196,147,10,.12); border: 1px solid rgba(196,147,10,.25);
-  border-radius: 100px; padding: .35rem .9rem; font-size: 1rem; font-weight: 600; color: var(--c-ink);
+  border-radius: 100px; padding: .22rem .65rem; font-size: .78rem; color: var(--c-ink);
 }
 .m-mem {
   direction: rtl; text-align: right;
@@ -734,12 +602,12 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
   padding: .7rem .9rem; margin-bottom: 1rem;
   font-style: italic; color: var(--c-ink-m); font-size: .88rem; line-height: 1.7;
 }
-.m-sec-h { direction: rtl; text-align: right; font-size: 1.05rem; font-weight: 800; color: var(--c-gold-d); text-transform: uppercase; letter-spacing: .08em; margin: 1rem 0 .6rem; border-bottom: 1px solid rgba(196,147,10,.2); padding-bottom: .4rem; }
+.m-sec-h { direction: rtl; text-align: right; font-size: .78rem; font-weight: 700; color: var(--c-gold-d); text-transform: uppercase; letter-spacing: .06em; margin: .8rem 0 .4rem; }
 .m-ingr-item { direction: rtl; display: flex; justify-content: space-between; align-items: baseline; padding: .3rem 0; border-bottom: 1px solid var(--c-bg3); }
-.m-ingr-q { direction: rtl; text-align: right; font-weight: 700; min-width: 95px; color: var(--c-ink); font-size: 1.08rem; }
-.m-ingr-i { direction: rtl; text-align: right; color: var(--c-ink-m); font-size: 1.08rem; line-height: 1.55; }
+.m-ingr-q { direction: rtl; text-align: right; font-weight: 600; min-width: 80px; color: var(--c-ink); font-size: .88rem; }
+.m-ingr-i { direction: rtl; text-align: right; color: var(--c-ink-m); font-size: .88rem; }
 .m-steps { padding-right: 1.3rem; margin: .5rem 0; }
-.m-step { direction: rtl; text-align: right; padding: .4rem 0; border-bottom: 1px solid var(--c-bg3); line-height: 1.75; font-size: 1.08rem; color: var(--c-ink-m); }
+.m-step { direction: rtl; text-align: right; padding: .4rem 0; border-bottom: 1px solid var(--c-bg3); line-height: 1.7; font-size: .88rem; color: var(--c-ink-m); }
 .m-step-t { color: var(--c-gold); font-weight: 700; }
 .m-tip-wrap { direction: rtl; text-align: right; background: rgba(196,147,10,.07); border: 1px solid rgba(196,147,10,.25); border-radius: var(--r-md); padding: .7rem 1rem; margin-top: .8rem; }
 .m-tip-label { direction: rtl; text-align: right; font-size: .72rem; font-weight: 700; color: var(--c-gold-d); margin-bottom: .3rem; }
@@ -775,19 +643,10 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 /* ── Header tools (theme + lang) ──────────────────────────── */
 .hdr-tools { display: flex; gap: .3rem; align-items: center; flex-shrink: 0; }
 .hdr-btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  background: transparent;
-  border: 1px solid rgba(196,147,10,.35);
-  border-radius: 100px;
-  padding: .4rem .95rem;
-  color: var(--c-gold-l);
-  font-size: .95rem;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(196,147,10,.25);
+  border-radius: 100px; padding: .25rem .5rem; color: var(--c-gold-d);
+  font-size: .72rem; cursor: pointer; font-family: inherit; transition: all var(--t-fast);
   white-space: nowrap;
-  line-height: 1;
-  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
 }
 .hdr-btn:hover { background: rgba(196,147,10,.2); color: var(--c-gold-l); }
 
@@ -807,7 +666,7 @@ html.light .nb { color: #4a2a14; }
 html.light .nb:hover, html.light .nb.active { color: #b84223; }
 html.light .nb.active { border-bottom-color: #b84223; }
 html.light .nb-cnt { background: rgba(196,147,10,.15); color: #7a3a18; }
-html.light .nav-panel { background: #fdf8ee; border-bottom-color: rgba(196,147,10,.3); box-shadow: 0 12px 32px rgba(74,42,20,.2), 0 4px 8px rgba(196,147,10,.15); }
+html.light .nav-panel { background: #fdf8ee; border-bottom-color: rgba(196,147,10,.2); }
 html.light .pc { background: rgba(0,0,0,.03); border-color: rgba(196,147,10,.25); color: #4a2a14; }
 html.light .pc:hover, html.light .pc.active { background: rgba(196,147,10,.15); color: #4e2010; }
 html.light .hero { background: linear-gradient(165deg, rgba(253,248,238,.85), rgba(245,236,215,.9)); }
@@ -824,29 +683,7 @@ html.light main { background: rgba(253,248,238,.6); }
 html.light .grid-header { background: rgba(245,236,215,.8); border-bottom-color: rgba(196,147,10,.15); }
 html.light .diff-btn { background: rgba(0,0,0,.03); color: #4a2a14; border-color: rgba(196,147,10,.2); }
 html.light .diff-btn.active { background: #c4930a; color: #fff; }
-html.light .time-filter {
-  direction: rtl;
-  display: inline-flex; align-items: center;
-  background: transparent;
-  color: var(--c-gold-l);
-  border: 1px solid rgba(196,147,10,.35);
-  border-radius: 100px;
-  padding: .4rem 2rem .4rem 1rem;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
-  line-height: 1;
-  -webkit-appearance: none; appearance: none;
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23c4930a' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: left 0.85rem center;
-  background-size: 10px;
-  transition: background-color var(--t-fast), border-color var(--t-fast);
-}
-.time-filter:hover { background-color: rgba(196,147,10,.12); border-color: var(--c-gold); }
-html.light .time-filter { color: #4a2010; border-color: rgba(196,147,10,.4); }
-html.light .time-filter:hover { background-color: rgba(196,147,10,.12); }
+html.light .time-filter { background: #fff; border-color: rgba(196,147,10,.3); color: #4a2a14; }
 html.light .card { background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
 html.light .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
 html.light .footer { background: #f5ecd7; border-top-color: rgba(196,147,10,.3); }
@@ -855,7 +692,7 @@ html.light .footer-sub { color: #7a3a18; }
 html.light .footer-quote { color: #9a7208; }
 html.light #toast { background: #fff; color: #4e2010; border-color: #c4930a; }
 html.light #back-top { background: #4e2010; color: #fdf8ee; }
-
+html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10,.2); color: #4a2a14; }
 
 /* ── Cooking Timer ───────────────────────────────────────── */
 .step-timer-btn {
@@ -951,7 +788,7 @@ html.light #back-top { background: #4e2010; color: #fdf8ee; }
   "description": "1,054 מתכונים אותנטיים מהמטבח המרוקאי, הספרדי-יהודי ומטבחי יהדות המזרח — לזכרם של פרלה ופנחס בן הראש שזכרונם יהיה לברכה וגאווה לדורי דורות דרך הטעם המעלה...",
   "url": "https://perlabenharrosh-cookingbook.netlify.app/",
   "inLanguage": "he",
-  "image": "https://asafben33.github.io/PerlaBenHarroshCookingBook/images/site_images/og-image.jpg",
+  "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/320px-Tajine_mix.jpg",
   "author": {
     "@type": "Person",
     "name": "אסף בן ארוש"
@@ -1282,7 +1119,6 @@ html.light #back-top { background: #4e2010; color: #fdf8ee; }
   <div id="nav-panel" class="nav-panel" dir="rtl" role="region" aria-label="תת-קטגוריות">
     <div id="nav-panel-inner" class="nav-panel-inner"></div>
   </div>
-  <div id="nav-backdrop" class="nav-backdrop" aria-hidden="true"></div>
 </nav>
 
 <!-- ════════ HERO ══════════════════════════════════════════ -->
@@ -1335,6 +1171,409 @@ html.light #back-top { background: #4e2010; color: #fdf8ee; }
     </div>
   </div>
 </section>
+
+<!--
+═══════════════════════════════════════════════════════════════════════
+ABOUT REDESIGNED — "על שביל האהבה ממרוקו לירושלים"
+═══════════════════════════════════════════════════════════════════════
+הסבר: סעיף "אודות" מעוצב מחדש ב-Web-First, מבוסס על הספר הזיכרוני
+של משפחת בן הראש (2014). 10 סעיפים קולנועיים + גלריה מלאה של כל
+תמונות הספר + עץ משפחה אינטראקטיבי.
+
+Version: 1.0 (2026-04-18)
+Author: עבור אסף יעקב בן-הראש, בן הזקונים של פרלה ופנחס ז"ל
+Source: הספר "על שביל האהבה ממרוקו לירושלים" — 2014
+
+Insert in index.html:
+  מיקום: אחרי </section> של #about הקיים (בסוף שורה 1172)
+         לפני <!-- MAIN CONTENT --> marker (שורה 1174)
+
+Requires:
+  - CSS: about_redesigned.css (לטעון ב-<head>)
+  - JS:  about_redesigned.js  (לטעון בסוף <body>, לפני book_data.js)
+  - D3 :  https://d3js.org/d3.v7.min.js (רק אם רוצים עץ משפחה)
+═══════════════════════════════════════════════════════════════════════
+-->
+<section id="about-redesigned" class="ar-root" dir="rtl" lang="he" aria-labelledby="ar-hero-title">
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 1. HERO                                            -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-hero" role="region" aria-label="פתיחה — שער הספר">
+    <div class="ar-hero-bg" aria-hidden="true"></div>
+    <div class="ar-hero-overlay" aria-hidden="true"></div>
+    <div class="ar-hero-particles" aria-hidden="true">
+      <span class="ar-pt"></span><span class="ar-pt"></span><span class="ar-pt"></span>
+      <span class="ar-pt"></span><span class="ar-pt"></span><span class="ar-pt"></span>
+      <span class="ar-pt"></span><span class="ar-pt"></span><span class="ar-pt"></span>
+      <span class="ar-pt"></span><span class="ar-pt"></span><span class="ar-pt"></span>
+    </div>
+    <div class="ar-hero-content">
+      <div class="ar-hero-eyebrow">ספר בישול משפחתי — לזכרם</div>
+      <h1 class="ar-hero-title" id="ar-hero-title">פרלה ופנחס בן הראש ז״ל</h1>
+      <p class="ar-hero-sub">על שביל האהבה ממרוקו לירושלים</p>
+      <p class="ar-hero-tagline">1927 — 1951 — 2014</p>
+      <button class="ar-scroll-hint" type="button" aria-label="גללו לגלות את הסיפור"
+              onclick="document.getElementById('ar-opening').scrollIntoView({behavior:'smooth',block:'start'})">
+        <span>גללו לגלות את הסיפור</span>
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M7 10l5 5 5-5"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 2. OPENING STATEMENT                               -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-opening" id="ar-opening" role="region" aria-labelledby="ar-opening-title">
+    <div class="ar-mandala" aria-hidden="true"></div>
+    <div class="ar-container">
+      <div class="ar-glass-card ar-reveal">
+        <div class="ar-eyebrow">הקדמה</div>
+        <h2 class="ar-h2" id="ar-opening-title">אתר זה הוא זיכרון, טעם, ושייכות.</h2>
+        <div class="ar-body">
+          <p>פרלה נולדה בקזבלנקה ב-1931 וגדלה במרקש. בגיל שנתיים איבדה את אימה, ובגיל 17 עלתה ארצה לבדה. פנחס נולד בקזבלנקה ב-27 בדצמבר 1927, בן הזקונים של שמואל ורינה בן הראש. בגיל עשרים עלה ארצה בדרך בלתי לגאלית, בקבוצת תנועת "הדרור".</p>
+          <p>הם נפגשו באוניה "קונדרנס" במרסיי בשנת 1950. נישאו במעברת תלפיות ב-5 בדצמבר 1951. חתונתם הצנועה הייתה תחילה של 63 שנות חיים משותפים, חמישה ילדים (סימי, יהודה, סמי, אילן, אסף), נכדים ונינים.</p>
+          <p>המטבח שלהם שימר שני עולמות: מרוקו הצפון-אפריקאית, וספרד האנדלוסית דרך שושלת רבי יוסף קארו — אבי משפחת בן הראש. 1,054 מתכונים חיו בראשה של פרלה. האתר הזה משמר אותם כדי שגם הדורות הבאים יוכלו לטעום את מה שהיא בישלה.</p>
+          <p class="ar-body-small"><em>פנחס ז״ל נפטר בדצמבר 2016. פרלה ז״ל נפטרה במאי 2025, בגיל 92.</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 3. HERITAGE — שושלת קארו (Split 50/50)             -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-heritage" role="region" aria-labelledby="ar-heritage-title">
+    <div class="ar-split">
+      <div class="ar-split-image ar-reveal">
+        <img src="images/book_images/book_g42_018.jpg"
+             alt="דיוקן רבי יוסף קארו, מחבר השולחן ערוך, 1488-1575"
+             loading="lazy" decoding="async">
+        <div class="ar-split-caption">
+          <span class="ar-date-seal">1488 — 1575</span>
+          <span class="ar-date-sub">מחבר "השולחן ערוך"</span>
+        </div>
+      </div>
+      <div class="ar-split-text ar-reveal">
+        <div class="ar-eyebrow">פרק א' — שורשים באדמת מרוקו</div>
+        <h2 class="ar-h2" id="ar-heritage-title">מטולדו לטנג'יר לירושלים</h2>
+        <div class="ar-body">
+          <p>ב-1492 גורשו יהודי ספרד. משפחת קארו — שבראשה עמד הרא"ש, רבי אשר בן יחיאל — מצאה מקלט בפורטוגל, בטורקיה, ובאדריאנופול. רבי יוסף קארו (1488-1575) נולד בטולדו שבספרד, חי בצפת, וכתב את "השולחן ערוך" — הספר שהגדיר את ההלכה היהודית עד היום.</p>
+          <p>חמישה דורות אחר-כך הגיעה המשפחה לטנג'יר שבמרוקו הספרדית, משם — לקזבלנקה. לא רק שם משפחה — ירושה של תורה, חכמה, מסורת.</p>
+        </div>
+        <blockquote class="ar-quote">
+          <p>"שַלַּח לַחְמְךָ עַל־פְּנֵי הַמָּיִם, כִּי בְּרֹב הַיָּמִים תִּמְצָאֶנּוּ"</p>
+          <cite>— קהלת (יא, א), פסוק הפתיחה של הספר</cite>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 4. TWO LIVES                                       -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-two-lives" role="region" aria-labelledby="ar-two-title">
+    <div class="ar-container">
+      <div class="ar-center ar-reveal">
+        <h2 class="ar-h2" id="ar-two-title">שני סיפורים. שני מסעות.</h2>
+        <p class="ar-subtitle"><em>עד שנפגשו על סיפון אוניית "קונדרנס", ב-1950 במרסיי.</em></p>
+      </div>
+      <div class="ar-duo-grid">
+        <article class="ar-portrait-card ar-reveal" tabindex="0">
+          <div class="ar-portrait-photo">
+            <img src="images/book_images/book_g42_017.jpg"
+                 alt="פנחס בן הראש כילד, קזבלנקה, שנות ה-30"
+                 loading="lazy" decoding="async">
+          </div>
+          <div class="ar-portrait-body">
+            <h3 class="ar-portrait-name">פנחס בן הראש</h3>
+            <div class="ar-portrait-dates">1927 — 2016</div>
+            <ul class="ar-portrait-facts">
+              <li>נולד 27 בדצמבר 1927 בקזבלנקה</li>
+              <li>בן הזקונים של שמואל ורינה בן הראש</li>
+              <li>דור חמישי מצאצאי רבי יוסף קארו</li>
+              <li>עלה ארצה 1948 באנייה "סנט אנטוניו"</li>
+            </ul>
+          </div>
+        </article>
+        <article class="ar-portrait-card ar-reveal" tabindex="0">
+          <div class="ar-portrait-photo">
+            <img src="images/book_images/book_g42_050.jpg"
+                 alt="פרלה בן הראש (לבית כהן) בנעוריה, קזבלנקה"
+                 loading="lazy" decoding="async">
+          </div>
+          <div class="ar-portrait-body">
+            <h3 class="ar-portrait-name">פרלה בן הראש</h3>
+            <div class="ar-portrait-dates">1931 — 2025</div>
+            <ul class="ar-portrait-facts">
+              <li>נולדה 1931 בקזבלנקה, גדלה במרקש</li>
+              <li>בת יצחק כהן וסימי בוזגלו ז״ל</li>
+              <li>גדלה אצל דודתה לאחר מות אמה ב-1936</li>
+              <li>עלתה ארצה 1950 באנייה "נגבה"</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 5. THE MEETING — Cinematic                         -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-meeting" role="region" aria-labelledby="ar-meeting-title">
+    <div class="ar-meeting-bg" aria-hidden="true"></div>
+    <div class="ar-meeting-overlay" aria-hidden="true"></div>
+    <div class="ar-meeting-content ar-reveal">
+      <h2 class="ar-h2-xl" id="ar-meeting-title">
+        <span class="ar-meeting-year">1950.</span>
+        <span class="ar-meeting-place">מרסיי. אניית "קונדרנס".</span>
+      </h2>
+      <div class="ar-body">
+        <p>המפגש לא היה מתוכנן. פרלה בת ה-17 עלתה על האנייה לבדה, עם תיק קטן ואומץ גדול. פנחס, שהיה אז ב"בית אל וואד" — הארגון הציוני שהיה אחראי על העלייה הבלתי לגאלית — ראה אותה ומשהו בו נעצר.</p>
+        <p>שנה אחר-כך, ב-5 בדצמבר 1951, נישאו בחופה צנועה במעברת תלפיות בירושלים. הרב שלוש ערך את הקידושין.</p>
+      </div>
+      <div class="ar-rings" aria-hidden="true">
+        <svg viewBox="0 0 80 40" width="80" height="40" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="28" cy="20" r="16"/>
+          <circle cx="52" cy="20" r="16"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 6. CASABLANCA — Mosaic                             -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-casablanca" role="region" aria-labelledby="ar-casa-title">
+    <div class="ar-container">
+      <div class="ar-reveal">
+        <div class="ar-eyebrow">פרק ב' + ג' — העיר הלבנה</div>
+        <h2 class="ar-h2" id="ar-casa-title">קזבלנקה של ילדותנו</h2>
+      </div>
+      <div class="ar-casa-grid">
+        <div class="ar-casa-text ar-reveal">
+          <p>"רו דה לה קרואה" — "רחוב הצלב האדום". בית בן שתי קומות עם חמישה חדרים, משרתת ערבייה שנהגה אצלם במשך עשרים שנה. המטבח היה בקומה הראשונה. אימא חמה של עשרה ילדים, שהתחתנה בגיל 16 לאבא שהיה בן 40.</p>
+          <p class="ar-body-italic"><em>המים שהרוכל הערבי הביא בנאדות. הקפה של שבת. הגבינה של דודה עדה. שוק המדרחוב עם התבלינים, המחבתות של בצק דק, והמופלטות של ליל המימונה.</em></p>
+        </div>
+        <div class="ar-casa-mosaic ar-reveal">
+          <figure class="ar-casa-item ar-casa-big" tabindex="0">
+            <img src="images/book_images/book_g42_021.jpg"
+                 alt="חתונת יעקב בכור משפחת בן הראש, קזבלנקה — קבוצה משפחתית"
+                 loading="lazy" decoding="async">
+            <figcaption>חתונת יעקב הבכור, קזבלנקה</figcaption>
+          </figure>
+          <figure class="ar-casa-item" tabindex="0">
+            <img src="images/book_images/book_g42_037.jpg"
+                 alt="דודה איטו, אחות פנחס הגדולה, בת 103"
+                 loading="lazy" decoding="async">
+            <figcaption>דודה איטו</figcaption>
+          </figure>
+          <figure class="ar-casa-item" tabindex="0">
+            <img src="images/book_images/book_g42_022.jpg"
+                 alt="ממתקי המימונה המסורתיים"
+                 loading="lazy" decoding="async">
+            <figcaption>ממתקי המימונה</figcaption>
+          </figure>
+          <figure class="ar-casa-item" tabindex="0">
+            <img src="images/book_images/book_g42_023.jpg"
+                 alt="מופלטה בטאג'ין — מסורת ליל המימונה"
+                 loading="lazy" decoding="async">
+            <figcaption>מופלטה בטאג'ין</figcaption>
+          </figure>
+          <figure class="ar-casa-item" tabindex="0">
+            <img src="images/book_images/book_g42_031.jpg"
+                 alt="פנחס ברחובות קזבלנקה בנעוריו"
+                 loading="lazy" decoding="async">
+            <figcaption>ברחובות קזבלנקה</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 7. JOURNEY TIMELINE — 4 תחנות                      -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-journey" role="region" aria-labelledby="ar-journey-title">
+    <div class="ar-container">
+      <div class="ar-center ar-reveal">
+        <div class="ar-eyebrow">פרקים ד'-ח' — המסע</div>
+        <h2 class="ar-h2" id="ar-journey-title">ארבע תחנות</h2>
+        <p class="ar-subtitle">מקזבלנקה, אל הדרור, אל המעברה, אל הבית.</p>
+      </div>
+      <div class="ar-timeline">
+        <article class="ar-tl-stop ar-reveal" tabindex="0">
+          <div class="ar-tl-photo">
+            <img src="images/book_images/book_g42_025.jpg"
+                 alt="פנחס עם חבריו ברחובות קזבלנקה, שנות ה-40"
+                 loading="lazy" decoding="async">
+          </div>
+          <div class="ar-tl-body">
+            <div class="ar-tl-year">1927 — 1948</div>
+            <h3 class="ar-tl-title">קזבלנקה</h3>
+            <p>ילדות ונעורים בקזבלנקה. בית הרב, תנועת "הפועל המזרחי", ועיתון "הקול היהודי" שמכרתי בפינת הרחוב. הפרעות במלחמת העולם השנייה שפגעו ביהודים העזים גם בבית ספרי.</p>
+          </div>
+        </article>
+        <article class="ar-tl-stop ar-reveal" tabindex="0">
+          <div class="ar-tl-photo">
+            <img src="images/book_images/book_g42_048.jpg"
+                 alt="מחנה ההכשרה של תנועת הדרור בצרפת, 1948"
+                 loading="lazy" decoding="async">
+          </div>
+          <div class="ar-tl-body">
+            <div class="ar-tl-year">1948 — 1950</div>
+            <h3 class="ar-tl-title">צרפת וההכשרה</h3>
+            <p>פרעות אוג'דה (7-8 ביוני 1948), יציאה בלתי לגאלית דרך אלג'יר-מרסיי. שלושה חודשים ב"שאטו מון ברדו" עם חברי "הדרור". משם — אנייה "סנט אנטוניו" לחיפה.</p>
+          </div>
+        </article>
+        <article class="ar-tl-stop ar-reveal" tabindex="0">
+          <div class="ar-tl-photo">
+            <img src="images/book_images/book_g42_056.jpg"
+                 alt="מעברת צריפים — שנות החמישים הראשונות בארץ"
+                 loading="lazy" decoding="async">
+          </div>
+          <div class="ar-tl-body">
+            <div class="ar-tl-year">1948 — 1951</div>
+            <h3 class="ar-tl-title">הארץ</h3>
+            <p>בבית אורן. קיבוץ רגבים. פרדס-חנה. מושב ארבל. האסון ב-20/7/1950 — צריפים בוערים, ילדים נספים. עברנו למעברת תלפיות בירושלים.</p>
+          </div>
+        </article>
+        <article class="ar-tl-stop ar-reveal" tabindex="0">
+          <div class="ar-tl-photo">
+            <img src="images/book_images/book_g42_074.jpg"
+                 alt="תמונת חתונת פרלה ופנחס, 5 בדצמבר 1951"
+                 loading="lazy" decoding="async">
+          </div>
+          <div class="ar-tl-body">
+            <div class="ar-tl-year">1951 — 2025</div>
+            <h3 class="ar-tl-title">ירושלים</h3>
+            <p>חתונה ב-5/12/1951. חמישה ילדים. דירה ב"יהודה הנשיא 13" בקטמונים. פנחס במשטרה ובמשמר הגבול. פרלה — לב הבית. 63 שנה יחד.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 8. FAMILY TREE — אינטראקטיבי                       -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-tree" role="region" aria-labelledby="ar-tree-title">
+    <div class="ar-container">
+      <div class="ar-center ar-reveal">
+        <div class="ar-eyebrow">פרק י' — המבט לעבר, הפנים לעתיד</div>
+        <h2 class="ar-h2" id="ar-tree-title">חמישה ילדים. עץ שגדל.</h2>
+        <p class="ar-subtitle">סימי (1953), יהודה (1956), סמי (1960), אילן (1964), אסף (1974).<br>היום — נכדים ונינים בישראל, בבריטניה, בעולם.</p>
+      </div>
+      <div class="ar-tree-wrap ar-reveal">
+        <div id="ar-family-tree" role="img" aria-label="עץ משפחה אינטראקטיבי של משפחת בן הראש"></div>
+        <div class="ar-tree-hint">לחצו על כל דמות להרחבה</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 9. MOROCCO RETURN — טיול שורשים                   -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-morocco" role="region" aria-labelledby="ar-morocco-title">
+    <div class="ar-container">
+      <div class="ar-reveal">
+        <div class="ar-eyebrow">פרק י' — המבט לעבר</div>
+        <h2 class="ar-h2" id="ar-morocco-title">טיול שורשים למרוקו</h2>
+        <p class="ar-subtitle ar-body-italic"><em>בשנות התשעים חזרו פרלה ופנחס למרוקו — ביקרו בקזבלנקה, במרקש, ברחובות שבהם גדלו.</em></p>
+      </div>
+      <div class="ar-morocco-grid">
+        <figure class="ar-morocco-hero ar-reveal" tabindex="0">
+          <img src="images/book_images/book_g45_060.jpg"
+               alt="פרלה ופנחס במרוקו עם בני משפחה בלבוש מסורתי"
+               loading="lazy" decoding="async">
+          <figcaption>חזרה לשורשים — שנות התשעים</figcaption>
+        </figure>
+        <figure class="ar-morocco-item ar-reveal" tabindex="0">
+          <img src="images/book_images/book_g45_057.jpg" alt="ארמון וכסבה במרוקו" loading="lazy" decoding="async">
+          <figcaption>כסבה — מרקש</figcaption>
+        </figure>
+        <figure class="ar-morocco-item ar-reveal" tabindex="0">
+          <img src="images/book_images/book_g45_063.jpg" alt="פרלה בחנות כלי נחושת מרוקאית" loading="lazy" decoding="async">
+          <figcaption>בין כלי הנחושת</figcaption>
+        </figure>
+        <figure class="ar-morocco-item ar-reveal" tabindex="0">
+          <img src="images/book_images/book_g45_066.jpg" alt="פרלה במסעדה מרוקאית מסורתית" loading="lazy" decoding="async">
+          <figcaption>במסעדה מסורתית</figcaption>
+        </figure>
+      </div>
+      <blockquote class="ar-quote ar-reveal">
+        <p>"התרגשות עזה אחזה בנו עת אמרנו תפילה על קבר."</p>
+        <cite>— מתוך הספר, עמוד 107</cite>
+      </blockquote>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 10. FULL GALLERY — כל תמונות הספר (151 תמונות)     -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-gallery" role="region" aria-labelledby="ar-gal-title">
+    <div class="ar-container">
+      <div class="ar-center ar-reveal">
+        <div class="ar-eyebrow">ארכיון מלא</div>
+        <h2 class="ar-h2" id="ar-gal-title">כל התמונות מהספר</h2>
+        <p class="ar-subtitle">151 תמונות היסטוריות מהספר "על שביל האהבה ממרוקו לירושלים" (2014)</p>
+      </div>
+      <!-- Gallery is populated dynamically by JavaScript -->
+      <div id="ar-gallery-grid" class="ar-gallery-grid" aria-live="polite"></div>
+      <div class="ar-gallery-controls">
+        <button type="button" class="ar-btn" id="ar-gallery-load-more" aria-label="טען עוד תמונות">טען עוד תמונות</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 11. CLOSING — ציטוט קורצ'אק + CTA                 -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-closing" role="region" aria-labelledby="ar-closing-title">
+    <div class="ar-mandala ar-mandala-bottom" aria-hidden="true"></div>
+    <div class="ar-container">
+      <blockquote class="ar-closing-quote ar-reveal">
+        <p>"הדואג לימים — זורע חיטה.<br>הדואג לשנים — נוטע עצים.<br>הדואג לדורות — מחנך אנשים."</p>
+        <cite>— יאנוש קורצ'אק</cite>
+        <div class="ar-closing-note">ציטוט הסגירה של הספר המקורי, עמוד 109</div>
+      </blockquote>
+      <div class="ar-closing-body ar-reveal">
+        <h2 class="ar-h2" id="ar-closing-title">המטבח — הזיכרון הכי טעים</h2>
+        <p>פרלה ופנחס דאגו לדורות. הם חינכו חמישה ילדים, ראו נכדים ונינים, ושמרו בזיכרונם טעמים ממרוקו שהם לא אמרו "שכחנו".</p>
+        <p>המטבח הזה — 1,054 המתכונים שחיים בראשה של פרלה — הוא הכיתה האמיתית שלהם. בואו לטעום.</p>
+      </div>
+      <div class="ar-cta-wrap ar-reveal">
+        <button type="button" class="ar-cta" onclick="document.getElementById('main').scrollIntoView({behavior:'smooth'})" aria-label="עבור למאגר 1,054 המתכונים">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+          <span>כנסו למאגר 1,054 המתכונים</span>
+        </button>
+      </div>
+      <div class="ar-credit ar-reveal">
+        <p>עיצוב ותכנות: <strong>אסף יעקב בן-הראש</strong>, בן הזקונים של פרלה ופנחס ז״ל</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- LIGHTBOX MODAL (for image clicks)                  -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-lightbox" id="ar-lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="ar-lb-caption">
+    <button type="button" class="ar-lb-close" id="ar-lb-close" aria-label="סגור תצוגה מקדימה">&times;</button>
+    <button type="button" class="ar-lb-prev" id="ar-lb-prev" aria-label="תמונה קודמת">&#8250;</button>
+    <button type="button" class="ar-lb-next" id="ar-lb-next" aria-label="תמונה הבאה">&#8249;</button>
+    <div class="ar-lb-inner">
+      <img id="ar-lb-img" src="" alt="">
+      <div class="ar-lb-caption" id="ar-lb-caption"></div>
+    </div>
+  </div>
+
+</section>
+
 
 <!-- ════════ MAIN CONTENT ══════════════════════════════════ -->
 <main id="main" role="main">
@@ -1591,7 +1830,27 @@ function hide(id) { const el = document.getElementById(id); if (el) el.hidden = 
    IMAGES
 ═══════════════════════════════════════════════ */
 /* Category fallback images — Wikimedia Commons (CC licensed, extremely stable) */
-var CAT_IMG = {}; // no fallbacks;
+var CAT_IMG = {
+  soups:  'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  salads: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  veg:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  meat:   'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Moroccan_TAGINE.JPG/640px-Moroccan_TAGINE.JPG',
+  chick:  'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Couscous_Royal_Marocain.JPG/640px-Couscous_Royal_Marocain.JPG',
+  fish:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  hol:    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Couscous_Royal_Marocain.JPG/640px-Couscous_Royal_Marocain.JPG',
+  des:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  span:   'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Moroccan_TAGINE.JPG/640px-Moroccan_TAGINE.JPG',
+  iraq:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  kurd:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  ashk:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  yem:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  pers:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  buk:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  tun:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  turk:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  isr:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
+  _def:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg'
+};
 
 /* _IMG_ALIAS: maps duplicate image names to canonical file.
    Generated by cleanup_hardlinks.ps1 — paste content here after running.
@@ -1614,11 +1873,13 @@ function getRecipeImg(r) {
 
 /* Fallback sources for onerror (tried in order) */
 function _getImgFallbacks(r) {
-  // Only try local alternate images — NEVER random stock photos
   var fb = [];
   for (var n = 2; n <= 3; n++) {
     fb.push(_resolveImg('r-' + r.id + '-' + n));
   }
+  if (r.img) fb.push(r.img);
+  var cat = CAT_IMG[r.cat] || CAT_IMG._def;
+  if (cat) fb.push(cat);
   return fb;
 }
 
@@ -1940,8 +2201,7 @@ var _navKey = null;
 
 function closePanel() {
   var panel = document.getElementById('nav-panel');
-  if (panel) { var _f = panel.querySelector(':focus'); if (_f) _f.blur(); panel.classList.remove('open');
-    var backdrop = document.getElementById('nav-backdrop'); if (backdrop) backdrop.classList.remove('open'); panel.setAttribute('aria-hidden', 'true'); }
+  if (panel) { var _f = panel.querySelector(':focus'); if (_f) _f.blur(); panel.classList.remove('open'); panel.setAttribute('aria-hidden', 'true'); }
   document.querySelectorAll('.nb').forEach(function(b) { b.classList.remove('panel-open'); });
   _navKey = null;
 }
@@ -1954,18 +2214,15 @@ function openPanel(key, btn, buildFn) {
   var pi = document.getElementById('nav-panel-inner');
   if (pi) { pi.innerHTML = ''; buildFn(pi); }
   var panel = document.getElementById('nav-panel');
-  if (panel) { panel.classList.add('open');
-    var backdrop = document.getElementById('nav-backdrop'); if (backdrop) backdrop.classList.add('open'); panel.removeAttribute('aria-hidden'); }
+  if (panel) { panel.classList.add('open'); panel.removeAttribute('aria-hidden'); }
 }
 
 /* Single document listener */
 if (!window._navInit) {
   window._navInit = true;
   document.addEventListener('click', function(e) {
-    if (!e.target.closest('#cat-inner') && !e.target.closest('#nav-panel') && !e.target.closest('#nav-backdrop')) closePanel();
+    if (!e.target.closest('#cat-inner') && !e.target.closest('#nav-panel')) closePanel();
   });
-    var bd = document.getElementById('nav-backdrop');
-  if (bd) bd.addEventListener('click', closePanel);
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closePanel(); } });
 }
 
@@ -1976,7 +2233,7 @@ function buildNav() {
 
   function catCnt(id) {
     if (!id) return 0;
-    if (typeof id === 'string') return id === 'all' ? R.filter(Boolean).length : R.filter(function(r) { return r && r.cat === id; }).length;
+    if (typeof id === 'string') return id === 'all' ? R.length : R.filter(function(r) { return r && r.cat === id; }).length;
     if (Array.isArray(id)) return R.filter(function(r) { return r && id.indexOf(r.cat) >= 0; }).length;
     return 0;
   }
@@ -2273,7 +2530,7 @@ function buildNav() {
     // Group with dropdown
     // Compute correct group total — use the 'הכל' item to avoid double-counting
     var total = (function() {
-      if (node.key === 'all_group' || node.key === 'all_master') return R.filter(Boolean).length;
+      if (node.key === 'all_group' || node.key === 'all_master') return R.length;
       // Find the 'הכל' aggregate item
       var allItem = (node.items || []).find(function(it) { return it.lbl === 'הכל' && it.ids; });
       if (allItem) {
@@ -2576,7 +2833,7 @@ function updateTitle() {
   }
   // Update pill count
   var pill = document.getElementById('pill-cnt');
-  if (pill) pill.textContent = R.filter(Boolean).length + t('recipes_count');
+  if (pill) pill.textContent = R.length + t('recipes_count');
 }
 
 /* ═══════════════════════════════════════════════
@@ -2996,7 +3253,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Pill counter
   var pill = document.getElementById('pill-cnt');
-  if (pill) pill.textContent = R.filter(Boolean).length + t('recipes_count');
+  if (pill) pill.textContent = R.length + t('recipes_count');
 
   // Search input
   var srch = document.getElementById('srch');
@@ -6198,7 +6455,7 @@ function exportFullCookbook() {
 
     // Title page
     html += '<h1>' + t('hdr_title') + '</h1>';
-    html += '<div class="subtitle">' + t('hdr_subtitle') + '<br>' + t('pill_cities') + '<br><br>' + R.filter(Boolean).length + t('recipes_count') + '</div>';
+    html += '<div class="subtitle">' + t('hdr_subtitle') + '<br>' + t('pill_cities') + '<br><br>' + R.length + t('recipes_count') + '</div>';
 
     // Table of contents
     html += '<div class="toc"><h2>' + (_LANG==='en'?'Table of Contents':'תוכן עניינים') + '</h2><ul>';
@@ -6280,6 +6537,7 @@ function exportFullCookbook() {
 
 </script>
 
+<script src="about_redesigned.js"></script>
 <script src="book_data.js"></script>
 <script>
 if(typeof BOOK_HTML!=='undefined'){

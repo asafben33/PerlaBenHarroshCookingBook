@@ -2,19 +2,23 @@
 *
 
 # Allow only project files
-!index.html
-!book_data.js
-!data.js
-!pre_en.js
-!sw.js
-!manifest.json
-!download_images.py
-!clean_bad_images.py
-!cleanup_hardlinks.py
-!README.md
-!.gitignore
 !docs/
 !docs/**
 !images/
 !images/**
-!images/_IMG_ALIAS.js
+!.gitignore
+!about_redesigned.css
+!about_redesigned.html
+!about_redesigned.js
+!book_data.js
+!CLAUDE.md
+!clean_bad_images.py
+!cleanup_hardlinks.py
+!data.js
+!download_images.py
+!index.html
+!manifest.json
+!pre_en.js
+proxy_config.txt
+!README.md
+!sw.js

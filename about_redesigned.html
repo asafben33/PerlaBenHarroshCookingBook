@@ -1,0 +1,401 @@
+<!--
+═══════════════════════════════════════════════════════════════════════
+ABOUT REDESIGNED — "על שביל האהבה ממרוקו לירושלים"
+═══════════════════════════════════════════════════════════════════════
+הסבר: סעיף "אודות" מעוצב מחדש ב-Web-First, מבוסס על הספר הזיכרוני
+של משפחת בן הראש (2014). 10 סעיפים קולנועיים + גלריה מלאה של כל
+תמונות הספר + עץ משפחה אינטראקטיבי.
+
+Version: 1.0 (2026-04-18)
+Author: עבור אסף יעקב בן-הראש, בן הזקונים של פרלה ופנחס ז"ל
+Source: הספר "על שביל האהבה ממרוקו לירושלים" — 2014
+
+Insert in index.html:
+  מיקום: אחרי </section> של #about הקיים (בסוף שורה 1172)
+         לפני <!-- MAIN CONTENT --> marker (שורה 1174)
+
+Requires:
+  - CSS: about_redesigned.css (לטעון ב-<head>)
+  - JS:  about_redesigned.js  (לטעון בסוף <body>, לפני book_data.js)
+  - D3 :  https://d3js.org/d3.v7.min.js (רק אם רוצים עץ משפחה)
+═══════════════════════════════════════════════════════════════════════
+-->
+<section id="about-redesigned" class="ar-root" dir="rtl" lang="he" aria-labelledby="ar-hero-title">
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 1. HERO                                            -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-hero" role="region" aria-label="פתיחה — שער הספר">
+    <div class="ar-hero-bg" aria-hidden="true"></div>
+    <div class="ar-hero-overlay" aria-hidden="true"></div>
+    <div class="ar-hero-particles" aria-hidden="true">
+      <span class="ar-pt"></span><span class="ar-pt"></span><span class="ar-pt"></span>
+      <span class="ar-pt"></span><span class="ar-pt"></span><span class="ar-pt"></span>
+      <span class="ar-pt"></span><span class="ar-pt"></span><span class="ar-pt"></span>
+      <span class="ar-pt"></span><span class="ar-pt"></span><span class="ar-pt"></span>
+    </div>
+    <div class="ar-hero-content">
+      <div class="ar-hero-eyebrow">ספר בישול משפחתי — לזכרם</div>
+      <h1 class="ar-hero-title" id="ar-hero-title">פרלה ופנחס בן הראש ז״ל</h1>
+      <p class="ar-hero-sub">על שביל האהבה ממרוקו לירושלים</p>
+      <p class="ar-hero-tagline">1927 — 1951 — 2014</p>
+      <button class="ar-scroll-hint" type="button" aria-label="גללו לגלות את הסיפור"
+              onclick="document.getElementById('ar-opening').scrollIntoView({behavior:'smooth',block:'start'})">
+        <span>גללו לגלות את הסיפור</span>
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M7 10l5 5 5-5"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 2. OPENING STATEMENT                               -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-opening" id="ar-opening" role="region" aria-labelledby="ar-opening-title">
+    <div class="ar-mandala" aria-hidden="true"></div>
+    <div class="ar-container">
+      <div class="ar-glass-card ar-reveal">
+        <div class="ar-eyebrow">הקדמה</div>
+        <h2 class="ar-h2" id="ar-opening-title">אתר זה הוא זיכרון, טעם, ושייכות.</h2>
+        <div class="ar-body">
+          <p>פרלה נולדה בקזבלנקה ב-1931 וגדלה במרקש. בגיל שנתיים איבדה את אימה, ובגיל 17 עלתה ארצה לבדה. פנחס נולד בקזבלנקה ב-27 בדצמבר 1927, בן הזקונים של שמואל ורינה בן הראש. בגיל עשרים עלה ארצה בדרך בלתי לגאלית, בקבוצת תנועת "הדרור".</p>
+          <p>הם נפגשו באוניה "קונדרנס" במרסיי בשנת 1950. נישאו במעברת תלפיות ב-5 בדצמבר 1951. חתונתם הצנועה הייתה תחילה של 63 שנות חיים משותפים, חמישה ילדים (סימי, יהודה, סמי, אילן, אסף), נכדים ונינים.</p>
+          <p>המטבח שלהם שימר שני עולמות: מרוקו הצפון-אפריקאית, וספרד האנדלוסית דרך שושלת רבי יוסף קארו — אבי משפחת בן הראש. 1,054 מתכונים חיו בראשה של פרלה. האתר הזה משמר אותם כדי שגם הדורות הבאים יוכלו לטעום את מה שהיא בישלה.</p>
+          <p class="ar-body-small"><em>פנחס ז״ל נפטר בדצמבר 2016. פרלה ז״ל נפטרה במאי 2025, בגיל 92.</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 3. HERITAGE — שושלת קארו (Split 50/50)             -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-heritage" role="region" aria-labelledby="ar-heritage-title">
+    <div class="ar-split">
+      <div class="ar-split-image ar-reveal">
+        <img src="images/book_images/book_g42_018.jpg"
+             alt="דיוקן רבי יוסף קארו, מחבר השולחן ערוך, 1488-1575"
+             loading="lazy" decoding="async">
+        <div class="ar-split-caption">
+          <span class="ar-date-seal">1488 — 1575</span>
+          <span class="ar-date-sub">מחבר "השולחן ערוך"</span>
+        </div>
+      </div>
+      <div class="ar-split-text ar-reveal">
+        <div class="ar-eyebrow">פרק א' — שורשים באדמת מרוקו</div>
+        <h2 class="ar-h2" id="ar-heritage-title">מטולדו לטנג'יר לירושלים</h2>
+        <div class="ar-body">
+          <p>ב-1492 גורשו יהודי ספרד. משפחת קארו — שבראשה עמד הרא"ש, רבי אשר בן יחיאל — מצאה מקלט בפורטוגל, בטורקיה, ובאדריאנופול. רבי יוסף קארו (1488-1575) נולד בטולדו שבספרד, חי בצפת, וכתב את "השולחן ערוך" — הספר שהגדיר את ההלכה היהודית עד היום.</p>
+          <p>חמישה דורות אחר-כך הגיעה המשפחה לטנג'יר שבמרוקו הספרדית, משם — לקזבלנקה. לא רק שם משפחה — ירושה של תורה, חכמה, מסורת.</p>
+        </div>
+        <blockquote class="ar-quote">
+          <p>"שַלַּח לַחְמְךָ עַל־פְּנֵי הַמָּיִם, כִּי בְּרֹב הַיָּמִים תִּמְצָאֶנּוּ"</p>
+          <cite>— קהלת (יא, א), פסוק הפתיחה של הספר</cite>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 4. TWO LIVES                                       -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-two-lives" role="region" aria-labelledby="ar-two-title">
+    <div class="ar-container">
+      <div class="ar-center ar-reveal">
+        <h2 class="ar-h2" id="ar-two-title">שני סיפורים. שני מסעות.</h2>
+        <p class="ar-subtitle"><em>עד שנפגשו על סיפון אוניית "קונדרנס", ב-1950 במרסיי.</em></p>
+      </div>
+      <div class="ar-duo-grid">
+        <article class="ar-portrait-card ar-reveal" tabindex="0">
+          <div class="ar-portrait-photo">
+            <img src="images/book_images/book_g42_017.jpg"
+                 alt="פנחס בן הראש כילד, קזבלנקה, שנות ה-30"
+                 loading="lazy" decoding="async">
+          </div>
+          <div class="ar-portrait-body">
+            <h3 class="ar-portrait-name">פנחס בן הראש</h3>
+            <div class="ar-portrait-dates">1927 — 2016</div>
+            <ul class="ar-portrait-facts">
+              <li>נולד 27 בדצמבר 1927 בקזבלנקה</li>
+              <li>בן הזקונים של שמואל ורינה בן הראש</li>
+              <li>דור חמישי מצאצאי רבי יוסף קארו</li>
+              <li>עלה ארצה 1948 באנייה "סנט אנטוניו"</li>
+            </ul>
+          </div>
+        </article>
+        <article class="ar-portrait-card ar-reveal" tabindex="0">
+          <div class="ar-portrait-photo">
+            <img src="images/book_images/book_g42_050.jpg"
+                 alt="פרלה בן הראש (לבית כהן) בנעוריה, קזבלנקה"
+                 loading="lazy" decoding="async">
+          </div>
+          <div class="ar-portrait-body">
+            <h3 class="ar-portrait-name">פרלה בן הראש</h3>
+            <div class="ar-portrait-dates">1931 — 2025</div>
+            <ul class="ar-portrait-facts">
+              <li>נולדה 1931 בקזבלנקה, גדלה במרקש</li>
+              <li>בת יצחק כהן וסימי בוזגלו ז״ל</li>
+              <li>גדלה אצל דודתה לאחר מות אמה ב-1936</li>
+              <li>עלתה ארצה 1950 באנייה "נגבה"</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 5. THE MEETING — Cinematic                         -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-meeting" role="region" aria-labelledby="ar-meeting-title">
+    <div class="ar-meeting-bg" aria-hidden="true"></div>
+    <div class="ar-meeting-overlay" aria-hidden="true"></div>
+    <div class="ar-meeting-content ar-reveal">
+      <h2 class="ar-h2-xl" id="ar-meeting-title">
+        <span class="ar-meeting-year">1950.</span>
+        <span class="ar-meeting-place">מרסיי. אניית "קונדרנס".</span>
+      </h2>
+      <div class="ar-body">
+        <p>המפגש לא היה מתוכנן. פרלה בת ה-17 עלתה על האנייה לבדה, עם תיק קטן ואומץ גדול. פנחס, שהיה אז ב"בית אל וואד" — הארגון הציוני שהיה אחראי על העלייה הבלתי לגאלית — ראה אותה ומשהו בו נעצר.</p>
+        <p>שנה אחר-כך, ב-5 בדצמבר 1951, נישאו בחופה צנועה במעברת תלפיות בירושלים. הרב שלוש ערך את הקידושין.</p>
+      </div>
+      <div class="ar-rings" aria-hidden="true">
+        <svg viewBox="0 0 80 40" width="80" height="40" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="28" cy="20" r="16"/>
+          <circle cx="52" cy="20" r="16"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 6. CASABLANCA — Mosaic                             -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-casablanca" role="region" aria-labelledby="ar-casa-title">
+    <div class="ar-container">
+      <div class="ar-reveal">
+        <div class="ar-eyebrow">פרק ב' + ג' — העיר הלבנה</div>
+        <h2 class="ar-h2" id="ar-casa-title">קזבלנקה של ילדותנו</h2>
+      </div>
+      <div class="ar-casa-grid">
+        <div class="ar-casa-text ar-reveal">
+          <p>"רו דה לה קרואה" — "רחוב הצלב האדום". בית בן שתי קומות עם חמישה חדרים, משרתת ערבייה שנהגה אצלם במשך עשרים שנה. המטבח היה בקומה הראשונה. אימא חמה של עשרה ילדים, שהתחתנה בגיל 16 לאבא שהיה בן 40.</p>
+          <p class="ar-body-italic"><em>המים שהרוכל הערבי הביא בנאדות. הקפה של שבת. הגבינה של דודה עדה. שוק המדרחוב עם התבלינים, המחבתות של בצק דק, והמופלטות של ליל המימונה.</em></p>
+        </div>
+        <div class="ar-casa-mosaic ar-reveal">
+          <figure class="ar-casa-item ar-casa-big" tabindex="0">
+            <img src="images/book_images/book_g42_021.jpg"
+                 alt="חתונת יעקב בכור משפחת בן הראש, קזבלנקה — קבוצה משפחתית"
+                 loading="lazy" decoding="async">
+            <figcaption>חתונת יעקב הבכור, קזבלנקה</figcaption>
+          </figure>
+          <figure class="ar-casa-item" tabindex="0">
+            <img src="images/book_images/book_g42_037.jpg"
+                 alt="דודה איטו, אחות פנחס הגדולה, בת 103"
+                 loading="lazy" decoding="async">
+            <figcaption>דודה איטו</figcaption>
+          </figure>
+          <figure class="ar-casa-item" tabindex="0">
+            <img src="images/book_images/book_g42_022.jpg"
+                 alt="ממתקי המימונה המסורתיים"
+                 loading="lazy" decoding="async">
+            <figcaption>ממתקי המימונה</figcaption>
+          </figure>
+          <figure class="ar-casa-item" tabindex="0">
+            <img src="images/book_images/book_g42_023.jpg"
+                 alt="מופלטה בטאג'ין — מסורת ליל המימונה"
+                 loading="lazy" decoding="async">
+            <figcaption>מופלטה בטאג'ין</figcaption>
+          </figure>
+          <figure class="ar-casa-item" tabindex="0">
+            <img src="images/book_images/book_g42_031.jpg"
+                 alt="פנחס ברחובות קזבלנקה בנעוריו"
+                 loading="lazy" decoding="async">
+            <figcaption>ברחובות קזבלנקה</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 7. JOURNEY TIMELINE — 4 תחנות                      -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-journey" role="region" aria-labelledby="ar-journey-title">
+    <div class="ar-container">
+      <div class="ar-center ar-reveal">
+        <div class="ar-eyebrow">פרקים ד'-ח' — המסע</div>
+        <h2 class="ar-h2" id="ar-journey-title">ארבע תחנות</h2>
+        <p class="ar-subtitle">מקזבלנקה, אל הדרור, אל המעברה, אל הבית.</p>
+      </div>
+      <div class="ar-timeline">
+        <article class="ar-tl-stop ar-reveal" tabindex="0">
+          <div class="ar-tl-photo">
+            <img src="images/book_images/book_g42_025.jpg"
+                 alt="פנחס עם חבריו ברחובות קזבלנקה, שנות ה-40"
+                 loading="lazy" decoding="async">
+          </div>
+          <div class="ar-tl-body">
+            <div class="ar-tl-year">1927 — 1948</div>
+            <h3 class="ar-tl-title">קזבלנקה</h3>
+            <p>ילדות ונעורים בקזבלנקה. בית הרב, תנועת "הפועל המזרחי", ועיתון "הקול היהודי" שמכרתי בפינת הרחוב. הפרעות במלחמת העולם השנייה שפגעו ביהודים העזים גם בבית ספרי.</p>
+          </div>
+        </article>
+        <article class="ar-tl-stop ar-reveal" tabindex="0">
+          <div class="ar-tl-photo">
+            <img src="images/book_images/book_g42_048.jpg"
+                 alt="מחנה ההכשרה של תנועת הדרור בצרפת, 1948"
+                 loading="lazy" decoding="async">
+          </div>
+          <div class="ar-tl-body">
+            <div class="ar-tl-year">1948 — 1950</div>
+            <h3 class="ar-tl-title">צרפת וההכשרה</h3>
+            <p>פרעות אוג'דה (7-8 ביוני 1948), יציאה בלתי לגאלית דרך אלג'יר-מרסיי. שלושה חודשים ב"שאטו מון ברדו" עם חברי "הדרור". משם — אנייה "סנט אנטוניו" לחיפה.</p>
+          </div>
+        </article>
+        <article class="ar-tl-stop ar-reveal" tabindex="0">
+          <div class="ar-tl-photo">
+            <img src="images/book_images/book_g42_056.jpg"
+                 alt="מעברת צריפים — שנות החמישים הראשונות בארץ"
+                 loading="lazy" decoding="async">
+          </div>
+          <div class="ar-tl-body">
+            <div class="ar-tl-year">1948 — 1951</div>
+            <h3 class="ar-tl-title">הארץ</h3>
+            <p>בבית אורן. קיבוץ רגבים. פרדס-חנה. מושב ארבל. האסון ב-20/7/1950 — צריפים בוערים, ילדים נספים. עברנו למעברת תלפיות בירושלים.</p>
+          </div>
+        </article>
+        <article class="ar-tl-stop ar-reveal" tabindex="0">
+          <div class="ar-tl-photo">
+            <img src="images/book_images/book_g42_074.jpg"
+                 alt="תמונת חתונת פרלה ופנחס, 5 בדצמבר 1951"
+                 loading="lazy" decoding="async">
+          </div>
+          <div class="ar-tl-body">
+            <div class="ar-tl-year">1951 — 2025</div>
+            <h3 class="ar-tl-title">ירושלים</h3>
+            <p>חתונה ב-5/12/1951. חמישה ילדים. דירה ב"יהודה הנשיא 13" בקטמונים. פנחס במשטרה ובמשמר הגבול. פרלה — לב הבית. 63 שנה יחד.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 8. FAMILY TREE — אינטראקטיבי                       -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-tree" role="region" aria-labelledby="ar-tree-title">
+    <div class="ar-container">
+      <div class="ar-center ar-reveal">
+        <div class="ar-eyebrow">פרק י' — המבט לעבר, הפנים לעתיד</div>
+        <h2 class="ar-h2" id="ar-tree-title">חמישה ילדים. עץ שגדל.</h2>
+        <p class="ar-subtitle">סימי (1953), יהודה (1956), סמי (1960), אילן (1964), אסף (1974).<br>היום — נכדים ונינים בישראל, בבריטניה, בעולם.</p>
+      </div>
+      <div class="ar-tree-wrap ar-reveal">
+        <div id="ar-family-tree" role="img" aria-label="עץ משפחה אינטראקטיבי של משפחת בן הראש"></div>
+        <div class="ar-tree-hint">לחצו על כל דמות להרחבה</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 9. MOROCCO RETURN — טיול שורשים                   -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-morocco" role="region" aria-labelledby="ar-morocco-title">
+    <div class="ar-container">
+      <div class="ar-reveal">
+        <div class="ar-eyebrow">פרק י' — המבט לעבר</div>
+        <h2 class="ar-h2" id="ar-morocco-title">טיול שורשים למרוקו</h2>
+        <p class="ar-subtitle ar-body-italic"><em>בשנות התשעים חזרו פרלה ופנחס למרוקו — ביקרו בקזבלנקה, במרקש, ברחובות שבהם גדלו.</em></p>
+      </div>
+      <div class="ar-morocco-grid">
+        <figure class="ar-morocco-hero ar-reveal" tabindex="0">
+          <img src="images/book_images/book_g45_060.jpg"
+               alt="פרלה ופנחס במרוקו עם בני משפחה בלבוש מסורתי"
+               loading="lazy" decoding="async">
+          <figcaption>חזרה לשורשים — שנות התשעים</figcaption>
+        </figure>
+        <figure class="ar-morocco-item ar-reveal" tabindex="0">
+          <img src="images/book_images/book_g45_057.jpg" alt="ארמון וכסבה במרוקו" loading="lazy" decoding="async">
+          <figcaption>כסבה — מרקש</figcaption>
+        </figure>
+        <figure class="ar-morocco-item ar-reveal" tabindex="0">
+          <img src="images/book_images/book_g45_063.jpg" alt="פרלה בחנות כלי נחושת מרוקאית" loading="lazy" decoding="async">
+          <figcaption>בין כלי הנחושת</figcaption>
+        </figure>
+        <figure class="ar-morocco-item ar-reveal" tabindex="0">
+          <img src="images/book_images/book_g45_066.jpg" alt="פרלה במסעדה מרוקאית מסורתית" loading="lazy" decoding="async">
+          <figcaption>במסעדה מסורתית</figcaption>
+        </figure>
+      </div>
+      <blockquote class="ar-quote ar-reveal">
+        <p>"התרגשות עזה אחזה בנו עת אמרנו תפילה על קבר."</p>
+        <cite>— מתוך הספר, עמוד 107</cite>
+      </blockquote>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 10. FULL GALLERY — כל תמונות הספר (151 תמונות)     -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-gallery" role="region" aria-labelledby="ar-gal-title">
+    <div class="ar-container">
+      <div class="ar-center ar-reveal">
+        <div class="ar-eyebrow">ארכיון מלא</div>
+        <h2 class="ar-h2" id="ar-gal-title">כל התמונות מהספר</h2>
+        <p class="ar-subtitle">151 תמונות היסטוריות מהספר "על שביל האהבה ממרוקו לירושלים" (2014)</p>
+      </div>
+      <!-- Gallery is populated dynamically by JavaScript -->
+      <div id="ar-gallery-grid" class="ar-gallery-grid" aria-live="polite"></div>
+      <div class="ar-gallery-controls">
+        <button type="button" class="ar-btn" id="ar-gallery-load-more" aria-label="טען עוד תמונות">טען עוד תמונות</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- 11. CLOSING — ציטוט קורצ'אק + CTA                 -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-section ar-closing" role="region" aria-labelledby="ar-closing-title">
+    <div class="ar-mandala ar-mandala-bottom" aria-hidden="true"></div>
+    <div class="ar-container">
+      <blockquote class="ar-closing-quote ar-reveal">
+        <p>"הדואג לימים — זורע חיטה.<br>הדואג לשנים — נוטע עצים.<br>הדואג לדורות — מחנך אנשים."</p>
+        <cite>— יאנוש קורצ'אק</cite>
+        <div class="ar-closing-note">ציטוט הסגירה של הספר המקורי, עמוד 109</div>
+      </blockquote>
+      <div class="ar-closing-body ar-reveal">
+        <h2 class="ar-h2" id="ar-closing-title">המטבח — הזיכרון הכי טעים</h2>
+        <p>פרלה ופנחס דאגו לדורות. הם חינכו חמישה ילדים, ראו נכדים ונינים, ושמרו בזיכרונם טעמים ממרוקו שהם לא אמרו "שכחנו".</p>
+        <p>המטבח הזה — 1,054 המתכונים שחיים בראשה של פרלה — הוא הכיתה האמיתית שלהם. בואו לטעום.</p>
+      </div>
+      <div class="ar-cta-wrap ar-reveal">
+        <button type="button" class="ar-cta" onclick="document.getElementById('main').scrollIntoView({behavior:'smooth'})" aria-label="עבור למאגר 1,054 המתכונים">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+          <span>כנסו למאגר 1,054 המתכונים</span>
+        </button>
+      </div>
+      <div class="ar-credit ar-reveal">
+        <p>עיצוב ותכנות: <strong>אסף יעקב בן-הראש</strong>, בן הזקונים של פרלה ופנחס ז״ל</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- LIGHTBOX MODAL (for image clicks)                  -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="ar-lightbox" id="ar-lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="ar-lb-caption">
+    <button type="button" class="ar-lb-close" id="ar-lb-close" aria-label="סגור תצוגה מקדימה">&times;</button>
+    <button type="button" class="ar-lb-prev" id="ar-lb-prev" aria-label="תמונה קודמת">&#8250;</button>
+    <button type="button" class="ar-lb-next" id="ar-lb-next" aria-label="תמונה הבאה">&#8249;</button>
+    <div class="ar-lb-inner">
+      <img id="ar-lb-img" src="" alt="">
+      <div class="ar-lb-caption" id="ar-lb-caption"></div>
+    </div>
+  </div>
+
+</section>
