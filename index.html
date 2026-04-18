@@ -908,6 +908,198 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
   @page { margin: 1.5cm; }
 }
 
+
+/* ═════════════════════════════════════════════════════════════════════════
+   FEEDBACK SYSTEM v1.0 — Recipe corrections & bug reports
+   Uses existing design tokens (--c-*) — no new colors introduced.
+═════════════════════════════════════════════════════════════════════════
+*/
+.fb-ovl {
+  position: fixed; inset: 0; z-index: 950;
+  display: none; align-items: center; justify-content: center;
+  padding: 1rem;
+  background: rgba(1,5,15,.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.fb-ovl.open { display: flex; }
+.fb-box {
+  direction: rtl;
+  background: var(--c-bg);
+  border-radius: var(--r-xl);
+  max-width: 520px; width: 100%; max-height: 92vh;
+  overflow-y: auto;
+  box-shadow: var(--sh-xl);
+  animation: fb-enter .28s cubic-bezier(.22,.61,.36,1);
+}
+@keyframes fb-enter {
+  from { opacity: 0; transform: translateY(12px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.fb-head {
+  direction: rtl;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1rem 1.4rem;
+  background: linear-gradient(135deg, var(--c-dark), var(--c-mid));
+  color: var(--c-gold-l);
+  border-top-left-radius: inherit; border-top-right-radius: inherit;
+  position: sticky; top: 0; z-index: 2;
+}
+.fb-title {
+  font-family: 'Frank Ruhl Libre', Georgia, serif;
+  font-size: 1.15rem; font-weight: 700;
+  margin: 0; color: var(--c-gold-l);
+}
+.fb-close {
+  background: rgba(0,0,0,.4);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 100px; width: 32px; height: 32px;
+  color: #fff; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: inherit; font-size: .95rem;
+  transition: background var(--t-fast);
+}
+.fb-close:hover { background: rgba(196,147,10,.4); }
+.fb-body { direction: rtl; text-align: right; padding: 1.2rem 1.4rem 1.4rem; }
+.fb-context {
+  direction: rtl;
+  background: rgba(196,147,10,.1);
+  border-right: 3px solid var(--c-gold);
+  border-radius: var(--r-sm);
+  padding: .6rem .9rem;
+  margin: 0 0 1rem;
+  font-size: .88rem;
+  color: var(--c-ink-m);
+}
+.fb-context strong { color: var(--c-spice); font-weight: 700; }
+.fb-form { direction: rtl; }
+.fb-field { display: block; direction: rtl; margin-bottom: 1rem; }
+.fb-label {
+  direction: rtl; display: block;
+  font-size: .84rem; font-weight: 600;
+  color: var(--c-ink-m);
+  margin-bottom: .35rem;
+}
+.fb-req { color: var(--c-spice); font-weight: 700; }
+.fb-form input,
+.fb-form textarea {
+  direction: rtl; text-align: right;
+  width: 100%;
+  background: var(--c-bg2);
+  border: 1.5px solid var(--c-bdr);
+  border-radius: var(--r-md);
+  padding: .6rem .85rem;
+  font-family: 'Heebo', system-ui, sans-serif;
+  font-size: .92rem; color: var(--c-ink);
+  transition: all var(--t-fast);
+}
+.fb-form input:focus,
+.fb-form textarea:focus {
+  outline: none;
+  border-color: var(--c-gold);
+  box-shadow: 0 0 0 3px rgba(196,147,10,.15);
+}
+.fb-form textarea { resize: vertical; min-height: 110px; }
+.fb-hint {
+  display: block; text-align: left;
+  font-size: .72rem; color: var(--c-ink-l);
+  margin-top: .3rem;
+}
+.fb-status {
+  direction: rtl;
+  min-height: 0; margin: 0 0 .8rem;
+  padding: 0 .9rem; border-radius: var(--r-sm);
+  font-size: .88rem; font-weight: 600;
+  display: none; align-items: center; gap: .5rem;
+}
+.fb-status.show { display: flex; padding: .6rem .9rem; margin-bottom: .9rem; }
+.fb-status.success {
+  background: rgba(61,110,58,.12);
+  color: var(--c-herb);
+  border: 1px solid rgba(61,110,58,.3);
+}
+.fb-status.error {
+  background: rgba(184,66,35,.12);
+  color: var(--c-spice-d);
+  border: 1px solid rgba(184,66,35,.3);
+}
+.fb-status.loading {
+  background: rgba(196,147,10,.12);
+  color: var(--c-gold-d);
+  border: 1px solid rgba(196,147,10,.3);
+}
+.fb-status a { color: inherit; text-decoration: underline; font-weight: 700; }
+.fb-actions {
+  direction: rtl;
+  display: flex; gap: .6rem; justify-content: flex-start;
+  margin-top: 1rem; padding-top: 1rem;
+  border-top: 1px solid var(--c-bg3);
+}
+.fb-btn {
+  direction: rtl;
+  font-family: 'Heebo', system-ui, sans-serif;
+  font-size: .9rem; font-weight: 700;
+  padding: .58rem 1.5rem;
+  border-radius: 100px;
+  cursor: pointer; border: 1.5px solid transparent;
+  transition: all var(--t-med);
+}
+.fb-btn:disabled { opacity: .6; cursor: wait; }
+.fb-btn-1 { background: var(--c-spice); color: #fff; }
+.fb-btn-1:hover:not(:disabled) {
+  background: var(--c-spice-d);
+  transform: translateY(-1px);
+  box-shadow: var(--sh-sm);
+}
+.fb-btn-2 {
+  background: transparent;
+  color: var(--c-ink-m);
+  border-color: var(--c-bdr);
+}
+.fb-btn-2:hover { background: var(--c-bg2); }
+.fb-fab {
+  position: fixed; z-index: 450;
+  bottom: 1.5rem; left: 1.5rem;
+  display: flex; align-items: center; gap: .55rem;
+  padding: .72rem 1.1rem;
+  background: var(--c-spice); color: #fff;
+  border: 2px solid var(--c-gold);
+  border-radius: 100px;
+  font-family: 'Heebo', system-ui, sans-serif;
+  font-size: .88rem; font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--sh-md);
+  transition: all var(--t-med) cubic-bezier(.4,0,.2,1);
+}
+.fb-fab:hover {
+  background: var(--c-spice-d);
+  transform: translateY(-2px);
+  box-shadow: var(--sh-lg);
+}
+.fb-fab svg { width: 18px; height: 18px; flex-shrink: 0; }
+.m-act-media.fb-recipe-btn {
+  background: rgba(184,66,35,.12);
+  border-color: rgba(184,66,35,.35);
+  color: var(--c-spice-d);
+}
+.m-act-media.fb-recipe-btn:hover {
+  background: rgba(184,66,35,.25);
+  color: var(--c-spice);
+}
+@media (max-width: 480px) {
+  .fb-ovl { padding: 0; align-items: flex-end; }
+  .fb-box { max-height: 95vh; border-radius: var(--r-lg) var(--r-lg) 0 0; }
+  .fb-fab-lbl { display: none; }
+  .fb-fab { padding: .85rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fb-box { animation: none; }
+  .fb-btn, .fb-fab { transition: none; }
+}
+@media print {
+  .fb-ovl, .fb-fab, #m-feedback-act { display: none !important; }
+}
+
 </style>
 <script type="application/ld+json">{
   "@context": "https://schema.org",
@@ -1798,6 +1990,7 @@ Requires:
         <button id="m-share" class="m-act-media" aria-label="שתף מתכון">⬆ שתף</button>
         <button id="m-upload-act" class="m-act-media" aria-label="הוסף תמונה">🖼 תמונה</button>
         <button id="m-img-del-act" class="m-act-media del" aria-label="מחק תמונה" hidden>✕ מחק תמונה</button>
+        <button id="m-feedback-act" class="m-act-media fb-recipe-btn" aria-label="הערה או תיקון למתכון"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> הערה / תיקון</button>
       </div>
     </div>
   </div>
@@ -6679,6 +6872,236 @@ function exportFullCookbook() {
 
 
 
+
+/* ═════════════════════════════════════════════════════════════════
+   FEEDBACK SYSTEM v1.0 — Perla Cookbook
+   Privacy: Destination email is stored ONLY in Netlify Dashboard,
+   NEVER in this source code.
+   Setup: Netlify → Forms → perla-feedback → Settings →
+          Form notifications → Add email → <your-email>
+════════════════════════════════════════════════════════════════════ */
+(function() {
+  'use strict';
+
+  var FORM_NAME = 'perla-feedback';
+  var MAX_MSG   = 2000;
+
+  var _type = null;
+  var _recipe = null;
+  var _isSubmitting = false;
+
+  function $(id) { return document.getElementById(id); }
+
+  function escapeHtml(s) {
+    return String(s || '').replace(/[<>&"']/g, function(c) {
+      return ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#039;'})[c];
+    });
+  }
+
+  function encodeFormData(data) {
+    return Object.keys(data)
+      .map(function(k) { return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]); })
+      .join('&');
+  }
+
+  function setStatus(msg, kind) {
+    var el = $('fb-status');
+    if (!el) return;
+    el.className = 'fb-status' + (kind ? ' show ' + kind : '');
+    if (msg === undefined || msg === null) { el.innerHTML = ''; return; }
+    el.innerHTML = msg;
+  }
+
+  function updateCharCount() {
+    var msg = $('fb-message');
+    var counter = $('fb-count');
+    if (msg && counter) counter.textContent = msg.value.length;
+  }
+
+  function openFeedbackModal(type, recipe) {
+    _type = type || 'site';
+    _recipe = recipe || null;
+
+    var ovl = $('fb-ovl');
+    var title = $('fb-title');
+    var context = $('fb-context');
+    var form = $('fb-form');
+
+    if (!ovl || !title || !context) return;
+
+    if (form) form.reset();
+    setStatus('');
+    updateCharCount();
+
+    if (_type === 'recipe' && _recipe) {
+      title.textContent = 'הערה / תיקון על מתכון';
+      context.innerHTML = 'לגבי המתכון: <strong>' + escapeHtml(_recipe.title) + '</strong>';
+      context.hidden = false;
+    } else {
+      title.textContent = 'הצעה לשיפור או דיווח על תקלה';
+      context.hidden = true;
+    }
+
+    ovl.classList.add('open');
+    ovl.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    setTimeout(function() {
+      var f = $('fb-message');
+      if (f) f.focus();
+    }, 100);
+  }
+
+  function closeFeedbackModal() {
+    var ovl = $('fb-ovl');
+    if (!ovl) return;
+    ovl.classList.remove('open');
+    ovl.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    _type = null;
+    _recipe = null;
+  }
+
+  function submitFeedback(e) {
+    if (e) e.preventDefault();
+    if (_isSubmitting) return;
+
+    var submitBtn = $('fb-submit');
+    var message = ($('fb-message') || {}).value || '';
+    var name    = ($('fb-name') || {}).value || '';
+    var email   = ($('fb-email') || {}).value || '';
+
+    if (!message.trim()) {
+      setStatus('נא לכתוב הודעה לפני השליחה.', 'error');
+      return;
+    }
+    if (message.length > MAX_MSG) {
+      setStatus('ההודעה ארוכה מדי (מקסימום ' + MAX_MSG + ' תווים).', 'error');
+      return;
+    }
+    if (email && !email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) {
+      setStatus('כתובת אימייל לא תקינה.', 'error');
+      return;
+    }
+
+    _isSubmitting = true;
+    if (submitBtn) submitBtn.disabled = true;
+    setStatus('שולח הודעה...', 'loading');
+
+    var payload = {
+      'form-name':     FORM_NAME,
+      'bot-field':     '',
+      'feedback-type': _type || 'site',
+      'recipe-id':     _recipe ? String(_recipe.id) : '',
+      'recipe-title':  _recipe ? String(_recipe.title) : '',
+      'sender-name':   name.slice(0, 80),
+      'sender-email':  email.slice(0, 100),
+      'message':       message.slice(0, MAX_MSG),
+      'page-url':      location.href,
+      'user-agent':    (navigator.userAgent || '').slice(0, 200)
+    };
+
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: encodeFormData(payload)
+    }).then(function(r) {
+      if (r && r.ok) {
+        setStatus('תודה! ההודעה נשלחה בהצלחה.', 'success');
+        setTimeout(closeFeedbackModal, 2500);
+      } else {
+        throw new Error('HTTP ' + (r ? r.status : 'unknown'));
+      }
+    }).catch(function() {
+      setStatus(
+        'שליחה ישירה נכשלה. <a href="#" id="fb-mailto-fallback">פתח אימייל במקום</a>',
+        'error'
+      );
+      var m = $('fb-mailto-fallback');
+      if (m) m.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        openMailtoFallback(payload);
+      });
+    }).then(function() {
+      _isSubmitting = false;
+      if (submitBtn) submitBtn.disabled = false;
+    });
+  }
+
+  function openMailtoFallback(data) {
+    // Base64-obfuscated destination address (prevents simple scrapers)
+    var to = atob('YXNhZmJlbjMzQGdtYWlsLmNvbQ==');
+    var subject = data['feedback-type'] === 'recipe'
+      ? 'תיקון למתכון: ' + data['recipe-title']
+      : 'הצעה / דיווח — אתר ספר הבישול של פרלה ז"ל';
+    var body = [
+      'סוג: ' + (data['feedback-type'] === 'recipe' ? 'תיקון מתכון' : 'הצעה / תקלה'),
+      data['recipe-title'] ? 'מתכון: ' + data['recipe-title'] : '',
+      data['recipe-id']    ? 'מזהה: '  + data['recipe-id']    : '',
+      'שם: ' + (data['sender-name'] || '(לא צוין)'),
+      '',
+      'תוכן ההודעה:',
+      data['message'] || '',
+      '',
+      '---',
+      'דף: ' + data['page-url']
+    ].filter(Boolean).join('\n');
+
+    window.location.href = 'mailto:' + to +
+      '?subject=' + encodeURIComponent(subject) +
+      '&body='    + encodeURIComponent(body);
+  }
+
+  function initFeedback() {
+    var fab = $('fb-fab');
+    if (fab) fab.addEventListener('click', function() {
+      openFeedbackModal('site', null);
+    });
+
+    var closeBtn = $('fb-close');
+    if (closeBtn) closeBtn.addEventListener('click', closeFeedbackModal);
+
+    var cancelBtn = $('fb-cancel');
+    if (cancelBtn) cancelBtn.addEventListener('click', closeFeedbackModal);
+
+    var ovl = $('fb-ovl');
+    if (ovl) ovl.addEventListener('click', function(e) {
+      if (e.target === ovl) closeFeedbackModal();
+    });
+
+    var form = $('fb-form');
+    if (form) form.addEventListener('submit', submitFeedback);
+
+    var msg = $('fb-message');
+    if (msg) msg.addEventListener('input', updateCharCount);
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        var ovl = $('fb-ovl');
+        if (ovl && ovl.classList.contains('open')) closeFeedbackModal();
+      }
+    });
+
+    var recBtn = $('m-feedback-act');
+    if (recBtn) recBtn.addEventListener('click', function() {
+      if (typeof CUR_REC !== 'undefined' && CUR_REC) {
+        openFeedbackModal('recipe', { id: CUR_REC.id, title: CUR_REC.title });
+      } else {
+        openFeedbackModal('site', null);
+      }
+    });
+  }
+
+  window.openFeedbackModal  = openFeedbackModal;
+  window.closeFeedbackModal = closeFeedbackModal;
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFeedback);
+  } else {
+    initFeedback();
+  }
+})();
+
 </script>
 
 <script src="about_redesigned.js"></script>
@@ -6692,5 +7115,71 @@ if(typeof BOOK_HTML!=='undefined'){
   }
 }
 </script>
+
+<!-- ════════════════════════════════════════════════════════════════════
+  FEEDBACK SYSTEM v1.0 — Hidden form for Netlify build-time detection
+  Email is configured in Netlify Dashboard — never in source code.
+════════════════════════════════════════════════════════════════════
+-->
+<form name="perla-feedback" method="POST" data-netlify="true"
+      netlify-honeypot="bot-field" hidden>
+  <input type="hidden" name="form-name" value="perla-feedback" />
+  <input type="text" name="bot-field" />
+  <input type="text" name="feedback-type" />
+  <input type="text" name="recipe-id" />
+  <input type="text" name="recipe-title" />
+  <input type="text" name="sender-name" />
+  <input type="email" name="sender-email" />
+  <textarea name="message"></textarea>
+  <input type="text" name="page-url" />
+  <input type="text" name="user-agent" />
+</form>
+
+<!-- Feedback modal overlay -->
+<div id="fb-ovl" class="fb-ovl" role="dialog" aria-modal="true"
+     aria-labelledby="fb-title" aria-hidden="true">
+  <div class="fb-box" role="document">
+    <header class="fb-head">
+      <h2 id="fb-title" class="fb-title">הערות ותיקונים</h2>
+      <button type="button" class="fb-close" id="fb-close" aria-label="סגור">✕</button>
+    </header>
+    <div class="fb-body">
+      <p id="fb-context" class="fb-context" hidden></p>
+      <form id="fb-form" class="fb-form" novalidate>
+        <label class="fb-field">
+          <span class="fb-label">השם שלך (לא חובה)</span>
+          <input type="text" id="fb-name" name="sender-name" maxlength="80" autocomplete="name" />
+        </label>
+        <label class="fb-field">
+          <span class="fb-label">אימייל לחזרה (לא חובה)</span>
+          <input type="email" id="fb-email" name="sender-email" maxlength="100"
+                 autocomplete="email" placeholder="name@example.com" />
+        </label>
+        <label class="fb-field">
+          <span class="fb-label">ההודעה <span class="fb-req">*</span></span>
+          <textarea id="fb-message" name="message" rows="5" maxlength="2000"
+                    required placeholder="ההערה, התיקון או הרעיון שלך..."></textarea>
+          <small class="fb-hint"><span id="fb-count">0</span> / 2000</small>
+        </label>
+        <div id="fb-status" class="fb-status" role="status" aria-live="polite"></div>
+        <div class="fb-actions">
+          <button type="button" id="fb-cancel" class="fb-btn fb-btn-2">ביטול</button>
+          <button type="submit" id="fb-submit" class="fb-btn fb-btn-1">שליחה</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Action Button — site-wide feedback -->
+<button type="button" id="fb-fab" class="fb-fab"
+        aria-label="הצעות לשיפור או דיווח תקלה"
+        title="הצעות לשיפור או דיווח תקלה">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+  <span class="fb-fab-lbl">הצעות ודיווח</span>
+</button>
+
 </body>
 </html>
