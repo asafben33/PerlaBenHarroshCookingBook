@@ -260,19 +260,23 @@ ol { padding-right: 1.2rem; }
 .nav-panel-inner {
   max-width: 1440px;
   margin: 0 auto;
-  padding: .8rem 1.5rem 1rem;
+  padding: 1.1rem 1.5rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
 }
 .panel-row { display: flex; direction: rtl; text-align: right; flex-wrap: wrap; gap: .5rem; align-items: flex-start; }
 .pc {
   display: inline-flex;
   direction: rtl;
   align-items: center;
-  gap: .3rem;
+  gap: .5rem;
   background: rgba(255,255,255,.05);
   border: 1px solid rgba(196,147,10,.2);
   border-radius: 100px;
-  padding: .3rem .85rem;
-  font-size: .78rem;
+  padding: .55rem 1.3rem;
+  font-size: 1rem;
+  font-weight: 600;
   color: rgba(245,236,215,.75);
   cursor: pointer;
   font-family: inherit;
@@ -280,18 +284,19 @@ ol { padding-right: 1.2rem; }
 }
 .pc:hover { background: rgba(196,147,10,.18); color: var(--c-gold-l); border-color: rgba(196,147,10,.45); }
 .pc.active { background: rgba(196,147,10,.25); border-color: rgba(196,147,10,.6); color: var(--c-gold-l); }
-.pc-cnt { font-size: .66rem; opacity: .5; }
+.pc-cnt { font-size: .82rem; opacity: .7; font-weight: 500; }
 .acc-hdr {
   display: inline-flex;
   direction: rtl;
   align-items: center;
-  gap: .3rem;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(196,147,10,.18);
+  gap: .5rem;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(196,147,10,.28);
   border-radius: 100px;
-  padding: .3rem .85rem;
-  font-size: .78rem;
-  color: rgba(245,236,215,.7);
+  padding: .55rem 1.3rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--c-gold-l);
   cursor: pointer;
   font-family: inherit;
   transition: background var(--t-fast), color var(--t-fast);
@@ -304,11 +309,11 @@ ol { padding-right: 1.2rem; }
   direction: rtl; text-align: right;
   width: 100%;
   flex-wrap: wrap;
-  gap: .4rem;
+  gap: .55rem;
   background: rgba(0,0,0,.2);
-  border-radius: var(--r-sm);
-  padding: .5rem .7rem;
-  margin-top: .3rem;
+  border-radius: var(--r-md);
+  padding: .8rem 1rem;
+  margin-top: .4rem;
 }
 .acc-body.open { display: flex; }
 .acc-sep { width: 100%; height: 1px; background: rgba(196,147,10,.12); margin: .2rem 0; }
