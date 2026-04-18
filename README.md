@@ -1,6 +1,6 @@
 # ספר הבישול של משפחת בן הראש
 
-**גרסה 6.3 | 19 אפריל 2026**
+**גרסה 6.4 | 19 אפריל 2026**
 
 לזכרם של **פרלה ופנחס בן הראש ז״ל** שזכרונם יהיה לברכה וגאווה הלאה לדורי דורות
 דרך הטעם המעלה זכרונות שכמעט שכחנו...
@@ -252,12 +252,13 @@ python download_images.py
 - **Service Worker** — network-first למסמכים, cache-first לתמונות
 - **offline mode** — האתר פועל גם בלי אינטרנט (מתוך cache)
 
-### מערכת פידבק (v6.3 — FormSubmit.co)
+### מערכת פידבק (v6.4 — FormSubmit + Hidden Iframe)
 - **כפתור "הערה / תיקון"** בכל modal של מתכון
 - **FAB צף** שמאלי-תחתון — "הצעות ודיווח"
-- **FormSubmit.co AJAX** — עובד מכל מקור (GitHub Pages, Netlify, localhost)
-- **fallback ל-mailto** — אם אין אינטרנט או FormSubmit חסום
-- **Base64 obfuscation** של כתובת המייל
+- **שיטה: Hidden iframe + form POST** — לא fetch (פותר CORS preflight block מ-GitHub Pages)
+- Form submissions ל-iframe **אינן כפופות ל-CORS** (התנהגות HTML מורשת) — עובד מכל מקור
+- Timeout 15s + **fallback ל-mailto** אוטומטי אם משהו נכשל
+- **Base64 obfuscation** של כתובת המייל — action נקבעת דינמית ב-JS
 
 ### אבטחה
 - **CSP מוחזק** (v6.3) — רק מקורות מאושרים, `connect-src` כולל formsubmit.co בלבד
@@ -309,14 +310,15 @@ Netlify + GitHub Pages יפרוסו אוטומטית תוך 1-2 דקות.
 
 | מסמך | גרסה | תיאור |
 |------|-------|-------|
-| `HLD_Perla_CookingBook.md` | 6.3 | High Level Design — ארכיטקטורה, תפריט, קטגוריות, חגים, תרגום, responsive, feedback, PWA |
-| `LLD_Perla_CookingBook.md` | 6.3 | Low Level Design — CSS tokens, DOM IDs, 48+ פונקציות, filtered(), buildNav(), openM(), submitFeedback(), PWA IIFE |
-| `INTEGRATION_GUIDE.md` | 2.0 | מדריך אינטגרציה של מערכת הפידבק (FormSubmit.co AJAX) |
-| `CHANGELOG_19-04-2026_v6.3.md` | — | שינויי סשן 19/04 — UI enlargement, FormSubmit migration, PWA restore, content updates |
+| `HLD_Perla_CookingBook.md` | 6.4 | High Level Design — ארכיטקטורה, תפריט, קטגוריות, חגים, תרגום, responsive, feedback, PWA |
+| `LLD_Perla_CookingBook.md` | 6.4 | Low Level Design — CSS tokens, DOM IDs, 48+ פונקציות, filtered(), buildNav(), openM(), submitFeedback(), PWA IIFE |
+| `INTEGRATION_GUIDE.md` | 3.0 | מדריך אינטגרציה של מערכת הפידבק (FormSubmit + Hidden Iframe) |
+| `CHANGELOG_19-04-2026_v6.4.md` | — | תיקון CORS — מעבר ל-hidden iframe approach |
+| `CHANGELOG_19-04-2026_v6.3.md` | — | שינויי 19/04 חלק א׳ — UI enlargement, FormSubmit AJAX (נכשל), PWA restore, content |
 | `CHANGELOG_18-04-2026_v2.md` | — | שינויי 18/04 — meta/security fixes, 50 tips, 20 cat-*.jpg placeholders, 7 favicons |
 | `CHANGELOG_download_images_v5.md` | — | שינויי download_images.py v5.1 — unified, 6 CLI flags, 100+100 domains |
 | `download_images_usage_guide.md` | — | מדריך הרצת download_images.py v5.1 |
-| `CLAUDE.md` | 6.3 | הנחיות למפתחים/AI agents לעבודה על הפרויקט |
+| `CLAUDE.md` | 6.4 | הנחיות למפתחים/AI agents לעבודה על הפרויקט |
 
 ---
 
@@ -328,7 +330,8 @@ Netlify + GitHub Pages יפרוסו אוטומטית תוך 1-2 דקות.
 | 6.0 | 18/04/2026 | CSP מוחזק, favicons PNG, OG image, feedback system (Netlify Forms) |
 | 6.1 | 18/04/2026 | הסרת r.img/-2/-3 מ-fallback (מונע 3,162 שגיאות/טעינה) |
 | 6.2 | 18/04/2026 | 20 cat-*.jpg placeholders, `_headers` file, UI enlarge סיבוב 1 |
-| **6.3** | **19/04/2026** | **UI enlarge סיבוב 2, FormSubmit.co migration, PWA install button, content updates** |
+| 6.3 | 19/04/2026 | UI enlarge סיבוב 2, FormSubmit AJAX migration, PWA install button, content updates |
+| **6.4** | **19/04/2026** | **CORS fix — מעבר מ-fetch+JSON ל-hidden iframe + form POST** |
 
 ---
 
