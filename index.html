@@ -12,7 +12,7 @@
 <!-- Security headers via meta -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="Content-Security-Policy"
-  content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com; media-src 'self' blob:; connect-src 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self';">
+  content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com; media-src 'self' blob:; connect-src 'self' https://formsubmit.co; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta name="referrer" content="no-referrer">
 <meta property="og:title" content="ספר הבישול של פרלה בן הראש ז״ל">
@@ -6889,6 +6889,12 @@ function exportFullCookbook() {
 (function() {
   'use strict';
 
+  /* FormSubmit.co — free form-to-email service (no signup).
+     First-ever submission triggers activation: owner receives verification email,
+     clicks link, then future submissions arrive normally.
+     For extra privacy, after activation replace the email with the hashed alias
+     that FormSubmit provides (https://formsubmit.co/el/{hash}). */
+  var FORMSUBMIT_EMAIL_B64 = 'YXNhZmJlbjMzQGdtYWlsLmNvbQ==';
   var FORM_NAME = 'perla-feedback';
   var MAX_MSG   = 2000;
 
@@ -6977,6 +6983,7 @@ function exportFullCookbook() {
     var name    = ($('fb-name') || {}).value || '';
     var email   = ($('fb-email') || {}).value || '';
 
+    /* Validation */
     if (!message.trim()) {
       setStatus('נא לכתוב הודעה לפני השליחה.', 'error');
       return;
@@ -6994,41 +7001,77 @@ function exportFullCookbook() {
     if (submitBtn) submitBtn.disabled = true;
     setStatus('שולח הודעה...', 'loading');
 
+    /* Build email subject */
+    var subject = (_type === 'recipe' && _recipe)
+      ? 'תיקון למתכון: ' + _recipe.title
+      : 'הצעה / תקלה — אתר ספר הבישול של פרלה ז״ל';
+
+    /* Payload for FormSubmit.co AJAX endpoint.
+       Keys prefixed with _ configure email behavior. */
     var payload = {
-      'form-name':     FORM_NAME,
-      'bot-field':     '',
-      'feedback-type': _type || 'site',
-      'recipe-id':     _recipe ? String(_recipe.id) : '',
-      'recipe-title':  _recipe ? String(_recipe.title) : '',
-      'sender-name':   name.slice(0, 80),
-      'sender-email':  email.slice(0, 100),
-      'message':       message.slice(0, MAX_MSG),
-      'page-url':      location.href,
-      'user-agent':    (navigator.userAgent || '').slice(0, 200)
+      _subject:  subject,
+      _template: 'table',
+      _captcha:  'false',
+      _honey:    '',
+      name:      name.slice(0, 80) || '(לא צוין)',
+      email:     email.slice(0, 100) || '(לא צוין)',
+      message:   message.slice(0, MAX_MSG),
+      type:      _type || 'site',
+      recipe_id:    _recipe ? String(_recipe.id) : '',
+      recipe_title: _recipe ? String(_recipe.title) : '',
+      page_url:  location.href,
+      user_agent: (navigator.userAgent || '').slice(0, 200)
     };
 
-    fetch('/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: encodeFormData(payload)
-    }).then(function(r) {
-      if (r && r.ok) {
-        setStatus('תודה! ההודעה נשלחה בהצלחה.', 'success');
-        setTimeout(closeFeedbackModal, 2500);
-      } else {
-        throw new Error('HTTP ' + (r ? r.status : 'unknown'));
-      }
-    }).catch(function() {
+    /* Mailto fallback payload — uses old key names for openMailtoFallback() compat */
+    var mailtoData = {
+      'feedback-type': _type || 'site',
+      'recipe-title':  _recipe ? String(_recipe.title) : '',
+      'recipe-id':     _recipe ? String(_recipe.id)    : '',
+      'sender-name':   name.slice(0, 80),
+      'message':       message.slice(0, MAX_MSG),
+      'page-url':      location.href
+    };
+
+    /* POST to FormSubmit.co — works from any origin (GitHub Pages, Netlify, etc.)
+       Email is base64-obfuscated to foil simple scrapers. */
+    var endpoint = 'https://formsubmit.co/ajax/' + atob(FORMSUBMIT_EMAIL_B64);
+
+    fetch(endpoint, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body:    JSON.stringify(payload)
+    })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      /* FormSubmit returns { success: 'true', message: '...' } on delivery.
+         First-ever submission returns success:'false' + activation message —
+         the email is queued and delivered after owner clicks verification link.
+         For UX we treat both states as successfully captured. */
+      var okDelivered = (String(data.success).toLowerCase() === 'true' || data.success === true);
+      var msg = okDelivered
+        ? 'תודה! ההודעה נשלחה בהצלחה.'
+        : 'תודה! ההודעה נקלטה בהצלחה.';
+      setStatus(msg, 'success');
+      setTimeout(closeFeedbackModal, 2500);
+    })
+    .catch(function(err) {
+      /* Network error, CSP block, offline, or FormSubmit unreachable.
+         Fall back to mailto — always works (opens user's email client). */
       setStatus(
-        'שליחה ישירה נכשלה. <a href="#" id="fb-mailto-fallback">פתח אימייל במקום</a>',
+        'שליחה ישירה נכשלה. <a href="#" id="fb-mailto-fallback">פתח באימייל במקום</a>',
         'error'
       );
       var m = $('fb-mailto-fallback');
       if (m) m.addEventListener('click', function(ev) {
         ev.preventDefault();
-        openMailtoFallback(payload);
+        openMailtoFallback(mailtoData);
       });
-    }).then(function() {
+    })
+    .then(function() {
       _isSubmitting = false;
       if (submitBtn) submitBtn.disabled = false;
     });
@@ -7122,24 +7165,7 @@ if(typeof BOOK_HTML!=='undefined'){
 }
 </script>
 
-<!-- ════════════════════════════════════════════════════════════════════
-  FEEDBACK SYSTEM v1.0 — Hidden form for Netlify build-time detection
-  Email is configured in Netlify Dashboard — never in source code.
-════════════════════════════════════════════════════════════════════
--->
-<form name="perla-feedback" method="POST" data-netlify="true"
-      netlify-honeypot="bot-field" hidden>
-  <input type="hidden" name="form-name" value="perla-feedback" />
-  <input type="text" name="bot-field" />
-  <input type="text" name="feedback-type" />
-  <input type="text" name="recipe-id" />
-  <input type="text" name="recipe-title" />
-  <input type="text" name="sender-name" />
-  <input type="email" name="sender-email" />
-  <textarea name="message"></textarea>
-  <input type="text" name="page-url" />
-  <input type="text" name="user-agent" />
-</form>
+<!-- Feedback uses FormSubmit.co AJAX — no hidden form needed, JS posts directly. -->
 
 <!-- Feedback modal overlay -->
 <div id="fb-ovl" class="fb-ovl" role="dialog" aria-modal="true"
