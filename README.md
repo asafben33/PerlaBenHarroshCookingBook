@@ -31,18 +31,26 @@
 
 ```
 PerlaBenHarroshCookingBook/
-├── index.html              ← SPA (303 KB) — UI, CSS, JS, מילון, כותרות EN
+├── index.html              ← SPA — UI, CSS, JS, מילון, כותרות EN
 ├── data.js                 ← 1,054 מתכונים + CATS + MENU_STRUCTURE + HOLIDAY_TAGS
-├── pre_en.js               ← תרגום EN מוכן (782 KB) — desc, mem, tip, steps, ingr
-├── sw.js                   ← Service Worker v9 — cache data.js + pre_en.js
+├── pre_en.js               ← תרגום EN מוכן — desc, mem, tip, steps, ingr
+├── book_data.js            ← תוכן הספר הביוגרפי (BOOK_HTML / BOOK_HTML_EN)
+├── about_redesigned.html   ← דף "אודות" מעוצב מחדש
+├── about_redesigned.css    ← עיצוב דף אודות
+├── about_redesigned.js     ← לוגיקת דף אודות
+├── sw.js                   ← Service Worker v10 — network-first documents, cache-first images
 ├── manifest.json           ← PWA manifest
-├── download_images.py      ← סקריפט הורדת תמונות (810 search terms, 11 sources, up to 10 images/recipe)
+├── download_images.py      ← סקריפט הורדת תמונות (810 search terms)
 ├── cleanup_hardlinks.py    ← ניקוי כפילויות תמונות — SHA256 dedup
-├── images/                 ← תמונות מורדות (r-{id}.jpg)
-├── wedding.jpg             ← תמונת פרלה ופנחס ביום חתונתם
-├── HLD_Perla_CookingBook.docx  ← High Level Design v5.0
-├── LLD_Perla_CookingBook.docx  ← Low Level Design v5.0
+├── clean_bad_images.py     ← ניקוי תמונות פגומות/שגויות
+├── images/
+│   ├── recipes_images/     ← תמונות מתכונים: r-{id}.jpg
+│   ├── book_images/        ← תמונות ספר + wedding.jpg
+│   └── site_images/        ← אייקונים, OG image, cat-*.jpg
+├── HLD_Perla_CookingBook.docx  ← High Level Design
+├── LLD_Perla_CookingBook.docx  ← Low Level Design
 ├── .gitignore
+├── CLAUDE.md
 └── README.md
 ```
 
@@ -181,12 +189,12 @@ python download_images.py
 
 | קובץ | גודל | תיאור מפורט |
 |-------|------|------------|
-| index.html | 303 KB | SPA — CSS (70KB), HTML, _FOOD_DICT (2,853), _TITLE_EN (1,054), CAT_IMG, I18N, JS functions |
-| data.js | 1,389 KB | R[] (1,054 recipes), CATS (20), MENU_STRUCTURE, HOLIDAY_TAGS (10) |
-| pre_en.js | 782 KB | _PRE_EN — 1,054 recipes × 5 fields (d,m,t,st,ig), 0 Hebrew chars |
-| sw.js | 2.3 KB | Service Worker v9 — cache: data.js, pre_en.js, manifest.json, wedding.jpg |
-| download_images.py | 104 KB | 810 TITLE_QUERIES, INGR_FALLBACK, CAT_QUERY, 5 image sources |
-| cleanup_hardlinks.py | 3.3 KB | SHA256 scan → dedup → _IMG_ALIAS.js |
+| index.html | ~341 KB | SPA — CSS, HTML, _FOOD_DICT (2,853), _TITLE_EN (1,054), CAT_IMG, I18N, JS functions |
+| data.js | ~1.4 MB | R[] (1,054 recipes), CATS (20), MENU_STRUCTURE, HOLIDAY_TAGS (10) |
+| pre_en.js | ~782 KB | _PRE_EN — 1,054 recipes × 5 fields (d,m,t,st,ig), 0 Hebrew chars |
+| sw.js | ~2.7 KB | Service Worker v10 — network-first documents, cache-first images |
+| download_images.py | ~104 KB | 810 TITLE_QUERIES, INGR_FALLBACK, CAT_QUERY, 5 image sources |
+| cleanup_hardlinks.py | ~3.3 KB | SHA256 scan → dedup → _IMG_ALIAS.js |
 
 ### Global State
 
@@ -212,6 +220,11 @@ python download_images.py
 - `perla_media_{id}` → `{imgs:[...base64], vids:[...urls]}` — עד 3 תמונות + 5 סרטונים
 - `perla_vid_del_{id}` → ביטול סרטון נתוני
 - `perla_favs` → מועדפים
+
+### מבנה תיקיית images/
+- `images/recipes_images/` — תמונות מתכונים בפורמט `r-{id}.jpg` (מורדות אוטומטית על ידי `download_images.py`)
+- `images/book_images/` — תמונות הספר הביוגרפי (WhatsApp) + `wedding.jpg`
+- `images/site_images/` — אייקונים (favicon-192, favicon-512, apple-touch-icon), OG image, ותמונות fallback לקטגוריות (`cat-{cat}.jpg`)
 
 ---
 
