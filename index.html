@@ -12,20 +12,22 @@
 <!-- Security headers via meta -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="Content-Security-Policy"
-  content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src * data: blob:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self';">
+  content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com; media-src 'self' blob:; connect-src 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta name="referrer" content="no-referrer">
 <meta property="og:title" content="ספר הבישול של פרלה בן הראש ז״ל">
 <meta property="og:description" content="1,054 מתכונים מרוקאיים וספרדיים אותנטיים">
 <meta property="og:type"  content="website">
-<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/320px-Tajine_mix.jpg">
-<meta property="og:image:width"  content="320">
-<meta property="og:image:height" content="240">
+<meta property="og:image" content="images/site_images/og-image.jpg">
+<meta property="og:image:width"  content="1200">
+<meta property="og:image:height" content="630">
 <title>ספר הבישול של משפחת בן הראש</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍲</text></svg>">
+<link rel="icon" type="image/png" sizes="192x192" href="images/site_images/favicon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="images/site_images/favicon-512.png">
+<link rel="apple-touch-icon" href="images/site_images/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700;900&family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="about_redesigned.css">
 <style>
 /* ═══════════════════════════════════════════════
@@ -914,10 +916,10 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
   "description": "1,054 מתכונים אותנטיים מהמטבח המרוקאי, הספרדי-יהודי ומטבחי יהדות המזרח — לזכרם של פרלה ופנחס בן הראש שזכרונם יהיה לברכה וגאווה לדורי דורות דרך הטעם המעלה...",
   "url": "https://perlabenharrosh-cookingbook.netlify.app/",
   "inLanguage": "he",
-  "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/320px-Tajine_mix.jpg",
+  "image": "https://perlabenharrosh-cookingbook.netlify.app/images/site_images/og-image.jpg",
   "author": {
     "@type": "Person",
-    "name": "אסף בן ארוש"
+    "name": "אסף בן הראש"
   },
   "about": {
     "@type": "Thing",
@@ -1952,31 +1954,32 @@ function hide(id) { const el = document.getElementById(id); if (el) el.hidden = 
 /* ═══════════════════════════════════════════════
    IMAGES
 ═══════════════════════════════════════════════ */
-/* Category fallback images — Wikimedia Commons (CC licensed, extremely stable) */
+/* Category fallback images — local files under images/site_images/ (stable, no external dependency) */
 var CAT_IMG = {
-  soups:  'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  salads: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  veg:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  meat:   'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Moroccan_TAGINE.JPG/640px-Moroccan_TAGINE.JPG',
-  chick:  'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Couscous_Royal_Marocain.JPG/640px-Couscous_Royal_Marocain.JPG',
-  fish:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  hol:    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Couscous_Royal_Marocain.JPG/640px-Couscous_Royal_Marocain.JPG',
-  des:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  span:   'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Moroccan_TAGINE.JPG/640px-Moroccan_TAGINE.JPG',
-  iraq:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  kurd:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  ashk:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  yem:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  pers:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  buk:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  tun:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  turk:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  isr:    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg',
-  _def:   'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Tajine_mix.jpg/640px-Tajine_mix.jpg'
+  soups:  'images/site_images/cat-soups.jpg',
+  salads: 'images/site_images/cat-salads.jpg',
+  veg:    'images/site_images/cat-veg.jpg',
+  meat:   'images/site_images/cat-meat.jpg',
+  chick: 'images/site_images/cat-chick.jpg',
+  fish:   'images/site_images/cat-fish.jpg',
+  hol:    'images/site_images/cat-hol.jpg',
+  des:    'images/site_images/cat-des.jpg',
+  span:   'images/site_images/cat-span.jpg',
+  iraq:   'images/site_images/cat-iraq.jpg',
+  kurd:   'images/site_images/cat-kurd.jpg',
+  ashk:   'images/site_images/cat-ashk.jpg',
+  yem:    'images/site_images/cat-yem.jpg',
+  pers:   'images/site_images/cat-pers.jpg',
+  buk:    'images/site_images/cat-buk.jpg',
+  tun:    'images/site_images/cat-tun.jpg',
+  turk:   'images/site_images/cat-turk.jpg',
+  isr:    'images/site_images/cat-isr.jpg',
+  nonkosher: 'images/site_images/cat-nonkosher.jpg',
+  _def:   'images/site_images/cat-default.jpg'
 };
 
 /* _IMG_ALIAS: maps duplicate image names to canonical file.
-   Generated by cleanup_hardlinks.ps1 — paste content here after running.
+   Generated by cleanup_hardlinks.py — paste content here after running.
    Example: {'r-add3-2':'r-add1-2'} means r-add3-2.jpg was deleted,
    use r-add1-2.jpg instead. */
 var _IMG_ALIAS = {};
@@ -2985,7 +2988,7 @@ function printRecipe() {
   w.document.write('<!DOCTYPE html><html lang="' + _LANG + '" dir="' + _dir + '"><head><meta charset="UTF-8">'
     + '<title>' + esc(getEnTitle(r)) + ' — ' + t('hdr_title') + '</title>'
     + '<style>'
-    + '@import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&display=swap");'
+    + '@import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&family=Heebo:wght@400;700;900&display=swap");'
     + 'body{font-family:"Frank Ruhl Libre",serif;max-width:680px;margin:0 auto;padding:2rem;direction:'+_dir+';text-align:'+_align+';color:#1c1008}'
     + '.header{text-align:center;border-bottom:2px solid #c4930a;padding-bottom:1rem;margin-bottom:1.5rem}'
     + '.header h1{color:#8c2e14;font-size:1.8rem;font-weight:900;margin:0}'
@@ -6569,7 +6572,7 @@ function exportFullCookbook() {
     var html = '<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8">'
       + '<title>' + t('hdr_title') + '</title>'
       + '<style>'
-      + '@import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&display=swap");'
+      + '@import url("https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700;900&family=Heebo:wght@400;700;900&display=swap");'
       + 'body{font-family:"Frank Ruhl Libre",serif;max-width:700px;margin:0 auto;padding:1.5rem;direction:rtl;color:#1c1008;font-size:11pt}'
       + 'h1{text-align:center;color:#8c2e14;font-size:2rem;margin:2rem 0 .5rem;font-weight:900}'
       + '.subtitle{text-align:center;color:#7a3a18;font-size:.9rem;margin-bottom:2rem}'
