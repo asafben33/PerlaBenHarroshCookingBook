@@ -12,19 +12,19 @@
   "categories": ["food"],
   "icons": [
     {
-      "src": "favicon-192.png",
+      "src": "images/site_images/favicon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "favicon-512.png",
+      "src": "images/site_images/favicon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "apple-touch-icon.png",
+      "src": "images/site_images/apple-touch-icon.png",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
@@ -32,7 +32,7 @@
   ],
   "screenshots": [
     {
-      "src": "og-image.jpg",
+      "src": "images/site_images/og-image.jpg",
       "sizes": "1200x630",
       "type": "image/jpeg",
       "form_factor": "wide",
