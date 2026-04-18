@@ -798,6 +798,48 @@ html.light .hdr { background: linear-gradient(to bottom, #fdf8ee 0%, #f5ecd7 100
 html.light .hdr-title { color: #4e2010; }
 html.light .hdr-subtitle { color: #7a3a18; }
 html.light .hdr-search { background: rgba(0,0,0,.04); border-color: rgba(196,147,10,.3); }
+
+/* ══ PWA Install Button ═══════════════════════════════ */
+.hdr-btn-install {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .45rem .9rem;
+  background: rgba(196,147,10,.2);
+  border: 1px solid rgba(196,147,10,.45);
+  border-radius: 100px;
+  color: var(--c-gold-l);
+  font-family: inherit;
+  font-size: .88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+  animation: pwa-pulse 3s ease-in-out infinite;
+}
+.hdr-btn-install:hover {
+  background: rgba(196,147,10,.32);
+  border-color: rgba(196,147,10,.6);
+  transform: translateY(-1px);
+  animation: none;
+}
+.hdr-btn-install:active { transform: translateY(0); }
+.hdr-btn-install svg { flex-shrink: 0; display: block; }
+.pwa-label { font-family: inherit; white-space: nowrap; }
+@keyframes pwa-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(196,147,10,.35); }
+  50%      { box-shadow: 0 0 0 6px rgba(196,147,10,.04); }
+}
+html.light .hdr-btn-install {
+  background: rgba(196,147,10,.15);
+  border-color: rgba(196,147,10,.45);
+  color: #8a5a20;
+}
+html.light .hdr-btn-install:hover {
+  background: rgba(196,147,10,.25);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hdr-btn-install { animation: none; }
+}
 html.light .hdr-search svg { color: #9a7208; }
 html.light #srch { color: #2a1508; }
 html.light #srch::placeholder { color: rgba(74,42,20,.4); }
@@ -1436,6 +1478,17 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
       <button id="srch-clr" hidden aria-label="נקה חיפוש">✕</button>
     </div>
     <div class="hdr-tools">
+      <button id="pwa-install-btn" class="hdr-btn hdr-btn-install"
+              aria-label="התקן אפליקציה" title="התקן אפליקציה"
+              data-i18n-label="pwa_label" data-i18n-aria="pwa_aria" data-i18n-title="pwa_title"
+              style="display:none">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="8 17 12 21 16 17"/>
+          <line x1="12" y1="3" x2="12" y2="21"/>
+        </svg>
+        <span class="pwa-label" data-i18n="pwa_label">התקן</span>
+      </button>
       <button id="theme-toggle" class="hdr-btn" aria-label="מצב בהיר" title="מצב בהיר/חשוך">☀</button>
       <button id="lang-toggle" class="hdr-btn" aria-label="English" title="English / עברית">EN</button>
     </div>
@@ -6457,6 +6510,9 @@ var I18N = {
   hdr_subtitle:  {he:'לזכרם של פרלה ופנחס בן הראש ז״ל', en:'In memory of Perla & Pinchas Ben-Harrosh z"l'},
   search_ph:     {he:'חפש מתכון, מרכיב...', en:'Search recipe, ingredient...'},
   // Hero
+  pwa_label:  {he:'התקן',          en:'Install'},
+  pwa_title:  {he:'התקן אפליקציה',  en:'Install app'},
+  pwa_aria:   {he:'התקן אפליקציה',  en:'Install app'},
   hero_title:    {he:'המטבח של ', en:'The Kitchen of '},
   hero_title_em:   {he:'משפחת בן הראש (ארוש\\הרוש)', en:'the Ben-Harrosh / Ben-Arrush Family'},
   hero_tagline:  {he:'לזכרם של פרלה ופנחס בן הראש ז״ל — טעמים שמעלים זכרונות שכמעט שכחנו...', en:'In memory of Perla & Pinchas Ben-Harrosh z"l — flavors that awaken memories we almost forgot...'},
@@ -7213,5 +7269,81 @@ if(typeof BOOK_HTML!=='undefined'){
   <span class="fb-fab-lbl">הצעות ודיווח</span>
 </button>
 
+
+<!-- ═══════════════════════════════════════════════════════════
+     PWA Install Prompt (Progressive Web App)
+     Shows an animated install button when browser supports it.
+     iOS fallback: manual "Add to Home Screen" instructions.
+═══════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+  'use strict';
+  var _prompt = null;
+  var SEEN_KEY = 'perla_pwa_dismissed';
+
+  function _btn(){ return document.getElementById('pwa-install-btn'); }
+  function _show(){ var b = _btn(); if (b) b.style.display = 'flex'; }
+  function _hide(){ var b = _btn(); if (b) b.style.display = 'none'; }
+
+  /* Hide if running as installed PWA (standalone mode) */
+  if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return;
+  if (window.navigator.standalone === true) return;
+
+  /* Chrome/Edge/Firefox/Samsung Internet: standard install flow */
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    _prompt = e;
+    if (localStorage.getItem(SEEN_KEY) !== 'yes') _show();
+  });
+
+  window.addEventListener('appinstalled', function(){
+    _hide();
+    _prompt = null;
+    try { localStorage.setItem(SEEN_KEY, 'yes'); } catch(e){}
+  });
+
+  /* Click handler */
+  document.addEventListener('click', function(e){
+    var b = e.target && e.target.closest && e.target.closest('#pwa-install-btn');
+    if (!b) return;
+    e.preventDefault();
+
+    if (_prompt) {
+      _prompt.prompt();
+      _prompt.userChoice.then(function(r){
+        if (r.outcome === 'accepted') {
+          _hide();
+          try { localStorage.setItem(SEEN_KEY, 'yes'); } catch(e){}
+        }
+        _prompt = null;
+      });
+    } else {
+      /* iOS / unsupported browsers: show instructions */
+      var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      var lang = (document.documentElement.lang || navigator.language || 'he').slice(0,2);
+      var isHe = lang === 'he';
+      var msg;
+      if (isIOS) {
+        msg = isHe
+          ? 'להתקנה ב-iPhone/iPad:\n1. לחצו על כפתור "שיתוף" בתחתית הדפדפן\n2. גללו ובחרו "הוסף למסך הבית"\n3. לחצו "הוסף"'
+          : 'To install on iPhone/iPad:\n1. Tap the Share button at the bottom\n2. Scroll and choose "Add to Home Screen"\n3. Tap "Add"';
+      } else {
+        msg = isHe
+          ? 'להתקנה: פתחו את תפריט הדפדפן (שלוש נקודות) ובחרו "הוסף למסך הבית" או "התקן אפליקציה"'
+          : 'To install: Open your browser menu (three dots) and select "Install app" or "Add to Home Screen"';
+      }
+      alert(msg);
+    }
+  });
+
+  /* iOS doesn't fire beforeinstallprompt — show button after load (once) */
+  if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone) {
+    window.addEventListener('load', function(){
+      if (localStorage.getItem(SEEN_KEY) === 'yes') return;
+      setTimeout(_show, 1500);
+    });
+  }
+})();
+</script>
 </body>
 </html>
