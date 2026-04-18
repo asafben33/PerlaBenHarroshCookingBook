@@ -1284,13 +1284,15 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
 <!-- ════════ BOOK + TAGS ══════════════════════════════════ -->
 <section id="book-wrapper" class="book-wrapper" dir="rtl" lang="he">
   <div class="book-toggle-wrap">
-    <button type="button" class="book-toggle-btn" id="book-toggle" aria-expanded="false" aria-controls="book-content">
+    <button type="button" class="book-toggle-btn" id="book-toggle" aria-expanded="false" aria-controls="book-content-wrap">
       <span class="book-toggle-icon" aria-hidden="true">📖</span>
       <span class="book-toggle-label" data-i18n="read_book">קרא את הספר: "על שביל האהבה ממרוקו לירושלים"</span>
       <span class="book-toggle-arrow" aria-hidden="true">▾</span>
     </button>
   </div>
-  <div id="book-content" class="book-collapsible" aria-hidden="true"></div>
+  <div id="book-content-wrap" class="book-collapsible" aria-hidden="true">
+    <div id="book-content"></div>
+  </div>
   <div class="about-inner" style="max-width:800px;margin:0 auto;padding:0 1.5rem">
       <div class="about-tags" role="list">
         <span class="at" role="listitem" data-i18n="tag_moroccan">מטבח מרוקאי</span>
@@ -3350,15 +3352,15 @@ function refreshModalMedia(r) {
 
 function uploadImg(recipeId) { addImg(recipeId); }
 function toggleBook() {
-  var sec = document.getElementById('book-content');
+  var wrap = document.getElementById('book-content-wrap');
   var btn = document.getElementById('book-toggle');
-  if (!sec) return;
-  var isHidden = sec.getAttribute('aria-hidden') !== 'false';
-  sec.setAttribute('aria-hidden', isHidden ? 'false' : 'true');
+  if (!wrap) return;
+  var isHidden = wrap.getAttribute('aria-hidden') !== 'false';
+  wrap.setAttribute('aria-hidden', isHidden ? 'false' : 'true');
   if (btn) btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
   if (isHidden) {
     // smooth scroll to book after opening
-    setTimeout(function(){ sec.scrollIntoView({behavior:'smooth', block:'start'}); }, 120);
+    setTimeout(function(){ wrap.scrollIntoView({behavior:'smooth', block:'start'}); }, 120);
   }
 }
 
