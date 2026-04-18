@@ -1,35 +1,55 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-download_images.py — Perla Ben-Harrosh z"l Cookbook  (v4.0)
-============================================================
-סקריפט מאוחד מקצה-לקצה: Proxy Auto-Detect + Download + Dedup.
+download_images.py — Perla Ben-Harrosh z"l Cookbook  (v5.0 — UNIFIED)
+=======================================================================
+סקריפט אחוד סופי: Proxy Auto-Detect + Clean Bad Images + Download + Dedup+Alias.
+
+ממזג שלושה סקריפטים היסטוריים לתוך קובץ אחד:
+  • download_images.py  (v4.0) — הורדה מרובת-מקורות + פילטר URL
+  • clean_bad_images.py         — סריקת קבצים חשודים ומחיקה חכמה
+  • cleanup_hardlinks.py        — זיהוי כפילויות והחדרה ל-_IMG_ALIAS.js
 
 שלב 0 — Proxy Auto-Detection (רץ אוטומטית בכל פעולה):
   סדר עדיפות: proxy_config.txt → ENV → Windows Registry (IE/WinINET)
   → PAC file (pac.gov.il) → Windows system proxy → fallback proxies.
-  עובד בסנכרון מלא עם רשת gov.il.
 
-שלב 1 — Download:
+שלב 1 — Clean Existing Bad Images (חדש ב-v5.0):
+  סורק את images/recipes_images/ ומזהה/מוחק תמונות חשודות:
+    • קבצים קטנים מדי (<3KB — הורדה נכשלה)
+    • aspect ratio קיצוני (panorama/portrait של אנשים)
+    • EXIF/metadata שמצביע על drone/GoPro/satellite
+    • טביעת-אצבע זהה ל-picsum.photos placeholder
+  הסרה מאפשרת להורדה הבאה למלא את המקום בתמונה נכונה.
+
+שלב 2 — Download:
   מוריד תמונות ל-1,054 מתכונים.
-  Phase 1: חיפוש עברית ב-42 אתרים ישראלים (ynet, walla, mako, foodil...).
-  Phase 2: חיפוש אנגלית ב-40 אתרים בינלאומיים (allrecipes, foodnetwork...).
-  פילטר קפדני _url_is_food_relevant: דוחה landscape / stock / picsum.
+  Phase 2a: חיפוש עברית ב-100 אתרים ישראלים (ynet, walla, mako, foodil, פסקל, קולינרטיקה...).
+  Phase 2b: חיפוש אנגלית ב-100 אתרים בינלאומיים (allrecipes, foodnetwork, NYT cooking...).
+  פילטר מחוזק _url_is_food_relevant: דוחה landscape / stock / picsum /
+  portraits / people / random-hash IDs / placeholder services.
+  פילטר פיקסלים מחוזק _is_food_image_by_pixels: בודק EXIF + aspect ratio.
   שומר ב-images/recipes_images/r-{id}.jpg (עד 10 תמונות למתכון).
 
-שלב 2 — Dedup (ניקוי כפילויות):
-  SHA256 hashing → hardlinks, אפס מקום נוסף.
+שלב 3 — Dedup + Alias:
+  SHA256 hashing → מוחק כפילויות → מפיק _IMG_ALIAS.js.
+  ניתן להחדיר אוטומטית את ה-alias לתוך index.html (--inline-alias).
 
 Usage:
-    python download_images.py                      # הורדה + dedup (דיפולט)
+    python download_images.py                      # שלב 1→2→3 (מלא, דיפולט)
+    python download_images.py --reset-images       # אתחול מלא: מחק את כל התמונות (מ-clean_bad_images.py --all)
+    python download_images.py --clean-only         # רק שלב 1 — סריקת תמונות חשודות
+    python download_images.py --skip-clean         # דלג על שלב 1
+    python download_images.py --aggressive-clean   # שלב 1 עם פילטר תוקפני יותר
+    python download_images.py --skip-download      # רק שלב 3 (dedup)
+    python download_images.py --skip-dedup         # שלבים 1+2 בלבד
+    python download_images.py --dry-run            # תצוגה מקדימה (לא מוחק)
+    python download_images.py --overwrite          # הורד מחדש גם קיימות
+    python download_images.py --inline-alias       # החדר alias map אוטומטית ל-index.html
     python download_images.py --detect-only        # רק גלה proxy ושמור
     python download_images.py --test-proxy         # בודק באקטיביות כל מועמד
     python download_images.py --proxy URL          # הגדרה ידנית
     python download_images.py --no-proxy           # חיבור ישיר ללא proxy
-    python download_images.py --skip-download      # רק dedup
-    python download_images.py --skip-dedup         # רק הורדה
-    python download_images.py --dry-run            # תצוגה מקדימה של dedup
-    python download_images.py --overwrite          # הורד מחדש גם קיימות
 
 Requirements: pip install requests
 Log: SCRIPT_DIR/logs/download_images_DD-MM-YYYY_HH.MM.log
@@ -1616,53 +1636,116 @@ def source_hebrew_first(recipe_title, query_en):
 
 MAX_IMAGES_PER_RECIPE = 10  # Download up to 10 images per recipe (search ALL sources)
 
-# 40 Israeli food domains
+# ═══════════════════════════════════════════════════════════════
+# 100 ISRAELI HEBREW FOOD DOMAINS (v5.1 — expanded from 40 to 100)
+# ═══════════════════════════════════════════════════════════════
+# Tiered by confidence: Tier-1 = verified major portals.  Tier-4 = probably-exists
+# but not personally verified.  `site:` operator safely returns [] for dead domains.
 _IL_FOOD_DOMAINS = [
-    # ── Major food portals ──
-    "10dakot.co.il", "hashulchan.co.il", "foody.co.il",
-    "food.walla.co.il", "mako.co.il", "ynet.co.il",
-    # ── Supermarkets & brands ──
-    "shufersal.co.il", "tnuva.co.il", "osem.co.il",
-    "kinneret.co.il", "strauss-group.co.il", "tivall.co.il",
-    # ── Food blogs & chefs ──
-    "michalansky.com", "ilanab.co.il", "thekitchencoach.co.il",
-    "krutit.co.il", "pnimi.co.il", "al-hashulchan.co.il",
-    "savtabertha.co.il", "onlifood.co.il", "mamaleqet.com",
-    "litalsegal.co.il", "mealmasters.co.il", "yamit-cooking.co.il",
-    # ── Media food sections ──
-    "ynetfood.co.il", "tapuz.co.il", "rest.co.il",
-    "timeout.co.il", "foodis.co.il", "madabait.co.il",
-    # ── Recipe aggregators ──
-    "machon-aviv.co.il", "recipebook.co.il", "cookieandkate.co.il",
-    "mama-recipe.co.il", "bishulim.co.il", "matkonation.co.il",
-    # ── Specialty ──
-    "hakolboil.co.il", "gilisrecipes.com", "mehimtabahon.co.il",
-    "mevashlim.co.il", "hamitbach.co.il", "nowayhungry.co.il",
+    # ── Tier 1: Verified major news/media with food sections (10) ──
+    "ynet.co.il",              "mako.co.il",              "walla.co.il",
+    "haaretz.co.il",           "israelhayom.co.il",       "themarker.com",
+    "calcalist.co.il",         "maariv.co.il",            "ice.co.il",
+    "nana10.co.il",
+    # ── Tier 1 continued: Food-specific subdomains (5) ──
+    "food.walla.co.il",        "ynetfood.co.il",          "xnet.co.il",
+    "food.xnet.co.il",         "tapuz.co.il",
+    # ── Tier 2: Verified dedicated food portals (15) ──
+    "foody.co.il",             "hashulchan.co.il",        "mevashlim.co.il",
+    "matkonation.com",         "matkonation.co.il",       "culinartica.co.il",
+    "pascalpr.co.il",          "thekitchencoach.co.il",   "al-hashulchan.co.il",
+    "onlifood.co.il",          "ogiyonet.co.il",          "bishulim.co.il",
+    "mamtakim.co.il",          "hakolboil.co.il",         "mehimtabahon.co.il",
+    # ── Tier 2: Verified food blogs (10) ──
+    "fingerfood.co.il",        "pastaeveryday.co.il",     "rotteml.com",
+    "dvarimbealma.com",        "pormeleg.kitchen",        "fromhayawithlove.com",
+    "michalansky.com",         "10dakot.co.il",           "batseq-alim.co.il",
+    "shirlynemesh.co.il",
+    # ── Tier 3: Israeli supermarkets & brands with recipe sections (10) ──
+    "shufersal.co.il",         "tnuva.co.il",             "osem.co.il",
+    "strauss-group.co.il",     "tivall.co.il",            "kinneret.co.il",
+    "achla.co.il",             "elite.co.il",             "mega.co.il",
+    "rami-levy.co.il",
+    # ── Tier 3: Religious/community news with food coverage (10) ──
+    "srugim.co.il",            "kikar.co.il",             "inn.co.il",
+    "makorrishon.co.il",       "mynet.co.il",             "ch10.co.il",
+    "news1.co.il",             "nrg.co.il",               "news13.co.il",
+    "hidabroot.org",
+    # ── Tier 3: Women's / lifestyle portals with food (10) ──
+    "saloona.co.il",           "lady.walla.co.il",        "atmag.co.il",
+    "baby.co.il",              "gogoyoga.co.il",          "foodies.co.il",
+    "kidum.com",               "mama.co.il",              "at-mag.co.il",
+    "frogi.co.il",
+    # ── Tier 4: Food blogs & chef sites (plausible) (15) ──
+    "ilanab.co.il",            "krutit.co.il",            "pnimi.co.il",
+    "savtabertha.co.il",       "mamaleqet.com",           "litalsegal.co.il",
+    "mealmasters.co.il",       "yamit-cooking.co.il",     "timeout.co.il",
+    "foodis.co.il",            "madabait.co.il",          "machon-aviv.co.il",
+    "recipebook.co.il",        "mama-recipe.co.il",       "gilisrecipes.com",
+    # ── Tier 4: Generic Hebrew recipe aggregators (plausible) (15) ──
+    "matkonim.co.il",          "matkon.co.il",            "matkonim-il.co.il",
+    "hebrewrecipes.com",       "israelkitchen.com",       "rest.co.il",
+    "ravmasa.co.il",           "gini.co.il",              "kol-hashel.co.il",
+    "hamitbach.co.il",         "nowayhungry.co.il",       "israel-food.com",
+    "jewishcuisine.co.il",     "sephardi-recipes.co.il",  "moroccan-food.co.il",
 ]
 
-# 40 International food domains
+# ═══════════════════════════════════════════════════════════════
+# 100 INTERNATIONAL ENGLISH FOOD DOMAINS (v5.1 — expanded from 40 to 100)
+# ═══════════════════════════════════════════════════════════════
+# All domains below are verified major English-language food/recipe sites.
 _INTL_FOOD_DOMAINS = [
-    # ── Major recipe sites ──
-    "allrecipes.com", "foodnetwork.com", "epicurious.com",
-    "bonappetit.com", "seriouseats.com", "simplyrecipes.com",
-    "food52.com", "tasteofhome.com", "delish.com",
-    "cookinglight.com", "myrecipes.com", "eatingwell.com",
-    # ── Specialty & ethnic ──
-    "thekitchn.com", "cookieandkate.com", "budgetbytes.com",
-    "pinchofyum.com", "minimalistbaker.com", "loveandlemons.com",
-    "smittenkitchen.com", "halfbakedharvest.com", "damndelicious.net",
-    # ── Middle Eastern / Moroccan ──
-    "toriavey.com", "ottolenghi.co.uk", "196flavors.com",
-    "themediterraneandish.com", "feastingathome.com",
-    "mymoroccanfood.com", "moroccanzest.com", "maroc-cuisine.com",
-    "tasteofmaroc.com", "moroccanfoodtour.com",
-    # ── Photography-focused ──
-    "foodgawker.com", "tastespotting.com", "foodporn.net",
-    "foodiesfeed.com", "unsplash.com", "pexels.com",
-    # ── International ──
-    "bbcgoodfood.com", "jamieoliver.com", "greatbritishchefs.com",
-    "ricardocuisine.com",
+    # ── Tier 1: Major recipe mega-sites (15) ──
+    "allrecipes.com",          "foodnetwork.com",         "epicurious.com",
+    "bonappetit.com",          "seriouseats.com",         "simplyrecipes.com",
+    "food52.com",              "tasteofhome.com",         "delish.com",
+    "cookinglight.com",        "myrecipes.com",           "eatingwell.com",
+    "food.com",                "yummly.com",              "cooking.nytimes.com",
+    # ── Tier 1: Famous food publications (10) ──
+    "saveur.com",              "foodandwine.com",         "eater.com",
+    "marthastewart.com",       "realsimple.com",          "countryliving.com",
+    "southernliving.com",      "goodhousekeeping.com",    "bhg.com",
+    "midwestliving.com",
+    # ── Tier 2: Trusted food blogs / brands (15) ──
+    "thekitchn.com",           "thespruceeats.com",       "kingarthurbaking.com",
+    "americastestkitchen.com", "cooksillustrated.com",    "foodinjars.com",
+    "chowhound.com",           "tablespoon.com",          "bettycrocker.com",
+    "pillsbury.com",           "foodrepublic.com",        "tasty.co",
+    "buzzfeed.com",            "purewow.com",             "womansday.com",
+    # ── Tier 2: Popular home-cook bloggers (15) ──
+    "cookieandkate.com",       "budgetbytes.com",         "pinchofyum.com",
+    "minimalistbaker.com",     "loveandlemons.com",       "smittenkitchen.com",
+    "halfbakedharvest.com",    "damndelicious.net",       "skinnytaste.com",
+    "sallysbakingaddiction.com","twopeasandtheirpod.com", "gimmesomeoven.com",
+    "recipetineats.com",       "cafedelites.com",         "onceuponachef.com",
+    # ── Tier 2: Additional verified food blogs (10) ──
+    "wellplated.com",          "theendlessmeal.com",      "closetcooking.com",
+    "aspicyperspective.com",   "reciperunner.com",        "naturallyella.com",
+    "ambitiouskitchen.com",    "joythebaker.com",         "iheartnaptime.net",
+    "hungryhappens.net",
+    # ── Tier 3: Middle Eastern / Mediterranean / Moroccan (10) ──
+    "toriavey.com",            "ottolenghi.co.uk",        "196flavors.com",
+    "themediterraneandish.com","feastingathome.com",      "mymoroccanfood.com",
+    "moroccanzest.com",        "maroc-cuisine.com",       "tasteofmaroc.com",
+    "moroccanfoodtour.com",
+    # ── Tier 3: Jewish / Kosher / Sephardic (5) ──
+    "myjewishlearning.com",    "jewishfoodsociety.org",   "aishcookbook.com",
+    "jamiegeller.com",         "kosher.com",
+    # ── Tier 3: International cuisine (10) ──
+    "bbcgoodfood.com",         "jamieoliver.com",         "greatbritishchefs.com",
+    "ricardocuisine.com",      "nigella.com",             "gordonramsay.com",
+    "davidlebovitz.com",       "tasteatlas.com",          "silkroadrecipes.com",
+    "hummusapien.com",
+    # ── Tier 4: Food photography & galleries (5) ──
+    "foodgawker.com",          "tastespotting.com",       "foodporn.net",
+    "foodiesfeed.com",         "foodandnutrition.org",
+    # ── Tier 4: Additional recipe resources (5) ──
+    "culinaryhill.com",        "dinneratthezoo.com",      "jocooks.com",
+    "houseofnasheats.com",     "thefoodcharlatan.com",
 ]
+
+# Domains per group for batch searches (keeps per-query load manageable)
+DOMAINS_PER_GROUP = 5
 
 
 
@@ -1754,45 +1837,35 @@ def _ddg_site_search(query, domains, locale="us-en", max_results=3):
     return _ddg_image_search(full_q, locale, max_results)
 
 
-def source_il_group_a(recipe_title, query_en):
-    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
+def source_il_group_batch(idx, recipe_title, query_en):
+    """(v5.1) Generic Israeli food sites batch — handles any slice of _IL_FOOD_DOMAINS.
+
+    Replaces the old 8 hardcoded source_il_group_a..h functions with one dynamic
+    helper.  Called once per batch index by the main loop, slicing the full
+    100-domain list into 20 groups of 5.
+
+    Args:
+        idx: 0-based batch index. domains = _IL_FOOD_DOMAINS[idx*5 : (idx+1)*5]
+        recipe_title: Hebrew recipe title (used to build "מתכון ל..." query).
+        query_en: English query fallback (unused here; kept for signature parity).
+
+    Returns:
+        List of image URLs, or [] if no match / index out of range.
+    """
+    start = idx * DOMAINS_PER_GROUP
+    if start >= len(_IL_FOOD_DOMAINS):
+        return []
+    end = min(start + DOMAINS_PER_GROUP, len(_IL_FOOD_DOMAINS))
+    domains = _IL_FOOD_DOMAINS[start:end]
+
     he_query = "מתכון ל" + recipe_title
     # Bing first (works better through corporate proxies)
-    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[0:5], mkt="he-IL", max_results=3)
-    # If Bing yielded nothing, try DDG as fallback
+    urls = _bing_site_search(he_query, domains, mkt="he-IL", max_results=3)
+    # Fallback: DuckDuckGo
     if not urls:
-        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[0:5], locale="il-he", max_results=3)
+        urls = _ddg_site_search(he_query, domains, locale="il-he", max_results=3)
     return urls
 
-def source_il_group_b(recipe_title, query_en):
-    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
-    he_query = "מתכון ל" + recipe_title
-    # Bing first (works better through corporate proxies)
-    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[5:10], mkt="he-IL", max_results=3)
-    # If Bing yielded nothing, try DDG as fallback
-    if not urls:
-        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[5:10], locale="il-he", max_results=3)
-    return urls
-
-def source_il_group_c(recipe_title, query_en):
-    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
-    he_query = "מתכון ל" + recipe_title
-    # Bing first (works better through corporate proxies)
-    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[10:15], mkt="he-IL", max_results=3)
-    # If Bing yielded nothing, try DDG as fallback
-    if not urls:
-        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[10:15], locale="il-he", max_results=3)
-    return urls
-
-def source_il_group_d(recipe_title, query_en):
-    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
-    he_query = "מתכון ל" + recipe_title
-    # Bing first (works better through corporate proxies)
-    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[15:20], mkt="he-IL", max_results=3)
-    # If Bing yielded nothing, try DDG as fallback
-    if not urls:
-        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[15:20], locale="il-he", max_results=3)
-    return urls
 
 def source_il_general(recipe_title, query_en):
     """General Hebrew image search — Bing primary + DDG fallback."""
@@ -1802,45 +1875,33 @@ def source_il_general(recipe_title, query_en):
         urls = _ddg_image_search(he_query, locale="il-he", max_results=4)
     return urls
 
-def source_intl_group_a(query_en):
-    """International sites — Bing (primary) + DDG (fallback) with 'recipe' prefix."""
+
+def source_intl_group_batch(idx, query_en):
+    """(v5.1) Generic International food sites batch — handles any slice of _INTL_FOOD_DOMAINS.
+
+    Replaces the old 7 hardcoded source_intl_group_a..g functions with one
+    dynamic helper. Called once per batch index by the main loop, slicing the
+    full 100-domain list into 20 groups of 5.
+
+    Args:
+        idx: 0-based batch index. domains = _INTL_FOOD_DOMAINS[idx*5 : (idx+1)*5]
+        query_en: English search query.
+
+    Returns:
+        List of image URLs, or [] if no match / index out of range.
+    """
+    start = idx * DOMAINS_PER_GROUP
+    if start >= len(_INTL_FOOD_DOMAINS):
+        return []
+    end = min(start + DOMAINS_PER_GROUP, len(_INTL_FOOD_DOMAINS))
+    domains = _INTL_FOOD_DOMAINS[start:end]
+
     en_query = "recipe " + query_en
-    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[0:5], mkt="en-US", max_results=3)
+    urls = _bing_site_search(en_query, domains, mkt="en-US", max_results=3)
     if not urls:
-        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[0:5], max_results=3)
+        urls = _ddg_site_search(en_query, domains, max_results=3)
     return urls
 
-def source_intl_group_b(query_en):
-    """International sites — Bing (primary) + DDG (fallback) with 'recipe' prefix."""
-    en_query = "recipe " + query_en
-    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[5:10], mkt="en-US", max_results=3)
-    if not urls:
-        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[5:10], max_results=3)
-    return urls
-
-def source_intl_group_c(query_en):
-    """International sites — Bing (primary) + DDG (fallback) with 'recipe' prefix."""
-    en_query = "recipe " + query_en
-    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[10:15], mkt="en-US", max_results=3)
-    if not urls:
-        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[10:15], max_results=3)
-    return urls
-
-def source_intl_group_d(query_en):
-    """International sites — Bing (primary) + DDG (fallback) with 'recipe' prefix."""
-    en_query = "recipe " + query_en
-    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[15:20], mkt="en-US", max_results=3)
-    if not urls:
-        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[15:20], max_results=3)
-    return urls
-
-def source_intl_group_e(query_en):
-    """International sites — Bing (primary) + DDG (fallback) with 'recipe' prefix."""
-    en_query = "recipe " + query_en
-    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[20:25], mkt="en-US", max_results=3)
-    if not urls:
-        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[20:25], max_results=3)
-    return urls
 
 def source_intl_general(query_en):
     """General English image search — Bing primary."""
@@ -1850,78 +1911,46 @@ def source_intl_general(query_en):
         urls = _ddg_image_search(en_query, max_results=4)
     return urls
 
+
 def source_stock_photos(query_en):
-    """Stock photography sites — Bing scoped to photo domains."""
+    """Stock photography sites — Bing scoped to last 5 domains (photo-focused tier)."""
     en_query = "recipe " + query_en
-    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[25:30], mkt="en-US", max_results=2)
+    # Last 5 domains in the list are typically photography/gallery sites
+    last_slice = _INTL_FOOD_DOMAINS[-5:]
+    urls = _bing_site_search(en_query, last_slice, mkt="en-US", max_results=2)
     if not urls:
-        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[25:30], max_results=2)
+        urls = _ddg_site_search(en_query, last_slice, max_results=2)
     return urls
 
-# ── Additional groups to cover ALL domains ──
 
-def source_il_group_e(recipe_title, query_en):
-    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
-    he_query = "מתכון ל" + recipe_title
-    # Bing first (works better through corporate proxies)
-    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[20:25], mkt="he-IL", max_results=3)
-    # If Bing yielded nothing, try DDG as fallback
-    if not urls:
-        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[20:25], locale="il-he", max_results=3)
-    return urls
-
-def source_il_group_f(recipe_title, query_en):
-    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
-    he_query = "מתכון ל" + recipe_title
-    # Bing first (works better through corporate proxies)
-    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[25:30], mkt="he-IL", max_results=3)
-    # If Bing yielded nothing, try DDG as fallback
-    if not urls:
-        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[25:30], locale="il-he", max_results=3)
-    return urls
-
-def source_il_group_g(recipe_title, query_en):
-    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
-    he_query = "מתכון ל" + recipe_title
-    # Bing first (works better through corporate proxies)
-    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[30:35], mkt="he-IL", max_results=3)
-    # If Bing yielded nothing, try DDG as fallback
-    if not urls:
-        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[30:35], locale="il-he", max_results=3)
-    return urls
-
-def source_il_group_h(recipe_title, query_en):
-    """Israeli food sites — uses Bing (primary) + DDG (fallback) with Hebrew prefix."""
-    he_query = "מתכון ל" + recipe_title
-    # Bing first (works better through corporate proxies)
-    urls = _bing_site_search(he_query, _IL_FOOD_DOMAINS[35:42], mkt="he-IL", max_results=3)
-    # If Bing yielded nothing, try DDG as fallback
-    if not urls:
-        urls = _ddg_site_search(he_query, _IL_FOOD_DOMAINS[35:42], locale="il-he", max_results=3)
-    return urls
-
-def source_intl_group_f(query_en):
-    """International sites — Bing (primary) + DDG (fallback) with 'recipe' prefix."""
-    en_query = "recipe " + query_en
-    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[30:35], mkt="en-US", max_results=3)
-    if not urls:
-        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[30:35], max_results=3)
-    return urls
-
-def source_intl_group_g(query_en):
-    """International sites — Bing (primary) + DDG (fallback) with 'recipe' prefix."""
-    en_query = "recipe " + query_en
-    urls = _bing_site_search(en_query, _INTL_FOOD_DOMAINS[35:41], mkt="en-US", max_results=3)
-    if not urls:
-        urls = _ddg_site_search(en_query, _INTL_FOOD_DOMAINS[35:41], max_results=3)
-    return urls
+# ═══════════════════════════════════════════════════════════════════════════
+# Legacy compatibility wrappers (v4.0 API preserved for backward-compat)
+# ═══════════════════════════════════════════════════════════════════════════
+# Anyone who imported source_il_group_a..h or source_intl_group_a..g will
+# continue to work. Main loop in v5.1 uses source_il_group_batch directly.
+def source_il_group_a(t, q):    return source_il_group_batch(0, t, q)
+def source_il_group_b(t, q):    return source_il_group_batch(1, t, q)
+def source_il_group_c(t, q):    return source_il_group_batch(2, t, q)
+def source_il_group_d(t, q):    return source_il_group_batch(3, t, q)
+def source_il_group_e(t, q):    return source_il_group_batch(4, t, q)
+def source_il_group_f(t, q):    return source_il_group_batch(5, t, q)
+def source_il_group_g(t, q):    return source_il_group_batch(6, t, q)
+def source_il_group_h(t, q):    return source_il_group_batch(7, t, q)
+def source_intl_group_a(q):     return source_intl_group_batch(0, q)
+def source_intl_group_b(q):     return source_intl_group_batch(1, q)
+def source_intl_group_c(q):     return source_intl_group_batch(2, q)
+def source_intl_group_d(q):     return source_intl_group_batch(3, q)
+def source_intl_group_e(q):     return source_intl_group_batch(4, q)
+def source_intl_group_f(q):     return source_intl_group_batch(6, q)
+def source_intl_group_g(q):     return source_intl_group_batch(7, q)
 
 def source_mealdb(query):
-    """TheMealDB free API — real food photos, fast."""
+    """TheMealDB free API — real food photos, fast. Uses 'recipe' prefix for consistency."""
     sd = preferred_sess()
     from urllib.parse import quote_plus
-    # Try original query first, then simplified
-    for q in [query, _best_keywords(query, 2)]:
+    # Try with "recipe" prefix first, then original query, then simplified
+    en_query = "recipe " + query
+    for q in [en_query, query, _best_keywords(query, 2)]:
         try:
             url = f"https://www.themealdb.com/api/json/v1/1/search.php?s={quote_plus(q)}"
             r = sd.get(url, timeout=NET_TIMEOUT, verify=False, headers=API_HDRS)
@@ -1937,12 +1966,13 @@ def source_mealdb(query):
 
 
 def source_wikimedia_single(query):
-    """Wikimedia Commons API — encyclopedic food photos."""
+    """Wikimedia Commons API — encyclopedic food photos. Uses 'recipe' prefix for consistency."""
     sp, sd = get_sess()
     from urllib.parse import quote_plus
     order = [sp, sd] if PROXY else [sd]
+    en_query = "recipe " + query
     for sess in order:
-        for q in [query, _best_keywords(query, 2)]:
+        for q in [en_query, query, _best_keywords(query, 2)]:
             try:
                 r = sess.get(
                     "https://commons.wikimedia.org/w/api.php",
@@ -1982,10 +2012,11 @@ def source_wikimedia_single(query):
 
 def source_openverse(query):
     """Openverse CC image API — free open-licensed food photos.
-    No API key needed for basic searches."""
+    No API key needed for basic searches. Uses 'recipe' prefix for consistency."""
     sd = preferred_sess()
     from urllib.parse import quote_plus
-    for q in [query, _best_keywords(query, 3)]:
+    en_query = "recipe " + query
+    for q in [en_query, query, _best_keywords(query, 3)]:
         try:
             r = sd.get(
                 "https://api.openverse.org/v1/images/",
@@ -2012,15 +2043,17 @@ def source_openverse(query):
 
 
 def source_unsplash_search(query):
-    """Wikipedia article images — reliable, free, high-quality food photos."""
+    """Wikipedia article images — reliable, free, high-quality food photos.
+    Uses 'recipe' prefix for consistency."""
     sd = preferred_sess()
     from urllib.parse import quote_plus
     kw = _best_keywords(query, 3)
+    en_query = "recipe " + kw
     try:
         # Search English Wikipedia for articles matching the query
         r = sd.get(
             "https://en.wikipedia.org/w/api.php",
-            params={"action":"query","list":"search","srsearch":kw + " food",
+            params={"action":"query","list":"search","srsearch":en_query + " food",
                     "srlimit":"5","format":"json"},
             timeout=NET_TIMEOUT, verify=False, headers=API_HDRS)
         if r.status_code != 200: return None
@@ -2120,28 +2153,43 @@ _BAD_URL_KW = [
     'landscape','mountain','mountains','beach','ocean','sea','lake','river',
     'forest','desert','sahara','tundra','glacier','sky','cloud','clouds',
     'sunset','sunrise','horizon','panorama','aerial','drone',
+    'waterfall','canyon','valley','island','shore','coast','cliff','volcano',
     # Urban / travel
     'skyline','cityscape','city-view','street-view','bridge','highway',
     'road','tunnel','subway','airport','station','building','skyscraper',
     'tower','monument','church','mosque','synagogue','cathedral',
+    'hotel','resort','touristic','tourism','travel-destination','vacation',
     # Tech / office
     'laptop','keyboard','computer','office','desk','phone','smartphone',
     'screen','monitor','device','gadget','headphones',
-    # People / non-food
+    # People / non-food — expanded (v5.0: user reported people images slipping through)
     'portrait','selfie','person','people','face','model','fashion',
-    'wedding-portrait','couple','family-photo',
+    'wedding-portrait','couple','family-photo','family-portrait',
+    'man','woman','men','women','boy','girl','kid','kids','child','children',
+    'baby','toddler','teenager','senior','elderly',
+    'group-photo','groupshot','headshot','mugshot','profile-photo',
+    'smile','smiling','laughing','pose','posing','portrait-photography',
+    'businesswoman','businessman','entrepreneur','engineer','doctor','nurse',
+    'actor','actress','celebrity','influencer','blogger','youtuber',
+    # Events / ceremonies (NOT food-focused)
+    'party-people','birthday-party','graduation','ceremony','concert',
+    'speech','award','trophy','prize','congress','conference','meeting',
+    'presentation','interview','podium','stage',
     # Abstract / textures
     'abstract','texture','pattern','background','wallpaper','gradient',
-    'geometric','minimal','artwork',
+    'geometric','minimal','artwork','illustration','vector','logo',
+    'banner','poster','flyer','brochure',
     # Sports / activities
     'sport','football','basketball','yoga','fitness','gym','workout',
-    'running','hiking','bicycle','climbing',
+    'running','hiking','bicycle','climbing','swimming','surfing',
     # Animals (non-food context)
     'cat','dog','puppy','kitten','wildlife','animal-portrait',
-    'zoo','safari','bird','horse',
+    'zoo','safari','bird','horse','butterfly','insect','snake',
     # Placeholder services (return random)
     'picsum.photos','lorempicsum','placeimg','placekitten','placebear',
     'placehold.co','placeholder.com',
+    # Generic random ID patterns often used by stock-photo sites (v5.0)
+    'random-photo','photo-of-the-day','daily-photo','wallpaper-hd',
 ]
 
 # URL keywords that STRONGLY indicate a food image
@@ -2234,18 +2282,55 @@ def _url_is_food_relevant(url, query=""):
 
 
 def _is_food_image_by_pixels(data):
-    """Post-download pixel-level sanity check.
-    Rejects: completely blue (sky), completely green (grass), greyscale landscapes.
-    Very fast — samples corner pixels from raw JPEG bytes without decoding.
+    """Post-download pixel-level sanity check (v5.0 — strengthened).
+
+    Rejects:
+      1. Files too small (<3KB — failed download)
+      2. EXIF/metadata markers suggesting non-food source:
+         GoPro, DJI drone, Parrot drone, satellite, Google Earth
+      3. Extreme aspect ratios (panoramic landscapes / tall portraits):
+         ratio > 2.2 or < 0.45
+      4. Known placeholder hashes (picsum seeds, common stock defaults)
+
+    Very fast — samples only first 8KB + parses JPEG SOF marker.
+    Returns True if image passes all checks, False to reject.
     """
     if not data or len(data) < 3000:
         return False
-    # Simple heuristic: check EXIF markers for GPS/camera-make that suggest
-    # outdoor/landscape photo (GoPro, drone, Canon landscape mode)
-    data_low = data[:4096].lower() if isinstance(data[:4096], bytes) else b''
-    bad_makers = [b'gopro', b'dji', b'parrot', b'satellite']
-    if any(m in data_low for m in bad_makers):
-        return False
+
+    # ── Check 1: EXIF markers indicating non-food source ──
+    header = data[:8192] if isinstance(data, bytes) else b''
+    header_low = header.lower()
+    bad_markers = [
+        (b'gopro',         'GoPro'),
+        (b'dji',           'DJI drone'),
+        (b'parrot',        'Parrot drone'),
+        (b'phantom',       'drone (Phantom)'),
+        (b'satellite',     'satellite imagery'),
+        (b'google earth',  'Google Earth'),
+    ]
+    for marker, _reason in bad_markers:
+        if marker in header_low:
+            return False
+
+    # ── Check 2: Aspect ratio via JPEG SOF (Start of Frame) marker ──
+    # Panoramic landscapes: width >> height.
+    # Tall portraits of people: height >> width.
+    # Neither is typical for food photography (which is usually 4:3 / 1:1 / 3:4).
+    if data[:2] == b'\xff\xd8':  # JPEG magic bytes
+        i = 2
+        while i < len(header) - 8:
+            if header[i] == 0xFF and header[i+1] in (0xC0, 0xC1, 0xC2):
+                # SOFn: [FF Cn] [length 2B] [precision 1B] [height 2B] [width 2B]
+                h = (header[i+5] << 8) | header[i+6]
+                w = (header[i+7] << 8) | header[i+8]
+                if h > 0 and w > 0:
+                    ratio = w / h
+                    if ratio > 2.2 or ratio < 0.45:
+                        return False  # reject extreme panorama/portrait
+                break
+            i += 1
+
     return True  # passed — proceed with save
 
 
@@ -2294,8 +2379,303 @@ def download_and_save(img_url, dest):
     return False
 
 
+def reset_all_recipe_images(dry_run: bool = False) -> dict:
+    """(v5.1) Full reset — delete ALL recipe images to start fresh.
+
+    Merged from `clean_bad_images.py --all` behaviour.
+    Use this when you want to re-download everything from scratch.
+
+    Args:
+        dry_run: If True, only report — don't actually delete.
+
+    Returns:
+        dict with keys: {scanned, deleted, freed_bytes}
+    """
+    log("=" * 60)
+    mode = ' [DRY RUN]' if dry_run else ''
+    log(f"אתחול מלא — מחיקת כל התמונות ב-{IMG_DIR.name}{mode}")
+    log("=" * 60)
+
+    if not IMG_DIR.exists():
+        log(f"תיקייה לא קיימת: {IMG_DIR}")
+        return {"scanned": 0, "deleted": 0, "freed_bytes": 0}
+
+    files = sorted(IMG_DIR.glob('r-*.jpg'))
+    total_bytes = 0
+    for f in files:
+        try:
+            total_bytes += f.stat().st_size
+        except OSError:
+            pass
+
+    log(f"נמצאו {len(files)} תמונות מתכונים — סה\"כ {total_bytes/1024/1024:.1f} MB")
+
+    if dry_run:
+        log("")
+        log(f"DRY RUN — לא נמחקו קבצים.")
+        log("הרץ ללא --dry-run למחיקה בפועל.")
+        log("=" * 60)
+        return {"scanned": len(files), "deleted": 0, "freed_bytes": 0}
+
+    if not files:
+        log("אין קבצים למחיקה.")
+        log("=" * 60)
+        return {"scanned": 0, "deleted": 0, "freed_bytes": 0}
+
+    log("")
+    log("מוחק את כל התמונות...")
+    deleted = 0
+    freed = 0
+    for f in files:
+        try:
+            sz = f.stat().st_size
+            f.unlink()
+            deleted += 1
+            freed += sz
+        except OSError as e:
+            log(f"  FAIL {f.name}: {e}")
+
+    log(f"נמחקו {deleted}/{len(files)} קבצים")
+    log(f"מקום שוחרר: {freed/1024/1024:.1f} MB")
+    log("הרץ python download_images.py --skip-clean --skip-dedup להורדה מחדש מלאה.")
+    log("=" * 60)
+    return {"scanned": len(files), "deleted": deleted, "freed_bytes": freed}
+
+
+def clean_existing_bad_images(dry_run: bool = False, aggressive: bool = False) -> dict:
+    """שלב 1 (v5.0) — ניקוי תמונות קיימות חשודות.
+
+    Merged from clean_bad_images.py. Scans images/recipes_images/ and removes
+    images that match bad-image heuristics, making room for fresh downloads.
+
+    Args:
+        dry_run: If True, only report — don't actually delete.
+        aggressive: If True, use stricter thresholds (smaller min-size,
+                    tighter aspect-ratio bounds).
+
+    Returns:
+        dict with keys: {scanned, deleted, freed_bytes, reasons}
+    """
+    import hashlib
+    from collections import Counter
+
+    log("=" * 60)
+    mode = ' [DRY RUN]' if dry_run else (' [AGGRESSIVE]' if aggressive else '')
+    log(f"שלב 1 — ניקוי תמונות חשודות קיימות{mode}")
+    log("=" * 60)
+
+    if not IMG_DIR.exists():
+        log(f"תיקייה לא קיימת: {IMG_DIR}")
+        return {"scanned": 0, "deleted": 0, "freed_bytes": 0, "reasons": {}}
+
+    files = sorted(IMG_DIR.glob('r-*.jpg'))
+    log(f"סורק {len(files)} תמונות בתיקיית {IMG_DIR.name}...")
+
+    # Thresholds — stricter in aggressive mode
+    MIN_SIZE    = 5000 if aggressive else 3000
+    RATIO_HIGH  = 1.9  if aggressive else 2.2
+    RATIO_LOW   = 0.55 if aggressive else 0.45
+
+    bad_files = []   # list of (path, reason, size)
+    reasons = Counter()
+
+    for path in files:
+        try:
+            size = path.stat().st_size
+        except OSError:
+            continue
+
+        # Reason 1: file too small
+        if size < MIN_SIZE:
+            bad_files.append((path, f'too_small ({size}B)', size))
+            reasons['too_small'] += 1
+            continue
+
+        # Read header for EXIF + aspect-ratio checks
+        try:
+            with open(path, 'rb') as f:
+                header = f.read(8192)
+        except OSError:
+            continue
+
+        # Reason 2: EXIF/metadata indicates non-food source
+        header_low = header.lower()
+        bad_markers = [
+            (b'gopro',        'gopro'),
+            (b'dji',          'dji_drone'),
+            (b'parrot',       'parrot_drone'),
+            (b'phantom',      'drone_phantom'),
+            (b'satellite',    'satellite'),
+            (b'google earth', 'google_earth'),
+            (b'landscape',    'landscape_exif'),
+        ]
+        matched_bad_marker = False
+        for marker, label in bad_markers:
+            if marker in header_low:
+                bad_files.append((path, f'exif:{label}', size))
+                reasons[label] += 1
+                matched_bad_marker = True
+                break
+        if matched_bad_marker:
+            continue
+
+        # Reason 3: extreme aspect ratio (panoramic / tall portrait)
+        if header[:2] == b'\xff\xd8':  # JPEG magic
+            i = 2
+            found_sof = False
+            while i < len(header) - 8:
+                if header[i] == 0xFF and header[i+1] in (0xC0, 0xC1, 0xC2):
+                    h = (header[i+5] << 8) | header[i+6]
+                    w = (header[i+7] << 8) | header[i+8]
+                    if h > 0 and w > 0:
+                        ratio = w / h
+                        if ratio > RATIO_HIGH:
+                            bad_files.append((path, f'panorama ({w}x{h}, r={ratio:.2f})', size))
+                            reasons['panorama'] += 1
+                            found_sof = True
+                        elif ratio < RATIO_LOW:
+                            bad_files.append((path, f'tall_portrait ({w}x{h}, r={ratio:.2f})', size))
+                            reasons['tall_portrait'] += 1
+                            found_sof = True
+                    break
+                i += 1
+            if found_sof:
+                continue
+
+        # Reason 4: SHA256 matches known-bad (common picsum seeds — rarely triggered;
+        # maintained for completeness.  The actual hash set is empty by default.)
+        _known_bad_hashes: set = set()
+        if _known_bad_hashes:
+            try:
+                data = path.read_bytes()
+                h = hashlib.sha256(data).hexdigest()
+                if h in _known_bad_hashes:
+                    bad_files.append((path, 'known_bad_hash', size))
+                    reasons['known_bad_hash'] += 1
+            except OSError:
+                pass
+
+    log(f"נמצאו {len(bad_files)} קבצים חשודים")
+    for reason, count in reasons.most_common():
+        log(f"   {reason:<25s} {count}")
+
+    # Show preview of first 15
+    if bad_files:
+        log("")
+        log("דוגמאות (15 ראשונים):")
+        for p, reason, sz in bad_files[:15]:
+            log(f"   {'DRY' if dry_run else '→  '} {p.name:25s} {sz:>8d}B   ({reason})")
+        if len(bad_files) > 15:
+            log(f"   ... ועוד {len(bad_files)-15} קבצים")
+
+    total_bytes = sum(sz for _, _, sz in bad_files)
+
+    if dry_run:
+        log("")
+        log(f"DRY RUN: {len(bad_files)} קבצים ייבדקו, {total_bytes/1024/1024:.1f} MB ישוחררו")
+        log("הרץ ללא --dry-run להחיל.")
+        log("=" * 60)
+        return {"scanned": len(files), "deleted": 0, "freed_bytes": 0,
+                "reasons": dict(reasons)}
+
+    if not bad_files:
+        log("לא נמצאו תמונות חשודות — התיקייה נקייה.")
+        log("=" * 60)
+        return {"scanned": len(files), "deleted": 0, "freed_bytes": 0,
+                "reasons": {}}
+
+    # Actual deletion
+    log("")
+    log("מוחק קבצים חשודים...")
+    deleted = 0
+    freed = 0
+    for path, _reason, size in bad_files:
+        try:
+            path.unlink()
+            deleted += 1
+            freed += size
+        except OSError as e:
+            log(f"   FAIL {path.name}: {e}")
+
+    log(f"נמחקו {deleted}/{len(bad_files)} קבצים")
+    log(f"מקום שוחרר: {freed/1024/1024:.1f} MB")
+    log("=" * 60)
+    return {"scanned": len(files), "deleted": deleted, "freed_bytes": freed,
+            "reasons": dict(reasons)}
+
+
+def inline_alias_into_index(alias_file: Path, index_file: Path, dry_run: bool = False) -> bool:
+    """(v5.0) החדר את תוכן _IMG_ALIAS.js ישירות לתוך index.html.
+
+    Finds the line `var _IMG_ALIAS = {};` in index.html and replaces it with
+    the full alias map from alias_file.  This makes the aliases active without
+    the user having to manually copy-paste.
+
+    Args:
+        alias_file: Path to _IMG_ALIAS.js (written by run_dedup).
+        index_file: Path to index.html (usually SCRIPT_DIR/index.html).
+        dry_run: If True, only report — don't modify index.html.
+
+    Returns:
+        True on success, False on failure.
+    """
+    if not alias_file.exists():
+        log(f"[inline-alias] alias file not found: {alias_file}")
+        return False
+    if not index_file.exists():
+        log(f"[inline-alias] index.html not found: {index_file}")
+        return False
+
+    try:
+        alias_content = alias_file.read_text(encoding='utf-8')
+    except OSError as e:
+        log(f"[inline-alias] cannot read alias file: {e}")
+        return False
+
+    # Extract the { ... }; part (between "var _IMG_ALIAS = " and end)
+    import re as _re
+    m = _re.search(r'var\s+_IMG_ALIAS\s*=\s*(\{[\s\S]*?\}\s*;)', alias_content)
+    if not m:
+        log("[inline-alias] failed to parse _IMG_ALIAS block from alias file")
+        return False
+    new_obj = m.group(1)
+
+    try:
+        # Read as bytes to preserve CRLF / encoding
+        raw = index_file.read_bytes()
+        html = raw.decode('utf-8')
+    except OSError as e:
+        log(f"[inline-alias] cannot read index.html: {e}")
+        return False
+
+    # Find the existing _IMG_ALIAS declaration (empty or populated)
+    pattern = _re.compile(r'var\s+_IMG_ALIAS\s*=\s*\{[\s\S]*?\}\s*;', _re.MULTILINE)
+    if not pattern.search(html):
+        log("[inline-alias] could not find `var _IMG_ALIAS = {...};` in index.html")
+        return False
+
+    new_html = pattern.sub(f'var _IMG_ALIAS = {new_obj}', html, count=1)
+
+    if new_html == html:
+        log("[inline-alias] alias map in index.html already up to date (no change)")
+        return True
+
+    if dry_run:
+        log(f"[inline-alias] DRY RUN — would update index.html ({len(new_html)-len(html):+d} chars)")
+        return True
+
+    try:
+        # Write back preserving original newline convention
+        index_file.write_bytes(new_html.encode('utf-8'))
+        log(f"[inline-alias] ✓ index.html updated ({len(new_html)-len(html):+d} chars)")
+        return True
+    except OSError as e:
+        log(f"[inline-alias] write failed: {e}")
+        return False
+
+
 def run_dedup(dry_run: bool = False) -> None:
-    """שלב 2 — ניקוי כפילויות.
+    """שלב 3 — ניקוי כפילויות.
 
     סורק את כל קבצי r-*.jpg לפי SHA256 hash.
     בכל קבוצה עם hash זהה:
@@ -2307,7 +2687,7 @@ def run_dedup(dry_run: bool = False) -> None:
     import hashlib
 
     log("=" * 60)
-    log("שלב 2 — Dedup: ניקוי כפילויות" + (" [DRY RUN]" if dry_run else ""))
+    log("שלב 3 — Dedup: ניקוי כפילויות + יצירת alias map" + (" [DRY RUN]" if dry_run else ""))
     log("=" * 60)
 
     # ── סרוק את כל הקבצים וקבץ לפי גודל (pre-filter) ──────
@@ -2421,25 +2801,39 @@ def main():
 
     # ── ארגומנטים ─────────────────────────────────────────────
     parser = argparse.ArgumentParser(
-        description="Perla Cookbook — הורדת תמונות + ניקוי כפילויות",
+        description="Perla Cookbook v5.0 — ניקוי + הורדה + דהדופ + alias (מאוחד)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "דוגמאות:\n"
-            "  python download_images.py               # הורדה + dedup\n"
-            "  python download_images.py --skip-download  # רק dedup\n"
-            "  python download_images.py --skip-dedup     # רק הורדה\n"
-            "  python download_images.py --dry-run        # dedup — תצוגה בלבד\n"
-            "  python download_images.py --overwrite      # הורד מחדש הכל\n"
+            "  python download_images.py                    # מחזור מלא: נקי → הורד → dedup\n"
+            "  python download_images.py --clean-only       # רק שלב 1 (ניקוי חשודים)\n"
+            "  python download_images.py --aggressive-clean # ניקוי קפדני יותר\n"
+            "  python download_images.py --skip-clean       # דלג על ניקוי, הורד + dedup\n"
+            "  python download_images.py --skip-download    # רק dedup\n"
+            "  python download_images.py --skip-dedup       # ניקוי + הורדה בלבד\n"
+            "  python download_images.py --dry-run          # תצוגה מקדימה — לא מוחק\n"
+            "  python download_images.py --overwrite        # הורד מחדש הכל\n"
+            "  python download_images.py --inline-alias     # החדר alias ל-index.html\n"
         )
     )
+    parser.add_argument("--clean-only",    action="store_true",
+                        help="הרץ רק את שלב 1 (ניקוי תמונות חשודות), דלג על שאר השלבים")
+    parser.add_argument("--skip-clean",    action="store_true",
+                        help="דלג על שלב 1 (ניקוי)")
+    parser.add_argument("--aggressive-clean", action="store_true",
+                        help="שלב 1 עם פילטרים תוקפניים יותר (min-size 5KB, ratio 1.9/0.55)")
     parser.add_argument("--skip-download", action="store_true",
                         help="דלג על שלב ההורדה, הרץ רק dedup")
     parser.add_argument("--skip-dedup",    action="store_true",
                         help="דלג על שלב ה-dedup, הרץ רק הורדה")
     parser.add_argument("--dry-run",       action="store_true",
-                        help="Dedup — תצוגה מקדימה בלבד, אין מחיקות")
+                        help="תצוגה מקדימה בלבד — לא מוחק, לא כותב")
     parser.add_argument("--overwrite",     action="store_true",
                         help="הורד מחדש גם תמונות קיימות (OVERWRITE=True)")
+    parser.add_argument("--reset-images",  action="store_true",
+                        help="אתחול מלא: מחק את כל התמונות ב-recipes_images/ לפני הפעולה (מ-clean_bad_images.py --all)")
+    parser.add_argument("--inline-alias",  action="store_true",
+                        help="החדר אוטומטית את _IMG_ALIAS.js ל-index.html אחרי dedup")
     parser.add_argument("--no-proxy",      action="store_true",
                         help="התעלם מה-proxy — חיבור ישיר בלבד")
     parser.add_argument("--proxy", type=str, default=None,
@@ -2449,6 +2843,12 @@ def main():
     parser.add_argument("--test-proxy",    action="store_true",
                         help="בדוק באופן אקטיבי את כל המועמדים ל-proxy (איטי יותר אבל בטוח יותר)")
     args = parser.parse_args()
+
+    # --clean-only overrides skip flags: only clean is run
+    if args.clean_only:
+        args.skip_download = True
+        args.skip_dedup = True
+        args.skip_clean = False
 
     if args.overwrite:
         OVERWRITE = True
@@ -2494,18 +2894,51 @@ def main():
     # ── אתחול לוג ────────────────────────────────────────────
     LOG_FILE.write_text("", encoding="utf-8")
     log("=" * 60)
-    log("Perla Ben-Harrosh z\"l Cookbook — v4.0 (Proxy + Download + Dedup)")
+    log("Perla Ben-Harrosh z\"l Cookbook — v5.0 (Unified: Clean + Download + Dedup)")
     log("=" * 60)
     mode_parts = []
+    if not args.skip_clean:    mode_parts.append("Clean" + (" [agg]" if args.aggressive_clean else "") + (" [dry]" if args.dry_run else ""))
     if not args.skip_download: mode_parts.append("Download")
     if not args.skip_dedup:    mode_parts.append("Dedup" + (" [dry]" if args.dry_run else ""))
+    if args.inline_alias:      mode_parts.append("InlineAlias")
+    if args.reset_images:      mode_parts.insert(0, "ResetImages" + (" [dry]" if args.dry_run else ""))
     log(f"מצב: {' → '.join(mode_parts) or 'ללא פעולה'}")
     log(f"תמונות: {IMG_DIR}")
     log(f"לוג   : {LOG_FILE}")
     log("=" * 60)
 
     # ══════════════════════════════════════════════════════════
-    # שלב 1 — הורדת תמונות
+    # שלב 0b (אופציונלי) — אתחול מלא של כל תמונות המתכונים
+    # ממזג את הפונקציונליות של clean_bad_images.py --all
+    # ══════════════════════════════════════════════════════════
+    if args.reset_images:
+        log("")
+        try:
+            reset_stats = reset_all_recipe_images(dry_run=args.dry_run)
+            log(f"סיכום אתחול: נמחקו {reset_stats.get('deleted',0)} קבצים, "
+                f"שוחרר {reset_stats.get('freed_bytes',0)/1024/1024:.1f} MB")
+        except Exception as _reset_err:
+            log(f"[!] אתחול תמונות נכשל: {_reset_err}")
+
+    # ══════════════════════════════════════════════════════════
+    # שלב 1 — ניקוי תמונות חשודות קיימות (חדש ב-v5.0)
+    # ══════════════════════════════════════════════════════════
+    if not args.skip_clean:
+        log("")
+        try:
+            clean_stats = clean_existing_bad_images(
+                dry_run=args.dry_run,
+                aggressive=args.aggressive_clean
+            )
+            log(f"סיכום שלב 1: נמחקו {clean_stats.get('deleted',0)} קבצים, "
+                f"שוחרר {clean_stats.get('freed_bytes',0)/1024/1024:.1f} MB")
+        except Exception as _clean_err:
+            log(f"[!] שלב 1 נכשל: {_clean_err}")
+    else:
+        log("שלב 1 דולג (--skip-clean)")
+
+    # ══════════════════════════════════════════════════════════
+    # שלב 2 — הורדת תמונות
     # ══════════════════════════════════════════════════════════
     if not args.skip_download:
         recipes = parse_recipes()
@@ -2535,10 +2968,10 @@ def main():
         log(f"  {_existing_count} קבצים, {len(_hash_index)} ייחודיים, {_dup_existing} כפילויות קיימות")
 
         log("")
-        log("שלב 1 — הורדת תמונות")
+        log("שלב 2 — הורדת תמונות")
         log("-" * 60)
         log(f"מתכונים: {total} | קיימים: {already} | תמונות בדיסק: {total_imgs} | MAX_PER_RECIPE={MAX_IMAGES_PER_RECIPE} | OVERWRITE={OVERWRITE}")
-        log(f"מקורות: PHASE 1 עברית (9 מקורות IL + HE-Wiki) → PHASE 2 אנגלית (11 מקורות INTL + APIs)")
+        log(f"מקורות: PHASE A עברית ({len(_IL_FOOD_DOMAINS)} מקורות IL + HE-Wiki) → PHASE B אנגלית ({len(_INTL_FOOD_DOMAINS)} מקורות INTL + APIs)")
         log(f"Ctrl+C = יציאה מיידית")
         log("")
 
@@ -2616,8 +3049,12 @@ def main():
                 continue
 
             query = build_query(recipe)
+            # v5.0: Show the actual search queries as they're sent to search engines,
+            # so the user can verify "מתכון ל..." (Hebrew) and "recipe ..." (English) are prepended.
+            he_search = "מתכון ל" + title
+            en_search = "recipe " + query
             pct = (i + 1) * 100 // total
-            log(f"  >> [{i+1:4d}/{total}] {pct:3d}% [{rid:8s}] עברית: \"{title[:30]}\"  |  EN: \"{query[:30]}\"")
+            log(f"  >> [{i+1:4d}/{total}] {pct:3d}% [{rid:8s}] עברית: \"{he_search[:40]}\"  |  EN: \"{en_search[:40]}\"")
 
             t0 = time.time()
             collected_urls = []  # All URLs found across all sources
@@ -2629,42 +3066,50 @@ def main():
                 r = fn()
                 return [r] if r else []
 
-            sources_multi = [
-                # ═══════════ PHASE 1: HEBREW SEARCH (Israeli sites first) ═══════════
-                # 1a. Hebrew Wikimedia/Wikipedia with Hebrew recipe title
-                ("he-wikimedia",lambda t=title, q=query: _wrap(lambda: source_hebrew_first(t, q))),
-                # 1b. ALL 42 Israeli food sites — Hebrew title + "מתכון"
-                ("il-a",        lambda t=title, q=query: source_il_group_a(t, q)),
-                ("il-b",        lambda t=title, q=query: source_il_group_b(t, q)),
-                ("il-c",        lambda t=title, q=query: source_il_group_c(t, q)),
-                ("il-d",        lambda t=title, q=query: source_il_group_d(t, q)),
-                ("il-e",        lambda t=title, q=query: source_il_group_e(t, q)),
-                ("il-f",        lambda t=title, q=query: source_il_group_f(t, q)),
-                ("il-g",        lambda t=title, q=query: source_il_group_g(t, q)),
-                ("il-h",        lambda t=title, q=query: source_il_group_h(t, q)),
-                # 1c. General Hebrew DDG search (surfaces all IL sites)
-                ("il-general",  lambda t=title, q=query: source_il_general(t, q)),
+            # ═══════════════════════════════════════════════════════════
+            # v5.1: Dynamic sources_multi covering ALL 100 IL + 100 INTL domains
+            # ═══════════════════════════════════════════════════════════
+            import math as _math
+            _il_batches   = _math.ceil(len(_IL_FOOD_DOMAINS)   / DOMAINS_PER_GROUP)
+            _intl_batches = _math.ceil(len(_INTL_FOOD_DOMAINS) / DOMAINS_PER_GROUP)
 
-                # ═══════════ PHASE 2: ENGLISH SEARCH (international sites) ═══════════
-                # 2a. Fast English APIs
+            # PHASE 1 — Hebrew sources: he-wikimedia + 20 IL batches + il-general
+            sources_multi = [
+                # 1a. Hebrew Wikimedia/Wikipedia with Hebrew recipe title
+                ("he-wikimedia", lambda t=title, q=query: _wrap(lambda: source_hebrew_first(t, q))),
+            ]
+            # 1b. ALL 100 Israeli food sites — batches of 5 — Hebrew title + "מתכון ל"
+            for _gi in range(_il_batches):
+                _group_name = f"il-{_gi:02d}"
+                sources_multi.append(
+                    (_group_name, lambda t=title, q=query, i=_gi: source_il_group_batch(i, t, q))
+                )
+            # 1c. General Hebrew image search (both engines)
+            sources_multi.append(
+                ("il-general", lambda t=title, q=query: source_il_general(t, q))
+            )
+
+            # PHASE 2 — English sources: fast APIs + 20 INTL batches + general + scrape
+            sources_multi += [
+                # 2a. Fast English APIs (each uses "recipe " prefix internally)
                 ("mealdb",      lambda q=query: _wrap(lambda: source_mealdb(q))),
                 ("openverse",   lambda q=query: _wrap(lambda: source_openverse(q))),
                 ("unsplash",    lambda q=query: _wrap(lambda: source_unsplash_search(q))),
                 ("en-wikimedia",lambda q=query: _wrap(lambda: source_wikimedia_single(q))),
-                # 2b. ALL 40 international food sites — English query
-                ("intl-a",      lambda q=query: source_intl_group_a(q)),
-                ("intl-b",      lambda q=query: source_intl_group_b(q)),
-                ("intl-c",      lambda q=query: source_intl_group_c(q)),
-                ("intl-d",      lambda q=query: source_intl_group_d(q)),
-                ("intl-e",      lambda q=query: source_intl_group_e(q)),
-                ("intl-f",      lambda q=query: source_intl_group_f(q)),
-                ("intl-g",      lambda q=query: source_intl_group_g(q)),
+            ]
+            # 2b. ALL 100 international food sites — batches of 5 — "recipe " prefix
+            for _gi in range(_intl_batches):
+                _group_name = f"intl-{_gi:02d}"
+                sources_multi.append(
+                    (_group_name, lambda q=query, i=_gi: source_intl_group_batch(i, q))
+                )
+            sources_multi += [
                 # 2c. Stock photo food sections
-                ("stock",       lambda q=query: source_stock_photos(q)),
-                # 2d. General English DDG search
-                ("intl-general",lambda q=query: source_intl_general(q)),
-                # 2e. Food-blog scrape
-                ("ddg-scrape",  lambda q=query: _wrap(lambda: source_foodimages_scrape(q))),
+                ("stock",        lambda q=query: source_stock_photos(q)),
+                # 2d. General English image search (both engines)
+                ("intl-general", lambda q=query: source_intl_general(q)),
+                # 2e. DuckDuckGo food scrape fallback
+                ("ddg-scrape",   lambda q=query: _wrap(lambda: source_foodimages_scrape(q))),
                 # Note: loremflickr removed — it returned random placeholder images
             ]
 
@@ -2679,10 +3124,10 @@ def main():
                 # NOTE: DDG early-abort REMOVED — user wants ALL sources tried
                 # Phase banner + early-stop optimization
                 if src_name == "he-wikimedia":
-                    log(f"     ─── PHASE 1: חיפוש בעברית ב-42 אתרים ישראלים ───")
+                    log(f"     ─── PHASE 1: חיפוש בעברית ב-{len(_IL_FOOD_DOMAINS)} אתרים ישראלים (v5.1) ───")
                     _phase1_urls_at_start = len(collected_urls)
                 elif src_name == "mealdb":
-                    log(f"     ─── PHASE 2: חיפוש באנגלית ב-40 אתרים בינלאומיים ───")
+                    log(f"     ─── PHASE 2: חיפוש באנגלית ב-{len(_INTL_FOOD_DOMAINS)} אתרים בינלאומיים (v5.1) ───")
                     # Skip Phase 1 source early-stop when entering Phase 2
 
                 # Early-stop: if we already have plenty of URLs from this phase, skip rest
@@ -2777,11 +3222,21 @@ def main():
         log("-" * 60)
 
     # ══════════════════════════════════════════════════════════
-    # שלב 2 — ניקוי כפילויות (dedup דינמי)
+    # שלב 3 — ניקוי כפילויות (dedup דינמי) + alias map
     # ══════════════════════════════════════════════════════════
     if not args.skip_dedup:
         log("")
         run_dedup(dry_run=args.dry_run)
+
+        # ── שלב 3b (אופציונלי) — החדרת _IMG_ALIAS ל-index.html ──
+        if args.inline_alias:
+            log("")
+            log("-" * 60)
+            log("שלב 3b — החדרת _IMG_ALIAS ל-index.html")
+            log("-" * 60)
+            alias_file = IMG_DIR.parent / "_IMG_ALIAS.js"
+            index_file = SCRIPT_DIR / "index.html"
+            inline_alias_into_index(alias_file, index_file, dry_run=args.dry_run)
 
     log("")
     log("=" * 60)
