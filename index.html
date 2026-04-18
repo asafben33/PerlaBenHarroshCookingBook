@@ -434,6 +434,63 @@ html.light .book-photo-cap{background:rgba(255,255,255,.85);color:#4a2a14}
 .book-photo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
 .book-photo-grid .book-photo{margin:0}
 
+/* ── NEW: Book collapsible (hidden by default, expanded on click) ── */
+.book-toggle-wrap {
+  max-width: 860px;
+  margin: 2rem auto 0;
+  padding: 0 1rem;
+  text-align: center;
+}
+.book-toggle-btn {
+  direction: rtl;
+  display: inline-flex;
+  align-items: center;
+  gap: .7rem;
+  background: linear-gradient(135deg, rgba(196,147,10,.15), rgba(196,147,10,.06));
+  border: 1.5px solid rgba(196,147,10,.45);
+  color: var(--c-gold-l);
+  padding: .85rem 1.6rem;
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,.25);
+  transition: all .3s var(--ease);
+}
+.book-toggle-btn:hover {
+  background: linear-gradient(135deg, rgba(196,147,10,.25), rgba(196,147,10,.12));
+  border-color: var(--c-gold);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(196,147,10,.25);
+}
+.book-toggle-icon { font-size: 1.2rem; }
+.book-toggle-arrow {
+  font-size: .9rem;
+  transition: transform .3s var(--ease);
+  display: inline-block;
+}
+.book-toggle-btn[aria-expanded="true"] .book-toggle-arrow { transform: rotate(180deg); }
+.book-toggle-btn[aria-expanded="true"] {
+  background: linear-gradient(135deg, rgba(196,147,10,.3), rgba(196,147,10,.15));
+  border-color: var(--c-gold);
+}
+html.light .book-toggle-btn {
+  background: linear-gradient(135deg, rgba(196,147,10,.1), rgba(196,147,10,.04));
+  color: var(--c-wood);
+  border-color: rgba(196,147,10,.35);
+}
+.book-collapsible {
+  max-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  transition: max-height .5s var(--ease), visibility .5s;
+}
+.book-collapsible[aria-hidden="false"] {
+  max-height: 200000px;
+  visibility: visible;
+}
+
 /* ── NEW: Bio section (moved from bottom About to top of page) ── */
 .bio {
   direction: rtl; text-align: right;
@@ -1226,7 +1283,14 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
 
 <!-- ════════ BOOK + TAGS ══════════════════════════════════ -->
 <section id="book-wrapper" class="book-wrapper" dir="rtl" lang="he">
-  <div id="book-content"></div>
+  <div class="book-toggle-wrap">
+    <button type="button" class="book-toggle-btn" id="book-toggle" aria-expanded="false" aria-controls="book-content">
+      <span class="book-toggle-icon" aria-hidden="true">📖</span>
+      <span class="book-toggle-label" data-i18n="read_book">קרא את הספר: "על שביל האהבה ממרוקו לירושלים"</span>
+      <span class="book-toggle-arrow" aria-hidden="true">▾</span>
+    </button>
+  </div>
+  <div id="book-content" class="book-collapsible" aria-hidden="true"></div>
   <div class="about-inner" style="max-width:800px;margin:0 auto;padding:0 1.5rem">
       <div class="about-tags" role="list">
         <span class="at" role="listitem" data-i18n="tag_moroccan">מטבח מרוקאי</span>
@@ -3285,6 +3349,19 @@ function refreshModalMedia(r) {
 }
 
 function uploadImg(recipeId) { addImg(recipeId); }
+function toggleBook() {
+  var sec = document.getElementById('book-content');
+  var btn = document.getElementById('book-toggle');
+  if (!sec) return;
+  var isHidden = sec.getAttribute('aria-hidden') !== 'false';
+  sec.setAttribute('aria-hidden', isHidden ? 'false' : 'true');
+  if (btn) btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+  if (isHidden) {
+    // smooth scroll to book after opening
+    setTimeout(function(){ sec.scrollIntoView({behavior:'smooth', block:'start'}); }, 120);
+  }
+}
+
 function toggleAbout() {
   var sec = document.getElementById('about');
   var btn = document.getElementById('about-toggle');
@@ -3340,6 +3417,10 @@ document.addEventListener('DOMContentLoaded', function() {
   // About toggle
   var aboutBtn = document.getElementById('about-toggle');
   if (aboutBtn) aboutBtn.addEventListener('click', toggleAbout);
+
+  // Book toggle (collapsible book content)
+  var bookBtn = document.getElementById('book-toggle');
+  if (bookBtn) bookBtn.addEventListener('click', toggleBook);
 
   // Modal close
   var closeBtn = document.getElementById('m-close');
@@ -6191,6 +6272,7 @@ var I18N = {
   pill_cities:   {he:'קזבלנקה · מרקש', en:'Casablanca · Marrakech'},
   pill_heritage: {he:'מסורת של דורות', en:'Heritage of Generations'},
   read_more:     {he:'קרא עוד על פרלה ופנחס בן הראש ז״ל', en:'Read more about Perla & Pinchas Ben-Harrosh z"l'},
+  read_book:     {he:'קרא את הספר: "על שביל האהבה ממרוקו לירושלים"', en:'Read the book: "On the Path of Love from Morocco to Jerusalem"'},
   // About section
   photo_caption: {he:'פרלה ופנחס ביום חתונתם', en:'Perla & Pinchas on their wedding day'},
   about_h:       {he:'פרלה ופנחס בן הראש ז״ל — המשפחה שיצבה מטבח', en:'Perla & Pinchas Ben-Harrosh z"l — The family that shaped a kitchen'},
