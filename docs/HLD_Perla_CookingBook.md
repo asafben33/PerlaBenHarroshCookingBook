@@ -2,7 +2,7 @@
 
 ## HLD — High Level Design
 
-**גרסה 6.3 | 19 אפריל 2026**
+**גרסה 6.4 | 19 אפריל 2026**
 
 *לזכרם של פרלה ופנחס בן הראש ז״ל שזכרונם יהיה לברכה וגאווה הלאה לדורי דורות*
 *דרך הטעם המעלה זכרונות שכמעט שכחנו...*
@@ -14,8 +14,8 @@
 | GitHub Pages | https://asafben33.github.io/PerlaBenHarroshCookingBook/ |
 | Branch | main |
 | Deployment | push ידני (ללא CI/CD) |
-| גרסה נוכחית | 6.3 (19/04/2026) |
-| גרסה קודמת | 6.2 (18/04/2026) |
+| גרסה נוכחית | 6.4 (19/04/2026) |
+| גרסה קודמת | 6.3 (19/04/2026) — בו-יום, נכשלה בגלל CORS |
 | גרסת בסיס | 5.0 (אפריל 2026) |
 
 ---
@@ -306,7 +306,9 @@ asafben33.github.io/:1 Failed to load resource: the server responded with a stat
 
 **הפתרון החדש:** FormSubmit.co — שירות form-to-email חיצוני ב-AJAX שעובד **מכל מקור** (GitHub Pages, Netlify, localhost, file://).
 
-### 9.3 ארכיטקטורה חדשה (v6.3)
+### 9.3 ארכיטקטורה — Hidden iframe + form (v6.4)
+
+**ב-v6.3 נוסה גישת fetch+JSON ל-FormSubmit AJAX endpoint, אבל היא נכשלה ב-CORS preflight בכל דפדפן ב-GitHub Pages. ב-v6.4 הוחלפה בגישת hidden-iframe.**
 
 ```
 משתמש → FAB (#fb-fab) או כפתור "הערה/תיקון" (#m-feedback-act)
@@ -315,21 +317,41 @@ Modal פידבק (#fb-ovl) עם טופס (#fb-form)
     ↓
 JS validation: message.length, email regex
     ↓
-fetch POST (JSON) → https://formsubmit.co/ajax/<email-base64-decoded>
+JS מאכלס שדות hidden form (#fb-hidden-form) — כולל subject, name, message...
     ↓
-┌─────────────────────────────────────────────────────────────┐
-│ FormSubmit.co (שירות חיצוני, חינמי, ללא הרשמה)              │
-│ • AJAX endpoint — מחזיר JSON                                 │
-│ • Honeypot: _honey                                           │
-│ • Email template: _template=table                             │
-│ • Captcha disabled: _captcha=false                            │
-└─────────────────────────────────────────────────────────────┘
+JS מגדיר action דינמית: hf.action = 'https://formsubmit.co/' + atob(EMAIL_B64)
     ↓
-אימייל נשלח אל asafben33@gmail.com
+hf.submit() — Form POST classic, target='fb-iframe-target' (iframe מוסתר)
+    ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ הדפדפן שולח POST classic application/x-www-form-urlencoded:    │
+│ • לא מפעיל CORS preflight (form submissions אינן כפופות ל-CORS) │
+│ • התגובה מטוענת ב-iframe המוסתר                                  │
+│ • event 'load' של ה-iframe מציין סיום שליחה                     │
+└─────────────────────────────────────────────────────────────────┘
+    ↓
+FormSubmit.co מקבל את הבקשה, מעביר ל-asafben33@gmail.com
     (הכתובת מוסתרת כ-base64: YXNhZmJlbjMzQGdtYWlsLmNvbQ==)
     ↓
-בכישלון רשת/CSP → fallback ל-mailto: (פתיחת לקוח מייל מקומי)
+JS תופס iframe.load → "תודה! ההודעה נשלחה בהצלחה."
+    ↓
+timeout 15s למקרה של בעיית רשת → mailto fallback
 ```
+
+#### למה לא fetch + JSON (לקח v6.3 → v6.4)
+
+ב-v6.3 ניסינו לשלוח `fetch()` עם `Content-Type: application/json` ל-`https://formsubmit.co/ajax/{email}`. הקונסול הציג שגיאה:
+
+```
+Access to fetch at 'https://formsubmit.co/ajax/asafben33@gmail.com'
+from origin 'https://asafben33.github.io' has been blocked by CORS policy:
+Response to preflight request doesn't pass access control check:
+No 'Access-Control-Allow-Origin' header is present on the requested resource.
+```
+
+**הסיבה:** שליחת JSON עם custom headers מפעילה preflight `OPTIONS` request אוטומטי של הדפדפן. השרת של FormSubmit אינו מחזיר `Access-Control-Allow-Origin` בתגובת ה-OPTIONS, ולכן הדפדפן חוסם את הבקשה כולה.
+
+**הפתרון (v6.4):** טפסי HTML מסורתיים (`<form method="POST">`) **אינם כפופים ל-CORS** — זה התנהגות מורשת מ-HTML 4 (predates fetch). שולחים את הטופס לתוך `<iframe>` מוסתר, התגובה נטענת בתוך ה-iframe (לא נקראת על ידי JS), והדפדפן מאשר את הבקשה ללא preflight.
 
 ### 9.4 השוואה בין חלופות
 
@@ -645,6 +667,29 @@ Netlify: publishes to perlabenharrosh-cookingbook.netlify.app
 - תיקון שורש: `שיצבה` → `שעיצבה` (שורש ע+צ+ב).
 - אנגלית: `The family that shaped an entire kitchen, to be remembered and cooked onward for generations to come`.
 
+### 14.10 תיקון CORS — מעבר מ-fetch ל-hidden iframe (v6.4)
+
+**הבעיה שהתגלתה אחרי הפריסה של v6.3:**
+```
+Access to fetch at 'https://formsubmit.co/ajax/asafben33@gmail.com'
+from origin 'https://asafben33.github.io' has been blocked by CORS policy:
+Response to preflight request doesn't pass access control check:
+No 'Access-Control-Allow-Origin' header is present on the requested resource.
+```
+
+**ניתוח:** הדפדפן שולח `OPTIONS` (preflight) לפני `POST` כי שלחנו `Content-Type: application/json` (לא "simple request"). FormSubmit אינו מחזיר `Access-Control-Allow-Origin` ב-OPTIONS — ולכן הדפדפן חוסם את ה-POST.
+
+**הפתרון:** מעבר מ-`fetch()` ל-`<form>` רגיל עם `target="hidden-iframe"`. שליחת טופס ל-iframe **לא מפעילה CORS preflight** (זו התנהגות מורשת של HTML שלפני קיומו של fetch).
+
+**שינויים ב-v6.4:**
+1. **HTML חדש** לפני `</body>`: `<iframe id="fb-iframe-target" hidden>` + `<form id="fb-hidden-form" hidden>` עם 12 שדות hidden.
+2. **JS חדש** ב-`submitFeedback()`: מאכלס שדות hidden form, קורא ל-`hf.submit()`, מאזין ל-`iframe.load`.
+3. **CSP עודכן:**
+   - `connect-src 'self'` (הוסר formsubmit.co — לא מתבצע fetch)
+   - `frame-src` כולל formsubmit.co (iframe מנווט אליו)
+   - `form-action` כולל formsubmit.co (form נשלח אליו)
+4. **15s timeout** למקרה שה-iframe לא מטען מסיבה כלשהי → mailto fallback.
+
 ### 14.9 שחזור כפתור PWA Install (v6.3)
 
 הכפתור נעלם מהאתר ברגע כלשהו קודם לסשן זה ולכן שוחזר במלואו:
@@ -666,10 +711,11 @@ Netlify: publishes to perlabenharrosh-cookingbook.netlify.app
 |---|---|---|
 | `README.md` | 6.3 | סקירה כללית, התקנה, מבנה תפריט, קבצי נתונים |
 | `CLAUDE.md` | 6.3 | הנחיות למפתחים/AI agents לעבודה על הפרויקט |
-| `HLD_Perla_CookingBook.md` | **6.3** | המסמך הנוכחי — High Level Design |
-| `LLD_Perla_CookingBook.md` | **6.3** | Low Level Design — פונקציות, CSS, DOM |
-| `INTEGRATION_GUIDE.md` | 2.0 | מדריך אינטגרציה של מערכת הפידבק (מעודכן ל-FormSubmit) |
-| `CHANGELOG_19-04-2026_v6.3.md` | — | שינויי הסשן הנוכחי (UI + FormSubmit + PWA + תוכן) |
+| `HLD_Perla_CookingBook.md` | **6.4** | המסמך הנוכחי — High Level Design |
+| `LLD_Perla_CookingBook.md` | **6.4** | Low Level Design — פונקציות, CSS, DOM |
+| `INTEGRATION_GUIDE.md` | 3.0 | מדריך אינטגרציה (FormSubmit עם hidden iframe) |
+| `CHANGELOG_19-04-2026_v6.3.md` | — | שינויי 19/04 חלק ראשון (UI + FormSubmit AJAX + PWA + תוכן) |
+| `CHANGELOG_19-04-2026_v6.4.md` | — | תיקון CORS — מעבר ל-hidden iframe approach |
 | `CHANGELOG_18-04-2026_v2.md` | — | שינויי אבטחה ו-meta של 18/04 |
 | `CHANGELOG_download_images_v5.md` | — | שינויי v5.1 של `download_images.py` |
 
@@ -678,4 +724,4 @@ Netlify: publishes to perlabenharrosh-cookingbook.netlify.app
 *לזכר משפחת בן הראש — קזבלנקה, מרקש, ירושלים*
 *"האוכל שלה — הסיפור שלנו"*
 
-**סוף HLD v6.3**
+**סוף HLD v6.4**

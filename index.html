@@ -12,7 +12,7 @@
 <!-- Security headers via meta -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="Content-Security-Policy"
-  content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com; media-src 'self' blob:; connect-src 'self' https://formsubmit.co; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self';">
+  content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com; media-src 'self' blob:; connect-src 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://formsubmit.co; object-src 'none'; base-uri 'self'; form-action 'self' https://formsubmit.co;">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta name="referrer" content="no-referrer">
 <meta property="og:title" content="ספר הבישול של פרלה בן הראש ז״ל">
@@ -7057,27 +7057,10 @@ function exportFullCookbook() {
     if (submitBtn) submitBtn.disabled = true;
     setStatus('שולח הודעה...', 'loading');
 
-    /* Build email subject */
+    /* Build email subject (Hebrew gershayim U+05F4) */
     var subject = (_type === 'recipe' && _recipe)
       ? 'תיקון למתכון: ' + _recipe.title
-      : 'הצעה / תקלה — אתר ספר הבישול של פרלה ז״ל';
-
-    /* Payload for FormSubmit.co AJAX endpoint.
-       Keys prefixed with _ configure email behavior. */
-    var payload = {
-      _subject:  subject,
-      _template: 'table',
-      _captcha:  'false',
-      _honey:    '',
-      name:      name.slice(0, 80) || '(לא צוין)',
-      email:     email.slice(0, 100) || '(לא צוין)',
-      message:   message.slice(0, MAX_MSG),
-      type:      _type || 'site',
-      recipe_id:    _recipe ? String(_recipe.id) : '',
-      recipe_title: _recipe ? String(_recipe.title) : '',
-      page_url:  location.href,
-      user_agent: (navigator.userAgent || '').slice(0, 200)
-    };
+      : 'הצעה / תקלה — אתר ספר הבישול של פרלה ז\u05f4ל';
 
     /* Mailto fallback payload — uses old key names for openMailtoFallback() compat */
     var mailtoData = {
@@ -7089,48 +7072,96 @@ function exportFullCookbook() {
       'page-url':      location.href
     };
 
-    /* POST to FormSubmit.co — works from any origin (GitHub Pages, Netlify, etc.)
-       Email is base64-obfuscated to foil simple scrapers. */
-    var endpoint = 'https://formsubmit.co/ajax/' + atob(FORMSUBMIT_EMAIL_B64);
+    /* CRITICAL — Why hidden iframe + form, NOT fetch:
+       FormSubmit's /ajax/ endpoint does not properly handle CORS preflight from
+       cross-origin pages (GitHub Pages, etc). Sending JSON via fetch triggers
+       OPTIONS preflight that returns no Access-Control-Allow-Origin header,
+       causing CORS failure. Form submissions via <form target="iframe"> are
+       NOT subject to CORS preflight (legacy HTML form behavior), so this works
+       from ANY origin (GitHub Pages, Netlify, file://, localhost). */
+    var hf = $('fb-hidden-form');
+    var iframe = $('fb-iframe-target');
 
-    fetch(endpoint, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body:    JSON.stringify(payload)
-    })
-    .then(function(r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    .then(function(data) {
-      /* FormSubmit returns { success: 'true', message: '...' } on delivery.
-         First-ever submission returns success:'false' + activation message —
-         the email is queued and delivered after owner clicks verification link.
-         For UX we treat both states as successfully captured. */
-      var okDelivered = (String(data.success).toLowerCase() === 'true' || data.success === true);
-      var msg = okDelivered
-        ? 'תודה! ההודעה נשלחה בהצלחה.'
-        : 'תודה! ההודעה נקלטה בהצלחה.';
-      setStatus(msg, 'success');
-      setTimeout(closeFeedbackModal, 2500);
-    })
-    .catch(function(err) {
-      /* Network error, CSP block, offline, or FormSubmit unreachable.
-         Fall back to mailto — always works (opens user's email client). */
-      setStatus(
-        'שליחה ישירה נכשלה. <a href="#" id="fb-mailto-fallback">פתח באימייל במקום</a>',
-        'error'
-      );
-      var m = $('fb-mailto-fallback');
-      if (m) m.addEventListener('click', function(ev) {
+    if (!hf || !iframe) {
+      /* DOM not ready — fall back to mailto */
+      setStatus('שליחה ישירה לא זמינה. <a href="#" id="fb-mailto-fallback">פתח באימייל במקום</a>', 'error');
+      var mFb = $('fb-mailto-fallback');
+      if (mFb) mFb.addEventListener('click', function(ev) {
         ev.preventDefault();
         openMailtoFallback(mailtoData);
       });
-    })
-    .then(function() {
       _isSubmitting = false;
       if (submitBtn) submitBtn.disabled = false;
-    });
+      return;
+    }
+
+    /* Set form action dynamically — keeps email obfuscated in source */
+    hf.action = 'https://formsubmit.co/' + atob(FORMSUBMIT_EMAIL_B64);
+
+    /* Populate hidden form fields */
+    function setF(id, value) {
+      var el = $(id);
+      if (el) el.value = value || '';
+    }
+    setF('fb-hf-subject',      subject);
+    setF('fb-hf-name',         name.slice(0, 80) || '(לא צוין)');
+    setF('fb-hf-email',        email.slice(0, 100) || '(לא צוין)');
+    setF('fb-hf-message',      message.slice(0, MAX_MSG));
+    setF('fb-hf-type',         _type || 'site');
+    setF('fb-hf-recipe-id',    _recipe ? String(_recipe.id) : '');
+    setF('fb-hf-recipe-title', _recipe ? String(_recipe.title) : '');
+    setF('fb-hf-page-url',     location.href);
+    setF('fb-hf-user-agent',   (navigator.userAgent || '').slice(0, 200));
+
+    /* Listen for iframe load to detect submission completion.
+       The iframe will load FormSubmit's response page (success or activation msg).
+       Both cases mean the data was received. */
+    var done = false;
+
+    function onSuccess() {
+      if (done) return;
+      done = true;
+      try { iframe.removeEventListener('load', onSuccess); } catch(e) {}
+      clearTimeout(timeoutId);
+      setStatus('תודה! ההודעה נשלחה בהצלחה.', 'success');
+      setTimeout(closeFeedbackModal, 2500);
+      _isSubmitting = false;
+      if (submitBtn) submitBtn.disabled = false;
+    }
+
+    function onTimeout() {
+      if (done) return;
+      done = true;
+      try { iframe.removeEventListener('load', onSuccess); } catch(e) {}
+      setStatus('שליחה אורכת זמן רב מהצפוי. <a href="#" id="fb-mailto-fallback">פתח באימייל במקום</a>', 'error');
+      var mF = $('fb-mailto-fallback');
+      if (mF) mF.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        openMailtoFallback(mailtoData);
+      });
+      _isSubmitting = false;
+      if (submitBtn) submitBtn.disabled = false;
+    }
+
+    iframe.addEventListener('load', onSuccess);
+    var timeoutId = setTimeout(onTimeout, 15000);
+
+    /* Submit the hidden form (POSTs to FormSubmit, response loads in iframe).
+       This is a traditional form POST, NOT a fetch — bypasses CORS entirely. */
+    try {
+      hf.submit();
+    } catch (err) {
+      try { iframe.removeEventListener('load', onSuccess); } catch(e) {}
+      clearTimeout(timeoutId);
+      setStatus('שליחה ישירה נכשלה. <a href="#" id="fb-mailto-fallback">פתח באימייל במקום</a>', 'error');
+      var mE = $('fb-mailto-fallback');
+      if (mE) mE.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        openMailtoFallback(mailtoData);
+      });
+      _isSubmitting = false;
+      if (submitBtn) submitBtn.disabled = false;
+    }
   }
 
   function openMailtoFallback(data) {
@@ -7345,5 +7376,45 @@ if(typeof BOOK_HTML!=='undefined'){
   }
 })();
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FEEDBACK FORM — Hidden iframe + form for FormSubmit.co
+     Why this approach: FormSubmit's /ajax/ endpoint doesn't handle
+     CORS preflight from cross-origin pages (GitHub Pages, etc).
+     Traditional form POSTs to a hidden iframe target are NOT subject
+     to CORS, so this works from any origin (GH Pages, Netlify, file://).
+     The form action is set dynamically via JS to keep the email
+     base64-obfuscated in the source code.
+═══════════════════════════════════════════════════════════ -->
+<iframe name="fb-iframe-target"
+        id="fb-iframe-target"
+        title="טופס פידבק (יעד מוסתר)"
+        aria-hidden="true"
+        tabindex="-1"
+        style="position:absolute;width:0;height:0;border:0;visibility:hidden"></iframe>
+
+<form id="fb-hidden-form"
+      method="POST"
+      target="fb-iframe-target"
+      enctype="application/x-www-form-urlencoded"
+      accept-charset="UTF-8"
+      style="display:none"
+      aria-hidden="true"
+      hidden>
+  <!-- Action set dynamically by JS — keeps email base64-obfuscated -->
+  <input type="hidden" name="_subject"     id="fb-hf-subject"      value="">
+  <input type="hidden" name="_template"    value="table">
+  <input type="hidden" name="_captcha"     value="false">
+  <input type="hidden" name="_honey"       value="">
+  <input type="hidden" name="name"         id="fb-hf-name"         value="">
+  <input type="hidden" name="email"        id="fb-hf-email"        value="">
+  <input type="hidden" name="message"      id="fb-hf-message"      value="">
+  <input type="hidden" name="type"         id="fb-hf-type"         value="">
+  <input type="hidden" name="recipe_id"    id="fb-hf-recipe-id"    value="">
+  <input type="hidden" name="recipe_title" id="fb-hf-recipe-title" value="">
+  <input type="hidden" name="page_url"     id="fb-hf-page-url"     value="">
+  <input type="hidden" name="user_agent"   id="fb-hf-user-agent"   value="">
+</form>
+
 </body>
 </html>

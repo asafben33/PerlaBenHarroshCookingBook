@@ -2,15 +2,15 @@
 
 ## LLD — Low Level Design
 
-**גרסה 6.3 | 19 אפריל 2026**
+**גרסה 6.4 | 19 אפריל 2026**
 
 *מפרט טכני מלא ומפורט — כל שכבות הקוד, כל פונקציה, כל קומפוננטה*
 
 | פרט | ערך |
 |---|---|
 | Repository | github.com/asafben33/PerlaBenHarroshCookingBook |
-| גרסה נוכחית | 6.3 (19/04/2026) |
-| גרסה קודמת | 6.2 (18/04/2026) |
+| גרסה נוכחית | 6.4 (19/04/2026) |
+| גרסה קודמת | 6.3 (19/04/2026) — נכשלה ב-CORS, הוחלפה |
 | גרסת `index.html` | ~375 KB |
 | גרסת `download_images.py` | 5.1 (152 KB) |
 
@@ -329,11 +329,28 @@
 | `fb-fab` | `<button>` | Floating Action Button — `aria-label="הצעות לשיפור או דיווח תקלה"` |
 | `fb-mailto-fallback` | `<a>` | קישור dynamic שנוצר בזמן שגיאה — פותח mailto |
 
-### 4.4 Hidden Netlify Form — **הוסר ב-v6.3**
+### 4.4 Hidden Form + Iframe (v6.4 — מבנה חדש)
 
-בגרסה 6.0 היה `<form name="perla-feedback" data-netlify="true" hidden>` עם 9 שדות hidden, נסרק ע"י Netlify בזמן build.
+**הסיבה:** ב-v6.3 ניסינו לשלוח `fetch()` עם JSON ל-FormSubmit AJAX, אבל הוא נחסם ב-CORS preflight (`No 'Access-Control-Allow-Origin' header is present`). ב-v6.4 חזרנו ל-form classic — לא כפוף ל-CORS — עם iframe כיעד.
 
-**ב-v6.3 הוסר לגמרי** — המעבר ל-FormSubmit.co אינו דורש טופס DOM (JS שולח JSON ישירות). ראו סעיף **5.9** למפרט החדש.
+**HTML שנוסף לפני `</body>`:**
+
+| ID | Element | תיאור |
+|---|---|---|
+| `fb-iframe-target` | `<iframe>` | יעד מוסתר ל-form. `name="fb-iframe-target"` (חובה ל-target). `position:absolute;width:0;height:0;border:0;visibility:hidden`. `aria-hidden="true"`, `tabindex="-1"`. |
+| `fb-hidden-form` | `<form>` | hidden form. `method="POST"`, `target="fb-iframe-target"`, `enctype="application/x-www-form-urlencoded"`, `accept-charset="UTF-8"`. `action` מוגדר דינמית ב-JS (כדי לשמור email מוסתר ב-base64). |
+| `fb-hf-subject` | `<input type="hidden" name="_subject">` | נושא המייל — מוגדר דינמית |
+| (קבוע) | `<input type="hidden" name="_template" value="table">` | פורמט מייל בטבלה |
+| (קבוע) | `<input type="hidden" name="_captcha" value="false">` | captcha כבוי |
+| (קבוע) | `<input type="hidden" name="_honey" value="">` | honeypot |
+| `fb-hf-name` | `<input name="name">` | שם השולח |
+| `fb-hf-email` | `<input name="email">` | אימייל השולח |
+| `fb-hf-message` | `<input name="message">` | תוכן ההודעה |
+| `fb-hf-type` | `<input name="type">` | "recipe" / "site" |
+| `fb-hf-recipe-id` | `<input name="recipe_id">` | (אם recipe) |
+| `fb-hf-recipe-title` | `<input name="recipe_title">` | (אם recipe) |
+| `fb-hf-page-url` | `<input name="page_url">` | location.href |
+| `fb-hf-user-agent` | `<input name="user_agent">` | navigator.userAgent slice 200 |
 
 ### 4.5 PWA Install Button IDs (v6.3 — שוחזר)
 
@@ -512,7 +529,7 @@ window.openFeedbackModal  = openFeedbackModal;
 window.closeFeedbackModal = closeFeedbackModal;
 ```
 
-### 5.9 `submitFeedback(e)` — זרימה מפורטת (v6.3 — FormSubmit.co)
+### 5.9 `submitFeedback(e)` — זרימה מפורטת (v6.4 — Hidden iframe)
 
 ```
 1. e.preventDefault()  →  אם כבר submitting → return
@@ -522,35 +539,46 @@ window.closeFeedbackModal = closeFeedbackModal;
    - message > 2000 → setStatus('ההודעה ארוכה מדי...', 'error')
    - email != '' && !regex.test(email) → setStatus('כתובת אימייל לא תקינה', 'error')
 4. _isSubmitting = true; submitBtn.disabled = true; setStatus('שולח...', 'loading')
-5. בניית payload (JSON object) עם מפתחות _ (FormSubmit config) + שדות נתונים:
-   {
-     _subject: 'תיקון למתכון: X' | 'הצעה / תקלה — אתר ספר הבישול של פרלה ז"ל',
-     _template: 'table',          // פורמט מייל בטבלה
-     _captcha:  'false',          // captcha כבוי ב-AJAX
-     _honey:    '',                // honeypot
-     name, email, message,
-     type, recipe_id, recipe_title,
-     page_url, user_agent
-   }
-6. בניית mailtoData נפרד עם מפתחות ישנים (feedback-type, sender-name וכו') לתאימות עם openMailtoFallback()
-7. var endpoint = 'https://formsubmit.co/ajax/' + atob(FORMSUBMIT_EMAIL_B64)
-8. fetch(endpoint, {
-     method: 'POST',
-     headers: {
-       'Content-Type': 'application/json',
-       'Accept':       'application/json'
-     },
-     body: JSON.stringify(payload)
-   })
-9a. response.ok ?
-    - data.success === 'true' → setStatus('תודה! ההודעה נשלחה בהצלחה.', 'success')
-    - data.success === 'false' (פעם ראשונה, דורש activation) → setStatus('תודה! ההודעה נקלטה בהצלחה.', 'success')
-    setTimeout(closeFeedbackModal, 2500)
-9b. !response.ok OR network error → .catch():
-    - setStatus('שליחה ישירה נכשלה. <a>פתח באימייל במקום</a>', 'error')
-    - רישום click handler ב-#fb-mailto-fallback → openMailtoFallback(mailtoData)
-10. .then(): _isSubmitting = false; submitBtn.disabled = false
+5. בניית subject string (Hebrew gershayim) — תלוי type
+6. בניית mailtoData עם מפתחות ישנים (feedback-type, sender-name וכו') לתאימות עם openMailtoFallback()
+7. בדיקה ש-#fb-hidden-form ו-#fb-iframe-target קיימים. אם לא → fallback ל-mailto מיד.
+8. הגדרת action דינמית: hf.action = 'https://formsubmit.co/' + atob(FORMSUBMIT_EMAIL_B64)
+   (שומר email מוסתר ב-base64 בקוד מקור — לא מופיע ב-HTML)
+9. אכלוס שדות hidden form דרך setF(id, value):
+   - fb-hf-subject, fb-hf-name, fb-hf-email, fb-hf-message
+   - fb-hf-type, fb-hf-recipe-id, fb-hf-recipe-title
+   - fb-hf-page-url, fb-hf-user-agent
+10. רישום iframe.addEventListener('load', onSuccess) — מאזין לטעינת ה-iframe
+11. setTimeout(onTimeout, 15000) — fallback אם ה-iframe לא נטען תוך 15 שניות
+12. hf.submit() — שליחת form classic (NOT fetch — bypasses CORS)
+12a. iframe.onload נורה → onSuccess():
+     - clearTimeout(timeoutId), iframe.removeEventListener
+     - setStatus('תודה! ההודעה נשלחה בהצלחה.', 'success')
+     - setTimeout(closeFeedbackModal, 2500)
+     - _isSubmitting = false, submitBtn.disabled = false
+12b. timeout 15s פוקע → onTimeout():
+     - iframe.removeEventListener
+     - setStatus('שליחה אורכת זמן רב מהצפוי. <a>פתח באימייל במקום</a>', 'error')
+     - רישום click handler ב-#fb-mailto-fallback → openMailtoFallback(mailtoData)
+12c. hf.submit() throws (rare) → catch:
+     - clearTimeout, removeEventListener
+     - setStatus('שליחה ישירה נכשלה. <a>פתח באימייל במקום</a>', 'error')
 ```
+
+#### למה לא fetch + JSON (לקח v6.3 → v6.4)
+
+ב-v6.3 ניסינו `fetch(endpoint, { method:'POST', headers:{'Content-Type':'application/json',...}, body: JSON.stringify(payload) })`. שגיאה:
+
+```
+Access to fetch at 'https://formsubmit.co/ajax/asafben33@gmail.com'
+from origin 'https://asafben33.github.io' has been blocked by CORS policy:
+Response to preflight request doesn't pass access control check:
+No 'Access-Control-Allow-Origin' header is present on the requested resource.
+```
+
+**ניתוח:** Content-Type: application/json הופך את הבקשה ל-"non-simple", הדפדפן שולח OPTIONS preflight. FormSubmit אינו עונה עם Access-Control-Allow-Origin ב-OPTIONS → דפדפן חוסם את ה-POST.
+
+**פתרון:** Form submissions עם `target="iframe"` הם **legacy HTML behavior** שאינו כפוף ל-CORS preflight. הדפדפן שולח POST ישירות, התגובה מטוענת ב-iframe (לא נקראת על ידי JS), אין צורך ב-Access-Control-Allow-Origin.
 
 ### 5.10 `openMailtoFallback(data)` — Base64 obfuscation (לא השתנה)
 
@@ -1110,11 +1138,11 @@ style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
 font-src 'self' https://fonts.gstatic.com;
 img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com;
 media-src 'self' blob:;
-connect-src 'self' https://formsubmit.co;
-frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;
+connect-src 'self';  /* v6.4: removed formsubmit (no fetch anymore) */
+frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://formsubmit.co;  /* v6.4: added formsubmit (iframe target) */
 object-src 'none';
 base-uri 'self';
-form-action 'self';
+form-action 'self' https://formsubmit.co;  /* v6.4: added formsubmit (form target) */
 ```
 
 **שינויים v6.0 → v6.3:**
@@ -1545,4 +1573,4 @@ JSON-LD `description` (line ~1123) עודכן כדי להתאים לטקסט ש�
 *לזכר משפחת בן הראש — קזבלנקה, מרקש, ירושלים*
 *"האוכל שלה — הסיפור שלנו"*
 
-**סוף LLD v6.3**
+**סוף LLD v6.4**
