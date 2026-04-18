@@ -2,10 +2,10 @@
 
 ## HLD — High Level Design
 
-**גרסה 6.0 | אפריל 2026**
+**גרסה 6.3 | 19 אפריל 2026**
 
-*לזכרם של פרלה ופנחס בן הראש שזכרונם יהיה לברכה וגאווה לדורי דורות*
-*דרך הטעם המעלה זכרונות שחשבנו שכבר שכחנו...*
+*לזכרם של פרלה ופנחס בן הראש ז״ל שזכרונם יהיה לברכה וגאווה הלאה לדורי דורות*
+*דרך הטעם המעלה זכרונות שכמעט שכחנו...*
 
 | פרט | ערך |
 |---|---|
@@ -14,8 +14,9 @@
 | GitHub Pages | https://asafben33.github.io/PerlaBenHarroshCookingBook/ |
 | Branch | main |
 | Deployment | push ידני (ללא CI/CD) |
-| גרסה נוכחית | 6.0 (18/04/2026) |
-| גרסה קודמת | 5.0 (אפריל 2026) |
+| גרסה נוכחית | 6.3 (19/04/2026) |
+| גרסה קודמת | 6.2 (18/04/2026) |
+| גרסת בסיס | 5.0 (אפריל 2026) |
 
 ---
 
@@ -288,63 +289,116 @@
 
 ---
 
-## 9. מערכת פידבק — v6.0 (חדש)
+## 9. מערכת פידבק — v6.3 (מהגרה ל-FormSubmit.co)
 
 ### 9.1 רציונל
 
 מטרה: לאפשר למשתמשים לדווח על תיקונים במתכונים, להציע שיפורים, או לדווח על תקלות — **תוך הסתרת כתובת האימייל של המתחזק** ומבלי לדרוש שרת אפליקציה.
 
-### 9.2 ארכיטקטורה
+### 9.2 הסיבה למעבר מ-Netlify Forms (v6.3)
 
+**הבעיה שהתגלתה:** האתר מתארח ב-**שני מקומות** — Netlify *וגם* GitHub Pages. Netlify Forms יורט POST-ים רק במקור Netlify שלו. ב-GitHub Pages (שרת סטטי) POST מחזיר **405 Method Not Allowed**.
+
+לוג קונסול שהדגים את הבעיה:
 ```
-משתמש → FAB או כפתור "הערה/תיקון" במודל מתכון
-    ↓
-Modal פידבק עם טופס
-    ↓
-POST /  (application/x-www-form-urlencoded)
-    ↓
-Netlify detects form at build time (<form data-netlify="true">)
-    ↓
-Netlify stores submission + triggers email notification
-    ↓
-אימייל נשלח מ-no-reply@netlify.com אל asafben33@gmail.com
-    (הכתובת מוגדרת רק ב-Netlify Dashboard — NEVER in source code)
+asafben33.github.io/:1 Failed to load resource: the server responded with a status of 405 (Method Not Allowed)
 ```
 
-### 9.3 נקודות כניסה למשתמש
+**הפתרון החדש:** FormSubmit.co — שירות form-to-email חיצוני ב-AJAX שעובד **מכל מקור** (GitHub Pages, Netlify, localhost, file://).
+
+### 9.3 ארכיטקטורה חדשה (v6.3)
+
+```
+משתמש → FAB (#fb-fab) או כפתור "הערה/תיקון" (#m-feedback-act)
+    ↓
+Modal פידבק (#fb-ovl) עם טופס (#fb-form)
+    ↓
+JS validation: message.length, email regex
+    ↓
+fetch POST (JSON) → https://formsubmit.co/ajax/<email-base64-decoded>
+    ↓
+┌─────────────────────────────────────────────────────────────┐
+│ FormSubmit.co (שירות חיצוני, חינמי, ללא הרשמה)              │
+│ • AJAX endpoint — מחזיר JSON                                 │
+│ • Honeypot: _honey                                           │
+│ • Email template: _template=table                             │
+│ • Captcha disabled: _captcha=false                            │
+└─────────────────────────────────────────────────────────────┘
+    ↓
+אימייל נשלח אל asafben33@gmail.com
+    (הכתובת מוסתרת כ-base64: YXNhZmJlbjMzQGdtYWlsLmNvbQ==)
+    ↓
+בכישלון רשת/CSP → fallback ל-mailto: (פתיחת לקוח מייל מקומי)
+```
+
+### 9.4 השוואה בין חלופות
+
+| קריטריון | FormSubmit | Netlify Forms | EmailJS | FormSpree |
+|---|---|---|---|---|
+| עובד מ-GitHub Pages | ✓ | ✗ | ✓ | ✓ |
+| עובד מ-Netlify | ✓ | ✓ | ✓ | ✓ |
+| עובד מ-file:// | ✓ | ✗ | ✓ | ✗ |
+| ללא הרשמה | ✓ | — | ✗ | ✗ |
+| חינם ללא מגבלה | ✓ | 100/חודש | 200/חודש | 50/חודש |
+| ללא תלות JS-lib | ✓ | ✓ | ✗ (40KB) | ✓ |
+| AJAX native | ✓ | ✗ (redirect) | ✓ | ✓ |
+
+### 9.5 נקודות כניסה למשתמש (ללא שינוי)
 
 | נקודה | מיקום | סוג הודעה |
 |---|---|---|
-| כפתור "הערה / תיקון" | בתוך `.m-actions` בכל modal מתכון | `feedback-type: "recipe"` + recipe-id + recipe-title |
-| FAB צף | פינה שמאלית-תחתונה (RTL), תמיד גלוי | `feedback-type: "site"` |
-| פונקציה גלובלית | `window.openFeedbackModal(type, recipe)` | גמיש (למשל קישור footer) |
+| כפתור "הערה / תיקון" | בתוך `.m-actions` בכל modal מתכון | `type: "recipe"` + recipe_id + recipe_title |
+| FAB צף (#fb-fab) | פינה שמאלית-תחתונה (RTL), תמיד גלוי | `type: "site"` |
+| פונקציה גלובלית | `window.openFeedbackModal(type, recipe)` | גמיש |
 
-### 9.4 שיטות הסתרת האימייל
+### 9.6 שיטות הסתרת האימייל (v6.3)
 
-1. **Netlify Forms (שיטה עיקרית)** — הכתובת מוגדרת ב-Netlify Dashboard, אף פעם לא בקוד המקור.
-2. **Base64 fallback** — אם Netlify לא זמין (למשל ריצה מקומית), קישור `mailto:` עם `atob('YXNhZmJlbjMzQGdtYWlsLmNvbQ==')`.
-3. **Honeypot field** — `<input name="bot-field">` נסתר דוחה בוטים.
-4. **reCAPTCHA** — אופציונלי ב-Netlify Dashboard אם מתחיל להגיע spam.
+1. **Base64 obfuscation בקוד** — `FORMSUBMIT_EMAIL_B64 = 'YXNhZmJlbjMzQGdtYWlsLmNvbQ=='` → הכתובת אינה מופיעה plain-text בסקריפט.
+2. **Hashed alias (אופציונלי, מומלץ אחרי אישור)** — FormSubmit מספק אליאס `/el/{hash}` במקום email.
+3. **Honeypot field** — `_honey: ''` (JSON property במקום DOM field).
+4. **FormSubmit rate-limit** — הגנה אוטומטית מובנית (עד 50 submissions/IP/שעה).
 
-### 9.5 שדות הטופס
+### 9.7 שדות הטופס ב-payload
 
-| שדה | חובה | אורך מקסימלי |
-|---|---|---|
-| `sender-name` | לא | 80 תווים |
-| `sender-email` | לא | 100 תווים (regex validation) |
-| `message` | **כן** | 2000 תווים |
-| `feedback-type` | hidden | `"recipe"` או `"site"` |
-| `recipe-id` | hidden (אם recipe) | — |
-| `recipe-title` | hidden (אם recipe) | — |
-| `page-url` | hidden (auto) | — |
-| `user-agent` | hidden (auto, 200 תווים) | — |
-| `bot-field` | honeypot | צריך להישאר ריק |
+| שדה | חובה | מקור | אורך מקסימלי |
+|---|---|---|---|
+| `_subject` | hidden | JS builds (תלוי type) | — |
+| `_template` | hidden | `"table"` (פורמט המייל) | — |
+| `_captcha` | hidden | `"false"` (AJAX) | — |
+| `_honey` | hidden | `""` (honeypot) | — |
+| `name` | לא | `#fb-name` | 80 תווים |
+| `email` | לא | `#fb-email` | 100 תווים (regex) |
+| `message` | **כן** | `#fb-message` | 2000 תווים |
+| `type` | auto | `"recipe"` / `"site"` | — |
+| `recipe_id` | auto (אם recipe) | `_recipe.id` | — |
+| `recipe_title` | auto (אם recipe) | `_recipe.title` | — |
+| `page_url` | auto | `location.href` | — |
+| `user_agent` | auto | `navigator.userAgent` | 200 תווים |
+
+### 9.8 זרימת Activation חד-פעמית
+
+FormSubmit דורש **אישור חד-פעמי** בשליחה הראשונה לכתובת החדשה:
+
+1. משתמש ראשון שולח הודעה.
+2. FormSubmit מחזיר JSON עם `success: "false"` + הודעת activation.
+3. במקביל, FormSubmit שולח **מייל אישור** ל-asafben33@gmail.com.
+4. על בעל האתר ללחוץ על קישור האישור במייל.
+5. מאותו רגע — כל השליחות הבאות מגיעות רגיל.
+6. ה-UX מטפל ב-`success: false` של פעם ראשונה באלגנטיות: מציג "תודה! ההודעה נקלטה בהצלחה" (כי ההודעה אכן נשמרת, רק מחכה לאישור).
+
+### 9.9 Fallback במקרה כישלון
+
+אם `fetch()` נכשל (רשת, CSP, offline, FormSubmit down):
+- שגיאה מתגלה ב-`.catch()`
+- `setStatus('שליחה ישירה נכשלה. [פתח באימייל במקום]')` — סטטוס עם קישור
+- המשתמש לוחץ → `openMailtoFallback(mailtoData)` → פתיחת לקוח מייל עם subject+body מוכנים
+- `mailtoData` משתמש במפתחות הישנים לתאימות עם `openMailtoFallback()` — לא השתנה
 
 ---
 
-## 10. אבטחה — CSP & Headers (v6.0 — מוחזק)
+## 10. אבטחה — CSP & Headers (v6.3 — מעודכן)
 
-### 10.1 Content Security Policy
+### 10.1 Content Security Policy — `<meta>` (v6.3)
 
 ```
 default-src 'self';
@@ -353,25 +407,58 @@ style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
 font-src 'self' https://fonts.gstatic.com;
 img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com;
 media-src 'self' blob:;
-connect-src 'self';
+connect-src 'self' https://formsubmit.co;
 frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;
 object-src 'none';
 base-uri 'self';
 form-action 'self';
-frame-ancestors 'none';
 ```
 
-שינויים מגרסה 5.0:
-- **`img-src`**: `*` → ספציפי (`'self'`, `data:`, `blob:`, YouTube thumbnails)
-- **נוסף**: `media-src`, `form-action`, `frame-ancestors`
-- **`frame-src`**: `'none'` → `'self'` + YouTube embeds
+שינויים מגרסה 6.0:
+- **`connect-src`**: נוסף `https://formsubmit.co` — נדרש לשליחת פידבק ב-AJAX (v6.3).
+- **`frame-ancestors`**: **הוסר מה-meta** — הדפדפן מתעלם מהערך הזה כשהוא מגיע דרך `<meta>` (רק HTTP header תקף). הוגדר עכשיו רק ב-`_headers` של Netlify. הסרתו מונעת warning בקונסול.
 
-### 10.2 Meta Headers נוספים
+שינויים היסטוריים (5.0 → 6.0):
+- **`img-src`**: `*` → ספציפי (`'self'`, `data:`, `blob:`, YouTube thumbnails).
+- **נוסף**: `media-src`, `form-action`, `frame-ancestors`.
+
+### 10.2 Netlify `_headers` (חדש ב-v6.2)
+
+קובץ `_headers` בשורש הפרויקט מגדיר HTTP headers שאינם ניתנים לקבוע דרך `<meta>`:
+
+```
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Content-Security-Policy: default-src 'self'; ...
+    connect-src 'self' https://formsubmit.co;
+    form-action 'self' https://formsubmit.co;
+    frame-ancestors 'none';
+```
+
+- **`frame-ancestors`** — מוגדר כאן (לא ב-meta, כי הדפדפן יעלם ממנו).
+- **`X-Frame-Options: DENY`** — שכבה נוספת למניעת clickjacking.
+- **`form-action`** — מאפשר שליחה של `<form>` ל-formsubmit.co (הדפדפן חוסם form-action אם לא מורשה מפורש).
+
+### 10.3 Meta Headers נוספים ב-`<head>`
 
 ```html
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta name="referrer" content="no-referrer">
 ```
+
+### 10.4 הסתרת כתובת אימייל בקוד המקור
+
+```javascript
+// בקוד (index.html)
+var FORMSUBMIT_EMAIL_B64 = 'YXNhZmJlbjMzQGdtYWlsLmNvbQ==';  // base64 obfuscation
+// runtime
+var endpoint = 'https://formsubmit.co/ajax/' + atob(FORMSUBMIT_EMAIL_B64);
+```
+
+זה לא הגנה חזקה (decode טריוויאלי), אבל מונע **scrapers פשוטים** של אימיילים מלזהות את הכתובת ב-plain text.
 
 ---
 
@@ -404,12 +491,23 @@ Netlify: publishes to perlabenharrosh-cookingbook.netlify.app
 | Deployment | push ידני (ללא CI/CD) |
 | Logs | `logs/download_images_YYYY-MM-DD_HH.MM.log` |
 
-### 11.3 הגדרת Netlify Forms (חד-פעמי)
+### 11.3 הגדרת FormSubmit (חד-פעמי ב-v6.3)
 
-1. Netlify Dashboard → אתר → `Forms`.
-2. לוודא שטופס `perla-feedback` מופיע (מזוהה אוטומטית בזמן build).
-3. `Settings & Usage` → `Form notifications` → `Add notification` → `Email`.
-4. הזן `asafben33@gmail.com` ושמור.
+**לאחר הפריסה הראשונה, חובה לבצע פעולה חד-פעמית כדי להפעיל את הטופס:**
+
+1. היכנס לאתר החי (אחרי push ו-deploy).
+2. לחץ על כפתור "הצעות ודיווח" (FAB שמאלי-תחתון).
+3. שלח הודעת בדיקה (כל תוכן קצר).
+4. תקבל **מייל activation** אל `asafben33@gmail.com` מכתובת `contact@formsubmit.co`.
+5. לחץ על קישור האישור במייל.
+6. מאותו רגע והלאה — **כל ההודעות הבאות יגיעו ישירות לתיבת המייל**.
+
+הערות:
+- ההודעה הראשונה **נשמרת** ב-FormSubmit; היא נשלחת אליך מיד אחרי לחיצת האישור.
+- אין צורך ביצירת חשבון ב-FormSubmit.
+- אם תרצה **פרטיות מוגברת** (להחביא את הכתובת לגמרי מהקוד), לאחר האישור FormSubmit יספק אליאס hash:
+  - `https://formsubmit.co/el/{hash}`
+  - תוכל להחליף את `FORMSUBMIT_EMAIL_B64` בקוד עם ה-hash במקום base64.
 
 ---
 
@@ -469,13 +567,96 @@ Netlify: publishes to perlabenharrosh-cookingbook.netlify.app
 - **שורת לוג משופרת**: מציגה את ה-query האמיתי ששולח (`"מתכון ל" + title`).
 - **6 דגלי CLI חדשים**: `--reset-images`, `--clean-only`, `--skip-clean`, `--aggressive-clean`, `--inline-alias`, `--dry-run`.
 
-### 14.4 Feedback System (חדש)
+### 14.4 Feedback System (v6.0, הוחלף ב-v6.3)
 
 - Modal פידבק עם 3 נקודות כניסה (recipe button, FAB, פונקציה גלובלית).
-- Netlify Forms — כתובת `asafben33@gmail.com` מוסתרת ב-Dashboard בלבד.
+- בגרסה זו: Netlify Forms — ראו **14.7** לפרטי ההחלפה.
 - Fallback `mailto:` עם base64 obfuscation.
 - WCAG 2.1 compliant — focus trap, ARIA, keyboard nav, `prefers-reduced-motion`.
 - UI מתבסס על design tokens קיימים (`--c-spice`, `--c-gold`, `--c-ink` וכו').
+
+### 14.5 תיקוני יציבות ואבטחה (v6.1 → v6.2)
+
+- **הסרת `frame-ancestors` מה-meta** — הדפדפן מתעלם ממנו דרך meta; הוגדר רק ב-`_headers`. ביטל warning בקונסול.
+- **הסרת `r.img` מ-`_getImgFallbacks()`** — כל 1,054 המתכונים הצביעו ל-picsum.photos שנחסם על ידי CSP הצר. כעת אפס CSP violations (לפני: 1,054 הפרות לכל טעינת דף).
+- **הסרת `-2.jpg`/`-3.jpg` מ-fallback** — אלה היו tried לכל מתכון גם אם הראשי לא קיים; חסכו ~2,108 404-ים לכל טעינת דף. נשארים רק בגלריית התמונות במודל (`_getAllRecipeImages()`).
+- **תיקון באג `[data-sec=about]`** — selector שלא קיים, החזיר null, וגרם ל-`TypeError: Cannot read properties of null (reading 'click')` בלחיצה על קישור "קראו בספר". הוחלף ב-null-safe `#about-toggle` click.
+- **יצירת 20 תמונות cat-*.jpg** — placeholders אמנותיים (480×360) עם גרדיאנט חם, טקסט עברי בגדלים שונים (64px → 32px adaptive), מסגרת דקורטיבית זהובה עם מעויינים בפינות, וכותרת משנה ("מטעמים של אמא" / "מתכונים מהעדות" / "ספר הבישול"). מונע 20×3 = 60 404-ים לטעינת דף.
+- **הגדלת UI — סיבוב ראשון** (v6.2):
+  - שורת חיפוש: `width: 180px` → `320px`, גופן `.85rem` → `.95rem`.
+  - תפריט: `--nav-h: 44px` → `54px`, `.nb` גופן `.82rem` → `1rem` / weight 700.
+  - צ'יפים: `.pc` גופן `.78rem` → `1rem`, `.acc-hdr` גופן `.78rem` → `1.18rem`.
+
+### 14.6 UI Enlargement — סיבוב שני ויצירת תחושת hierarchy (v6.3)
+
+ההגדלות העיקריות כדי שהאתר יהיה נוח לקריאה ולקליק:
+
+**שורת חיפוש (flexible):**
+- `.hdr-search`: מ-`width: 320px` קבוע → `flex: 1; max-width: 640px; min-width: 220px` — ממלא את כל הרוחב הפנוי (עד 640px).
+- `#srch`: `width: 100%`, font `.95rem` → `1.05rem`, padding גדול יותר.
+
+**תפריט ראשי:**
+- `--nav-h`: `54px` → `60px`.
+- `.nb`: font `1rem` → `1.1rem`, weight `600` → `700`, padding `1.3rem` → `1.5rem`.
+- `.nb-cnt`: `.78rem` → `.9rem`, weight 700, padding גדול יותר.
+- `.nb-arr`: `.75rem` → `.88rem`.
+
+**צ'יפים בתת-התפריט:**
+- `.pc`: `1rem` → `1.08rem`, padding `.55/1.3rem` → `.72/1.5rem`.
+- `.acc-hdr` (כותרות קטגוריה): `1rem` → `1.18rem`, padding `.55/1.3rem` → `.8/1.7rem`, border alpha `.28` → `.35` — הבולטים ביותר.
+- `.pc-cnt`: `.82rem` → `.92rem`, weight 500 → 600.
+- `.acc-body`: gap `.55rem` → `.7rem`, padding `.8/1rem` → `1/1.3rem`.
+- `.nav-panel-inner`: padding `1.1/1.5/1.3rem` → `1.4/1.8/1.6rem`, הוסף `display: flex; flex-direction: column; gap: .8rem`.
+
+### 14.7 מערכת פידבק — מהגרה ל-FormSubmit.co (v6.3)
+
+**בעיה:** Netlify Forms לא עובד ב-GitHub Pages (POST מחזיר 405).
+
+**פתרון:** מעבר ל-FormSubmit.co AJAX endpoint.
+
+**שינויים קודיים:**
+- הוסר `<form name="perla-feedback" data-netlify="true" hidden>` (859 bytes פוחת).
+- נוסף קבוע: `var FORMSUBMIT_EMAIL_B64 = 'YXNhZmJlbjMzQGdtYWlsLmNvbQ==';`.
+- `submitFeedback()` נכתב מחדש — שולח JSON ל-`https://formsubmit.co/ajax/{email}`.
+- תגובות FormSubmit: `success: true` (מסר נשלח) או `success: false` (פעם ראשונה, דורש activation).
+- Fallback ל-mailto נשאר בעינו.
+- CSP: `connect-src 'self' https://formsubmit.co`.
+- `_headers`: `form-action 'self' https://formsubmit.co`.
+
+### 14.8 עדכוני תוכן (v6.3)
+
+**כותרת Hero:**
+- לפני: `המטבח של משפחת בן הראש המורחבת`
+- אחרי: `המטבח של משפחת בן הראש (ארוש\הרוש)` — מדגיש שני תעתיקי שם המשפחה.
+
+**שורת תיאור Hero:**
+- לפני: `לזכרם של פרלה ופנחס בן הראש — טעמים שמעלים זכרונות שחשבנו שכבר שכחנו...`
+- אחרי: `לזכרם של פרלה ופנחס בן הראש ז״ל — טעמים שמעלים זכרונות שכמעט שכחנו...`
+- שימוש ב-Hebrew gershayim U+05F4 (לא `"` רגיל) לעקביות עם 13 מופעים קיימים באתר.
+
+**פסקת Memorial ב-BIO:**
+- לפני: `...שזכרונם יהיה לברכה וגאווה לדורי דורות דרך הטעם המעלה זכרונות שחשבנו שכבר שכחנו...`
+- אחרי: `...שזכרונם יהיה לברכה וגאווה הלאה לדורי דורות דרך הטעם המעלה זכרונות שכמעט שכחנו...`
+- עודכן ב-3 מקומות: HTML, i18n, וגם **JSON-LD description** (מטא-תיאור לגוגל/שיתופים).
+
+**כותרת BIO (H2):**
+- לפני: `פרלה ופנחס בן הראש ז״ל — המשפחה שיצבה מטבח`
+- אחרי: `פרלה ופנחס בן הראש ז״ל — המשפחה שעיצבה מטבח שלם שיזכר ויתבשל הלאה לדורי דורות`
+- תיקון שורש: `שיצבה` → `שעיצבה` (שורש ע+צ+ב).
+- אנגלית: `The family that shaped an entire kitchen, to be remembered and cooked onward for generations to come`.
+
+### 14.9 שחזור כפתור PWA Install (v6.3)
+
+הכפתור נעלם מהאתר ברגע כלשהו קודם לסשן זה ולכן שוחזר במלואו:
+
+- **HTML**: `<button id="pwa-install-btn" class="hdr-btn hdr-btn-install">` עם SVG של חץ הורדה + span "התקן", hidden by default.
+- **CSS**: רקע זהב, `animation: pwa-pulse 3s ease-in-out infinite` (pulse מושך תשומת לב), עם `@media (prefers-reduced-motion: reduce)` מכבה.
+- **JavaScript** (IIFE):
+  - `addEventListener('beforeinstallprompt')` — שומר את ה-event ומציג את הכפתור.
+  - `addEventListener('appinstalled')` — מסתיר את הכפתור ושומר `localStorage['perla_pwa_dismissed'] = 'yes'`.
+  - Click handler: מפעיל `prompt.prompt()` ב-Chromium; ב-iOS מציג `alert()` עם הוראות ידניות.
+  - בדיקת `display-mode: standalone` — אם האתר כבר מותקן, הכפתור מוסתר.
+- **i18n**: 3 מפתחות חדשים — `pwa_label` / `pwa_title` / `pwa_aria` (HE + EN).
 
 ---
 
@@ -483,11 +664,12 @@ Netlify: publishes to perlabenharrosh-cookingbook.netlify.app
 
 | מסמך | גרסה | תיאור |
 |---|---|---|
-| `README.md` | 6.0 | סקירה כללית, התקנה, מבנה תפריט, קבצי נתונים |
-| `CLAUDE.md` | 6.0 | הנחיות למפתחים/AI agents לעבודה על הפרויקט |
-| `HLD_Perla_CookingBook.md` | **6.0** | המסמך הנוכחי — High Level Design |
-| `LLD_Perla_CookingBook.md` | **6.0** | Low Level Design — פונקציות, CSS, DOM |
-| `INTEGRATION_GUIDE.md` | 1.0 | מדריך אינטגרציה של מערכת הפידבק |
+| `README.md` | 6.3 | סקירה כללית, התקנה, מבנה תפריט, קבצי נתונים |
+| `CLAUDE.md` | 6.3 | הנחיות למפתחים/AI agents לעבודה על הפרויקט |
+| `HLD_Perla_CookingBook.md` | **6.3** | המסמך הנוכחי — High Level Design |
+| `LLD_Perla_CookingBook.md` | **6.3** | Low Level Design — פונקציות, CSS, DOM |
+| `INTEGRATION_GUIDE.md` | 2.0 | מדריך אינטגרציה של מערכת הפידבק (מעודכן ל-FormSubmit) |
+| `CHANGELOG_19-04-2026_v6.3.md` | — | שינויי הסשן הנוכחי (UI + FormSubmit + PWA + תוכן) |
 | `CHANGELOG_18-04-2026_v2.md` | — | שינויי אבטחה ו-meta של 18/04 |
 | `CHANGELOG_download_images_v5.md` | — | שינויי v5.1 של `download_images.py` |
 
@@ -496,4 +678,4 @@ Netlify: publishes to perlabenharrosh-cookingbook.netlify.app
 *לזכר משפחת בן הראש — קזבלנקה, מרקש, ירושלים*
 *"האוכל שלה — הסיפור שלנו"*
 
-**סוף HLD v6.0**
+**סוף HLD v6.3**

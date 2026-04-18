@@ -2,16 +2,16 @@
 
 ## LLD — Low Level Design
 
-**גרסה 6.0 | אפריל 2026**
+**גרסה 6.3 | 19 אפריל 2026**
 
 *מפרט טכני מלא ומפורט — כל שכבות הקוד, כל פונקציה, כל קומפוננטה*
 
 | פרט | ערך |
 |---|---|
 | Repository | github.com/asafben33/PerlaBenHarroshCookingBook |
-| גרסה נוכחית | 6.0 (18/04/2026) |
-| גרסה קודמת | 5.0 (אפריל 2026) |
-| גרסת `index.html` | 359 KB |
+| גרסה נוכחית | 6.3 (19/04/2026) |
+| גרסה קודמת | 6.2 (18/04/2026) |
+| גרסת `index.html` | ~375 KB |
 | גרסת `download_images.py` | 5.1 (152 KB) |
 
 ---
@@ -36,6 +36,7 @@
 16. [JSON-LD Schema.org](#16-json-ld-schemaorg)
 17. [Error Handling & Edge Cases](#17-error-handling--edge-cases)
 18. [שינויים v5.0 → v6.0](#18-שינויים-v50--v60)
+19. [שינויים v6.0 → v6.3 — סשן 19/04](#19-שינויים-v60--v63--סשן-1904)
 
 ---
 
@@ -108,27 +109,39 @@
 
 ## 3. CSS Classes — רכיבים עיקריים
 
-### 3.1 Header
+### 3.1 Header (עודכן ב-v6.3)
 
 | class | תכונות |
 |---|---|
 | `.hdr` | `position:sticky; top:0; z-index:600; height:var(--hdr-h); background:var(--c-deep)` |
-| `.hdr-inner` | `max-width:1200px; margin:auto; display:flex; align-items:center; gap:1rem; RTL` |
-| `.hdr-search` | `flex:1; position:relative` — contains input + clear button |
+| `.hdr-inner` | `max-width:1440px; margin:auto; display:flex; align-items:center; gap:1rem; RTL` |
+| `.hdr-search` | **v6.3:** `flex:1; max-width:640px; min-width:220px; gap:.6rem; padding:.65rem 1.3rem` (היה `width:320px` קבוע) |
+| `#srch` | **v6.3:** `width:100%; min-width:0; font-size:1.05rem; direction:rtl` (היה `width:180px`/`320px`) |
 | `.hdr-btn` | `background:none; border:none; color:gold; cursor:pointer; font-size:1.1rem` |
+| `.hdr-btn-install` (v6.3) | **חדש — PWA install button:** `display:flex; padding:.45rem .9rem; bg:rgba(196,147,10,.2); border:1px solid gold .45; radius:100px; color:var(--c-gold-l); font:.88rem/700; animation:pwa-pulse 3s infinite` |
+| `.hdr-btn-install:hover` | `bg:.32; transform:translateY(-1px); animation:none` |
+| `@keyframes pwa-pulse` | `0%/100%: box-shadow 0 0 0 0 rgba(196,147,10,.35); 50%: 0 0 0 6px rgba(196,147,10,.04)` |
+| `html.light .hdr-btn-install` | `bg:rgba(196,147,10,.15); color:#8a5a20` |
+| `@media (prefers-reduced-motion)` | `.hdr-btn-install { animation: none }` |
 | `.hdr-tools` | `display:flex; gap:.3rem; align-items:center; flex-shrink:0` |
 
-### 3.2 Navigation
+### 3.2 Navigation (עודכן משמעותית ב-v6.2/v6.3)
 
 | class | תכונות |
 |---|---|
-| `.cat-nav` | `position:sticky; top:var(--hdr-h); z-index:500; background:dark; height:var(--nav-h)` |
-| `.nb` | `nav button — color rgba(F5ECD7,.7); padding 0 1rem; active: gold border-bottom` |
-| `.nb-cnt` | `count badge — background rgba gold .2; border-radius full; font .65rem` |
-| `.nav-panel` | `position:absolute; top:calc(hdr+nav); z-index:490; background:dark; shadow md` |
-| `.pc` | `panel chip — inline-flex; background rgba white .06; border gold .2` |
-| `.acc-hdr` | `accordion header — inline-flex; hover gold border` |
-| `.acc-body` | `display:none → flex when .open; flex-wrap; gap .4rem` |
+| `.cat-nav` | `position:sticky; top:var(--hdr-h); z-index:500; height:var(--nav-h)` — **v6.3: `--nav-h: 60px`** (היה 44px → 54px → 60px) |
+| `.nb` | **v6.3:** `font:1.1rem/700; padding:0 1.5rem; color rgba(245,236,215,.72); border-bottom:3px solid transparent` (היה `.82rem/normal`, padding `0 1rem`, border 2px) |
+| `.nb.active` | `color:var(--c-gold-l); border-bottom-color:var(--c-gold)` |
+| `.nb-cnt` | **v6.3:** `font-size:.9rem; font-weight:700; background:rgba(196,147,10,.25); padding:.26rem .7rem; color:var(--c-gold-l)` (היה `.65rem/500`, padding `.1rem .4rem`) |
+| `.nb-arr` | **v6.3:** `font-size:.88rem; opacity:.75` (היה `.6rem/.6`) |
+| `.nav-panel` | `position:absolute; top:calc(hdr+nav); z-index:490` |
+| `.nav-panel-inner` | **v6.3:** `padding:1.4rem 1.8rem 1.6rem; display:flex; flex-direction:column; gap:.8rem` (היה `.8rem 1.5rem 1rem` ללא flex) |
+| `.pc` | **v6.3:** `display:inline-flex; padding:.72rem 1.5rem; gap:.55rem; font:1.08rem/600; color rgba(245,236,215,.8); border-radius:100px` (היה `.3rem .85rem, .78rem`) |
+| `.pc:hover` | `background:rgba(196,147,10,.18); color:var(--c-gold-l)` |
+| `.pc.active` | `background:rgba(196,147,10,.25); border-color:rgba(196,147,10,.6)` |
+| `.pc-cnt` | **v6.3:** `font-size:.92rem; opacity:.75; font-weight:600` (היה `.66rem/500/.5`) |
+| `.acc-hdr` | **v6.3:** `padding:.8rem 1.7rem; gap:.6rem; font:1.18rem/700; color:var(--c-gold-l); border:1px solid rgba(196,147,10,.35)` — **בולטות ביותר** (היה `.78rem/normal`) |
+| `.acc-body` | **v6.3:** `display:none → flex when .open; flex-wrap; gap:.7rem; padding:1rem 1.3rem; border-radius:var(--r-md); margin-top:.55rem` |
 | `.acc-sep` | `width:100%; height:1px; background rgba gold .12` |
 
 ### 3.3 Grid & Card
@@ -316,25 +329,17 @@
 | `fb-fab` | `<button>` | Floating Action Button — `aria-label="הצעות לשיפור או דיווח תקלה"` |
 | `fb-mailto-fallback` | `<a>` | קישור dynamic שנוצר בזמן שגיאה — פותח mailto |
 
-### 4.4 Hidden Netlify Form (v6.0 — חדש)
+### 4.4 Hidden Netlify Form — **הוסר ב-v6.3**
 
-טופס נסתר בסוף `<body>` הנסרק ע"י Netlify בזמן build:
+בגרסה 6.0 היה `<form name="perla-feedback" data-netlify="true" hidden>` עם 9 שדות hidden, נסרק ע"י Netlify בזמן build.
 
-```html
-<form name="perla-feedback" method="POST" data-netlify="true"
-      netlify-honeypot="bot-field" hidden>
-  <input type="hidden" name="form-name" value="perla-feedback" />
-  <input type="text" name="bot-field" />         <!-- honeypot -->
-  <input type="text" name="feedback-type" />     <!-- "recipe"|"site" -->
-  <input type="text" name="recipe-id" />
-  <input type="text" name="recipe-title" />
-  <input type="text" name="sender-name" />
-  <input type="email" name="sender-email" />
-  <textarea name="message"></textarea>
-  <input type="text" name="page-url" />
-  <input type="text" name="user-agent" />
-</form>
-```
+**ב-v6.3 הוסר לגמרי** — המעבר ל-FormSubmit.co אינו דורש טופס DOM (JS שולח JSON ישירות). ראו סעיף **5.9** למפרט החדש.
+
+### 4.5 PWA Install Button IDs (v6.3 — שוחזר)
+
+| ID | Element | תיאור |
+|---|---|---|
+| `pwa-install-btn` | `<button>` | כפתור ההתקנה ב-`.hdr-tools`, hidden by default; מוצג דרך JS כשהדפדפן תומך או ב-iOS |
 
 ---
 
@@ -459,7 +464,7 @@
 | `openPanel(key, btn, builder)` | פתיחת dropdown panel עם callback builder |
 | `closePanel()` | סגירת dropdown |
 
-### 5.8 Feedback System Functions (v6.0 — חדש)
+### 5.8 Feedback System Functions (v6.3 — מעודכן ל-FormSubmit.co)
 
 כל הפונקציות נמצאות ב-**IIFE** (Immediately Invoked Function Expression) בסוף ה-`<script>`:
 
@@ -474,19 +479,21 @@
 |---|---|---|
 | `$(id)` | `(id:string):Element\|null` | wrapper ל-`document.getElementById` |
 | `escapeHtml(s)` | `(s:string):string` | מחליף `<>&"'` ב-entities |
-| `encodeFormData(data)` | `(data:object):string` | `Object.keys().map().join('&')` — URL-encoded form data |
+| `encodeFormData(data)` | `(data:object):string` | *לא בשימוש ב-v6.3* — נשאר לצורך תאימות |
 | `setStatus(msg, kind)` | `(msg:string\|null, kind?:'success'\|'error'\|'loading'):void` | מעדכן `#fb-status` |
 | `updateCharCount()` | `():void` | `$('fb-count').textContent = $('fb-message').value.length` |
 | `openFeedbackModal(type, recipe)` | `(type:'recipe'\|'site', recipe?:{id,title}):void` | פותח modal, מגדיר כותרת והקשר |
 | `closeFeedbackModal()` | `():void` | סוגר modal, מאפס state |
-| `submitFeedback(e)` | `(e:Event):Promise<void>` | ולידציה → POST ל-`/` → success/error |
+| `submitFeedback(e)` | `(e:Event):Promise<void>` | **v6.3: POST JSON ל-FormSubmit.co AJAX** — ראו 5.9 |
 | `openMailtoFallback(data)` | `(data:object):void` | `window.location = mailto:...` עם נתוני הטופס |
 | `initFeedback()` | `():void` | רושם event listeners |
 
-**Constants:**
+**Constants (v6.3):**
 
 ```javascript
-var FORM_NAME = 'perla-feedback';  // Netlify form identifier
+// Base64-obfuscated email — prevents simple scrapers
+var FORMSUBMIT_EMAIL_B64 = 'YXNhZmJlbjMzQGdtYWlsLmNvbQ==';  // = asafben33@gmail.com
+var FORM_NAME = 'perla-feedback';  // kept for backward compat
 var MAX_MSG   = 2000;              // Max message length
 ```
 
@@ -505,7 +512,7 @@ window.openFeedbackModal  = openFeedbackModal;
 window.closeFeedbackModal = closeFeedbackModal;
 ```
 
-### 5.9 `submitFeedback(e)` — זרימה מפורטת
+### 5.9 `submitFeedback(e)` — זרימה מפורטת (v6.3 — FormSubmit.co)
 
 ```
 1. e.preventDefault()  →  אם כבר submitting → return
@@ -515,15 +522,37 @@ window.closeFeedbackModal = closeFeedbackModal;
    - message > 2000 → setStatus('ההודעה ארוכה מדי...', 'error')
    - email != '' && !regex.test(email) → setStatus('כתובת אימייל לא תקינה', 'error')
 4. _isSubmitting = true; submitBtn.disabled = true; setStatus('שולח...', 'loading')
-5. בניית payload עם 10 שדות (form-name, bot-field, type, id, title, name, email, msg, url, UA)
-6. fetch('/', {method:'POST', headers:{'Content-Type': 'application/x-www-form-urlencoded'}, body:encodeFormData(payload)})
-7a. if (response.ok): setStatus('תודה!...', 'success'); setTimeout(closeFeedbackModal, 2500)
-7b. catch: setStatus('שליחה ישירה נכשלה. <a>פתח אימייל במקום</a>', 'error')
-    - יצירת click handler ב-#fb-mailto-fallback → openMailtoFallback(payload)
-8. finally: _isSubmitting = false; submitBtn.disabled = false
+5. בניית payload (JSON object) עם מפתחות _ (FormSubmit config) + שדות נתונים:
+   {
+     _subject: 'תיקון למתכון: X' | 'הצעה / תקלה — אתר ספר הבישול של פרלה ז"ל',
+     _template: 'table',          // פורמט מייל בטבלה
+     _captcha:  'false',          // captcha כבוי ב-AJAX
+     _honey:    '',                // honeypot
+     name, email, message,
+     type, recipe_id, recipe_title,
+     page_url, user_agent
+   }
+6. בניית mailtoData נפרד עם מפתחות ישנים (feedback-type, sender-name וכו') לתאימות עם openMailtoFallback()
+7. var endpoint = 'https://formsubmit.co/ajax/' + atob(FORMSUBMIT_EMAIL_B64)
+8. fetch(endpoint, {
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json',
+       'Accept':       'application/json'
+     },
+     body: JSON.stringify(payload)
+   })
+9a. response.ok ?
+    - data.success === 'true' → setStatus('תודה! ההודעה נשלחה בהצלחה.', 'success')
+    - data.success === 'false' (פעם ראשונה, דורש activation) → setStatus('תודה! ההודעה נקלטה בהצלחה.', 'success')
+    setTimeout(closeFeedbackModal, 2500)
+9b. !response.ok OR network error → .catch():
+    - setStatus('שליחה ישירה נכשלה. <a>פתח באימייל במקום</a>', 'error')
+    - רישום click handler ב-#fb-mailto-fallback → openMailtoFallback(mailtoData)
+10. .then(): _isSubmitting = false; submitBtn.disabled = false
 ```
 
-### 5.10 `openMailtoFallback(data)` — Base64 obfuscation
+### 5.10 `openMailtoFallback(data)` — Base64 obfuscation (לא השתנה)
 
 ```javascript
 // Base64 of 'asafben33@gmail.com'
@@ -551,6 +580,8 @@ window.location.href = 'mailto:' + to +
   '&body='    + encodeURIComponent(body);
 ```
 
+**הערה:** `mailtoData` במ-`submitFeedback` משתמש במפתחות הישנים (`feedback-type`, `recipe-title`, `sender-name` וכו') כדי לשמור על תאימות עם הפונקציה הזו.
+
 ### 5.11 Event Listeners
 
 | Element | Event | Handler |
@@ -563,6 +594,90 @@ window.location.href = 'mailto:' + to +
 | `#fb-message` | `input` | `updateCharCount` |
 | `document` | `keydown` (Escape) | if `#fb-ovl.open` → `closeFeedbackModal` |
 | `#m-feedback-act` | `click` | if `CUR_REC` → `openFeedbackModal('recipe', {id, title})` |
+
+### 5.12 PWA Install Button JS (v6.3 — שוחזר)
+
+IIFE נפרד שמנהל את כפתור ההתקנה. נמצא לפני `</body>`.
+
+```javascript
+(function(){
+  'use strict';
+  var _prompt = null;
+  var SEEN_KEY = 'perla_pwa_dismissed';  // localStorage flag
+
+  function _btn(){ return document.getElementById('pwa-install-btn'); }
+  function _show(){ var b = _btn(); if (b) b.style.display = 'flex'; }
+  function _hide(){ var b = _btn(); if (b) b.style.display = 'none'; }
+
+  /* Hide if already installed (standalone mode) */
+  if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return;
+  if (window.navigator.standalone === true) return;  // iOS Safari
+
+  /* Chrome/Edge/Firefox/Samsung: standard install flow */
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    _prompt = e;
+    if (localStorage.getItem(SEEN_KEY) !== 'yes') _show();
+  });
+
+  window.addEventListener('appinstalled', function(){
+    _hide();
+    _prompt = null;
+    try { localStorage.setItem(SEEN_KEY, 'yes'); } catch(e){}
+  });
+
+  /* Click handler — trigger native prompt or iOS instructions */
+  document.addEventListener('click', function(e){
+    var b = e.target && e.target.closest && e.target.closest('#pwa-install-btn');
+    if (!b) return;
+    e.preventDefault();
+
+    if (_prompt) {
+      _prompt.prompt();
+      _prompt.userChoice.then(function(r){
+        if (r.outcome === 'accepted') {
+          _hide();
+          try { localStorage.setItem(SEEN_KEY, 'yes'); } catch(e){}
+        }
+        _prompt = null;
+      });
+    } else {
+      /* iOS / unsupported — show manual instructions */
+      var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      var lang = (document.documentElement.lang || navigator.language || 'he').slice(0,2);
+      var isHe = lang === 'he';
+      var msg;
+      if (isIOS) {
+        msg = isHe
+          ? 'להתקנה ב-iPhone/iPad:\n1. לחצו על כפתור "שיתוף"\n2. בחרו "הוסף למסך הבית"\n3. לחצו "הוסף"'
+          : 'To install: Tap Share → "Add to Home Screen" → "Add"';
+      } else {
+        msg = isHe
+          ? 'להתקנה: פתחו את תפריט הדפדפן (שלוש נקודות) ובחרו "הוסף למסך הבית" או "התקן אפליקציה"'
+          : 'To install: Browser menu (three dots) → "Install app" or "Add to Home Screen"';
+      }
+      alert(msg);
+    }
+  });
+
+  /* iOS doesn't fire beforeinstallprompt — show button after load */
+  if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone) {
+    window.addEventListener('load', function(){
+      if (localStorage.getItem(SEEN_KEY) === 'yes') return;
+      setTimeout(_show, 1500);
+    });
+  }
+})();
+```
+
+**Event Listeners ב-PWA IIFE:**
+
+| Event | Source | Handler |
+|---|---|---|
+| `beforeinstallprompt` | `window` | שומר event ומציג כפתור |
+| `appinstalled` | `window` | מסתיר כפתור, מעדכן localStorage |
+| `click` | `document` (delegated) | קורא `_prompt.prompt()` או מציג `alert()` לפי OS |
+| `load` | `window` (iOS only) | מציג כפתור אחרי 1.5s |
 
 ---
 
@@ -986,7 +1101,7 @@ en_search = "recipe " + query_en
 
 ## 15. Content Security Policy — מפרט מלא
 
-### 15.1 Policy String (v6.0)
+### 15.1 Policy String ב-`<meta>` (v6.3)
 
 ```
 default-src 'self';
@@ -995,32 +1110,59 @@ style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
 font-src 'self' https://fonts.gstatic.com;
 img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com;
 media-src 'self' blob:;
-connect-src 'self';
+connect-src 'self' https://formsubmit.co;
 frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;
 object-src 'none';
 base-uri 'self';
 form-action 'self';
-frame-ancestors 'none';
 ```
 
-### 15.2 Directive-by-Directive Explanation
+**שינויים v6.0 → v6.3:**
 
-| Directive | ערך | רציונל |
+| Directive | v6.0 | v6.3 | סיבה |
+|---|---|---|---|
+| `connect-src` | `'self'` | `'self' https://formsubmit.co` | נדרש לשליחת פידבק דרך AJAX |
+| `frame-ancestors` | `'none'` (ב-meta) | **הוסר מה-meta** | הדפדפן מתעלם מ-`frame-ancestors` ב-`<meta>`; מוגדר רק ב-`_headers` |
+
+**הסבר על `frame-ancestors`:**
+
+הכותרת `frame-ancestors` **חייבת** להגיע כ-HTTP response header — הדפדפן מתעלם ממנה אם היא מופיעה ב-`<meta>`. לכן ב-v6.2 הוסרה מ-meta ונוספה רק ל-`_headers` של Netlify. הדבר גם מונע warning בקונסול.
+
+### 15.2 Netlify `_headers` (v6.3)
+
+קובץ בשורש הפרויקט המגדיר HTTP headers:
+
+```
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com; media-src 'self' blob:; connect-src 'self' https://formsubmit.co; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self' https://formsubmit.co; frame-ancestors 'none';
+```
+
+**הבדלים בין meta ל-headers:**
+
+- `connect-src` — זהה בשניהם: `'self' https://formsubmit.co`.
+- `form-action` — ב-headers: `'self' https://formsubmit.co` (מאפשר שליחה של `<form>` עם action ל-formsubmit). במטה: רק `'self'` (כי JS fetch לא עובר דרך CSP `form-action`).
+- `frame-ancestors 'none'` — **רק ב-headers**.
+- `X-Frame-Options: DENY` — backup ל-`frame-ancestors`, רק ב-headers.
+
+### 15.3 מה חוסמת ה-CSP
+
+| ניסיון | נחסם? | סיבה |
 |---|---|---|
-| `default-src` | `'self'` | fallback — טען רק מאותה סביבה |
-| `script-src` | `'self' 'unsafe-inline'` | inline scripts מותרים (נחוץ ל-JS הגדול שמוטמע) |
-| `style-src` | `'self' 'unsafe-inline' https://fonts.googleapis.com` | inline CSS + Google Fonts |
-| `font-src` | `'self' https://fonts.gstatic.com` | Google Fonts file server |
-| `img-src` | `'self' data: blob: https://i.ytimg.com https://img.youtube.com` | local + base64 (user upload) + YouTube thumbnails |
-| `media-src` | `'self' blob:` | video playback (blob לוידאו מועלה) |
-| `connect-src` | `'self'` | **קריטי לטופס הפידבק** — POST ל-`/` (Netlify) |
-| `frame-src` | `'self' https://www.youtube.com ...` | YouTube embeds ב-modal |
-| `object-src` | `'none'` | חסם Flash / Applets |
-| `base-uri` | `'self'` | מונע `<base>` hijack |
-| `form-action` | `'self'` | **מונע form submissions לשירותים חיצוניים** |
-| `frame-ancestors` | `'none'` | מונע clickjacking (embedding את האתר ב-iframe) |
+| Inline `<script>` | ❌ | CSP מרשה `'unsafe-inline'` |
+| Inline `<style>` | ❌ | CSP מרשה `'unsafe-inline'` |
+| Google Fonts CSS | ❌ | מורשה `https://fonts.googleapis.com` |
+| YouTube thumbnails | ❌ | מורשה `https://i.ytimg.com` |
+| YouTube embeds | ❌ | מורשה `https://www.youtube.com` |
+| FormSubmit AJAX | ❌ | מורשה `connect-src https://formsubmit.co` (v6.3) |
+| picsum.photos images | ✓ חסום | v6.1 הסיר `r.img` מ-fallback, אין יותר ניסיונות |
+| ממילא eval() | ✓ חסום | אין `'unsafe-eval'` |
+| Third-party iframes | ✓ חסום | רק YouTube מורשה |
+| Frame the site externally | ✓ חסום | `frame-ancestors 'none'` ב-headers |
 
----
 
 ## 16. JSON-LD Schema.org
 
@@ -1091,7 +1233,7 @@ frame-ancestors 'none';
 | Tab navigation at modal boundary | Focus trap — cycles back to first focusable |
 | Opening modal from URL hash | `setTimeout(() => openM(id), 300)` — wait for DOM ready |
 
-### 17.5 Feedback System
+### 17.5 Feedback System (v6.3 — FormSubmit.co)
 
 | תרחיש | טיפול |
 |---|---|
@@ -1100,8 +1242,12 @@ frame-ancestors 'none';
 | Double-click submit | `_isSubmitting = true` flag + disable button |
 | Message > 2000 chars | Character counter shows 2000/2000 + error on submit |
 | User closes modal mid-submit | Fetch continues in background (safe — no data loss) |
-| Bot fills hidden `bot-field` | Netlify auto-rejects on server side |
-| Netlify quota exceeded (>100/month) | POST returns 4xx → fallback to mailto |
+| Bot fills `_honey` field | FormSubmit auto-rejects on server side |
+| **First-ever submission** | FormSubmit returns `success:false` + activation email → UX shows "תודה! ההודעה נקלטה בהצלחה" |
+| **FormSubmit rate-limit exceeded** | Returns 4xx → `.catch()` → fallback to mailto |
+| **CSP blocks fetch** (misconfiguration) | fetch throws → `.catch()` → fallback to mailto |
+| **Offline** | fetch throws `TypeError: Failed to fetch` → fallback to mailto |
+| **FormSubmit service outage** | fetch returns 5xx → `.catch()` → fallback to mailto |
 
 ### 17.6 Search
 
@@ -1222,15 +1368,174 @@ frame-ancestors 'none';
 
 ---
 
-## 19. מפת התיעוד
+## 19. שינויים v6.0 → v6.3 — סשן 19/04
+
+### 19.1 UI Enlargement — 2 סיבובים
+
+**סיבוב ראשון (v6.2):**
+| רכיב | לפני | אחרי |
+|---|---|---|
+| `.hdr-search width` | `320px` | `320px` (ללא שינוי) |
+| `#srch width` | `180px` | `320px` |
+| `#srch font-size` | `.85rem` | `.95rem` |
+| `--nav-h` | `44px` | `54px` |
+| `.nb font-size` | `.82rem` | `1rem` |
+| `.nb font-weight` | normal | `700` |
+| `.nb padding` | `0 1rem` | `0 1.3rem` |
+| `.pc font-size` | `.78rem` | `1rem` |
+| `.acc-hdr font-size` | `.78rem` | `1.18rem` |
+| `.acc-hdr color` | `rgba(245,236,215,.7)` | `var(--c-gold-l)` |
+
+**סיבוב שני (v6.3):**
+| רכיב | לפני | אחרי |
+|---|---|---|
+| `.hdr-search` | `width: 320px` קבוע | `flex:1; max-width:640px; min-width:220px` **(גמיש!)** |
+| `.hdr-search padding` | `.5rem 1.1rem` | `.65rem 1.3rem` |
+| `#srch width` | `320px` | `100%` |
+| `#srch font-size` | `.95rem` | `1.05rem` |
+| `--nav-h` | `54px` | `60px` |
+| `.nb font-size` | `1rem` | `1.1rem` |
+| `.nb font-weight` | `600` | `700` |
+| `.nb padding` | `0 1.3rem` | `0 1.5rem` |
+| `.nb-cnt font-size` | `.78rem` | `.9rem` |
+| `.nb-cnt font-weight` | `600` | `700` |
+| `.nb-arr font-size` | `.75rem` | `.88rem` |
+| `.pc font-size` | `1rem` | `1.08rem` |
+| `.pc padding` | `.55rem 1.3rem` | `.72rem 1.5rem` |
+| `.acc-hdr font-size` | `1rem` | `1.18rem` |
+| `.acc-hdr padding` | `.55rem 1.3rem` | `.8rem 1.7rem` |
+| `.acc-hdr border-alpha` | `.28` | `.35` |
+| `.pc-cnt font-size` | `.82rem` | `.92rem` |
+| `.pc-cnt font-weight` | `500` | `600` |
+| `.acc-body gap` | `.55rem` | `.7rem` |
+| `.acc-body padding` | `.8rem 1rem` | `1rem 1.3rem` |
+| `.nav-panel-inner padding` | `1.1rem 1.5rem 1.3rem` | `1.4rem 1.8rem 1.6rem` |
+| `.nav-panel-inner layout` | (no flex) | `display:flex; flex-direction:column; gap:.8rem` |
+
+### 19.2 Feedback System — Migration ל-FormSubmit.co
+
+**הסיבה:** Netlify Forms אינו עובד מ-GitHub Pages (POST מחזיר 405). ראו HLD 14.7 לפרטים מלאים.
+
+**Code changes מפורטים:**
+
+1. **HTML removed** (859 bytes):
+   - `<form name="perla-feedback" data-netlify="true" hidden>` + 9 hidden inputs
+   - Removed `form-name`, `bot-field`, `feedback-type`, `recipe-id`, `recipe-title`, `sender-name`, `sender-email`, `message`, `page-url`, `user-agent`
+   - Replaced with comment: `<!-- Feedback uses FormSubmit.co AJAX -->`
+
+2. **JavaScript constant added:**
+   ```javascript
+   var FORMSUBMIT_EMAIL_B64 = 'YXNhZmJlbjMzQGdtYWlsLmNvbQ==';
+   ```
+   (base64 obfuscation of asafben33@gmail.com)
+
+3. **`submitFeedback()` rewritten** — ראו מפורט ב-5.9.
+
+4. **`<meta>` CSP updated:**
+   ```
+   connect-src 'self';
+   ```
+   → 
+   ```
+   connect-src 'self' https://formsubmit.co;
+   ```
+
+5. **`_headers` updated:**
+   - `connect-src 'self' https://formsubmit.co;`
+   - `form-action 'self' https://formsubmit.co;`
+
+**One-time activation:**
+
+FormSubmit דורש אישור חד-פעמי בשליחה הראשונה. על בעל האתר ללחוץ על קישור ה-activation שמגיע ב-email לאחר ה-submission הראשון.
+
+### 19.3 Content Updates
+
+**Hero title (HTML line 1461, i18n line 6461):**
+
+- לפני: `המטבח של משפחת בן הראש המורחבת`
+- אחרי: `המטבח של משפחת בן הראש (ארוש\הרוש)` (תעתיקים אלטרנטיביים של שם המשפחה)
+
+**Hero tagline (HTML line 1464, i18n line 6465):**
+
+- לפני: `לזכרם של פרלה ופנחס בן הראש — טעמים שמעלים זכרונות שחשבנו שכבר שכחנו...`
+- אחרי: `לזכרם של פרלה ופנחס בן הראש ז״ל — טעמים שמעלים זכרונות שכמעט שכחנו...`
+- הוסף ז״ל (Hebrew gershayim U+05F4 — לא `"` רגיל)
+- פושט "שחשבנו שכבר שכחנו" → "שכמעט שכחנו"
+- English: `In memory of Perla & Pinchas Ben-Harrosh z"l — flavors that awaken memories we almost forgot...`
+
+**About memorial paragraph** (HTML line 1480, i18n line 6474, JSON-LD line 1123):
+
+- לפני: `...שזכרונם יהיה לברכה וגאווה לדורי דורות דרך הטעם המעלה זכרונות שחשבנו שכבר שכחנו...`
+- אחרי: `...שזכרונם יהיה לברכה וגאווה הלאה לדורי דורות דרך הטעם המעלה זכרונות שכמעט שכחנו...`
+- הוסף "הלאה" לפני "לדורי דורות" — מדגיש המשכיות בין-דורית
+- English: `...a source of pride onward for generations to come, through flavors that awaken memories we almost forgot...`
+
+**About heading H2** (HTML line 1477, i18n line 6470):
+
+- לפני: `פרלה ופנחס בן הראש ז״ל — המשפחה שיצבה מטבח`
+- אחרי: `פרלה ופנחס בן הראש ז״ל — המשפחה שעיצבה מטבח שלם שיזכר ויתבשל הלאה לדורי דורות`
+- תיקון שורש `שיצבה` → `שעיצבה` (שורש ע+צ+ב)
+- הרחבה הודגשת ערך המשכיות
+- English: `The family that shaped an entire kitchen, to be remembered and cooked onward for generations to come`
+
+### 19.4 PWA Install Button Restored
+
+הכפתור היה קיים בסשנים קודמים, אבד, ושוחזר בסשן זה.
+
+**Complete restoration:**
+
+1. **HTML** — inserted as first element in `.hdr-tools`:
+   ```html
+   <button id="pwa-install-btn" class="hdr-btn hdr-btn-install"
+           aria-label="התקן אפליקציה" title="התקן אפליקציה"
+           data-i18n-label="pwa_label" data-i18n-aria="pwa_aria"
+           data-i18n-title="pwa_title" style="display:none">
+     <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true">
+       <polyline points="8 17 12 21 16 17"/>
+       <line x1="12" y1="3" x2="12" y2="21"/>
+     </svg>
+     <span class="pwa-label" data-i18n="pwa_label">התקן</span>
+   </button>
+   ```
+
+2. **CSS** — ראו טבלת 3.1 לעיל.
+
+3. **JavaScript** — ראו 5.12 לעיל.
+
+4. **i18n keys** (3 חדשים):
+   ```javascript
+   pwa_label:  {he:'התקן',           en:'Install'},
+   pwa_title:  {he:'התקן אפליקציה',   en:'Install app'},
+   pwa_aria:   {he:'התקן אפליקציה',   en:'Install app'},
+   ```
+
+### 19.5 JSON-LD SEO Description Updated
+
+JSON-LD `description` (line ~1123) עודכן כדי להתאים לטקסט של pvm`about_memorial` החדש:
+
+- לפני: `1,054 מתכונים... שזכרונם יהיה לברכה וגאווה לדורי דורות דרך הטעם המעלה...`
+- אחרי: `1,054 מתכונים... שזכרונם יהיה לברכה וגאווה הלאה לדורי דורות דרך הטעם המעלה...`
+
+### 19.6 File Size Changes
+
+| קובץ | v6.0 | v6.2 | v6.3 | שינוי |
+|---|---|---|---|---|
+| `index.html` | 359,000 | 377,689 | ~384,572 | +25,572 |
+| `_headers` | — | 1,231 | 1,231 | +1,231 |
+| `cat_images/*` (20 files) | — | 335 KB | 335 KB | +335 KB |
+
+## 20. מפת התיעוד
 
 | מסמך | גרסה | תיאור |
 |---|---|---|
-| `README.md` | 6.0 | סקירה כללית, התקנה, מבנה תפריט |
-| `CLAUDE.md` | 6.0 | הנחיות למפתחים/AI agents |
-| `HLD_Perla_CookingBook.md` | 6.0 | High Level Design |
-| `LLD_Perla_CookingBook.md` | **6.0** | **המסמך הנוכחי — Low Level Design** |
-| `INTEGRATION_GUIDE.md` | 1.0 | מדריך אינטגרציה של מערכת הפידבק |
+| `README.md` | 6.3 | סקירה כללית, התקנה, מבנה תפריט |
+| `CLAUDE.md` | 6.3 | הנחיות למפתחים/AI agents |
+| `HLD_Perla_CookingBook.md` | 6.3 | High Level Design |
+| `LLD_Perla_CookingBook.md` | **6.3** | **המסמך הנוכחי — Low Level Design** |
+| `INTEGRATION_GUIDE.md` | 2.0 | מדריך אינטגרציה של מערכת הפידבק (FormSubmit) |
+| `CHANGELOG_19-04-2026_v6.3.md` | — | שינויי הסשן הנוכחי (UI + FormSubmit + PWA) |
 | `CHANGELOG_18-04-2026_v2.md` | — | שינויי אבטחה ו-meta של 18/04 |
 | `CHANGELOG_download_images_v5.md` | — | שינויי v5.1 של `download_images.py` |
 | `download_images_usage_guide.md` | — | מדריך הרצת סקריפט v5.1 |
@@ -1240,4 +1545,4 @@ frame-ancestors 'none';
 *לזכר משפחת בן הראש — קזבלנקה, מרקש, ירושלים*
 *"האוכל שלה — הסיפור שלנו"*
 
-**סוף LLD v6.0**
+**סוף LLD v6.3**

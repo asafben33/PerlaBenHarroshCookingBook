@@ -1,14 +1,16 @@
 # ספר הבישול של משפחת בן הראש
 
-לזכרם של **פרלה ופנחס בן הראש** שזכרונם יהיה לברכה וגאווה לדורי דורות
-דרך הטעם המעלה זכרונות שחשבנו שכבר שכחנו...
+**גרסה 6.3 | 19 אפריל 2026**
+
+לזכרם של **פרלה ופנחס בן הראש ז״ל** שזכרונם יהיה לברכה וגאווה הלאה לדורי דורות
+דרך הטעם המעלה זכרונות שכמעט שכחנו...
 
 פרלה נולדה בקזבלנקה, גדלה במרקש, ועלתה לישראל עם לב מלא בטעמים ובסיפורים.
 נישאה לפנחס, איש ממשפחת קארו — צאצאי **רבי יוסף קארו**, מגורשי קסטיליה 1492.
 המטבח שלה שילב שני עולמות: **מרוקו העמוקה** ו**ספרד האנדלוסית**, ומאכלים שלמדה משכנים וחברים שתמיד עטפו אותה באהבה וחום.
 עם העלייה לישראל הגיעו לשכונת הקטמון בירושלים. שם, בין שכנות מעיראק, כורדיסטן, אשכנז, תימן, פרס ובוכרה — הפך מטבחה לפסיפס שלם.
 
-> *"ספר הבישול של משפחת בן הראש — דרך הטעם המעלה זכרונות שחשבנו שכבר שכחנו..."*
+> *"ספר הבישול של משפחת בן הראש — דרך הטעם המעלה זכרונות שכמעט שכחנו..."*
 
 ---
 
@@ -31,27 +33,31 @@
 
 ```
 PerlaBenHarroshCookingBook/
-├── index.html              ← SPA — UI, CSS, JS, מילון, כותרות EN
+├── index.html              ← SPA — UI, CSS, JS, מילון, כותרות EN, PWA install btn (v6.3)
 ├── data.js                 ← 1,054 מתכונים + CATS + MENU_STRUCTURE + HOLIDAY_TAGS
 ├── pre_en.js               ← תרגום EN מוכן — desc, mem, tip, steps, ingr
 ├── book_data.js            ← תוכן הספר הביוגרפי (BOOK_HTML / BOOK_HTML_EN)
 ├── about_redesigned.html   ← דף "אודות" מעוצב מחדש
 ├── about_redesigned.css    ← עיצוב דף אודות
 ├── about_redesigned.js     ← לוגיקת דף אודות
-├── sw.js                   ← Service Worker v10 — network-first documents, cache-first images
-├── manifest.json           ← PWA manifest
-├── download_images.py      ← סקריפט הורדת תמונות (810 search terms)
-├── cleanup_hardlinks.py    ← ניקוי כפילויות תמונות — SHA256 dedup
-├── clean_bad_images.py     ← ניקוי תמונות פגומות/שגויות
+├── sw.js                   ← Service Worker — network-first documents, cache-first images
+├── manifest.json           ← PWA manifest (התקנה כאפליקציה)
+├── _headers                ← Netlify HTTP headers — CSP, X-Frame-Options, Permissions-Policy (v6.2)
+├── download_images.py      ← סקריפט הורדת תמונות v5.1 (מאוחד, 810 search terms)
 ├── images/
 │   ├── recipes_images/     ← תמונות מתכונים: r-{id}.jpg
 │   ├── book_images/        ← תמונות ספר + wedding.jpg
-│   └── site_images/        ← אייקונים, OG image, cat-*.jpg
-├── HLD_Perla_CookingBook.docx  ← High Level Design
-├── LLD_Perla_CookingBook.docx  ← Low Level Design
+│   └── site_images/        ← אייקונים, OG image, 7 favicons, 20 cat-*.jpg placeholders
+├── HLD_Perla_CookingBook.md       ← High Level Design v6.3
+├── LLD_Perla_CookingBook.md       ← Low Level Design v6.3
+├── INTEGRATION_GUIDE.md           ← מדריך אינטגרציה v2.0 (FormSubmit.co)
+├── CHANGELOG_19-04-2026_v6.3.md   ← שינויי סשן 19/04
+├── CHANGELOG_18-04-2026_v2.md     ← שינויי 18/04
+├── CHANGELOG_download_images_v5.md ← שינויי download_images.py v5.1
+├── download_images_usage_guide.md ← מדריך הרצת סקריפט הורדה
 ├── .gitignore
-├── CLAUDE.md
-└── README.md
+├── CLAUDE.md                      ← הנחיות למפתחים/AI (v6.3)
+└── README.md                      ← המסמך הזה
 ```
 
 ---
@@ -228,6 +234,49 @@ python download_images.py
 
 ---
 
+## פיצ'רים עיקריים
+
+### חוויית משתמש
+- **חיפוש מורפולוגי עברי** — מזהה צורות הטיה (בצל, לבצל, מבצל, בצלים)
+- **סינון רב-ממדי** — קטגוריה × רמת קושי × חג × תגיות מרכיבים × מועדפים
+- **תוצאות חיות** — מתעדכנות בזמן הקלדה
+- **דף "אודות"** מעוצב עם ביוגרפיה של פרלה ופנחס ז״ל
+
+### תרגום
+- **עברית + אנגלית** — toggle מיידי, 2,853 ערכי מילון + 1,054 תרגומים מוכנים מראש
+- תרגום morphological של כותרות, תיאורים, זיכרונות, טיפים, שלבים, מרכיבים
+
+### PWA (Progressive Web App)
+- **כפתור "התקן" בולט** בהדר (v6.3 — שוחזר) — pulse animation, מתחבא אחרי התקנה
+- **iOS support** — הוראות הוספה למסך הבית אם הדפדפן לא תומך ב-`beforeinstallprompt`
+- **Service Worker** — network-first למסמכים, cache-first לתמונות
+- **offline mode** — האתר פועל גם בלי אינטרנט (מתוך cache)
+
+### מערכת פידבק (v6.3 — FormSubmit.co)
+- **כפתור "הערה / תיקון"** בכל modal של מתכון
+- **FAB צף** שמאלי-תחתון — "הצעות ודיווח"
+- **FormSubmit.co AJAX** — עובד מכל מקור (GitHub Pages, Netlify, localhost)
+- **fallback ל-mailto** — אם אין אינטרנט או FormSubmit חסום
+- **Base64 obfuscation** של כתובת המייל
+
+### אבטחה
+- **CSP מוחזק** (v6.3) — רק מקורות מאושרים, `connect-src` כולל formsubmit.co בלבד
+- **`_headers`** של Netlify — X-Frame-Options, frame-ancestors, Permissions-Policy
+- **אין תלויות חיצוניות** — 100% self-contained
+
+### נגישות (WCAG 2.1)
+- **RTL + עברית**, `dir="rtl" lang="he"`
+- **ARIA roles** — `role`, `aria-label`, `aria-expanded`, `aria-modal`
+- **Keyboard navigation** — Tab, Enter, Escape, Arrow keys, focus trap
+- **`prefers-reduced-motion`** — אנימציות מבוטלות (pulse, transitions)
+
+### מדיה אישית
+- **תמונות אישיות** למתכונים (עד 3 לכל מתכון, localStorage)
+- **סרטונים** (YouTube iframes) — עד 5 למתכון
+- **מועדפים** — רשימה אישית ב-localStorage
+
+---
+
 ## פריסה
 
 | שרת | כתובת |
@@ -239,14 +288,47 @@ python download_images.py
 | Build | ללא CI/CD — push ידני |
 | Logs | logs/download_images_YYYY-MM-DD_HH.MM.log |
 
+### דרישה חד-פעמית (FormSubmit activation)
+
+לאחר הפריסה הראשונה, שלח הודעה דרך FAB. FormSubmit ישלח לך מייל verification — לחץ על הקישור. מאותו רגע כל ההודעות יגיעו רגיל.
+
+### Deploy מ-PowerShell
+
+```powershell
+cd C:\Users\isasaf\Assi-ProjectsWorkFolder\PerlaBenHarroshCookingBook
+git add .
+git commit -m "description"
+git push origin main
+```
+
+Netlify + GitHub Pages יפרוסו אוטומטית תוך 1-2 דקות.
+
 ---
 
 ## תיעוד טכני
 
 | מסמך | גרסה | תיאור |
 |------|-------|-------|
-| HLD_Perla_CookingBook.docx | 5.0 | High Level Design — ארכיטקטורה, תפריט, קטגוריות, חגים, תרגום, responsive |
-| LLD_Perla_CookingBook.docx | 5.0 | Low Level Design — CSS tokens, DOM IDs, 48 פונקציות, filtered(), buildNav(), openM() |
+| `HLD_Perla_CookingBook.md` | 6.3 | High Level Design — ארכיטקטורה, תפריט, קטגוריות, חגים, תרגום, responsive, feedback, PWA |
+| `LLD_Perla_CookingBook.md` | 6.3 | Low Level Design — CSS tokens, DOM IDs, 48+ פונקציות, filtered(), buildNav(), openM(), submitFeedback(), PWA IIFE |
+| `INTEGRATION_GUIDE.md` | 2.0 | מדריך אינטגרציה של מערכת הפידבק (FormSubmit.co AJAX) |
+| `CHANGELOG_19-04-2026_v6.3.md` | — | שינויי סשן 19/04 — UI enlargement, FormSubmit migration, PWA restore, content updates |
+| `CHANGELOG_18-04-2026_v2.md` | — | שינויי 18/04 — meta/security fixes, 50 tips, 20 cat-*.jpg placeholders, 7 favicons |
+| `CHANGELOG_download_images_v5.md` | — | שינויי download_images.py v5.1 — unified, 6 CLI flags, 100+100 domains |
+| `download_images_usage_guide.md` | — | מדריך הרצת download_images.py v5.1 |
+| `CLAUDE.md` | 6.3 | הנחיות למפתחים/AI agents לעבודה על הפרויקט |
+
+---
+
+## היסטוריית גרסאות
+
+| גרסה | תאריך | עיקרי השינויים |
+|---|---|---|
+| 5.0 | אפריל 2026 | בסיס — 1,054 מתכונים, 19 קטגוריות, תרגום מלא, PWA |
+| 6.0 | 18/04/2026 | CSP מוחזק, favicons PNG, OG image, feedback system (Netlify Forms) |
+| 6.1 | 18/04/2026 | הסרת r.img/-2/-3 מ-fallback (מונע 3,162 שגיאות/טעינה) |
+| 6.2 | 18/04/2026 | 20 cat-*.jpg placeholders, `_headers` file, UI enlarge סיבוב 1 |
+| **6.3** | **19/04/2026** | **UI enlarge סיבוב 2, FormSubmit.co migration, PWA install button, content updates** |
 
 ---
 
