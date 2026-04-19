@@ -191,7 +191,7 @@ CATEGORIES = [
 CATEGORY_IDS  = [c[0] for c in CATEGORIES]
 CATEGORY_DICT = dict(CATEGORIES)
 
-DIFFICULTIES = ['קל', 'בינוני', 'קשה']
+DIFFICULTIES = ['קל', 'בינוני', 'מתקדם']  # v8.2: was 'קשה' but data.js uses 'מתקדם' across all 1054 recipes
 
 # -----------------------------------------------------------
 # ANSI colors (fall back silently if terminal doesn't support)

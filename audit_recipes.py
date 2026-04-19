@@ -62,7 +62,10 @@ DEFAULT_MIN_MEM_LEN = 20    # Memory notes shorter than 20 chars are suspect
 
 # Time validation (in minutes)
 MIN_REASONABLE_TIME = 5     # Less than 5 min for a full recipe is suspect
-MAX_REASONABLE_TIME = 720   # More than 12 hours (except overnight prep) is suspect
+# v8.2: raised from 720 (12hr) to 4320 (72hr) to accommodate legitimate
+# brining/curing/fermentation times in Moroccan/Spanish/Yemeni traditional
+# recipes (salted fish, pickled vegetables, wine yeast, etc.)
+MAX_REASONABLE_TIME = 4320  # More than 72 hours is suspect
 
 # Serving validation
 MIN_REASONABLE_SERV = 1
@@ -173,12 +176,27 @@ def _time_to_minutes(time_str):
 
 
 def _serv_to_number(serv_str):
-    """Parse 'serv' field (e.g., '4 מנות', 'ל-6 אנשים') to int, or None."""
+    """Parse 'serv' field (e.g., '4 מנות', 'ל-6 אנשים') to int, or None.
+
+    v8.2: Some recipes (preserves, spreads, condiments) intentionally use
+    descriptive servings like "צנצנת גדולה" or "כלי קטן" because they're
+    measured by container, not by individual portions. These return a sentinel
+    value (-1) instead of None, so they pass validation without flagging.
+    """
     if not serv_str:
         return None
+    # Numeric extraction first
     m = re.search(r'(\d+)', serv_str)
     if m:
         return int(m.group(1))
+    # Whitelist of valid container-based descriptors (preserves, spreads, condiments)
+    container_descriptors = (
+        'צנצנת', 'כלי', 'קופסה', 'בקבוק', 'כד',     # containers
+        'מנה אחת', 'יחיד', 'קערה',                    # single-portion descriptors
+        'מנה שמירה', 'גרניש', 'תבלין',               # preservation/garnish/seasoning batches
+    )
+    if any(desc in serv_str for desc in container_descriptors):
+        return -1  # sentinel: valid non-numeric serving descriptor
     return None
 
 
@@ -325,6 +343,8 @@ def check_serv_reasonable(r):
     if serv is None:
         return [('unparseable_serv', 'serv',
                  f'לא הצלחתי לפענח את מספר המנות: "{r.get("serv", "")}"')]
+    if serv == -1:
+        return []  # v8.2: valid container-based descriptor (jar/bowl/etc.)
     if serv < MIN_REASONABLE_SERV or serv > MAX_REASONABLE_SERV:
         return [('suspicious_serv', 'serv',
                  f'מספר מנות חריג: {serv} ({r.get("serv", "")})')]
