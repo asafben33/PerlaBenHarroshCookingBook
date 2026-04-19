@@ -793,9 +793,24 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 .timer-box.active { display: block; }
 #toast { direction: rtl; position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%); background: var(--c-dark); color: var(--c-gold-l); border: 1px solid var(--c-gold-d); border-radius: 100px; padding: .5rem 1.2rem; z-index: 900; opacity: 0; transition: opacity .3s; pointer-events: none; font-size: .84rem; white-space: nowrap; }
 #toast.show { opacity: 1; }
-#back-top { position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 400; width: 42px; height: 42px; background: var(--c-gold); border-radius: 100%; color: var(--c-dark); border: none; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .3s; box-shadow: var(--sh-sm); }
-#back-top.on { opacity: .8; }
-#back-top:hover { opacity: 1; }
+#back-top {
+  position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 400;
+  width: 48px; height: 48px;
+  background: var(--c-gold); color: var(--c-dark);
+  border: 2px solid rgba(255,255,255,.15); border-radius: 100%;
+  cursor: pointer; font-size: 1.3rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transform: translateY(12px) scale(.85);
+  transition: opacity .28s var(--ease), transform .28s var(--ease), background var(--t-fast);
+  box-shadow: 0 6px 20px rgba(20,8,2,.28), 0 2px 4px rgba(20,8,2,.18);
+  pointer-events: none;
+}
+#back-top.on { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+#back-top:hover { background: var(--c-gold-l); transform: translateY(-3px) scale(1.05); }
+#back-top:focus-visible { outline: 2px solid var(--c-gold-l); outline-offset: 3px; }
+@media (max-width: 480px) {
+  #back-top { width: 44px; height: 44px; bottom: 1rem; left: 1rem; font-size: 1.15rem; }
+}
 
 /* ── Header tools (theme + lang) ──────────────────────────── */
 .hdr-tools { display: flex; gap: .3rem; align-items: center; flex-shrink: 0; }
@@ -1496,8 +1511,7 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
     <div class="hdr-tools">
       <button id="pwa-install-btn" class="hdr-btn hdr-btn-install"
               aria-label="התקן אפליקציה" title="התקן אפליקציה"
-              data-i18n-label="pwa_label" data-i18n-aria="pwa_aria" data-i18n-title="pwa_title"
-              style="display:none">
+              data-i18n-label="pwa_label" data-i18n-aria="pwa_aria" data-i18n-title="pwa_title">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
              stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <polyline points="8 17 12 21 16 17"/>
@@ -3765,13 +3779,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Back to top
+  // Back to top — v6.9: lower threshold, check on load
   var backTop = document.getElementById('back-top');
   if (backTop) {
-    backTop.addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
-    window.addEventListener('scroll', function() {
-      backTop.classList.toggle('on', window.scrollY > 450);
-    }, { passive: true });
+    backTop.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    var _updateBackTop = function() {
+      backTop.classList.toggle('on', window.scrollY > 300);
+    };
+    window.addEventListener('scroll', _updateBackTop, { passive: true });
+    _updateBackTop();  /* initial check on load (handles back-forward cache / deep links) */
   }
 
   // Modal scroll progress
@@ -7328,9 +7346,15 @@ if(typeof BOOK_HTML!=='undefined'){
 
 
 <!-- ═══════════════════════════════════════════════════════════
-     PWA Install Prompt (Progressive Web App)
-     Shows an animated install button when browser supports it.
-     iOS fallback: manual "Add to Home Screen" instructions.
+     PWA Install Prompt (Progressive Web App) — v6.9
+     v6.9: Button is always visible by default (HTML has no style="display:none").
+     JS only HIDES it in 3 cases:
+       1. Running as installed PWA (standalone mode).
+       2. User dismissed it via SEEN_KEY in localStorage.
+       3. App was installed (appinstalled event).
+     This fixes the v6.3-v6.8 issue where the button was hidden by default
+     and only shown if Chrome's internal engagement heuristic triggered
+     beforeinstallprompt, which many users never experienced.
 ═══════════════════════════════════════════════════════════ -->
 <script>
 (function(){
@@ -7339,18 +7363,20 @@ if(typeof BOOK_HTML!=='undefined'){
   var SEEN_KEY = 'perla_pwa_dismissed';
 
   function _btn(){ return document.getElementById('pwa-install-btn'); }
-  function _show(){ var b = _btn(); if (b) b.style.display = 'flex'; }
   function _hide(){ var b = _btn(); if (b) b.style.display = 'none'; }
 
   /* Hide if running as installed PWA (standalone mode) */
-  if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return;
-  if (window.navigator.standalone === true) return;
+  if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) { _hide(); return; }
+  if (window.navigator.standalone === true) { _hide(); return; }
 
-  /* Chrome/Edge/Firefox/Samsung Internet: standard install flow */
+  /* Hide if the user previously dismissed via our UI flow */
+  if (localStorage.getItem(SEEN_KEY) === 'yes') { _hide(); return; }
+
+  /* Chrome/Edge/Firefox/Samsung Internet: capture native install prompt */
   window.addEventListener('beforeinstallprompt', function(e){
     e.preventDefault();
     _prompt = e;
-    if (localStorage.getItem(SEEN_KEY) !== 'yes') _show();
+    /* Button is already visible — just note we have a native prompt available */
   });
 
   window.addEventListener('appinstalled', function(){
@@ -7359,13 +7385,14 @@ if(typeof BOOK_HTML!=='undefined'){
     try { localStorage.setItem(SEEN_KEY, 'yes'); } catch(e){}
   });
 
-  /* Click handler */
+  /* Click handler — uses native prompt if available, otherwise shows instructions */
   document.addEventListener('click', function(e){
     var b = e.target && e.target.closest && e.target.closest('#pwa-install-btn');
     if (!b) return;
     e.preventDefault();
 
     if (_prompt) {
+      /* Native install flow (Chrome/Edge on desktop + Android) */
       _prompt.prompt();
       _prompt.userChoice.then(function(r){
         if (r.outcome === 'accepted') {
@@ -7374,32 +7401,44 @@ if(typeof BOOK_HTML!=='undefined'){
         }
         _prompt = null;
       });
-    } else {
-      /* iOS / unsupported browsers: show instructions */
-      var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-      var lang = (document.documentElement.lang || navigator.language || 'he').slice(0,2);
-      var isHe = lang === 'he';
-      var msg;
-      if (isIOS) {
-        msg = isHe
-          ? 'להתקנה ב-iPhone/iPad:\n1. לחצו על כפתור "שיתוף" בתחתית הדפדפן\n2. גללו ובחרו "הוסף למסך הבית"\n3. לחצו "הוסף"'
-          : 'To install on iPhone/iPad:\n1. Tap the Share button at the bottom\n2. Scroll and choose "Add to Home Screen"\n3. Tap "Add"';
-      } else {
-        msg = isHe
-          ? 'להתקנה: פתחו את תפריט הדפדפן (שלוש נקודות) ובחרו "הוסף למסך הבית" או "התקן אפליקציה"'
-          : 'To install: Open your browser menu (three dots) and select "Install app" or "Add to Home Screen"';
-      }
-      alert(msg);
+      return;
     }
-  });
 
-  /* iOS doesn't fire beforeinstallprompt — show button after load (once) */
-  if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone) {
-    window.addEventListener('load', function(){
-      if (localStorage.getItem(SEEN_KEY) === 'yes') return;
-      setTimeout(_show, 1500);
-    });
-  }
+    /* No native prompt available — show manual install instructions per browser */
+    var ua = navigator.userAgent || '';
+    var isIOS      = /iphone|ipad|ipod/i.test(ua);
+    var isAndroid  = /android/i.test(ua);
+    var isSafari   = /^((?!chrome|android).)*safari/i.test(ua);
+    var isFirefox  = /firefox/i.test(ua);
+    var isDesktop  = !isIOS && !isAndroid;
+    var lang       = (document.documentElement.lang || navigator.language || 'he').slice(0,2);
+    var isHe       = lang === 'he';
+    var msg;
+
+    if (isIOS) {
+      msg = isHe
+        ? 'להתקנה ב-iPhone/iPad:\n1. לחצו על כפתור "שיתוף" (המשולש עם חץ) בתחתית Safari\n2. גללו למטה ובחרו "הוסף למסך הבית"\n3. לחצו "הוסף" בפינה העליונה'
+        : 'To install on iPhone/iPad:\n1. Tap the Share button (square with arrow) at the bottom of Safari\n2. Scroll down and choose "Add to Home Screen"\n3. Tap "Add" in the top corner';
+    } else if (isAndroid) {
+      msg = isHe
+        ? 'להתקנה ב-Android:\n1. פתחו את תפריט הדפדפן (שלוש נקודות מימין למעלה)\n2. בחרו "התקן אפליקציה" או "הוסף למסך הבית"\n3. אשרו "התקן"'
+        : 'To install on Android:\n1. Open the browser menu (three dots, top right)\n2. Choose "Install app" or "Add to Home Screen"\n3. Confirm "Install"';
+    } else if (isFirefox) {
+      msg = isHe
+        ? 'Firefox במחשב אינו תומך בהתקנה כאפליקציה.\nאנא השתמשו ב-Chrome, Edge או Brave להתקנה,\nאו הוסיפו סימנייה (Ctrl+D) כקיצור מהיר.'
+        : 'Firefox on desktop does not support app installation.\nPlease use Chrome, Edge or Brave to install,\nor add a bookmark (Ctrl+D) as a quick shortcut.';
+    } else if (isSafari && isDesktop) {
+      msg = isHe
+        ? 'להתקנה ב-Safari (macOS):\n1. לחצו על כפתור "שיתוף" בסרגל הכלים\n2. בחרו "הוסף ל-Dock"'
+        : 'To install in Safari (macOS):\n1. Click the Share button in the toolbar\n2. Choose "Add to Dock"';
+    } else {
+      /* Chrome/Edge/Brave — usually trigger beforeinstallprompt; if not, guide manually */
+      msg = isHe
+        ? 'להתקנה במחשב:\n1. לחצו על אייקון ההתקנה בסרגל הכתובת (מסך עם חץ)\n   או פתחו את התפריט (שלוש נקודות) ובחרו "התקן ספר הבישול…"\n2. אשרו "התקן"\n\nאם האייקון לא מופיע — נסו לרענן את הדף ולחזור.'
+        : 'To install on desktop:\n1. Click the install icon in the address bar (monitor with arrow)\n   or open the menu (three dots) and choose "Install Perla Cookbook…"\n2. Confirm "Install"\n\nIf the icon does not appear, try refreshing the page.';
+    }
+    alert(msg);
+  });
 })();
 </script>
 
