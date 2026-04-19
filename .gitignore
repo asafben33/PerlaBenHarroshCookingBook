@@ -12,9 +12,6 @@
 !about_redesigned.html
 !about_redesigned.js
 !book_data.js
-!CLAUDE.md
-!clean_bad_images.py
-!cleanup_hardlinks.py
 !data.js
 !download_images.py
 !index.html
@@ -22,3 +19,7 @@
 !pre_en.js
 !README.md
 !sw.js
+!add_recipe.py
+!edit_recipe.py
+!proxy_config.txt
+!recipe_utils.py
