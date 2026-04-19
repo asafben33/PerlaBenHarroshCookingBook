@@ -2,15 +2,15 @@
 
 ## LLD — Low Level Design
 
-**גרסה 6.4 | 19 אפריל 2026**
+**גרסה 7.1 | 19 אפריל 2026**
 
 *מפרט טכני מלא ומפורט — כל שכבות הקוד, כל פונקציה, כל קומפוננטה*
 
 | פרט | ערך |
 |---|---|
 | Repository | github.com/asafben33/PerlaBenHarroshCookingBook |
-| גרסה נוכחית | 6.4 (19/04/2026) |
-| גרסה קודמת | 6.3 (19/04/2026) — נכשלה ב-CORS, הוחלפה |
+| גרסה נוכחית | 7.1 (19/04/2026) |
+| גרסה קודמת | 7.0 (19/04/2026) — שיפוץ דף ראשי, MENU_STRUCTURE flat |
 | גרסת `index.html` | ~375 KB |
 | גרסת `download_images.py` | 5.1 (152 KB) |
 
@@ -266,13 +266,22 @@
 | `srch-clr` | `<button>` | ניקוי חיפוש — `hidden` default |
 | `theme-toggle` | `<button>` | `☀`/`🌙` — dark/light theme |
 | `lang-toggle` | `<button>` | `EN` — toggle language |
+| `pwa-install-btn` | `<button>` | התקן כאפליקציה (v6.3+) |
+| **`hdr-count`** | **`<span>`** | **v7.0 — ספירת מתכונים דינמית בכותר** |
 | `cat-inner` | `<div>` | container לכפתורי `.nb` — innerHTML ע"י `buildNav()` |
 | `nav-panel` | `<div>` | panel dropdown — `position:absolute` |
 | `nav-panel-inner` | `<div>` | scroll container של panel |
-| `pill-cnt` | `<span>` | מונה מתכונים — מעודכן ע"י `renderGrid()` |
+| **`hero-cta-browse`** | **`<button>`** | **v7.0 — כפתור CTA ראשי "עיון במתכונים"** |
+| **`hero-cta-book`** | **`<button>`** | **v7.0 — כפתור CTA משני "קרא את הספר"** |
+| `pill-cnt` | `<span>` | מונה מתכונים ב-hero — מעודכן ע"י `renderGrid()` |
+| `book-toggle` | `<button>` | פתיחה/סגירה של תוכן הספר |
 | `about-toggle` | `<button>` | expand/collapse אודות |
 | `about` | `<section>` | סקציית אודות — `aria-hidden` |
+| `bio` | `<section>` | סקציית ביוגרפיה קצרה (v7.0 — לפני main) |
 | `book-content` | `<div>` | placeholder שמוחלף ע"י `BOOK_HTML` |
+| `book-wrapper` | `<section>` | עטיפה של תוכן הספר (v7.0 — אחרי main) |
+| `about-redesigned` | `<section>` | סעיף אודות המורחב (v7.0 — אחרי book) |
+| **`main`** | **`<main>`** | **v7.1 — מתחיל עם `class="main-hidden"`, מתגלה ע"י `showMainGrid()`** |
 | `grid` | `<div>` | recipe grid — `aria-busy` toggle |
 | `sec-title` | `<h2>` | כותרת סקציה נוכחית |
 | `sec-cnt` | `<span>` | `N מתכונים` |
@@ -406,30 +415,53 @@
 6. Click/Enter/Space → `openM(r.id)`.
 7. `grid.appendChild(fragment)`.
 
-### 5.4 `buildNav()`
+### 5.4 `buildNav()` (v7.0)
 
-בונה את תפריט הניווט מ-`MENU_STRUCTURE`. פונקציות nested:
+בונה את תפריט הניווט מ-`MENU_STRUCTURE` (flat 6-group). מ-v7.0 נכתב מחדש — 42% קטן יותר. פונקציות nested:
 
 | פונקציה | תיאור |
 |---|---|
-| `catCnt(id)` | ספירת מתכונים — `null`/`string`/`array` safe |
+| `catCnt(id)` | ספירת מתכונים — תומך `null`/`string`/`array` (v7.0: מזהה recipe-IDs vs cat-IDs לפי regex `/[0-9]/`) |
 | `isActiveLeaf(catId, hol, ids)` | בודק אם פריט פעיל |
-| `makeChip(lbl, c, onClick, active)` | יוצר כפתור `.pc` עם count |
-| `selectCat(catId, hol, key)` | `ACT_CAT`, reset `ACT_IDS`/`ACT_CATS`/`SEARCH` |
-| `selectMulti(ids, lbl, key)` | `ACT_CATS`, reset `ACT_IDS` |
-| `selectByIds(rids, lbl, key)` | `ACT_IDS = new Set(rids)` |
-| `buildPanel(node, pi)` | בונה panel: 4 branches (accordion, multi-cat, recipe-IDs, simple) |
+| `makeChip(lbl, c, onClick, active, extraClass?)` | יוצר כפתור `.pc` + אפשרות להוסיף class |
+| `selectCat(catId, hol, key)` | `showMainGrid()` (v7.1) + `ACT_CAT`, reset `ACT_IDS`/`ACT_CATS`/`SEARCH` |
+| `selectMulti(ids, lbl, key)` | `showMainGrid()` + `ACT_CATS`, reset `ACT_IDS` |
+| `selectByIds(rids, lbl, key)` | `showMainGrid()` + `ACT_IDS = new Set(rids)` |
+| `renderItem(item, nodeKey, parentEl)` | רקורסיבית — 5 branches (sep, placeholder, holiday, nested, cat-leaf) |
+| `buildPanel(node, pi)` | `(node.items || []).forEach(item => renderItem(...))` |
 
-### 5.5 `buildPanel(node, pi)` — 4 branches
+### 5.5 `renderItem(item, nodeKey, parentEl)` — 5 branches (v7.0)
 
 | Branch | תנאי | פעולה |
 |---|---|---|
-| 1 | `item.items || item.sub` | Accordion group: `hdr + body`, expand/collapse |
-| 2 | `item.ids && !item.items` | Multi-cat leaf: `isRecipeIds ? selectByIds : selectMulti` |
-| 3 | `item.sep` | separator div |
-| 4 | default (simple chip) | `selectCat(item.id)` |
+| 1 | `item.sep` | separator div `.acc-sep` |
+| 2 | `item.placeholder === 'communityHolidays'` | chip עם class `pc-holidays pc-placeholder`, click → `showToast(emptyMsg)` (Option C) |
+| 3 | `item.id === 'hol' && 'h' in item` | holiday filter chip → `selectCat('hol', item.h)` |
+| 4 | `item.items` | nested accordion: `hdr + body`, רקורסיבית ל-renderItem עבור sub-items |
+| 5 | `item.ids` | Multi-cat/recipe-ID leaf: `isRecipeIds ? selectByIds : selectMulti` |
+| 6 | `item.id` (default) | simple chip → `selectCat(item.id)` |
 
-### 5.6 `openM(id)`
+### 5.6 `showMainGrid()` / `hideMainGrid()` (v7.1)
+
+פונקציות גלובליות המנהלות את הגילוי/הסתרה של רשת המתכונים:
+
+```javascript
+function showMainGrid() {
+  var m = document.getElementById('main');
+  if (m) { m.classList.remove('main-hidden'); m.setAttribute('aria-hidden', 'false'); }
+}
+function hideMainGrid() {
+  var m = document.getElementById('main');
+  if (m) { m.classList.add('main-hidden'); m.setAttribute('aria-hidden', 'true'); }
+}
+```
+
+**נקודות קריאה:**
+1. `selectCat/Multi/ByIds` (closures ב-buildNav) — תחילת הפונקציה
+2. `doSearch(val)` — `if (SEARCH) showMainGrid()` (ניקוי חיפוש לא מסתיר)
+3. Click handler של `#hero-cta-browse` — מדמה click על כפתור `[data-nav-key="all"]`
+
+### 5.7 `openM(id)` (הקודם 5.6)
 
 1. `R.find(x => x.id === id)` → `CUR_REC`.
 2. `filtered().findIndex` → `CUR_IDX`.
@@ -709,25 +741,98 @@ IIFE נפרד שמנהל את כפתור ההתקנה. נמצא לפני `</body
 
 ---
 
-## 6. MENU_STRUCTURE — מפרט מלא
+## 6. MENU_STRUCTURE — מפרט מלא (v7.0 Flat 6-Group)
 
-`key: all_master` — כפתור יחיד "כל המתכונים" עם כל הקטגוריות כ-items:
+מ-v7.0 המבנה שטוח: 6 קבוצות עליונות מקבילות. עומק קינון מקסימלי 2 רמות.
 
-| item | סוג | action |
+### 6.1 רמה עליונה — 6 nodes
+
+| index | node | סוג | `key` | `ids` | action |
+|---|---|---|---|---|---|
+| 0 | `{key:'all', lbl:'הכל', id:'all'}` | leaf | `all` | — | `selectCat('all')` |
+| 1 | `{key:'morocco', lbl:'מרוקו', ids:[8 cats], items:[7]}` | group | `morocco` | 8 cat-IDs | drawer |
+| 2 | `{key:'spain', lbl:'ספרד', ids:[73 rids], items:[9]}` | group | `spain` | 73 recipe-IDs | drawer |
+| 3 | `{key:'communities', lbl:'עדות ישראל', ids:[9 cats], items:[11]}` | group | `communities` | 9 cat-IDs | drawer |
+| 4 | `{key:'holidays', lbl:'חגים', ids:['hol'], items:[11]}` | group | `holidays` | `['hol']` | drawer |
+| 5 | `{key:'nonkosher', lbl:'לא כשר', ids:[40 rids], items:[3]}` | group | `nonkosher` | 40 recipe-IDs | drawer |
+
+### 6.2 Morocco (`key:'morocco'`) — 671 מתכונים
+
+```javascript
+items: [
+  {ids:[8 cats], lbl:'הכל'},
+  {id:'soups',  lbl:'מרקים'},           // → selectCat('soups')
+  {id:'salads', lbl:'סלטים'},
+  {lbl:'מנות עיקריות', ids:['meat','chick','fish'], items:[  // nested accordion
+    {id:'meat',  lbl:'בשר וקציצות'},
+    {id:'chick', lbl:'עוף ושבת'},
+    {id:'fish',  lbl:'דגים'},
+  ]},
+  {id:'veg', lbl:'ירקות ותוספות'},
+  {id:'hol', lbl:'חגים ומועדים'},
+  {id:'des', lbl:'קינוחים ומאפים'},
+]
+```
+
+### 6.3 Communities (`key:'communities'`) — 270 מתכונים + Option C
+
+```javascript
+items: [
+  {ids:[9 cats], lbl:'הכל'},
+  {id:'iraq',  lbl:'עיראק'},    // × 9 עדות
+  // ... (kurd, ashk, yem, pers, buk, tun, turk)
+  {lbl:'מטבח ישראלי', ids:['isr'], items:[    // nested accordion
+    {ids:[30 isr ids], lbl:'הכל'},
+    {ids:[10 street],  lbl:'מאכלי רחוב ישראליים'},
+    {ids:[9 main],     lbl:'מנות עיקריות'},
+    {ids:[4 bread],    lbl:'לחמים ומאפים'},
+    {ids:[7 des],      lbl:'קינוחים ועוגות'},
+  ]},
+  {sep:true},
+  // Option C: placeholder chip — lookup via item.placeholder === 'communityHolidays'
+  {placeholder:'communityHolidays', lbl:'חגי העדות (בקרוב)',
+    emptyMsg:'מתכונים לחגי העדות יתווספו בעתיד...'}
+]
+```
+
+**התנהגות placeholder:** `renderItem()` מזהה `item.placeholder === 'communityHolidays'`, בונה `makeChip()` עם class נוסף `pc-holidays pc-placeholder`, ולחיצה קוראת `showToast(msg)` (לא משנה state). לא משפיע על ספירות של "עדות ישראל" (270).
+
+### 6.4 Holidays (`key:'holidays'`) — 80 מתכונים
+
+```javascript
+items: [
+  {id:'hol', h:null, lbl:'כל החגים'},        // renderItem זיהוי: 'h' in item → selectCat('hol', null)
+  {sep:true},
+  {id:'hol', h:'shabbat',  lbl:'שבת'},       // → selectCat('hol', 'shabbat')
+  // ... עוד 9 חגים (rosh, kippur, pesach, mimouna, hanukkah, purim, shavuot, sukkot, henna)
+]
+```
+
+### 6.5 פונקציות select — השפעה על state + `showMainGrid()`
+
+| פונקציה (closure בתוך buildNav) | State changes | v7.1 side effect |
 |---|---|---|
-| `{id:"all", lbl:"הכל"}` | leaf | `selectCat("all")` |
-| `{lbl:"מטעמים של אמא"}` | accordion + `ids[8 cats]` | expand → 7 items + ספרד + עדות + נ"כ |
-| ├ `{id:"soups"}` | leaf | `selectCat("soups")` |
-| ├ `{id:"salads"}` | leaf | `selectCat("salads")` |
-| ├ `{lbl:"מנות עיקריות"}` | accordion + `ids[3]` | בשר, עוף, דגים |
-| ├ `{id:"veg"}` | leaf | `selectCat("veg")` |
-| ├ `{id:"hol", sub:[10]}` | leaf + `sub[]` | `selectCat("hol", h)` per holiday |
-| ├ `{id:"des"}` | leaf | `selectCat("des")` |
-| ├ `{lbl:"מורשת ספרד"}` | accordion + `ids[73]` | 8 sub-cats by recipe IDs |
-| ├ `{sep:true}` | separator | ──────── |
-| ├ `{lbl:"מתכונים מהעדות"}` | accordion + `ids[9 cats]` | 9 עדות + ישראלי (4 subs) |
-| ├ `{sep:true}` | separator | ──────── |
-| └ `{lbl:"לא כשרים"}` | accordion + `ids[40]` | פירות ים (14) + בשר+חלב (26) |
+| `selectCat(catId, hol, groupKey)` | `ACT_CAT=catId; ACT_HOLIDAY=hol; ACT_CATS=[]; ACT_IDS=null; ACT_NAV_KEY=groupKey` | `showMainGrid()` |
+| `selectMulti(ids, label, groupKey)` | `ACT_CATS=ids; ACT_IDS=null; ACT_CAT=''; ACT_HOLIDAY=null` | `showMainGrid()` |
+| `selectByIds(recipeIds, label, groupKey)` | `ACT_IDS=new Set(recipeIds); ACT_CATS=[]; ACT_CAT='span'; ACT_HOLIDAY=null` | `showMainGrid()` |
+
+כל 3 הפונקציות מבצעות בסוף: `SEARCH='';`, איפוס שדה חיפוש, `closePanel(); updateNavActive(); renderGrid();`.
+
+### 6.6 `buildNav()` v7.0 — איטרציה ב-top-level
+
+```javascript
+MENU_STRUCTURE.forEach(function(node, idx) {
+  var key = node.key || ('g' + idx);
+  if (node.id && !node.items) {
+    // Simple leaf ('הכל'): yields a direct click handler
+    // btn.click → closePanel() + selectCat(node.id, null, key)
+  } else {
+    // Group: yields openPanel() → buildPanel(node, pi) → for each item → renderItem(item, nodeKey, row)
+  }
+});
+```
+
+ל-`renderItem()` 5 סוגי items שונים: separator, placeholder, holiday-leaf, nested-accordion, multi/recipe-IDs, simple-cat-leaf.
 
 ---
 
@@ -1554,23 +1659,148 @@ JSON-LD `description` (line ~1123) עודכן כדי להתאים לטקסט ש�
 | `_headers` | — | 1,231 | 1,231 | +1,231 |
 | `cat_images/*` (20 files) | — | 335 KB | 335 KB | +335 KB |
 
-## 20. מפת התיעוד
+## 20. שינויים v6.x → v7.1 — שיפוץ דף ראשי (19/04/2026)
+
+### 20.1 v7.0 — Homepage Redesign (4 שינויים מבניים)
+
+#### A. Header מאוחד
+
+**HTML:** הוסף `<div class="hdr-brand-v7">` לפני `<div class="hdr-search">`:
+```html
+<div class="hdr-brand-v7">
+  <span class="hdr-brand-title">ספר הבישול של פרלה</span>
+  <span class="hdr-brand-count">
+    <span id="hdr-count">1,054</span>
+    <span data-i18n="recipes_label">מתכונים</span>
+  </span>
+</div>
+```
+
+**CSS (שורות ~155-195):** Frank Ruhl Libre 1rem לטייטל, `rgba(237,224,196,.55)` לספירה, קו מפריד inline-end. במובייל (`max-width:640px`): `.hdr-brand-count { display:none }`.
+
+**JS (init):** `document.getElementById('hdr-count').textContent = R.length.toLocaleString()`.
+
+#### B. Hero עם CTAs
+
+**HTML:** הוסף בתוך `.hero-inner`:
+```html
+<div class="hero-cta-row">
+  <button id="hero-cta-browse" class="hero-cta-primary">עיון במתכונים</button>
+  <button id="hero-cta-book" class="hero-cta-secondary">קרא את הספר</button>
+</div>
+```
+
+**CSS:** `.hero-cta-primary` = `--c-spice` רקע + לבן. `.hero-cta-secondary` = שקוף + border זהוב. Mobile (`max-width:480px`): padding/font מוקטנים.
+
+**JS handlers (init):**
+- `#hero-cta-browse.click` → `document.querySelector('.nb[data-nav-key="all"]').click()` + גלילה אל `#main`
+- `#hero-cta-book.click` → גלילה אל `#book-wrapper` + simulate `#book-toggle.click()` אם `aria-expanded !== 'true'`
+
+#### C. סידור מחדש של חלקים
+
+**סדר v6.x:** Hero → Bio → Book → About-redesigned → **Main**
+**סדר v7.0:** Hero → Bio → **Main** → Book → About-redesigned
+
+**איך זה בוצע:** בלוק `<main id="main">...</main>` הועבר מ-line ~2042 ל-line ~1720 (מייד אחרי `</section>` של `#bio`). Python cut-and-paste via `rfind('</section>', bio_start)`.
+
+#### D. Flat 6-group MENU_STRUCTURE
+
+ראה סעיף 6.
+
+### 20.2 v7.1 — הסתרת רשת בטעינה
+
+#### A. CSS (שורה 329)
+```css
+.main-hidden { display: none !important; }
+```
+
+#### B. HTML (שורה 1720)
+```html
+<main id="main" class="main-hidden" role="main" aria-hidden="true">
+```
+
+#### C. פונקציות JS גלובליות
+```javascript
+function showMainGrid() { /* removes .main-hidden + aria-hidden='false' */ }
+function hideMainGrid() { /* adds .main-hidden + aria-hidden='true' */ }
+```
+
+#### D. Entry points (5 נקודות קריאה ל-showMainGrid)
+1. `selectCat` (closure ב-buildNav) — תחילת הפונקציה
+2. `selectMulti` (closure) — תחילת הפונקציה
+3. `selectByIds` (closure) — תחילת הפונקציה
+4. `doSearch(val)` — `if (SEARCH) showMainGrid()`
+5. `#hero-cta-browse.click` — simulates click on `[data-nav-key="all"]`
+
+**לא נקרא `hideMainGrid()` בשום מקום בזמן ריצה** (רק בהגדרה). `clearSearch()` לא מסתיר.
+
+### 20.3 שינויים ב-data.js
+
+**המבנה הישן (v6.x):**
+```javascript
+const MENU_STRUCTURE = [{
+  lbl:'כל המתכונים', key:'all_master', items:[
+    {id:'all', lbl:'הכל'},
+    {lbl:'מטעמים של אמא ממרוקו', ids:[...], items:[...]}, // nested 4 levels deep
+    // ...
+  ]
+}];
+```
+
+**המבנה החדש (v7.0):**
+```javascript
+const MENU_STRUCTURE = [
+  {key:'all', lbl:'הכל', id:'all'},
+  {key:'morocco', lbl:'מרוקו', ids:[...], items:[...]},
+  {key:'spain', lbl:'ספרד', ids:[...], items:[...]},
+  {key:'communities', lbl:'עדות ישראל', ids:[...], items:[...]},
+  {key:'holidays', lbl:'חגים', ids:['hol'], items:[...]},
+  {key:'nonkosher', lbl:'לא כשר', ids:[...], items:[...]},
+];
+```
+
+**גודל:** 6,009 → 6,322 chars (+313). ספירת מתכונים: 1,054 ללא שינוי.
+
+### 20.4 שינויים ב-pre_en.js
+
+**ללא שינוי.** כל ה-i18n החדש נוסף ישירות ל-`I18N` dictionary ב-`index.html` (11 מפתחות חדשים, שורות 11607-11625).
+
+### 20.5 אבטחה / טפסים
+
+**WEB3FORMS_KEY** (שורה 12043) שוחזר מ-placeholder ל-`'705d4207-c4a6-43a2-8fdc-d8e202bc6c9c'` אגב v7.0. זה תיקן בעיית "טופס משוב לא שולח" שנפגעה ב-v6.10 (לא קשור ישירות ל-v7.0).
+
+### 20.6 סדר שינויים בקבצים — סיכום
+
+| קובץ | v7.0 | v7.1 | סה"כ שינויים |
+|---|---|---|---|
+| `index.html` | +50 KB (CSS+HTML+JS+i18n+reorder) | +1 KB (CSS+2 JS functions+class attr) | שינוי משמעותי |
+| `data.js` | MENU_STRUCTURE rewrite | ללא שינוי | minimal |
+| `pre_en.js` | ללא שינוי | ללא שינוי | — |
+| `book_data.js`, `about_redesigned.*`, `sw.js`, `manifest.json` | ללא שינוי | ללא שינוי | — |
+
+---
+
+## 21. מפת התיעוד
 
 | מסמך | גרסה | תיאור |
 |---|---|---|
-| `README.md` | 6.3 | סקירה כללית, התקנה, מבנה תפריט |
-| `CLAUDE.md` | 6.3 | הנחיות למפתחים/AI agents |
-| `HLD_Perla_CookingBook.md` | 6.3 | High Level Design |
-| `LLD_Perla_CookingBook.md` | **6.3** | **המסמך הנוכחי — Low Level Design** |
-| `INTEGRATION_GUIDE.md` | 2.0 | מדריך אינטגרציה של מערכת הפידבק (FormSubmit) |
-| `CHANGELOG_19-04-2026_v6.3.md` | — | שינויי הסשן הנוכחי (UI + FormSubmit + PWA) |
-| `CHANGELOG_18-04-2026_v2.md` | — | שינויי אבטחה ו-meta של 18/04 |
+| `README.md` | 7.1 | סקירה כללית, התקנה, מבנה תפריט flat 6-group |
+| `CLAUDE.md` | 7.1 | הנחיות למפתחים/AI agents |
+| `HLD_Perla_CookingBook.md` | 7.1 | High Level Design |
+| `LLD_Perla_CookingBook.md` | **7.1** | **המסמך הנוכחי — Low Level Design** |
+| `INTEGRATION_GUIDE.md` | — | מדריך אינטגרציה (Web3Forms מ-v6.6) |
+| `PLAN_v7_0_HEBREW.md` | — | תוכנית v7.0 בעברית (מוגשמת) |
+| `PLAN_v7_0_ENGLISH.md` | — | Handoff טכני ל-v7.0 (מוגשם) |
+| `CHANGELOG_19-04-2026_v7_1.md` | — | v7.1 — הסתרת רשת בטעינה |
+| `CHANGELOG_19-04-2026_v7_0.md` | — | v7.0 — שיפוץ דף ראשי |
+| `CHANGELOG_19-04-2026_v6_3..v6_10.md` | — | שינויי סשני v6.x |
 | `CHANGELOG_download_images_v5.md` | — | שינויי v5.1 של `download_images.py` |
 | `download_images_usage_guide.md` | — | מדריך הרצת סקריפט v5.1 |
+| `README_Recipe_CLI.md` | — | מדריך לסקריפטי Python (add_recipe, edit_recipe, recipe_utils) |
 
 ---
 
 *לזכר משפחת בן הראש — קזבלנקה, מרקש, ירושלים*
 *"האוכל שלה — הסיפור שלנו"*
 
-**סוף LLD v6.4**
+**סוף LLD v7.1**

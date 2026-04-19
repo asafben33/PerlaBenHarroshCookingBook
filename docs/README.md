@@ -1,6 +1,6 @@
 # ספר הבישול של משפחת בן הראש
 
-**גרסה 6.4 | 19 אפריל 2026**
+**גרסה 7.1 | 19 אפריל 2026**
 
 לזכרם של **פרלה ופנחס בן הראש ז״ל** שזכרונם יהיה לברכה וגאווה הלאה לדורי דורות
 דרך הטעם המעלה זכרונות שכמעט שכחנו...
@@ -33,8 +33,8 @@
 
 ```
 PerlaBenHarroshCookingBook/
-├── index.html              ← SPA — UI, CSS, JS, מילון, כותרות EN, PWA install btn (v6.3)
-├── data.js                 ← 1,054 מתכונים + CATS + MENU_STRUCTURE + HOLIDAY_TAGS
+├── index.html              ← SPA — UI, CSS, JS, מילון, כותרות EN, PWA install btn, v7.0 flat nav, v7.1 grid-on-demand
+├── data.js                 ← 1,054 מתכונים + CATS + MENU_STRUCTURE (v7.0 flat 6-group) + HOLIDAY_TAGS
 ├── pre_en.js               ← תרגום EN מוכן — desc, mem, tip, steps, ingr
 ├── book_data.js            ← תוכן הספר הביוגרפי (BOOK_HTML / BOOK_HTML_EN)
 ├── about_redesigned.html   ← דף "אודות" מעוצב מחדש
@@ -43,20 +43,25 @@ PerlaBenHarroshCookingBook/
 ├── sw.js                   ← Service Worker — network-first documents, cache-first images
 ├── manifest.json           ← PWA manifest (התקנה כאפליקציה)
 ├── _headers                ← Netlify HTTP headers — CSP, X-Frame-Options, Permissions-Policy (v6.2)
+├── recipe_utils.py         ← ספריית Python לניהול מתכונים (v6.7)
+├── add_recipe.py           ← אשף הוספת מתכון (v6.7)
+├── edit_recipe.py          ← אשף עריכה/מחיקה של מתכון (v6.7)
 ├── download_images.py      ← סקריפט הורדת תמונות v5.1 (מאוחד, 810 search terms)
 ├── images/
 │   ├── recipes_images/     ← תמונות מתכונים: r-{id}.jpg
 │   ├── book_images/        ← תמונות ספר + wedding.jpg
 │   └── site_images/        ← אייקונים, OG image, 7 favicons, 20 cat-*.jpg placeholders
-├── HLD_Perla_CookingBook.md       ← High Level Design v6.3
-├── LLD_Perla_CookingBook.md       ← Low Level Design v6.3
-├── INTEGRATION_GUIDE.md           ← מדריך אינטגרציה v2.0 (FormSubmit.co)
-├── CHANGELOG_19-04-2026_v6.3.md   ← שינויי סשן 19/04
-├── CHANGELOG_18-04-2026_v2.md     ← שינויי 18/04
-├── CHANGELOG_download_images_v5.md ← שינויי download_images.py v5.1
-├── download_images_usage_guide.md ← מדריך הרצת סקריפט הורדה
+├── HLD_Perla_CookingBook.md       ← High Level Design v7.1
+├── LLD_Perla_CookingBook.md       ← Low Level Design v7.1
+├── INTEGRATION_GUIDE.md           ← מדריך אינטגרציה (Web3Forms)
+├── PLAN_v7_0_HEBREW.md            ← תוכנית v7.0 בעברית (מוגשמת)
+├── PLAN_v7_0_ENGLISH.md           ← Handoff טכני ל-v7.0 (מוגשם)
+├── CHANGELOG_19-04-2026_v7_1.md   ← v7.1 — הסתרת רשת בטעינה
+├── CHANGELOG_19-04-2026_v7_0.md   ← v7.0 — שיפוץ דף ראשי
+├── CHANGELOG_19-04-2026_v6_3..v6_10.md ← שינויי סשני v6.x
+├── README_Recipe_CLI.md           ← מדריך סקריפטי Python
 ├── .gitignore
-├── CLAUDE.md                      ← הנחיות למפתחים/AI (v6.3)
+├── CLAUDE.md                      ← הנחיות למפתחים/AI (v7.1)
 └── README.md                      ← המסמך הזה
 ```
 
@@ -81,59 +86,55 @@ python download_images.py
 
 ---
 
-## מבנה התפריט (MENU_STRUCTURE)
+## מבנה התפריט (MENU_STRUCTURE) — v7.0 Flat 6-Group
 
-כפתור יחיד **"כל המתכונים"** עם dropdown:
+**החל מ-v7.0:** 6 קבוצות עליונות מקבילות, עומק קינון מקסימלי 2 רמות (הוחלף את ה-wrapper הנסתר של v6.x):
 
 ```
-[כל המתכונים 1054 ▼]
-│
-├── הכל (1,054)
-│
-├── מטעמים של אמא ממרוקו ▼
-│   ├── הכל במטעמים (671)
-│   ├── מרקים (103)
-│   ├── סלטים (103)
-│   ├── מנות עיקריות ▼
-│   │   ├── בשר וקציצות (82)
-│   │   ├── עוף ושבת (66)
-│   │   └── דגים (70)
-│   ├── ירקות ותוספות (87)
-│   ├── חגים ומועדים ▼ (80)
-│   │   ├── שבת, ראש השנה, יום כיפור
-│   │   ├── פסח, מימונה, חנוכה
-│   │   └── פורים, שבועות, סוכות, חינה
-│   ├── קינוחים ומאפים (80)
-│   ├── מורשת ספרד ▼ (73)
-│   │   ├── מרקים ומינסטרות (3)
-│   │   ├── בשר וקציצות (8)
-│   │   ├── דגים (3)
-│   │   ├── ירקות ותוספות (28)
-│   │   ├── שבת וחגים (4)
-│   │   ├── רטבים ותבלינים (4)
-│   │   ├── לחמים ומאפים (9)
-│   │   └── קינוחים ומתוקים (13)
-│   ├── ────────────
-│   ├── מתכונים מהעדות ▼ (270)
-│   │   ├── עיראק (30), כורדיסטן (30), אשכנז (30)
-│   │   ├── תימן (30), פרס (30), בוכרה (30)
-│   │   ├── טוניסיה (30), יהדות טורקיה (30)
-│   │   └── מטבח ישראלי ▼ (30)
-│   │       ├── מאכלי רחוב (10)
-│   │       ├── מנות עיקריות (9)
-│   │       ├── לחמים ומאפים (4)
-│   │       └── קינוחים ועוגות (7)
-│   ├── ────────────
-│   └── מתכונים לא כשרים ▼ (40)
-│       ├── פירות ים (14)
-│       └── בשר וחלב (26)
+┌──────────┬──────────┬──────────┬──────────────┬──────────┬──────────┐
+│  הכל     │  מרוקו   │  ספרד    │  עדות ישראל  │  חגים    │  לא כשר  │
+│  1,054   │   671    │   73     │     270      │    80    │    40    │
+└──────────┴──────────┴──────────┴──────────────┴──────────┴──────────┘
+
+[הכל] → leaf (1,054 מתכונים)
+
+[מרוקו ▼]
+├── הכל (671)
+├── מרקים (103)
+├── סלטים (103)
+├── מנות עיקריות ▼
+│   ├── בשר וקציצות (82)
+│   ├── עוף ושבת (66)
+│   └── דגים (70)
+├── ירקות ותוספות (87)
+├── חגים ומועדים (80)
+└── קינוחים ומאפים (80)
+
+[ספרד ▼] — 73 מתכונים מקובצים לפי 8 תתי-קטגוריות (recipe-ID arrays):
+├── הכל (73) · מרקים ומינסטרות (3) · בשר וקציצות (8) · דגים (3)
+└── ירקות ותוספות (28) · שבת וחגים (4) · רטבים (4) · לחמים (9) · קינוחים (13)
+
+[עדות ישראל ▼] — 9 עדות × 30 מתכונים = 270
+├── הכל (270)
+├── עיראק · כורדיסטן · אשכנז · תימן · פרס · בוכרה · טוניסיה · יהדות טורקיה
+├── מטבח ישראלי ▼ (30)
+│   └── מאכלי רחוב (10) · מנות עיקריות (9) · לחמים (4) · קינוחים (7)
+└── חגי העדות (בקרוב) ← placeholder v7.0 Option C (עתיד: תיוג ידני של מתכוני עדות)
+
+[חגים ▼] — 80 מתכוני הקטגוריה `hol` המתויגים ל-10 חגים:
+└── שבת · ראש השנה · יום כיפור · פסח · מימונה · חנוכה · פורים · שבועות · סוכות · חינה
+
+[לא כשר ▼] — 40 מתכונים:
+└── הכל (40) · פירות ים (14) · בשר וחלב (26)
 ```
+
+**שינוי מהותי מ-v6.x:** בעבר היה wrapper יחיד "כל המתכונים" עם קינון עמוק של עד 4 רמות שהקשה על ניווט. ב-v7.0 — 6 קבוצות שקופות ומקבילות, drawer אחיד עם עומק מקסימלי של 2 רמות.
 
 ---
 
 ## קטגוריות (19)
 
-### מטעמים של אמא ממרוקו (744 מתכונים)
+### מטעמים של אמא ממרוקו (671 מתכונים)
 
 | cat | שם בממשק | מתכונים | הערות |
 |-----|----------|---------|-------|
@@ -242,6 +243,13 @@ python download_images.py
 - **תוצאות חיות** — מתעדכנות בזמן הקלדה
 - **דף "אודות"** מעוצב עם ביוגרפיה של פרלה ופנחס ז״ל
 
+### דף ראשי (v7.0 + v7.1)
+- **Header מאוחד** — שם האתר + ספירת מתכונים בזמן אמת לצד שורת החיפוש
+- **Hero עם 2 כפתורי CTA** — "עיון במתכונים" (מציג את כל 1,054) ו"קרא את הספר" (פותח את הספר)
+- **סדר חדש:** Hero → Bio → Main (רשת) → Book → About
+- **רשת מתכונים מוסתרת בטעינה (v7.1):** מופיעה רק אחרי לחיצה על קטגוריה, חיפוש, או CTA
+- **ניווט שטוח:** 6 קבוצות עליונות (הכל / מרוקו / ספרד / עדות ישראל / חגים / לא כשר), עומק קינון מקסימלי 2 רמות
+
 ### תרגום
 - **עברית + אנגלית** — toggle מיידי, 2,853 ערכי מילון + 1,054 תרגומים מוכנים מראש
 - תרגום morphological של כותרות, תיאורים, זיכרונות, טיפים, שלבים, מרכיבים
@@ -252,16 +260,17 @@ python download_images.py
 - **Service Worker** — network-first למסמכים, cache-first לתמונות
 - **offline mode** — האתר פועל גם בלי אינטרנט (מתוך cache)
 
-### מערכת פידבק (v6.4 — FormSubmit + Hidden Iframe)
+### מערכת פידבק (v6.6+ — Web3Forms)
 - **כפתור "הערה / תיקון"** בכל modal של מתכון
 - **FAB צף** שמאלי-תחתון — "הצעות ודיווח"
-- **שיטה: Hidden iframe + form POST** — לא fetch (פותר CORS preflight block מ-GitHub Pages)
-- Form submissions ל-iframe **אינן כפופות ל-CORS** (התנהגות HTML מורשת) — עובד מכל מקור
-- Timeout 15s + **fallback ל-mailto** אוטומטי אם משהו נכשל
-- **Base64 obfuscation** של כתובת המייל — action נקבעת דינמית ב-JS
+- **שיטה: `fetch()` + JSON** → `https://api.web3forms.com/submit`
+- **Access key ציבורי בכוונה** — `705d4207-c4a6-43a2-8fdc-d8e202bc6c9c` (alias אימייל, לא סוד)
+- **CSP:** `connect-src 'self' https://api.web3forms.com;`
+- Timeout + **fallback ל-mailto** אוטומטי אם משהו נכשל
+- **היסטוריה:** v6.0-v6.2 Netlify Forms (נכשל ב-GH Pages), v6.3-v6.5 FormSubmit.co (CORS/403), v6.6+ Web3Forms (עובד)
 
 ### אבטחה
-- **CSP מוחזק** (v6.3) — רק מקורות מאושרים, `connect-src` כולל formsubmit.co בלבד
+- **CSP מוחזק** (v6.6+) — רק מקורות מאושרים, `connect-src` כולל `api.web3forms.com` בלבד
 - **`_headers`** של Netlify — X-Frame-Options, frame-ancestors, Permissions-Policy
 - **אין תלויות חיצוניות** — 100% self-contained
 
@@ -289,20 +298,22 @@ python download_images.py
 | Build | ללא CI/CD — push ידני |
 | Logs | logs/download_images_YYYY-MM-DD_HH.MM.log |
 
-### דרישה חד-פעמית (FormSubmit activation)
-
-לאחר הפריסה הראשונה, שלח הודעה דרך FAB. FormSubmit ישלח לך מייל verification — לחץ על הקישור. מאותו רגע כל ההודעות יגיעו רגיל.
-
 ### Deploy מ-PowerShell
 
 ```powershell
-cd C:\Users\isasaf\Assi-ProjectsWorkFolder\PerlaBenHarroshCookingBook
+cd C:\path\to\PerlaBenHarroshCookingBook
+```
+```powershell
 git add .
+```
+```powershell
 git commit -m "description"
+```
+```powershell
 git push origin main
 ```
 
-Netlify + GitHub Pages יפרוסו אוטומטית תוך 1-2 דקות.
+Netlify + GitHub Pages יפרוסו אוטומטית תוך 30-60 שניות.
 
 ---
 
@@ -310,15 +321,18 @@ Netlify + GitHub Pages יפרוסו אוטומטית תוך 1-2 דקות.
 
 | מסמך | גרסה | תיאור |
 |------|-------|-------|
-| `HLD_Perla_CookingBook.md` | 6.4 | High Level Design — ארכיטקטורה, תפריט, קטגוריות, חגים, תרגום, responsive, feedback, PWA |
-| `LLD_Perla_CookingBook.md` | 6.4 | Low Level Design — CSS tokens, DOM IDs, 48+ פונקציות, filtered(), buildNav(), openM(), submitFeedback(), PWA IIFE |
-| `INTEGRATION_GUIDE.md` | 3.0 | מדריך אינטגרציה של מערכת הפידבק (FormSubmit + Hidden Iframe) |
-| `CHANGELOG_19-04-2026_v6.4.md` | — | תיקון CORS — מעבר ל-hidden iframe approach |
-| `CHANGELOG_19-04-2026_v6.3.md` | — | שינויי 19/04 חלק א׳ — UI enlargement, FormSubmit AJAX (נכשל), PWA restore, content |
-| `CHANGELOG_18-04-2026_v2.md` | — | שינויי 18/04 — meta/security fixes, 50 tips, 20 cat-*.jpg placeholders, 7 favicons |
-| `CHANGELOG_download_images_v5.md` | — | שינויי download_images.py v5.1 — unified, 6 CLI flags, 100+100 domains |
+| `HLD_Perla_CookingBook.md` | 7.1 | High Level Design — ארכיטקטורה, תפריט (v7.0 flat 6-group), קטגוריות, חגים, תרגום, responsive, feedback, PWA |
+| `LLD_Perla_CookingBook.md` | 7.1 | Low Level Design — CSS tokens, DOM IDs, 48+ פונקציות, filtered(), buildNav() v7.0, openM(), submitFeedback(), PWA IIFE |
+| `INTEGRATION_GUIDE.md` | — | מדריך אינטגרציה של מערכת הפידבק (Web3Forms) |
+| `PLAN_v7_0_HEBREW.md` | — | תוכנית v7.0 בעברית (מוגשמת) |
+| `PLAN_v7_0_ENGLISH.md` | — | Handoff טכני ל-v7.0 (מוגשם) |
+| `CHANGELOG_19-04-2026_v7_1.md` | — | v7.1 — הסתרת רשת מתכונים בטעינה (UX fix) |
+| `CHANGELOG_19-04-2026_v7_0.md` | — | v7.0 — שיפוץ דף ראשי (flat 6-group nav, CTAs, reorder) |
+| `CHANGELOG_19-04-2026_v6_3..v6_10.md` | — | שינויי סשנים v6.3-v6.10 |
+| `CHANGELOG_download_images_v5.md` | — | שינויי download_images.py v5.1 |
 | `download_images_usage_guide.md` | — | מדריך הרצת download_images.py v5.1 |
-| `CLAUDE.md` | 6.4 | הנחיות למפתחים/AI agents לעבודה על הפרויקט |
+| `README_Recipe_CLI.md` | — | מדריך לסקריפטי Python — add_recipe.py, edit_recipe.py, recipe_utils.py |
+| `CLAUDE.md` | 7.1 | הנחיות למפתחים/AI agents לעבודה על הפרויקט |
 
 ---
 
@@ -331,7 +345,15 @@ Netlify + GitHub Pages יפרוסו אוטומטית תוך 1-2 דקות.
 | 6.1 | 18/04/2026 | הסרת r.img/-2/-3 מ-fallback (מונע 3,162 שגיאות/טעינה) |
 | 6.2 | 18/04/2026 | 20 cat-*.jpg placeholders, `_headers` file, UI enlarge סיבוב 1 |
 | 6.3 | 19/04/2026 | UI enlarge סיבוב 2, FormSubmit AJAX migration, PWA install button, content updates |
-| **6.4** | **19/04/2026** | **CORS fix — מעבר מ-fetch+JSON ל-hidden iframe + form POST** |
+| 6.4 | 19/04/2026 | CORS fix — FormSubmit iframe approach |
+| 6.5 | 19/04/2026 | FormSubmit `_url` field fallback + 404 gallery noise fix |
+| 6.6 | 19/04/2026 | **הגירה מלאה מ-FormSubmit.co ל-Web3Forms** (פתר 403 לצמיתות) |
+| 6.7 | 19/04/2026 | `.m-nav` sticky, חיצי גלריה ל-RTL, סקריפטי Python CLI (add/edit_recipe, recipe_utils) |
+| 6.8 | 19/04/2026 | Hero tagline bold/white, base font 17px גלובלי, book_paragraph 1.02rem |
+| 6.9 | 19/04/2026 | PWA install button תמיד נראה; Back-to-top משופר (48px, סף 300, בדיקה בטעינה) |
+| 6.10 | 19/04/2026 | PWA install dialog ל-Custom Modal (הוסר ה-prefix "<origin> says") |
+| **7.0** | **19/04/2026** | **שיפוץ דף ראשי — Header מאוחד, Hero עם CTAs, Main לפני Book, flat 6-group nav + Option C placeholder לחגי עדות. WEB3FORMS_KEY שוחזר.** |
+| **7.1** | **19/04/2026** | **רשת מתכונים מוסתרת בטעינה — מופיעה רק אחרי פעולת משתמש (ניווט/חיפוש/CTA)** |
 
 ---
 
