@@ -1,0 +1,7 @@
+# robots.txt — Perla Ben-Harrosh Cookbook
+# v8.0 — Apr 2026
+
+User-agent: *
+Allow: /
+
+Sitemap: https://perlabenharrosh-cookingbook.netlify.app/sitemap.xml

@@ -449,6 +449,31 @@ html.light .hero-cta-secondary { color: #7a3a18; border-color: rgba(184,66,35,.4
 }
 html.light .pc-comm-hol { color: #8c2e14; }
 
+/* v8.0: Light theme overrides for v7.x classes — close gaps in contrast.
+   Without these, the brand title and count appeared washed-out on light bg,
+   and the pc-comm-hol hover state was hard to distinguish. */
+html.light .hdr-brand-v7 .hdr-brand-title { color: #6e3d0a; }
+html.light .hdr-brand-v7 .hdr-brand-count { color: rgba(74,42,20,.65); }
+html.light .pc-comm-hol {
+  background: rgba(184,66,35,.06);
+  border-color: rgba(184,66,35,.30);
+}
+html.light .pc-comm-hol:hover {
+  background: rgba(184,66,35,.12);
+  border-color: rgba(184,66,35,.55);
+  color: #6e2410;
+}
+html.light .pc-comm-hol.pc-empty {
+  opacity: .45;
+}
+html.light .hero-cta-primary {
+  background: var(--c-spice);
+  color: #fff;
+}
+html.light .hero-cta-primary:hover {
+  background: #922f18;
+}
+
 /* ── About ────────────────────────────────────────────────── */
 .about {
   direction: rtl; text-align: right;
@@ -1104,7 +1129,11 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
 @media print {
   .hdr, .cat-nav, .nav-panel, #back-top, .footer, .casablanca-bg,
   .m-nav, .m-hero-media, .m-hero-nav, .m-hero-dots, .m-actions, .m-vid-wrap, .m-src-box,
-  .hero, .grid-header, .grid, .about, #toast, .filter-bar { display: none !important; }
+  .hero, .grid-header, .grid, .about, #toast, .filter-bar,
+  /* v8.0: hide v7.x menu elements + main grid container */
+  .hdr-brand-v7, .hero-cta-row, .pc-comm-hol, .pc-empty,
+  #main, .main-hidden, #book-wrapper, #about-redesigned,
+  .feedback-fab, #pwa-modal-ovl, #pwa-install-btn { display: none !important; }
   body { background: #fff !important; color: #1a1a1a !important; font-size: 12pt; }
   #ovl { position: static !important; display: block !important; background: none !important;
          backdrop-filter: none !important; padding: 0 !important; }
@@ -11970,6 +11999,12 @@ var I18N = {
   holiday_henna:    {he:'חינה', en:'Henna'},
   // Toast messages for empty community-holiday combos
   toast_no_recipes_holiday: {he:'אין עדיין מתכונים מתויגים לחג זה בעדה הזו', en:'No recipes tagged for this holiday in this community yet'},
+  // v8.0: i18n entries for v7.x labels
+  nav_morocco_span:     {he:'מרוקו\\ספרד', en:'Morocco / Spain'},
+  nav_morocco_span_all: {he:'כל מתכוני מרוקו וספרד', en:'All Morocco & Spain Recipes'},
+  nav_span_andalusi:    {he:'ספרד (אנדלוסי)', en:'Spain (Andalusian)'},
+  nav_veg_dishes:       {he:'תבשילי ירקות', en:'Vegetable Dishes'},
+  morocco_all_holidays: {he:'כל מתכוני החגים', en:'All Holiday Recipes'},
   nav_by_type:   {he:'לפי סוג מנה', en:'By Dish Type'},
   nav_moroccan:  {he:'מרוקאי-ספרדי', en:'Moroccan-Sephardic'},
   nav_span:      {he:'מורשת ספרד', en:'Spanish Heritage'},
@@ -12058,17 +12093,26 @@ var _NAV_I18N = {
   'מתכונים מהעדות':'nav_katamon','מתכונים לא כשרים':'nav_nonkosher',
   'עיראק':'nav_iraq','כורדיסטן':'nav_kurd','אשכנז':'nav_ashk',
   'תימן':'nav_yem','פרס':'nav_pers','בוכרה':'nav_buk','טוניסיה':'nav_tun',
-  'מטבח ישראלי':'nav_isr','יהדות טורקיה':'nav_turk',
+  'מטבח ישראלי':'nav_isr','יהדות טורקיה':'nav_turk','טורקיה':'nav_turk',
   'מרקים':'nav_soups','סלטים ומזות':'nav_salads','סלטים':'nav_salads','מנות עיקריות':'nav_main',
   'בשר וקציצות':'nav_meat','עוף':'nav_chick','דגים':'nav_fish',
   'ירקות ותוספות':'nav_veg','חגים ומועדים':'nav_hol','קינוחים ומאפים':'nav_des',
-  'הכל':'nav_all_sub',
+  'הכל':'nav_all_sub','לא כשר':'nav_nonkosher',
   'פירות ים ודגים לא כשרים':'nav_seafood','פירות ים':'nav_seafood','בשר וחלב':'nav_meatdairy',
-  'שבת':'hol_shabbat','ראש השנה':'hol_rosh','יום כיפור':'hol_kippur',
-  'פסח':'hol_pesach','מימונה':'hol_mimouna','חנוכה':'hol_hanukkah',
-  'פורים':'hol_purim','שבועות':'hol_shavuot','סוכות':'hol_sukkot','חינה':'hol_henna',
+  'שבת':'holiday_shabbat','ראש השנה':'holiday_rosh','יום כיפור':'holiday_kippur',
+  'פסח':'holiday_pesach','מימונה':'holiday_mimouna','חנוכה':'holiday_hanukkah',
+  'פורים':'holiday_purim','שבועות':'holiday_shavuot','סוכות':'holiday_sukkot','חינה':'holiday_henna',
   'כל החגים':'hol_all','בשר ספרדי':'nav_span_meat','דגים ספרדיים':'nav_span_fish','ירקות ספרדיים':'nav_span_veg','לחמים ספרדיים':'nav_span_bread2','מנות ישראליות':'nav_isr_main','לחמים ישראליים':'nav_isr_bread',
   'מטעמים של אמא ממרוקו':'nav_moroccan','מרקים ומינסטרות':'nav_span_soups','שבת וחגים':'nav_span_hol','רטבים ותבלינים':'nav_span_sauce','לחמים ומאפים':'nav_span_bread','קינוחים ומתוקים':'nav_span_des','מאכלי רחוב ישראליים':'nav_isr_street','קינוחים ועוגות':'nav_isr_des','עוף ושבת':'nav_chick',
+  /* v7.x additions — labels introduced in v7.0 through v7.9 */
+  'מרוקו':'nav_morocco','עדות ישראל':'nav_communities','חגים':'nav_holidays',
+  'מרוקו\\ספרד':'nav_morocco_span',                             /* v7.9 */
+  'כל מתכוני מרוקו וספרד':'nav_morocco_span_all',                /* v7.9 */
+  'ספרד (אנדלוסי)':'nav_span_andalusi',                          /* v7.9 */
+  'מאכלי חגים':'community_holidays_folder',                      /* v7.4 */
+  'מאכלים מסורתיים לעדה':'community_traditional',                /* v7.4 */
+  'תבשילי ירקות':'nav_veg_dishes',                               /* v7.0 */
+  'כל מתכוני החגים':'morocco_all_holidays'                       /* v7.8 */
 };
 
 function t(key) { return (I18N[key] && I18N[key][_LANG]) || key; }
