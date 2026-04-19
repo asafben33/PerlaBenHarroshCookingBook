@@ -2284,27 +2284,44 @@ function _getAllRecipeImages(r) {
 var _heroGallery = { imgs: [], idx: 0, validated: [] };
 
 function _heroGalleryInit(r) {
-  var all = _getAllRecipeImages(r);
-  _heroGallery = { imgs: all, idx: 0, validated: [], loading: true };
-
-  // Validate each image (check if it loads)
-  var hero = document.getElementById('m-hero');
+  _heroGallery = { imgs: [], idx: 0, validated: [], loading: true };
+  var hero  = document.getElementById('m-hero');
   var imgEl = hero ? hero.querySelector('img') : null;
+  var media = getMedia(r.id);
 
-  all.forEach(function(src, i) {
-    var test = new Image();
-    test.onload = function() {
-      _heroGallery.validated.push(src);
-      _heroGalleryUpdateNav();
-      // If first valid image and gallery not yet showing
-      if (_heroGallery.validated.length === 1 && imgEl) {
-        imgEl.src = src;
-        _heroGallery.idx = 0;
-      }
-    };
-    test.onerror = function() { /* skip invalid */ };
-    test.src = src;
+  function _accept(src) {
+    _heroGallery.validated.push(src);
+    if (_heroGallery.validated.length === 1 && imgEl) {
+      imgEl.src = src;
+      _heroGallery.idx = 0;
+    }
+    _heroGalleryUpdateNav();
+  }
+
+  /* Custom uploaded images — always safe to probe */
+  (media.imgs || []).forEach(function(src) {
+    var t = new Image();
+    t.onload  = function() { _accept(src); };
+    t.onerror = function() {};
+    t.src = src;
   });
+
+  /* Primary image — probe once; only try -2/-3 gallery variants if primary exists.
+     v6.5: Prevents unnecessary 404s for recipes that have no gallery images. */
+  var primary = _resolveImg('r-' + r.id);
+  var pTest = new Image();
+  pTest.onload = function() {
+    _accept(primary);
+    [2, 3].forEach(function(n) {
+      var alt = _resolveImg('r-' + r.id + '-' + n);
+      var aT  = new Image();
+      aT.onload  = function() { _accept(alt); };
+      aT.onerror = function() {};
+      aT.src = alt;
+    });
+  };
+  pTest.onerror = function() { /* no primary — skip gallery, onerror chain handles hero img */ };
+  pTest.src = primary;
 }
 
 function _heroGalleryUpdateNav() {
@@ -7111,6 +7128,7 @@ function exportFullCookbook() {
     setF('fb-hf-recipe-id',    _recipe ? String(_recipe.id) : '');
     setF('fb-hf-recipe-title', _recipe ? String(_recipe.title) : '');
     setF('fb-hf-page-url',     location.href);
+    setF('fb-hf-url',          location.origin + location.pathname);
     setF('fb-hf-user-agent',   (navigator.userAgent || '').slice(0, 200));
 
     /* Listen for iframe load to detect submission completion.
@@ -7406,6 +7424,7 @@ if(typeof BOOK_HTML!=='undefined'){
   <input type="hidden" name="_template"    value="table">
   <input type="hidden" name="_captcha"     value="false">
   <input type="hidden" name="_honey"       value="">
+  <input type="hidden" name="_url"         id="fb-hf-url"          value="">
   <input type="hidden" name="name"         id="fb-hf-name"         value="">
   <input type="hidden" name="email"        id="fb-hf-email"        value="">
   <input type="hidden" name="message"      id="fb-hf-message"      value="">
