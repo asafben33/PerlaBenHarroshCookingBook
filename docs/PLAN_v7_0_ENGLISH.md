@@ -4,6 +4,25 @@
 
 ---
 
+> ## ✓ STATUS: IMPLEMENTED
+>
+> **Version deployed: 7.1** (19/04/2026, afternoon)
+> **Decision made: Option C** — Community Holidays as empty placeholder container
+>
+> **What was actually implemented:**
+> - ✓ **v7.0** — All 4 structural changes (Header brand, Hero CTAs, section reorder, flat 6-group MENU_STRUCTURE)
+> - ✓ **v7.1** — Hotfix following v7.0 deployment: recipe grid hidden on load, shown only on user action (nav/search/CTA)
+>
+> **Documents created post-implementation:**
+> - `CHANGELOG_19-04-2026_v7_0.md` — full detail of v7.0 changes
+> - `CHANGELOG_19-04-2026_v7_1.md` — hotfix detail of v7.1
+> - `CLAUDE.md`, `README.md`, `HLD`, `LLD`, `INTEGRATION_GUIDE.md` updated to v7.1
+>
+> **See the "Implementation Summary" section at the end of this document** for what shipped, what differed from the plan, and what comes next (Stage 2: `audit_recipes.py`).
+> *This document is preserved as a historical record of the planning process.*
+
+---
+
 ## Project identity (for context if you're a new Claude)
 
 - **Name:** Perla Ben-Harrosh Cookbook — `ספר הבישול של פרלה בן-הראש ז״ל`
@@ -617,6 +636,84 @@ git push origin main
 - `PLAN_v7_0_ENGLISH.md` — THIS DOCUMENT
 - `CLAUDE.md` — project context (will be updated post-v7.0)
 - `CHANGELOG_19-04-2026_v7_0.md` — will be created when v7.0 ships
+
+---
+
+## ═══ Implementation Summary (19/04/2026, evening — post factum) ═══
+
+### Decision made
+
+**Option C** — Community Holidays as empty container (placeholder). Recommended in the plan, user approved, implemented in v7.0.
+
+### What shipped in v7.0
+
+| Planned | Actually implemented | Notes |
+|---|---|---|
+| Unified header | ✓ `.hdr-brand-v7` added before search bar | Site name + dynamic recipe count |
+| Shorter hero with CTAs | ✓ "Browse Recipes" + "Read the Book" | CSS: `.hero-cta-primary`, `.hero-cta-secondary` |
+| Bio before recipe grid | ✓ `<main>` moved after `</section>` of bio | New order: Hero → Bio → Main → Book → About |
+| Flat 6-group MENU_STRUCTURE | ✓ 6 parallel top-level groups, 2-level max depth | Includes "חגי העדות (בקרוב)" placeholder |
+| Incidental fix: WEB3FORMS_KEY | ✓ Restored from placeholder to actual key | Not in original plan — discovered during work and patched |
+
+### What was added in v7.1 (not in the original plan)
+
+After v7.0 deployment, the user screenshotted the homepage and noted that the recipe grid appeared immediately below the Bio — making the page too long and distracting from the book and about sections.
+
+**The request (translated from Hebrew):** "Don't show the recipes on the main page in wide layout — only if I choose from the menu or search for a recipe"
+
+**The solution implemented (v7.1):**
+- `<main class="main-hidden">` by default
+- `.main-hidden { display: none !important; }` in CSS
+- Global functions `showMainGrid()` / `hideMainGrid()`
+- Grid reveals when: nav click / search / hero "Browse Recipes" CTA
+
+This was a significant UX change not in the original v7.0 plan but complementary to it.
+
+### Corrected count — incidental fix
+
+The original plan stated:
+- **Morocco: 744 recipes** ← wrong
+
+Actually:
+- **Morocco: 671 recipes** (soups=103, salads=103, veg=87, meat=82, chick=66, fish=70, hol=80, des=80)
+
+The old HLD and README.md also contained the wrong number 744. The correct number 671 was corrected in all documents as part of post-implementation documentation update.
+
+### Files actually modified
+
+| File | v7.0 | v7.1 | Total |
+|---|---|---|---|
+| `index.html` | +50 KB (CSS+HTML+JS+i18n+reorder) | +1 KB (CSS+JS+HTML attr) | Significant |
+| `data.js` | MENU_STRUCTURE rewrite (+313 bytes) | Unchanged | Minimal |
+| `pre_en.js` | Unchanged | Unchanged | — |
+| `book_data.js`, `about_redesigned.*`, `sw.js`, `manifest.json`, `download_images.py` | Unchanged | Unchanged | — |
+
+**Recipes:** 1,054 → 1,054 (100% preserved — no content was touched).
+
+### Documents created post-implementation
+
+- `CHANGELOG_19-04-2026_v7_0.md` — full detail of v7.0
+- `CHANGELOG_19-04-2026_v7_1.md` — full detail of v7.1 hotfix
+- `CHANGELOG_19-04-2026_docs_v7_1.md` — docs update audit trail
+- Updates to `CLAUDE.md`, `README.md`, `HLD_Perla_CookingBook.md`, `LLD_Perla_CookingBook.md`, `INTEGRATION_GUIDE.md`
+
+### Notes for future developers / Claude instances
+
+**Do not revert v7.1:** Hiding the grid on load is an explicit user requirement. If future change is wanted, user will request it explicitly.
+
+**Do not restore old MENU_STRUCTURE:** v6.x used single wrapper nested structure, v7.0 uses flat 6-group. This is a significant UX improvement.
+
+**Option C remains open:** Community holiday recipes were NOT tagged. Future (Stage 2) options:
+- Ask the user for authentic family/community holiday tagging (Option A from original plan)
+- Or leave the placeholder permanently as a reminder that this work is pending
+
+### Stage 2 (future — not done in this session)
+
+Build `audit_recipes.py` — a Python script that scans the 1,054 recipes and flags mechanical issues (missing ingredients, steps too short, missing prep time, etc.). This is the honest path to improve recipe content — not "check every recipe manually" which would be 175-350 hours of actual work.
+
+### Honesty constraint retained
+
+The user values honesty over false claims of thoroughness. Every future session should remember: **Automated audit is the honest path to improving 1,054 recipes, not claimed manual review.**
 
 ---
 
