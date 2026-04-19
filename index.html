@@ -148,6 +148,17 @@ ol { padding-right: 1.2rem; }
   display: flex;
   align-items: center;
   gap: 1rem;
+  /* v7.3: justify-content space-between so brand sits on right edge,
+     tools on left edge, and the centered search bar fills the middle
+     with auto-margins from both sides. Per mockup, the search shouldn't
+     stretch full-width — it should look balanced in the center. */
+  justify-content: space-between;
+}
+
+/* v7.3: Push search bar into the visual center between brand & tools.
+   Without this, the v7.0 brand was forcing search to skew left in RTL. */
+.hdr-search {
+  margin: 0 auto;
 }
 
 
@@ -170,8 +181,8 @@ ol { padding-right: 1.2rem; }
   border: 1px solid rgba(196,147,10,.25);
   border-radius: 100px;
   padding: .65rem 1.3rem;
-  flex: 1;
-  max-width: 640px;
+  flex: 0 1 480px;
+  max-width: 480px;
   min-width: 220px;
 }
 .hdr-search svg { color: var(--c-gold-d); flex-shrink: 0; }
@@ -8032,6 +8043,36 @@ function buildNav() {
             var hr = document.createElement('div');
             hr.className = 'acc-sep';
             body.appendChild(hr); return;
+          }
+
+          // v7.3: Community-holiday combo INSIDE community accordion
+          // (e.g., עיראק accordion → שבת/ראש השנה/פסח/...)
+          if (s.communityHoliday && s.holidayKey) {
+            var _comm2 = s.communityHoliday;
+            var _hkey2 = s.holidayKey;
+            var _hlbl2 = s.lbl;
+            var ids2 = (typeof COMMUNITY_HOLIDAY_TAGS !== 'undefined'
+                        && COMMUNITY_HOLIDAY_TAGS[_comm2]
+                        && COMMUNITY_HOLIDAY_TAGS[_comm2][_hkey2]) || [];
+            var chBtn2 = document.createElement('button');
+            chBtn2.className = 'pc pc-comm-hol' + (ids2.length === 0 ? ' pc-empty' : '');
+            chBtn2.setAttribute('role', 'menuitem');
+            var cntHtml2 = ids2.length ? ' <span class="pc-cnt">(' + ids2.length + ')</span>' : '';
+            chBtn2.innerHTML = esc(_hlbl2) + cntHtml2;
+            chBtn2.addEventListener('click', function(e) {
+              e.stopPropagation();
+              if (ids2.length === 0) {
+                if (typeof showToast === 'function') {
+                  showToast('אין עדיין מתכונים מתויגים לחג זה בעדה הזו');
+                }
+                return;
+              }
+              selectCommunityHoliday(_comm2, _hkey2,
+                (catLbl(_comm2) || _comm2) + ' — ' + _hlbl2,
+                node.key);
+            });
+            body.appendChild(chBtn2);
+            return;
           }
 
           // ── Nested accordion (e.g. מתכונים מהעדות inside מטעמים, מטבח ישראלי inside עדות) ──
