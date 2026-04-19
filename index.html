@@ -1703,6 +1703,32 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
   </div>
 </section>
 
+<!-- ════════ MAIN CONTENT ══════════════════════════════════ -->
+<main id="main" class="main-hidden" role="main" aria-hidden="true">
+  <div class="grid-header">
+    <div>
+      <span id="sec-title">כל המתכונים</span>
+      <span id="sec-cnt"></span>
+    </div>
+    <div class="filter-bar">
+      <div class="diff-btns" role="group" aria-label="סנן לפי רמת קושי">
+        <button class="diff-btn active" data-diff="all">הכל</button>
+        <button class="diff-btn" data-diff="קל">קל</button>
+        <button class="diff-btn" data-diff="בינוני">בינוני</button>
+        <button class="diff-btn" data-diff="מתקדם">מתקדם</button>
+      </div>
+      <select id="time-filter" class="time-filter" aria-label="סנן לפי זמן הכנה">
+        <option value="all">כל הזמנים</option>
+        <option value="30">עד 30 דקות</option>
+        <option value="60">עד שעה</option>
+        <option value="120">עד שעתיים</option>
+        <option value="121">מעל שעתיים</option>
+      </select>
+    </div>
+  </div>
+  <div id="grid" class="grid" role="list" aria-label="רשימת מתכונים" aria-busy="true"></div>
+</main>
+
 <!-- ════════ BOOK + TAGS ══════════════════════════════════ -->
 <section id="book-wrapper" class="book-wrapper" dir="rtl" lang="he">
   <div class="book-toggle-wrap">
@@ -2120,31 +2146,6 @@ Requires:
 </section>
 
 
-<!-- ════════ MAIN CONTENT ══════════════════════════════════ -->
-<main id="main" class="main-hidden" role="main" aria-hidden="true">
-  <div class="grid-header">
-    <div>
-      <span id="sec-title">כל המתכונים</span>
-      <span id="sec-cnt"></span>
-    </div>
-    <div class="filter-bar">
-      <div class="diff-btns" role="group" aria-label="סנן לפי רמת קושי">
-        <button class="diff-btn active" data-diff="all">הכל</button>
-        <button class="diff-btn" data-diff="קל">קל</button>
-        <button class="diff-btn" data-diff="בינוני">בינוני</button>
-        <button class="diff-btn" data-diff="מתקדם">מתקדם</button>
-      </div>
-      <select id="time-filter" class="time-filter" aria-label="סנן לפי זמן הכנה">
-        <option value="all">כל הזמנים</option>
-        <option value="30">עד 30 דקות</option>
-        <option value="60">עד שעה</option>
-        <option value="120">עד שעתיים</option>
-        <option value="121">מעל שעתיים</option>
-      </select>
-    </div>
-  </div>
-  <div id="grid" class="grid" role="list" aria-label="רשימת מתכונים" aria-busy="true"></div>
-</main>
 
 <!-- ════════ BACK TO TOP ════════════════════════════════════ -->
 <button id="back-top" aria-label="חזור למעלה">↑</button>
@@ -11905,6 +11906,12 @@ var I18N = {
   pwa_label:  {he:'התקן',          en:'Install'},
   pwa_title:  {he:'התקן אפליקציה',  en:'Install app'},
   pwa_aria:   {he:'התקן אפליקציה',  en:'Install app'},
+  // v7.6: Header brand + recipe count (per v7.0 plan)
+  site_name_short: {he:'ספר הבישול של פרלה', en:"Perla's Cookbook"},
+  recipes_label:   {he:'מתכונים', en:'recipes'},
+  // v7.6: Hero CTA buttons (per v7.0 plan)
+  hero_cta_browse: {he:'עיון במתכונים', en:'Browse Recipes'},
+  hero_cta_book:   {he:'קרא את הספר', en:'Read the Book'},
   hero_title:    {he:'המטבח של ', en:'The Kitchen of '},
   hero_title_em:   {he:'משפחת בן הראש (ארוש\\הרוש)', en:'the Ben-Harrosh / Ben-Arrush Family'},
   hero_tagline:  {he:'לזכרם של פרלה ופנחס בן הראש ז״ל — טעמים שמעלים זכרונות שכמעט שכחנו...', en:'In memory of Perla & Pinchas Ben-Harrosh z"l — flavors that awaken memories we almost forgot...'},
@@ -11942,6 +11949,27 @@ var I18N = {
   time_121:      {he:'מעל שעתיים', en:'Over 2 hours'},
   // Navigation categories
   nav_all:       {he:'כל המתכונים', en:'All Recipes'},
+  // v7.6: New top-level group names from v7.0 flat menu
+  nav_morocco:     {he:'מרוקו', en:'Morocco'},
+  nav_communities: {he:'עדות ישראל', en:'Jewish Communities'},
+  nav_holidays:    {he:'חגים', en:'Holidays'},
+  // v7.6: v7.4 community sub-folder labels
+  community_all:        {he:'כל המתכונים', en:'All Recipes'},
+  community_traditional: {he:'מאכלים מסורתיים לעדה', en:'Traditional Community Dishes'},
+  community_holidays_folder: {he:'מאכלי חגים', en:'Holiday Dishes'},
+  // v7.6: Holiday names (per community context)
+  holiday_shabbat:  {he:'שבת', en:'Shabbat'},
+  holiday_rosh:     {he:'ראש השנה', en:'Rosh Hashana'},
+  holiday_kippur:   {he:'יום כיפור', en:'Yom Kippur'},
+  holiday_pesach:   {he:'פסח', en:'Pesach'},
+  holiday_mimouna:  {he:'מימונה', en:'Mimouna'},
+  holiday_hanukkah: {he:'חנוכה', en:'Hanukkah'},
+  holiday_purim:    {he:'פורים', en:'Purim'},
+  holiday_shavuot:  {he:'שבועות', en:'Shavuot'},
+  holiday_sukkot:   {he:'סוכות', en:'Sukkot'},
+  holiday_henna:    {he:'חינה', en:'Henna'},
+  // Toast messages for empty community-holiday combos
+  toast_no_recipes_holiday: {he:'אין עדיין מתכונים מתויגים לחג זה בעדה הזו', en:'No recipes tagged for this holiday in this community yet'},
   nav_by_type:   {he:'לפי סוג מנה', en:'By Dish Type'},
   nav_moroccan:  {he:'מרוקאי-ספרדי', en:'Moroccan-Sephardic'},
   nav_span:      {he:'מורשת ספרד', en:'Spanish Heritage'},
