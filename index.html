@@ -375,6 +375,8 @@ html.light .pc-holidays { color: #a64020 !important; }
 .acc-sep { width: 100%; height: 1px; background: rgba(196,147,10,.12); margin: .2rem 0; }
 
 /* ── Hero ─────────────────────────────────────────────────── */
+/* v7.1 — Hide recipe grid until user picks category or searches */
+.main-hidden { display: none !important; }
 .hero {
   direction: rtl;
   background: linear-gradient(165deg,
@@ -1717,7 +1719,7 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
 </section>
 
 <!-- ════════ MAIN CONTENT ══════════════════════════════════ -->
-<main id="main" role="main">
+<main id="main" class="main-hidden" role="main" aria-hidden="true">
   <div class="grid-header">
     <div>
       <span id="sec-title">כל המתכונים</span>
@@ -7769,6 +7771,16 @@ function observeLazy() {
 ═══════════════════════════════════════════════ */
 var _navKey = null;
 
+/* v7.1 — Show/hide the recipe grid on demand (instead of displaying on load) */
+function showMainGrid() {
+  var m = document.getElementById('main');
+  if (m) { m.classList.remove('main-hidden'); m.setAttribute('aria-hidden', 'false'); }
+}
+function hideMainGrid() {
+  var m = document.getElementById('main');
+  if (m) { m.classList.add('main-hidden'); m.setAttribute('aria-hidden', 'true'); }
+}
+
 function closePanel() {
   var panel = document.getElementById('nav-panel');
   if (panel) { var _f = panel.querySelector(':focus'); if (_f) _f.blur(); panel.classList.remove('open'); panel.setAttribute('aria-hidden', 'true'); }
@@ -7836,6 +7848,7 @@ function buildNav() {
   }
 
   function selectCat(catId, hol, groupKey) {
+    showMainGrid();
     ACT_CATS = []; ACT_IDS = null; ACT_CAT = catId;
     ACT_HOLIDAY = hol || null;
     if (groupKey) ACT_NAV_KEY = groupKey;
@@ -7847,6 +7860,7 @@ function buildNav() {
   }
 
   function selectMulti(ids, label, groupKey) {
+    showMainGrid();
     ACT_CATS = ids.slice(); ACT_IDS = null; ACT_CAT = ''; ACT_HOLIDAY = null;
     if (groupKey) ACT_NAV_KEY = groupKey;
     SEARCH = '';
@@ -7857,6 +7871,7 @@ function buildNav() {
   }
 
   function selectByIds(recipeIds, label, groupKey) {
+    showMainGrid();
     ACT_IDS = new Set(recipeIds); ACT_CATS = []; ACT_CAT = 'span'; ACT_HOLIDAY = null;
     if (groupKey) ACT_NAV_KEY = groupKey;
     SEARCH = '';
@@ -8194,6 +8209,8 @@ function navRecipe(dir) {
 ═══════════════════════════════════════════════ */
 function doSearch(val) {
   SEARCH = (val || '').trim().toLowerCase();
+  // v7.1 — Any search (even clearing) keeps the grid visible once revealed
+  if (SEARCH) showMainGrid();
   var clr = document.getElementById('srch-clr');
   if (clr) clr.hidden = !SEARCH;
   updateTitle();
@@ -8698,8 +8715,18 @@ document.addEventListener('DOMContentLoaded', function() {
   // v7.0 — Hero CTA buttons
   var ctaBrowse = document.getElementById('hero-cta-browse');
   if (ctaBrowse) ctaBrowse.addEventListener('click', function() {
-    var main = document.getElementById('main');
-    if (main) main.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // v7.1 — Simulate click on "הכל" nav button to reveal grid with all recipes
+    var allBtn = document.querySelector('#cat-inner .nb[data-nav-key="all"]');
+    if (allBtn) {
+      allBtn.click();
+    } else {
+      // Fallback: just show grid
+      showMainGrid();
+    }
+    setTimeout(function() {
+      var main = document.getElementById('main');
+      if (main) main.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
   });
   var ctaBook = document.getElementById('hero-cta-book');
   if (ctaBook) ctaBook.addEventListener('click', function() {
