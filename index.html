@@ -141,7 +141,7 @@ ol { padding-right: 1.2rem; }
   box-shadow: 0 2px 12px rgba(0,0,0,.4);
 }
 .hdr-inner {
-  max-width: 1440px;
+  max-width: 1100px;
   margin: 0 auto;
   height: 100%;
   padding: 0 1.5rem;
@@ -151,7 +151,10 @@ ol { padding-right: 1.2rem; }
   /* v7.3: justify-content space-between so brand sits on right edge,
      tools on left edge, and the centered search bar fills the middle
      with auto-margins from both sides. Per mockup, the search shouldn't
-     stretch full-width — it should look balanced in the center. */
+     stretch full-width — it should look balanced in the center.
+     v7.5: max-width reduced 1440→1100 so header aligns visually with
+     the centered content (Hero ~760, Bio ~860) rather than spreading
+     to the screen edges. */
   justify-content: space-between;
 }
 
@@ -220,7 +223,7 @@ ol { padding-right: 1.2rem; }
   box-shadow: 0 4px 16px rgba(0,0,0,.35);
 }
 .cat-nav-inner {
-  max-width: 1440px;
+  max-width: 1100px;
   direction: rtl;
   margin: 0 auto;
   height: 100%;
@@ -229,6 +232,10 @@ ol { padding-right: 1.2rem; }
   align-items: center;
   gap: .2rem;
   overflow-x: auto;
+  /* v7.5: max-width reduced 1440→1100 so nav category buttons sit
+     within the same visual column as header + content, not stretched
+     to the screen edges. */
+  justify-content: center;
 }
 .cat-nav-inner::-webkit-scrollbar { height: 0; }
 #cat-inner { display: flex; direction: rtl; align-items: center; gap: .2rem; }
@@ -276,7 +283,7 @@ ol { padding-right: 1.2rem; }
 }
 .nav-panel.open { display: block; }
 .nav-panel-inner {
-  max-width: 1440px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 1.4rem 1.8rem 1.6rem;
   display: flex;
