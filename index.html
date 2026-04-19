@@ -12,7 +12,7 @@
 <!-- Security headers via meta -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="Content-Security-Policy"
-  content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com; media-src 'self' blob:; connect-src 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://formsubmit.co; object-src 'none'; base-uri 'self'; form-action 'self' https://formsubmit.co;">
+  content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com; media-src 'self' blob:; connect-src 'self' https://api.web3forms.com; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta name="referrer" content="no-referrer">
 <meta property="og:title" content="ספר הבישול של פרלה בן הראש ז״ל">
@@ -6953,21 +6953,24 @@ function exportFullCookbook() {
 
 
 /* ═════════════════════════════════════════════════════════════════
-   FEEDBACK SYSTEM v1.0 — Perla Cookbook
-   Privacy: Destination email is stored ONLY in Netlify Dashboard,
-   NEVER in this source code.
-   Setup: Netlify → Forms → perla-feedback → Settings →
-          Form notifications → Add email → <your-email>
+   FEEDBACK SYSTEM v2.0 — Perla Cookbook (Web3Forms backend)
+   Migrated from FormSubmit.co (v6.6, 19-04-2026) due to persistent 403
+   responses from FormSubmit's anti-abuse layer on captcha-less submits.
+   Web3Forms has proper CORS support (no iframe tricks required).
+   Setup: https://web3forms.com → Sign up (free, 250 subs/month) →
+          Paste your Access Key below in WEB3FORMS_KEY.
+   Privacy: The Access Key is a public alias; it is NOT your email
+   address. The destination email is stored only on Web3Forms' servers.
 ════════════════════════════════════════════════════════════════════ */
 (function() {
   'use strict';
 
-  /* FormSubmit.co — free form-to-email service (no signup).
-     First-ever submission triggers activation: owner receives verification email,
-     clicks link, then future submissions arrive normally.
-     For extra privacy, after activation replace the email with the hashed alias
-     that FormSubmit provides (https://formsubmit.co/el/{hash}). */
-  var FORMSUBMIT_EMAIL_B64 = 'YXNhZmJlbjMzQGdtYWlsLmNvbQ==';
+  /* Web3Forms Access Key — PUBLIC (not secret, it's an alias to your email).
+     Get yours at https://web3forms.com → sign up → Create Access Key.
+     Paste the UUID-style string below (e.g. 'a1b2c3d4-e5f6-7890-ab12-cd34ef56ab78'). */
+  var WEB3FORMS_KEY  = '705d4207-c4a6-43a2-8fdc-d8e202bc6c9c';
+  var WEB3FORMS_URL  = 'https://api.web3forms.com/submit';
+  var FORMSUBMIT_EMAIL_B64 = 'YXNhZmJlbjMzQGdtYWlsLmNvbQ==';  /* retained for mailto fallback only */
   var FORM_NAME = 'perla-feedback';
   var MAX_MSG   = 2000;
 
@@ -7070,6 +7073,20 @@ function exportFullCookbook() {
       return;
     }
 
+    /* Guard: Access Key must be configured. If left as placeholder,
+       fall back to mailto to avoid a silent 400 from Web3Forms. */
+    if (!WEB3FORMS_KEY || WEB3FORMS_KEY.indexOf('PASTE_') === 0) {
+      openMailtoFallback({
+        'feedback-type': _type || 'site',
+        'recipe-title':  _recipe ? String(_recipe.title) : '',
+        'recipe-id':     _recipe ? String(_recipe.id)    : '',
+        'sender-name':   name.slice(0, 80),
+        'message':       message.slice(0, MAX_MSG),
+        'page-url':      location.href
+      });
+      return;
+    }
+
     _isSubmitting = true;
     if (submitBtn) submitBtn.disabled = true;
     setStatus('שולח הודעה...', 'loading');
@@ -7089,97 +7106,72 @@ function exportFullCookbook() {
       'page-url':      location.href
     };
 
-    /* CRITICAL — Why hidden iframe + form, NOT fetch:
-       FormSubmit's /ajax/ endpoint does not properly handle CORS preflight from
-       cross-origin pages (GitHub Pages, etc). Sending JSON via fetch triggers
-       OPTIONS preflight that returns no Access-Control-Allow-Origin header,
-       causing CORS failure. Form submissions via <form target="iframe"> are
-       NOT subject to CORS preflight (legacy HTML form behavior), so this works
-       from ANY origin (GitHub Pages, Netlify, file://, localhost). */
-    var hf = $('fb-hidden-form');
-    var iframe = $('fb-iframe-target');
+    /* Web3Forms payload — clean JSON, proper CORS, no iframe hacks.
+       access_key is public by design (it's an alias to the email).
+       Per Web3Forms docs, Content-Type MUST be application/json;
+       using x-www-form-urlencoded triggers a 301 redirect that CORS blocks. */
+    var payload = {
+      access_key:   WEB3FORMS_KEY,
+      subject:      subject,
+      from_name:    'אתר ספר הבישול של פרלה ז״ל',
+      name:         name.slice(0, 80) || '(לא צוין)',
+      email:        email.slice(0, 100) || 'noreply@perla-cookbook.local',
+      message:      message.slice(0, MAX_MSG),
+      type:         _type || 'site',
+      recipe_id:    _recipe ? String(_recipe.id)    : '',
+      recipe_title: _recipe ? String(_recipe.title) : '',
+      page_url:     location.href,
+      page_origin:  location.origin + location.pathname,
+      user_agent:   (navigator.userAgent || '').slice(0, 200),
+      botcheck:     ''   /* Web3Forms honeypot (must stay empty) */
+    };
 
-    if (!hf || !iframe) {
-      /* DOM not ready — fall back to mailto */
-      setStatus('שליחה ישירה לא זמינה. <a href="#" id="fb-mailto-fallback">פתח באימייל במקום</a>', 'error');
+    function showMailtoFallback(label) {
+      setStatus((label || 'שליחה נכשלה.') +
+        ' <a href="#" id="fb-mailto-fallback">פתח באימייל במקום</a>', 'error');
       var mFb = $('fb-mailto-fallback');
       if (mFb) mFb.addEventListener('click', function(ev) {
         ev.preventDefault();
         openMailtoFallback(mailtoData);
       });
-      _isSubmitting = false;
-      if (submitBtn) submitBtn.disabled = false;
-      return;
     }
 
-    /* Set form action dynamically — keeps email obfuscated in source */
-    hf.action = 'https://formsubmit.co/' + atob(FORMSUBMIT_EMAIL_B64);
-
-    /* Populate hidden form fields */
-    function setF(id, value) {
-      var el = $(id);
-      if (el) el.value = value || '';
-    }
-    setF('fb-hf-subject',      subject);
-    setF('fb-hf-name',         name.slice(0, 80) || '(לא צוין)');
-    setF('fb-hf-email',        email.slice(0, 100) || '(לא צוין)');
-    setF('fb-hf-message',      message.slice(0, MAX_MSG));
-    setF('fb-hf-type',         _type || 'site');
-    setF('fb-hf-recipe-id',    _recipe ? String(_recipe.id) : '');
-    setF('fb-hf-recipe-title', _recipe ? String(_recipe.title) : '');
-    setF('fb-hf-page-url',     location.href);
-    setF('fb-hf-url',          location.origin + location.pathname);
-    setF('fb-hf-user-agent',   (navigator.userAgent || '').slice(0, 200));
-
-    /* Listen for iframe load to detect submission completion.
-       The iframe will load FormSubmit's response page (success or activation msg).
-       Both cases mean the data was received. */
-    var done = false;
-
-    function onSuccess() {
-      if (done) return;
-      done = true;
-      try { iframe.removeEventListener('load', onSuccess); } catch(e) {}
-      clearTimeout(timeoutId);
-      setStatus('תודה! ההודעה נשלחה בהצלחה.', 'success');
-      setTimeout(closeFeedbackModal, 2500);
-      _isSubmitting = false;
-      if (submitBtn) submitBtn.disabled = false;
-    }
-
-    function onTimeout() {
-      if (done) return;
-      done = true;
-      try { iframe.removeEventListener('load', onSuccess); } catch(e) {}
-      setStatus('שליחה אורכת זמן רב מהצפוי. <a href="#" id="fb-mailto-fallback">פתח באימייל במקום</a>', 'error');
-      var mF = $('fb-mailto-fallback');
-      if (mF) mF.addEventListener('click', function(ev) {
-        ev.preventDefault();
-        openMailtoFallback(mailtoData);
+    /* Submit via fetch. Web3Forms supports CORS from any origin. */
+    fetch(WEB3FORMS_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept':       'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(function(response) {
+      return response.json().then(function(json) {
+        return { status: response.status, json: json };
+      }).catch(function() {
+        /* Response was not JSON (unexpected) */
+        return { status: response.status, json: { success: false, message: 'Unexpected response' } };
       });
+    })
+    .then(function(res) {
+      if (res.status === 200 && res.json && res.json.success) {
+        setStatus('תודה! ההודעה נשלחה בהצלחה.', 'success');
+        setTimeout(closeFeedbackModal, 2500);
+      } else {
+        var detail = (res.json && res.json.message) ? res.json.message : ('HTTP ' + res.status);
+        try { console.warn('[Feedback] Web3Forms error:', detail, res.json); } catch(e) {}
+        showMailtoFallback('שליחה נכשלה (' + detail + ').');
+      }
+    })
+    .catch(function(err) {
+      try { console.warn('[Feedback] Network error:', err); } catch(e) {}
+      showMailtoFallback('שגיאת רשת.');
+    })
+    .then(function() {
+      /* .finally() equivalent — broader browser support */
       _isSubmitting = false;
       if (submitBtn) submitBtn.disabled = false;
-    }
-
-    iframe.addEventListener('load', onSuccess);
-    var timeoutId = setTimeout(onTimeout, 15000);
-
-    /* Submit the hidden form (POSTs to FormSubmit, response loads in iframe).
-       This is a traditional form POST, NOT a fetch — bypasses CORS entirely. */
-    try {
-      hf.submit();
-    } catch (err) {
-      try { iframe.removeEventListener('load', onSuccess); } catch(e) {}
-      clearTimeout(timeoutId);
-      setStatus('שליחה ישירה נכשלה. <a href="#" id="fb-mailto-fallback">פתח באימייל במקום</a>', 'error');
-      var mE = $('fb-mailto-fallback');
-      if (mE) mE.addEventListener('click', function(ev) {
-        ev.preventDefault();
-        openMailtoFallback(mailtoData);
-      });
-      _isSubmitting = false;
-      if (submitBtn) submitBtn.disabled = false;
-    }
+    });
   }
 
   function openMailtoFallback(data) {
@@ -7396,44 +7388,13 @@ if(typeof BOOK_HTML!=='undefined'){
 </script>
 
 <!-- ═══════════════════════════════════════════════════════════
-     FEEDBACK FORM — Hidden iframe + form for FormSubmit.co
-     Why this approach: FormSubmit's /ajax/ endpoint doesn't handle
-     CORS preflight from cross-origin pages (GitHub Pages, etc).
-     Traditional form POSTs to a hidden iframe target are NOT subject
-     to CORS, so this works from any origin (GH Pages, Netlify, file://).
-     The form action is set dynamically via JS to keep the email
-     base64-obfuscated in the source code.
+     FEEDBACK FORM — Submission backend: Web3Forms (v6.6+)
+     Migrated from FormSubmit.co due to 403 issues from their
+     anti-abuse layer. Web3Forms supports CORS natively via
+     fetch() with application/json — no iframe/hidden-form hacks
+     required. Access Key is injected in the JS constant above
+     (WEB3FORMS_KEY) and is a public email-alias by design.
 ═══════════════════════════════════════════════════════════ -->
-<iframe name="fb-iframe-target"
-        id="fb-iframe-target"
-        title="טופס פידבק (יעד מוסתר)"
-        aria-hidden="true"
-        tabindex="-1"
-        style="position:absolute;width:0;height:0;border:0;visibility:hidden"></iframe>
-
-<form id="fb-hidden-form"
-      method="POST"
-      target="fb-iframe-target"
-      enctype="application/x-www-form-urlencoded"
-      accept-charset="UTF-8"
-      style="display:none"
-      aria-hidden="true"
-      hidden>
-  <!-- Action set dynamically by JS — keeps email base64-obfuscated -->
-  <input type="hidden" name="_subject"     id="fb-hf-subject"      value="">
-  <input type="hidden" name="_template"    value="table">
-  <input type="hidden" name="_captcha"     value="false">
-  <input type="hidden" name="_honey"       value="">
-  <input type="hidden" name="_url"         id="fb-hf-url"          value="">
-  <input type="hidden" name="name"         id="fb-hf-name"         value="">
-  <input type="hidden" name="email"        id="fb-hf-email"        value="">
-  <input type="hidden" name="message"      id="fb-hf-message"      value="">
-  <input type="hidden" name="type"         id="fb-hf-type"         value="">
-  <input type="hidden" name="recipe_id"    id="fb-hf-recipe-id"    value="">
-  <input type="hidden" name="recipe_title" id="fb-hf-recipe-title" value="">
-  <input type="hidden" name="page_url"     id="fb-hf-page-url"     value="">
-  <input type="hidden" name="user_agent"   id="fb-hf-user-agent"   value="">
-</form>
 
 </body>
 </html>
