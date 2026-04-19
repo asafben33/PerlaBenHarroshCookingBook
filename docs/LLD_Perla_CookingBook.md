@@ -1800,7 +1800,262 @@ const MENU_STRUCTURE = [
 
 ---
 
+## נספח — מחזור v7.0 → v8.0 (19/04/2026)
+
+המסמך הזה (LLD v7.1) משקף את העיצוב הנמוך-רמה הבסיסי. למחזור v7.0 → v8.0 בוצעו שינויים מבניים נרחבים שמתועדים בנפרד. **לפני שאתה משנה קוד שתואר ב-LLD v7.1, ודא שאתה מכיר את ה-API החדש.**
+
+### שינויים ב-`MENU_STRUCTURE` (data.js)
+
+המבנה הקיים של wrapper יחיד עם nested categories הוחלף ב-flat structure של 4 קבוצות עליונות:
+
+```javascript
+const MENU_STRUCTURE = [
+  {id:'all', lbl:'הכל'},                                       // 1,054
+  {lbl:'מרוקו\\ספרד', key:'morocco_span', items:[...]},        // 744 — 11 sub-items
+  {lbl:'עדות ישראל', key:'communities', items:[...]},          // 270 — 9 communities × 3 items
+  {id:'nonkosher', lbl:'לא כשר'}                               // 40
+];
+```
+
+#### מבנה sub-items של מרוקו\\ספרד (v7.9)
+
+```javascript
+items:[
+  // multi-cat selector
+  {lbl:'כל מתכוני מרוקו וספרד', ids:['soups','salads','veg','meat','chick','fish','hol','des','span']},
+  // Moroccan categories
+  {id:'soups', lbl:'מרקים'}, {id:'salads', lbl:'סלטים'}, {id:'veg', lbl:'תבשילי ירקות'},
+  {id:'meat', lbl:'בשר וקציצות'}, {id:'chick', lbl:'עוף ושבת'}, {id:'fish', lbl:'דגים'},
+  // holiday folder (v7.8) — uses h: param against HOLIDAY_TAGS
+  {lbl:'חגים ומועדים', items:[
+    {id:'hol', lbl:'כל מתכוני החגים'},
+    {id:'hol', h:'shabbat', lbl:'שבת'},   // 54 recipes
+    {id:'hol', h:'rosh', lbl:'ראש השנה'}, // 14
+    // ... 8 more holidays
+  ]},
+  {id:'des', lbl:'קינוחים ומאפים'},
+  {id:'span', lbl:'ספרד (אנדלוסי)'}      // Spain only
+]
+```
+
+#### מבנה sub-items של עדה (v7.4)
+
+```javascript
+{lbl:'עיראק', items:[
+  {id:'iraq', lbl:'כל המתכונים'},                              // 30
+  {lbl:'מאכלים מסורתיים לעדה', ids:['iq7','iq16','iq23']},     // non-holiday IDs
+  {lbl:'מאכלי חגים', items:[                                    // nested folder
+    {communityHoliday:'iraq', holidayKey:'shabbat', lbl:'שבת'},
+    // ... 8 more (NO mimouna)
+  ]}
+]}
+```
+
+### קבועים חדשים ב-data.js
+
+#### `HOLIDAY_TAGS` (v7.7 — תוקן מ-bug קריטי)
+
+```javascript
+const HOLIDAY_TAGS = {
+  shabbat:  ['sv2','me8','me11','me19','c3', /* ... 54 IDs */],
+  rosh:     [/* 14 IDs */], kippur:[],
+  pesach:   [/* 4 IDs */], mimouna:[/* 7 IDs */],
+  hanukkah: [/* 2 */], purim:[/* 1 */],
+  shavuot:  [/* 12 */], sukkot:[/* 27 */], henna:[/* 14 */]
+};
+```
+
+**Coverage:** 121 unique tags / 671 Morocco recipes (18%). מבוסס regex על כותרות + מסורת מתועדת.
+
+#### `COMMUNITY_HOLIDAY_TAGS` (v7.4 — חדש)
+
+```javascript
+const COMMUNITY_HOLIDAY_TAGS = {
+  iraq: { shabbat:[...], rosh:[...], kippur:[...], pesach:[...],
+          hanukkah:[...], purim:[...], shavuot:[...], sukkot:[...], henna:[...] },
+  kurd: { ... }, ashk: { ... }, yem: { ... }, pers: { ... },
+  buk:  { ... }, tun:  { ... }, turk: { ... }, isr:  { ... }
+};
+// 9 communities × 9 holidays. NO mimouna (Moroccan-only).
+// 221 unique tags / 270 community recipes (82% coverage).
+```
+
+### פונקציות JS חדשות/שונו (index.html)
+
+| פונקציה | שורה | מטרה | גרסה |
+|---|---|---|---|
+| `selectCommunityHoliday(community, holiday, label, key)` | ~7913 | סינון לפי עדה×חג מ-COMMUNITY_HOLIDAY_TAGS | v7.4 |
+| `selectCat(catId, hol, key)` | ~7857 | מטפל גם ב-`hol` parameter (מרוקו holiday) | v7.7 |
+| `window.showMainGrid()` | ~3500 | חושף את הרשת המוסתרת | v7.1 |
+| `window.hideMainGrid()` | ~3505 | מסתיר את הרשת | v7.1 |
+| `window.initHdrCount()` | header | מעדכן ספירה דינמית של מתכונים | v7.0 |
+| `window.initHeroCTAs()` | header | מחבר onClick לכפתורי Hero | v7.0 |
+
+### Filter logic — `renderGrid()` (~שורה 7544)
+
+```javascript
+} else if (ACT_CAT === 'hol' && ACT_HOLIDAY) {
+  cok = (HOLIDAY_TAGS[ACT_HOLIDAY] || []).indexOf(r.id) >= 0;
+}
+```
+
+זה התנאי שמשתמש כש-MENU_STRUCTURE מכיל `{id:'hol', h:'shabbat', ...}` (v7.8).
+
+### שינויים ב-`buildPanel()` (~שורה 7943)
+
+3 branches נוספו לטיפול ב-`communityHoliday`/`holidayKey` ברמות nesting 1, 2, ו-3:
+
+```javascript
+// רמה 1
+if (item.communityHoliday) { /* ... */ }
+
+// רמה 2
+if (s.communityHoliday) { /* ... */ }
+
+// רמה 3 (folder of folders)
+if (ns.communityHoliday) { /* ... */ }
+```
+
+### CSS classes חדשים (index.html)
+
+| class | תפקיד | שורה |
+|---|---|---|
+| `.hdr-brand-v7` | brand title + count container | ~410 |
+| `.hdr-brand-title` | שם האתר | ~416 |
+| `.hdr-brand-count` | "1,054 מתכונים" | ~422 |
+| `.hero-cta-row` | container ל-2 הכפתורים | ~388 |
+| `.hero-cta-primary` | "עיון במתכונים" — מלא | ~395 |
+| `.hero-cta-secondary` | "קרא את הספר" — outline | ~399 |
+| `.main-hidden` | `display: none !important` | ~432 |
+| `.pc-comm-hol` | community-holiday chip | ~436 |
+| `.pc-comm-hol:hover` | hover state | ~441 |
+| `.pc-empty` | חג ללא תיוגים (semi-transparent) | ~446 |
+
+### Light theme overrides (v8.0 — חדשים)
+
+ב-~שורה 451 (אחרי `html.light .pc-comm-hol { color: #8c2e14; }`):
+
+```css
+html.light .hdr-brand-v7 .hdr-brand-title { color: #6e3d0a; }
+html.light .hdr-brand-v7 .hdr-brand-count { color: rgba(74,42,20,.65); }
+html.light .pc-comm-hol { background: rgba(184,66,35,.06); border-color: rgba(184,66,35,.30); }
+html.light .pc-comm-hol:hover { background: rgba(184,66,35,.12); border-color: rgba(184,66,35,.55); color: #6e2410; }
+html.light .pc-comm-hol.pc-empty { opacity: .45; }
+html.light .hero-cta-primary { background: var(--c-spice); color: #fff; }
+html.light .hero-cta-primary:hover { background: #922f18; }
+```
+
+### Print stylesheet (v8.0 — הורחב)
+
+ב-`@media print` (~שורה 1129) נוסף ל-`display: none`:
+
+```css
+.hdr-brand-v7, .hero-cta-row, .pc-comm-hol, .pc-empty,
+#main, .main-hidden, #book-wrapper, #about-redesigned,
+.feedback-fab, #pwa-modal-ovl, #pwa-install-btn
+```
+
+### Layout widths (v7.5)
+
+```css
+.hdr-inner       { max-width: 1100px; }  /* היה 1440 */
+.cat-nav-inner   { max-width: 1100px; }
+.nav-panel-inner { max-width: 1100px; }
+.hdr-search      { flex: 0 1 480px; max-width: 480px; }
+.hero-inner      { max-width: 760px; margin: 0 auto; text-align: center; }
+.bio-inner       { max-width: 860px; }
+```
+
+### i18n constants (index.html)
+
+#### `DICT` (~שורה 11860+) — 21 keys חדשים ב-v7.6 + 5 ב-v8.0
+
+```javascript
+// v7.6 additions
+site_name_short, recipes_label, hero_cta_browse, hero_cta_book,
+nav_morocco, nav_communities, nav_holidays,
+community_all, community_traditional, community_holidays_folder,
+holiday_shabbat, holiday_rosh, holiday_kippur, holiday_pesach,
+holiday_mimouna, holiday_hanukkah, holiday_purim,
+holiday_shavuot, holiday_sukkot, holiday_henna,
+toast_no_recipes_holiday,
+
+// v8.0 additions
+nav_morocco_span:     {he:'מרוקו\\ספרד', en:'Morocco / Spain'},
+nav_morocco_span_all: {he:'כל מתכוני מרוקו וספרד', en:'All Morocco & Spain Recipes'},
+nav_span_andalusi:    {he:'ספרד (אנדלוסי)', en:'Spain (Andalusian)'},
+nav_veg_dishes:       {he:'תבשילי ירקות', en:'Vegetable Dishes'},
+morocco_all_holidays: {he:'כל מתכוני החגים', en:'All Holiday Recipes'}
+```
+
+#### `_NAV_I18N` (~שורה 12055) — 8 mappings חדשים ב-v8.0
+
+```javascript
+'מרוקו':'nav_morocco', 'עדות ישראל':'nav_communities', 'חגים':'nav_holidays',
+'מרוקו\\ספרד':'nav_morocco_span',
+'כל מתכוני מרוקו וספרד':'nav_morocco_span_all',
+'ספרד (אנדלוסי)':'nav_span_andalusi',
+'מאכלי חגים':'community_holidays_folder',
+'מאכלים מסורתיים לעדה':'community_traditional',
+'תבשילי ירקות':'nav_veg_dishes',
+'כל מתכוני החגים':'morocco_all_holidays'
+```
+
+### DOM section order (v7.6)
+
+```html
+<header class="hdr">...</header>
+<nav class="cat-nav">...</nav>
+<section class="hero">...</section>           <!-- 1675 -->
+<section id="bio">...</section>               <!-- 1689 -->
+<main id="main" class="main-hidden">...</main> <!-- 1707 — moved here from after About -->
+<div id="book-wrapper">...</div>              <!-- 1733 -->
+<section id="about-redesigned">...</section>  <!-- 1768 -->
+```
+
+### קבצים חדשים בפרויקט (v8.0)
+
+- **`sitemap.xml`** — 6 URLs (Netlify primary, GitHub Pages mirror, 4 anchor sections), עם hreflang tags he/en
+- **`robots.txt`** — מצביע ל-sitemap (158 bytes)
+
+### תהליך הוספת תווית חדשה (v8.0)
+
+1. הוסף `{lbl:'תווית חדשה', ...}` ל-MENU_STRUCTURE ב-data.js
+2. הוסף ל-DICT ב-index.html: `key_chosen: {he:'תווית חדשה', en:'New Label'}`
+3. הוסף ל-`_NAV_I18N`: `'תווית חדשה':'key_chosen'`
+4. בדוק ש-`applyLang('en')` מתרגם נכון
+
+**שכחת לעדכן `_NAV_I18N`?** התווית תופיע בעברית גם במצב EN. שכחת לעדכן DICT? תופיע ה-`key_chosen` הגולמי במקום התרגום.
+
+### CRLF normalization (חובה אחרי כל עריכת Python על index.html)
+
+```python
+raw = open('index.html', 'rb').read()
+text = raw.replace(b'\r', b'').replace(b'\n', b'\r\n')
+open('index.html', 'wb').write(text)
+```
+
+verify:
+```bash
+python3 -c "raw=open('index.html','rb').read(); print('CRLF',raw.count(b'\r\n'),'LONE',raw.count(b'\n')-raw.count(b'\r\n'))"
+# Expected: CRLF >= 12990, LONE 0
+```
+
+### בדיקות before push (v8.0)
+
+```bash
+node -c data.js                                    # data.js syntax
+python3 -c "[extract main JS, run node -c on it]"  # index.html JS syntax
+grep -c "מתכונים שיש" data.js | head -1            # recipes count = 1054
+grep -c "705d4207-c4a6-43a2-8fdc-d8e202bc6c9c" index.html  # Web3Forms key intact
+grep -c "morocco_span" data.js                     # v7.9 merged
+grep -c "nav_morocco_span:" index.html             # v8.0 i18n wired
+grep -c "html.light .hdr-brand-v7" index.html      # v8.0 light theme
+```
+
+---
+
 *לזכר משפחת בן הראש — קזבלנקה, מרקש, ירושלים*
 *"האוכל שלה — הסיפור שלנו"*
 
-**סוף LLD v7.1**
+**סוף LLD v7.1 + נספח v8.0**

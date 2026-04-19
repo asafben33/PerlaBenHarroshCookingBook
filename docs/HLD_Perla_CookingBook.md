@@ -758,7 +758,73 @@ No 'Access-Control-Allow-Origin' header is present on the requested resource.
 
 ---
 
+## נספח — מחזור v7.0 → v8.0 (19/04/2026)
+
+מחזור עיצוב מחדש מקיף שבוצע ביום אחד, ב-11 פריסות. **המסמך הזה (HLD v6.4) משקף את הבסיס הארכיטקטוני; פירוט מלא של השינויים נמצא ב-`PLAN_v7_0_HEBREW.md`, `PLAN_v7_0_ENGLISH.md`, ובסדרת CHANGELOGs יחודית לכל גרסה.**
+
+### שינויים ארכיטקטוניים מרכזיים
+
+| היבט | v6.4 (מסמך זה) | v8.0 (נוכחי) |
+|---|---|---|
+| **MENU_STRUCTURE** | nested wrapper "כל המתכונים" עם 4 רמות | 4 קבוצות שטוחות עליונות (הכל / מרוקו\\ספרד / עדות ישראל / לא כשר) |
+| **רשת מתכונים** | מוצגת בטעינה | מוסתרת עד פעולת משתמש (`main-hidden` + `showMainGrid()`) |
+| **חגים — מרוקו** | קטגוריה אחת `hol` (80 מתכונים) | 10 חגים נפרדים תחת מרוקו, 121 תיוגים יחודיים (`HOLIDAY_TAGS` תוקן ב-v7.7) |
+| **חגים — עדות** | לא קיים | 9 עדות × 9 חגים = 221 תיוגים יחודיים (`COMMUNITY_HOLIDAY_TAGS`, ללא מימונה) |
+| **מרוקו + ספרד** | 2 כפתורים נפרדים | אוחדו ל-"מרוקו\\ספרד" (744 מתכונים, מורשת קארו 1492) |
+| **i18n nav** | חלקי | מלא — כל פריט תפריט מתורגם לאנגלית |
+| **Header** | brand נפרד מחיפוש, max-width 1440 | brand+חיפוש+כלים מאוזנים, max-width 1100 (v7.5) |
+| **Hero** | `text-align: right` | ממורכז (`text-align: center`, max-width 760) |
+| **Hero CTAs** | לא קיים | 2 כפתורים: "עיון במתכונים" + "קרא את הספר" |
+| **DOM order** | Hero → Bio → Book → About → Main | Hero → Bio → **Main** → Book → About (v7.6) |
+| **SEO** | אין sitemap.xml | sitemap.xml + robots.txt + hreflang (v8.0) |
+| **Light theme** | חלקי | overrides ל-7 classes חדשים של v7.x (v8.0) |
+| **Print stylesheet** | מסתיר אלמנטים של v6.x | הורחב לכל classes של v7.x (v8.0) |
+
+### קבועי data חדשים (data.js)
+
+| קבוע | תוכן | גרסה |
+|---|---|---|
+| `MENU_STRUCTURE` | 4 קבוצות עליונות (במקום nested wrapper) | v7.9 |
+| `HOLIDAY_TAGS` | 10 חגי מרוקו → 121 IDs יחודיים | v7.7 (תוקן) |
+| `COMMUNITY_HOLIDAY_TAGS` | 9 עדות × 9 חגים → IDs | v7.4 (חדש) |
+
+### קבועי i18n חדשים (index.html)
+
+| קבוע | מטרה | גרסה |
+|---|---|---|
+| `_NAV_I18N` | מיפוי תוויות עברית → DICT keys | הורחב v8.0 |
+| `t(key)` | פונקציית lookup | קיים |
+| `applyLang(lang)` | סורק DOM, מתרגם תוויות לפי `_NAV_I18N` | קיים |
+
+DICT הורחב מ-~130 ל-~155 מפתחות (21 ב-v7.6 + 5 ב-v8.0).
+
+### קבצים חדשים בפרויקט
+
+- **`sitemap.xml`** (1.5 KB) — SEO sitemap עם 6 URLs + hreflang tags he/en (v8.0)
+- **`robots.txt`** (158 B) — מפנה crawlers ל-sitemap (v8.0)
+- **`audit_recipes.py`** — סקריפט ביקורת אוטומטי לאיכות מתכונים (לא מתקן)
+- **`CLAUDE_md_v7_update.md`** + **`CLAUDE_md_v8_update.md`** — תוספות תיעוד שטרם הוטמעו ב-CLAUDE.md המקורי
+
+### סדרת CHANGELOGs (v7.0 → v8.0 — 10 קבצים)
+
+```
+CHANGELOG_19-04-2026_v7_centered_hero.md          (v7.0 + v7.1)
+CHANGELOG_19-04-2026_v7_2_community_holidays.md   (v7.2)
+CHANGELOG_19-04-2026_v7_3_holidays_in_community.md (v7.3)
+CHANGELOG_19-04-2026_v7_4_holiday_folder.md       (v7.4)
+CHANGELOG_19-04-2026_v7_5_centered_header_strip.md (v7.5)
+CHANGELOG_19-04-2026_v7_6_final.md                (v7.6)
+CHANGELOG_19-04-2026_v7_7_holiday_tags_fix.md     (v7.7)
+CHANGELOG_19-04-2026_v7_8_remove_duplicate_holidays.md (v7.8)
+CHANGELOG_19-04-2026_v7_9_morocco_spain_merge.md  (v7.9)
+CHANGELOG_19-04-2026_v8_0_i18n_theme_seo.md       (v8.0)
+```
+
+**הערה למתחזק:** בעת רענון HLD מ-v6.4 ל-v8.x, חובה לקרוא את `PLAN_v7_0_HEBREW.md` ו-`PLAN_v7_0_ENGLISH.md` המעודכנים שמכילים את ה-handoff המקיף לכל הארכיטקטורה החדשה.
+
+---
+
 *לזכר משפחת בן הראש — קזבלנקה, מרקש, ירושלים*
 *"האוכל שלה — הסיפור שלנו"*
 
-**סוף HLD v6.4**
+**סוף HLD v6.4 + נספח v8.0**

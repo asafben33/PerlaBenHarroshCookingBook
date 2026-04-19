@@ -1,6 +1,6 @@
 # ספר הבישול של פרלה בן הראש ז"ל
 
-**גרסה: 7.1 | 19/04/2026**
+**גרסה: 8.0 | 19/04/2026**
 
 ## זהות הפרויקט
 - אתר (Netlify): https://perlabenharrosh-cookingbook.netlify.app/
@@ -170,10 +170,164 @@ Header → Hero → Bio → Main (רשת מתכונים) → Book-wrapper → Ab
   - לחיצה על "עיון במתכונים" ב-Hero (מדמה קליק על "הכל")
 - **מתי הרשת נסגרת:** רק ברענון דף (לא סוגרים אוטומטית לאחר שהתגלתה)
 
-## אזהרות (מעודכן ל-v7.1)
-- אל תשנה `MENU_STRUCTURE` ללא בדיקה: הוא 6-group flat structure, לא nested wrapper
-- אל תחזיר את סדר החלקים ל-v6.x (Bio→Book→About→Main) — המשתמש ביקש Main אחרי Bio
+## v7.2 — COMMUNITY_HOLIDAY_TAGS (19/04/2026)
+
+קבוע חדש ב-`data.js` שממפה **עדה × חג ← מתכונים**:
+
+```javascript
+const COMMUNITY_HOLIDAY_TAGS = {
+  iraq: { shabbat:[...], rosh:[...], pesach:[...], ... 9 holidays ... },
+  kurd: { ... }, ashk: { ... }, yem: { ... }, pers: { ... },
+  buk: { ... }, tun: { ... }, turk: { ... }, isr: { ... }
+};
+```
+
+**221 תיוגים יחודיים מתוך 270 מתכוני עדות (82% כיסוי)** מבוסס על מקורות מתועדים של מטבח יהודי-ספרדי/מזרחי/אשכנזי. תיוג ראשוני — דורש בדיקה משפחתית.
+
+## v7.3-v7.4 — מבנה תפריט עדות (19/04/2026)
+
+כל עדה עכשיו accordion בעל **3 פריטים** (לא flat ולא 3 רמות):
+
+```javascript
+{lbl:'עיראק', items:[
+  {id:'iraq', lbl:'כל המתכונים'},                              // 30 recipes
+  {lbl:'מאכלים מסורתיים לעדה', ids:['iq7','iq16','iq23']},     // non-holiday (1-8 per community)
+  {lbl:'מאכלי חגים', items:[                                    // nested folder
+    {communityHoliday:'iraq', holidayKey:'shabbat', lbl:'שבת'},
+    // ... 8 more (NO mimouna)
+  ]}
+]}
+```
+
+**Mimouna הוסרה מ-COMMUNITY_HOLIDAY_TAGS** — מסורת מרוקאית בלעדית, נשארת רק ב-`HOLIDAY_TAGS`.
+
+ב-`buildPanel`: 3 branches נוספו ל-`item.communityHoliday` / `s.communityHoliday` / `ns.communityHoliday` (3 רמות nesting). `selectCommunityHoliday()` חדש.
+
+CSS מובחן: `.pc-comm-hol` (אדום-אלמוגי) + `.pc-empty` (אפור-שקוף + cursor:help) לחגים ללא תיוגים.
+
+## v7.5 — מרכוז Header strip (19/04/2026)
+
+`max-width` הופחת מ-1440px ל-1100px בכל 3 ה-containers הראשיים:
+```css
+.hdr-inner       { max-width: 1100px; justify-content: space-between; }
+.cat-nav-inner   { max-width: 1100px; justify-content: center; }
+.nav-panel-inner { max-width: 1100px; }
+.hdr-search      { flex: 0 1 480px; max-width: 480px; margin: 0 auto; }
+```
+
+הרצועה העליונה מאוזנת סימטרית עם התוכן (Hero ~760, Bio ~860).
+
+## v7.6 — i18n keys + DOM order + Web3Forms restore (19/04/2026)
+
+- **21 i18n keys חדשים** ב-DICT (~שורה 11906): `site_name_short`, `recipes_label`, `hero_cta_browse`, `community_holidays_folder`, `holiday_*` (10), וכו'.
+- **DOM order תוקן:** `<main>` הועבר מאחרי About למיד אחרי Bio. סדר חדש: Hero → Bio → Main → Book → About.
+- **תיקון קריטי:** `WEB3FORMS_KEY` היה הוחלף ל-`'PASTE_YOUR_WEB3FORMS_ACCESS_KEY_HERE'` — הוחזר ל-`'705d4207-c4a6-43a2-8fdc-d8e202bc6c9c'`.
+
+## v7.7 — תיקון HOLIDAY_TAGS של מרוקו (19/04/2026)
+
+**הבעיה הקריטית:** `HOLIDAY_TAGS` הקיים היה שגוי — אותם 80 מתכונים בכל 10 החגים. שבת=ראש השנה=פסח=מימונה=...
+
+**התיקון:** תיוג אמיתי מבוסס regex על כותרות 671 מתכוני מרוקו + מסורת יהודית-מרוקאית מתועדת:
+
+```javascript
+const HOLIDAY_TAGS = {
+  shabbat:  [54 recipes],   // טאג'ין, חמין, סקינה
+  rosh:     [14 recipes],   // דבש, רימון, דלעת מתוק
+  kippur:   [],             // אין במאגר מתכון מרוקאי-יהודי ספציפי
+  pesach:   [4],
+  mimouna:  [7],            // מופלטה!, פרנה מימונה, ריבות
+  hanukkah: [2],            // ספינג', סופגניות
+  purim:    [1],
+  shavuot:  [12],           // גבינות, מאפי גבינה
+  sukkot:   [27],           // ירקות ממולאים
+  henna:    [14]            // מתכוני טקס חתונה
+};
+```
+
+**121 תיוגים יחודיים / 671 מתכוני מרוקו (18%).** זה תיקון של data שגויה מתחילה — לא feature חדש.
+
+## v7.8 — הסרת כפילות "חגים" + תיקיית חגים תחת מרוקו (19/04/2026)
+
+הקטגוריה "חגים" (`{id:'hol', lbl:'חגים'}`) הייתה כפתור עליון נפרד עם 80 מתכונים, **באותו זמן** שמרוקו כללה sub-category "חגים ומועדים". כפילות.
+
+**הפתרון:** הסרת ה-leaf העליון; המרת ה-leaf "חגים ומועדים" תחת מרוקו ל-folder עם 11 פריטים (כל מתכוני החגים + 10 חגים נפרדים, באמצעות `h:` parameter):
+
+```javascript
+{lbl:'חגים ומועדים', items:[
+  {id:'hol', lbl:'כל מתכוני החגים'},
+  {id:'hol', h:'shabbat', lbl:'שבת'},
+  {id:'hol', h:'rosh', lbl:'ראש השנה'},
+  // ... 8 חגים נוספים
+]}
+```
+
+תפריט ראשי עבר מ-6 קבוצות עליונות ל-5.
+
+## v7.9 — איחוד מרוקו + ספרד (19/04/2026)
+
+המטבח של פרלה משלב מרוקו וספרד דרך משפחת קארו (מגורשי ספרד 1492 → קזבלנקה → מרקש). אין סיבה להפריד בתפריט.
+
+```javascript
+{lbl:'מרוקו\\ספרד', key:'morocco_span', items:[
+  {lbl:'כל מתכוני מרוקו וספרד', ids:['soups','salads','veg','meat','chick','fish','hol','des','span']},
+  {id:'soups', lbl:'מרקים'}, // ... 7 sub-cats
+  {lbl:'חגים ומועדים', items:[/* 11 items */]},
+  {id:'des', lbl:'קינוחים ומאפים'},
+  {id:'span', lbl:'ספרד (אנדלוסי)'}  // מתכוני ספרד בלבד
+]}
+```
+
+**מספר קטגוריות עליונות: 4** (היה 6 ב-v7.0).
+
+## v8.0 — i18n wiring + light theme + SEO + print (19/04/2026)
+
+תחזוקה משולבת — הסרת חובות טכניות שנותרו אחרי v7.9:
+
+1. **i18n wiring:** הרחבת `_NAV_I18N` עם 8 mappings חדשים + 5 entries חדשים ב-DICT. עכשיו לחיצה על EN מתרגמת **את כל** פריטי v7.x בתפריט.
+
+2. **Light theme overrides** ל-7 classes חדשים: `.hdr-brand-v7`, `.pc-comm-hol` (background+hover+empty), `.hero-cta-primary` + hover.
+
+3. **SEO:** קבצים חדשים `sitemap.xml` (6 URLs + hreflang) + `robots.txt`.
+
+4. **Print stylesheet הורחב** עם classes של v7.x: `.hdr-brand-v7`, `.hero-cta-row`, `.pc-comm-hol`, וכו'.
+
+## ארכיטקטורה נוכחית (v8.0)
+
+### תפריט — 4 קבוצות עליונות
+| # | תווית | מספר | סוג |
+|---|---|---|---|
+| 1 | הכל | 1,054 | leaf |
+| 2 | מרוקו\\ספרד | 744 | accordion (11 sub-items) |
+| 3 | עדות ישראל | 270 | accordion (9 communities × 3 items) |
+| 4 | לא כשר | 40 | leaf |
+
+### קבועי data בקובץ data.js
+| קבוע | תוכן | גרסה אחרונה |
+|---|---|---|
+| `R` | 1,054 מתכונים | קיים |
+| `CATS` | 20 קטגוריות | קיים |
+| `MENU_STRUCTURE` | 4 קבוצות עליונות | v7.9 |
+| `HOLIDAY_TAGS` | 10 חגים → 121 IDs יחודיים | v7.7 (תוקן) |
+| `COMMUNITY_HOLIDAY_TAGS` | 9 עדות × 9 חגים | v7.4 |
+
+### i18n ב-index.html
+| קבוע | מטרה |
+|---|---|
+| `DICT` | מילון UI (~155 keys) |
+| `_NAV_I18N` | מיפוי תווית עברית → key (הורחב v8.0) |
+| `t(key)` | פונקציית תרגום |
+| `applyLang(lang)` | החלפת שפה — סורק DOM ומתרגם |
+
+## אזהרות (מעודכן ל-v8.0)
+- אל תשנה `MENU_STRUCTURE` ללא בדיקה: הוא 4-group flat structure (v7.9), לא nested wrapper
+- אל תחזיר את סדר החלקים ל-v6.x — Main חייב להיות אחרי Bio (v7.6)
 - אל תסיר את `class="main-hidden"` מה-HTML של `<main>` — זה השינוי המרכזי של v7.1
+- אל תחזיר את `HOLIDAY_TAGS` למבנה הישן (אותם 80 מתכונים בכל חג) — זה היה bug, לא feature (v7.7)
+- אל תוסיף בחזרה `{id:'hol', lbl:'חגים'}` כקטגוריה עליונה — זה כפול (v7.8)
+- אל תפריד את "מרוקו" ו"ספרד" לכפתורים נפרדים — מאוחדים תרבותית (v7.9)
+- אל תוסיף mimouna ל-`COMMUNITY_HOLIDAY_TAGS` — חג מרוקאי בלעדי (v7.4)
+- כשמוסיפים תווית חדשה ל-MENU_STRUCTURE, חובה לעדכן גם את `_NAV_I18N` *וגם* את DICT (v8.0)
+- אחרי כל עריכת Python על `index.html` חייב לנרמל CRLF בינארית
 - אחרי `git commit` תמיד `git push` כדי להפעיל Netlify/GH Pages deploy
 - `index.html` מכיל `</body>` פעם אחת בסוף הקובץ. יש 2 `</body>` נוספים בתוך מחרוזות JS (הדפסה/popups) — אל תתבלבל
 - אחרי שינוי ב-`data.js`: תמיד הרץ `node -c data.js` לוידוא תחביר לפני commit
@@ -184,9 +338,18 @@ Header → Hero → Bio → Main (רשת מתכונים) → Book-wrapper → Ab
 
 ## שינויים בסשנים
 
-### 19/04/2026
+### 19/04/2026 (סוף יום — מחזור v7.x → v8.0)
+- **v8.0:** i18n wiring מלא (8 mappings + 5 DICT entries) + light theme overrides ל-7 classes חדשים + sitemap.xml + robots.txt + print rules הורחב.
+- **v7.9:** איחוד "מרוקו" + "ספרד" ל-"מרוקו\\ספרד" (744 מתכונים יחד). 4 קבוצות עליונות במקום 5.
+- **v7.8:** הסרת כפתור "חגים" העליון הכפול. תיקיית חגים תחת מרוקו עם 11 פריטים (משתמש ב-`h:` parameter).
+- **v7.7:** תיקון `HOLIDAY_TAGS` של מרוקו — מ-80×10 חזרות זהות (bug) ל-121 תיוגים יחודיים מבוססי regex על כותרות.
+- **v7.6:** 21 i18n keys ל-DICT, DOM order תוקן (Main אחרי Bio), Web3Forms key הוחזר.
+- **v7.5:** Header strip מצומצם ל-1100px (היה 1440), מרכוז סימטרי לתוכן.
+- **v7.4:** תיקיית "מאכלי חגים" + "מאכלים מסורתיים" לכל עדה, מימונה הוסרה מעדות (Moroccan-only).
+- **v7.3:** מבנה שטוח של חגים תחת כל עדה + תיקון מרכוז ה-search bar.
+- **v7.2:** `COMMUNITY_HOLIDAY_TAGS` חדש — 221 תיוגים יחודיים של חגי-עדה.
 - **v7.1:** הרשת מוסתרת בטעינה, מופיעה רק אחרי פעולת משתמש (נווט/חיפוש/CTA). `showMainGrid()`/`hideMainGrid()` גלובליות. שינוי ב-`index.html` בלבד.
-- **v7.0:** שיפוץ דף ראשי — Header מאוחד, Hero עם CTAs, Main לפני Book, MENU_STRUCTURE flat 6-group עם placeholder "חגי העדות" (Option C). WEB3FORMS_KEY שוחזר אגב הסשן. שינויים ב-`index.html` + `data.js`.
+- **v7.0:** שיפוץ דף ראשי — Header מאוחד, Hero עם CTAs, Main לפני Book, MENU_STRUCTURE flat 6-group.
 - **v6.10:** PWA install dialog שוחזר מ-native `alert()` ל-Custom Modal.
 - **v6.9:** PWA Install button תמיד נראה; Back-to-top הוגדל ומשופר.
 - **v6.8:** Hero tagline הוגדל/הודגש/הולבן. Base font 17px גלובלי (16px במובייל).
