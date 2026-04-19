@@ -18762,16 +18762,16 @@ const R=[
 ];
 
 const HOLIDAY_TAGS = {
-  shabbat:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  rosh:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  kippur:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  pesach:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  mimouna:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  hanukkah:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  purim:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  shavuot:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  sukkot:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7'],
-  henna:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7']
+  shabbat:['sv2','me8','me11','me19','c3','hn1','hn2','hn3','hn5','hn6','hn7','hn15','hn16','add16','hv2','add55','h1','h3','hx1','hx2','hx3','hx4','hx5','hn4','hn8','hn9','hn10','hn11','hn12','hn13','hn14','hn17','hne1','hne2','hne3','hne4','var7','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hn18','hn19','hn20','hn21','hn22','hn23','hn24'],
+  rosh:['s6','sv6','ex9','sle13','v4','ex15','me12','ce1','ce15','holf1','dx3','rer7','ex36','fin28'],
+  kippur:[],
+  pesach:['fin12','hle2','holf4','hn24'],
+  mimouna:['chf2','fw1','holf5','hv4','d1','d6','dn5'],
+  hanukkah:['d2','dv1'],
+  purim:['hle4'],
+  shavuot:['sf9','fin1','fin22','sle16','vne1','vef6','add7','ve11','hn14','hle5','holf2','hw4'],
+  sukkot:['vn3','vn4','vn5','vn6','vne3','vne4','vne5','add7','add8','fin6','vv2','vv4','vw3','vef9','ve19','mx3','mx4','me5','ex21','me17','ex26','f4','fn3','fif5','ex18','fw1','hw5'],
+  henna:['sane1','ex26','h2','hne4','holf2','fin14','hv1','hw1','hw2','hn21','dn11','hw3','hw4','hw5']
 };
 
 // ═══ COMMUNITY_HOLIDAY_TAGS — v7.4 ═══
@@ -18886,20 +18886,38 @@ const MENU_STRUCTURE = [
   /* 1. הכל — leaf, no items */
   {id:'all', lbl:'הכל'},
 
-  /* 2. מרוקו (Moroccan core — 671 recipes) */
-  {lbl:'מרוקו', key:'morocco', items:[
+  /* 2. מרוקו\ספרד (Moroccan core 671 + Spanish/Andalusian 73 = 744 recipes)
+        v7.9: merged into single accordion. Spain appears as its own sub-item
+        within the Morocco/Spain folder. The "כל מתכוני מרוקו וספרד" link
+        uses ids:[...] to show recipes from BOTH cuisines together. */
+  {lbl:'מרוקו\\ספרד', key:'morocco_span', items:[
+    {lbl:'כל מתכוני מרוקו וספרד', ids:['soups','salads','veg','meat','chick','fish','hol','des','span']},
     {id:'soups',  lbl:'מרקים'},
     {id:'salads', lbl:'סלטים'},
     {id:'veg',    lbl:'תבשילי ירקות'},
     {id:'meat',   lbl:'בשר וקציצות'},
     {id:'chick',  lbl:'עוף ושבת'},
     {id:'fish',   lbl:'דגים'},
-    {id:'hol',    lbl:'חגים ומועדים'},
-    {id:'des',    lbl:'קינוחים ומאפים'}
+    /* v7.8: holiday folder with per-holiday filtering using HOLIDAY_TAGS.
+       Replaces flat {id:'hol'} so user can browse by specific holiday.
+       Uses existing h: parameter (legacy support, line ~7544 in index.html). */
+    {lbl:'חגים ומועדים', items:[
+      {id:'hol', lbl:'כל מתכוני החגים'},
+      {id:'hol', h:'shabbat',  lbl:'שבת'},
+      {id:'hol', h:'rosh',     lbl:'ראש השנה'},
+      {id:'hol', h:'kippur',   lbl:'יום כיפור'},
+      {id:'hol', h:'pesach',   lbl:'פסח'},
+      {id:'hol', h:'mimouna',  lbl:'מימונה'},
+      {id:'hol', h:'hanukkah', lbl:'חנוכה'},
+      {id:'hol', h:'purim',    lbl:'פורים'},
+      {id:'hol', h:'shavuot',  lbl:'שבועות'},
+      {id:'hol', h:'sukkot',   lbl:'סוכות'},
+      {id:'hol', h:'henna',    lbl:'חינה'}
+    ]},
+    {id:'des',    lbl:'קינוחים ומאפים'},
+    {id:'span',   lbl:'ספרד (אנדלוסי)'}
   ]},
 
-  /* 3. ספרד (Andalusian — 73 recipes) */
-  {id:'span', lbl:'ספרד'},
 
         /* 4. עדות ישראל (communities — 270 recipes across 9 ethnicities)
         v7.4: each community has 3 sub-items:
@@ -19045,10 +19063,9 @@ const MENU_STRUCTURE = [
     ]}
   ]},
 
-  /* 5. חגים (holiday recipes — 80 tagged in hol category) */
-  {id:'hol', lbl:'חגים'},
-
-  /* 6. לא כשר (non-kosher — 40 recipes) */
+  /* 5. לא כשר (non-kosher — 40 recipes)
+        v7.8: top-level "חגים" entry removed — was redundant with Morocco
+        sub-category "חגים ומועדים" which now has 10 holiday folders */
   {id:'nonkosher', lbl:'לא כשר'}
 ];
 

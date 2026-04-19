@@ -1,535 +1,241 @@
-# תוכנית עבודה מפורטת — שלב 1: שיפוץ הדף הראשי
+# תוכנית עבודה — ספר הבישול של פרלה בן-הראש ז״ל
 
-**ספר הבישול של פרלה בן-הראש ז״ל**
-**גרסה מתוכננת: 7.0**
-**תאריך תכנון: 19/04/2026**
-
----
-
-> ## ✓ סטטוס: מיושם (IMPLEMENTED)
->
-> **גרסה שנפרסה: 7.1** (19/04/2026, אחר הצהריים)
-> **החלטה שהתקבלה:** אפשרות **C** — "חגי העדה" כ-container ריק
->
-> **מה בוצע בפועל:**
-> - ✓ **v7.0** — כל 4 השינויים המבניים (Header, Hero, סדר החלקים, MENU_STRUCTURE flat 6-group)
-> - ✓ **v7.1** — hotfix לאחר פריסת v7.0: הסתרת רשת מתכונים בטעינה (מופיעה רק אחרי פעולת משתמש)
->
-> **מסמכים שנוצרו לאחר היישום:**
-> - `CHANGELOG_19-04-2026_v7_0.md` — פירוט השינויים של v7.0
-> - `CHANGELOG_19-04-2026_v7_1.md` — פירוט ה-hotfix של v7.1
-> - `CLAUDE.md`, `README.md`, `HLD`, `LLD`, `INTEGRATION_GUIDE.md` עודכנו ל-v7.1
->
-> **הסעיף "סיכום יישום" בסוף המסמך הזה** מפרט מה יושם, מה שונה מהתוכנית, ומה מגיע בהמשך.
-> *המסמך הזה נשמר כתיעוד היסטורי של תהליך התכנון.*
+**עודכן אחרון:** 19/04/2026 — לילה
+**גרסה נוכחית של האתר:** v7.6 (פרוס מ-v7.5; v7.6 ממתין לפריסה)
 
 ---
 
-## מטרות כוללות
+## סטטוס המחזור הנוכחי — v7.0 הסתיים
 
-ארבעה שינויים מבניים בדף הראשי, בהתאם למוקאפ שאושר:
+מחזור v7.0 הוגדר ב-13/04/2026 ונפרס ב-7 שלבים (v7.0 → v7.6) במהלך 19/04/2026. **כל 10 משימות התוכנית בוצעו**, פלוס 6 תוספות שהמשתמש ביקש במהלך העבודה.
 
-1. **Header מאוחד** — כל הכפתורים בשורה אחת
-2. **Hero מקוצר** — פחות תוכן, כפתורי CTA ברורים
-3. **Bio לפני רשת המתכונים** — סדר גלילה נכון
-4. **תפריט ניווט משופר** — 5 קבוצות יציבות + "חגי העדה" לכל עדה
+### מה הושלם
 
-כל השינויים ב-commit אחד גדול (לבקשתך).
+| שלב | מה בוצע | תאריך |
+|---|---|---|
+| **v7.0** | Header אחיד (`hdr-brand-v7`), Hero CTAs, MENU_STRUCTURE שטוח 6-קבוצות, Hero ממורכז | 19/04 |
+| **v7.1** | רשת מתכונים מוסתרת בטעינה (`main-hidden`), מתגלה רק אחרי לחיצה/חיפוש | 19/04 |
+| **v7.2** | `COMMUNITY_HOLIDAY_TAGS` חדש, 221 תיוגים יחודיים של חגי-עדה | 19/04 |
+| **v7.3** | מבנה שטוח של חגים תחת כל עדה + תיקון מרכוז ה-search bar | 19/04 |
+| **v7.4** | תיקיית "מאכלי חגים" + "מאכלים מסורתיים" לכל עדה, מימונה הוסרה | 19/04 |
+| **v7.5** | Header strip מצומצם ל-1100px (היה 1440) — ממורכז כתוכן | 19/04 |
+| **v7.6** | 21 i18n keys ל-DICT, סדר DOM מתוקן, Web3Forms key מוחזר | 19/04 |
 
----
+### תיקונים קריטיים שנעשו במחזור
 
-## לפני שמתחילים — ממצא חשוב מאוד
-
-במהלך בדיקת ה-`data.js` גיליתי דבר שחייבים להבהיר לפני תחילת העבודה:
-
-**ה-HOLIDAY_TAGS הקיים מכיל רק מתכונים של "מטעמי אמא ממרוקו"** (המתכונים שמתחילים ב-`h*`, `hn*`, `hle*` וכו׳). המתכונים של 9 העדות האחרות (עיראק, כורדיסטן, אשכנז, תימן, פרס, בוכרה, טוניסיה, טורקיה, ישראלי) **אינם מתויגים לחגים** כרגע.
-
-משמעות הדבר: אם אנחנו רוצים קבוצת "חגי העדה" תחת כל עדה — **צריך להוסיף תיוג חגים ידני למתכונים של כל עדה**. זה לא נעשה אוטומטית.
-
-### 3 אפשרויות להמשך:
-
-**אפשרות A — תיוג ידני מלא (הכי מדויק, הכי ארוך)**
-אתה תספק לי רשימה: "במטבח עיראקי, המתכונים X, Y, Z מוגשים בראש השנה; A, B ב-שבועות..." — ואני אתייג את data.js בהתאם. דרוש ממך זמן ומחקר, או ידע מוקדם מהמשפחה.
-
-**אפשרות B — תיוג חלקי לפי ידע כללי (מהיר, לא שלם)**
-אני מתייג לפי ידע כללי על המטבחים (למשל "סופגניות ← חנוכה" בכל עדה; "קניידלעך אשכנזי ← פסח"). ה*סיכון*: מתכון שאצל משפחה מסוימת נהוג לחג אחד — אצל משפחה אחרת לחג אחר. אני אציין בכל תיוג איזה מקור השתמשתי.
-
-**אפשרות C — דחייה של "חגי העדה" לשלב מאוחר יותר**
-היום נבנה את המבנה (container) של "חגי העדה" בתפריט עם placeholder ריק. בשלב 2 נמלא את המתכונים בקצב שלך. ככה שלב 1 יושלם מהר ותוכל לראות תוצאות.
-
-**ההמלצה שלי:** אפשרות C לשלב 1, ואפשרות A בעתיד. זה משקף את הכנות שלי — אין לי ידע מקורי על מסורות חגים של 9 עדות שונות, ואני לא רוצה לפברק תיוגים.
-
-**תגיד לי איזה אפשרות אתה מעדיף לפני שאמשיך בקוד.**
+1. **Web3Forms key** — היה `'PASTE_YOUR_WEB3FORMS_ACCESS_KEY_HERE'` לאורך כל v7.0-v7.5 ולא תוקן עד v7.6. כעת `'705d4207-c4a6-43a2-8fdc-d8e202bc6c9c'`.
+2. **Mimouna בעדות** — הוסרה לחלוטין מ-`COMMUNITY_HOLIDAY_TAGS`. נשארת רק ב-`HOLIDAY_TAGS` של מטעמי אמא (חג מרוקאי בלעדי).
+3. **CRLF** — בכל עריכת Python ה-CRLF נשבר ל-LF. תוקן ידנית בכל גרסה.
 
 ---
 
-## קבצים שמושפעים
+## ארכיטקטורה נוכחית (v7.6)
 
-| קובץ | מצב | תיאור שינוי |
-|------|------|-------------|
-| `index.html` | שינוי משמעותי | Header חדש, Hero חדש, Bio חדש, CSS חדש |
-| `data.js` | שינוי ממוקד בלבד | עדכון `MENU_STRUCTURE` + אם אפשרות A/B: תיוג חגים ב-R[] |
-| `pre_en.js` | הוספת תרגומים | טקסטים חדשים באנגלית |
-| `manifest.json` | ללא שינוי | — |
-| `sw.js` | ללא שינוי | — |
-| `about_redesigned.*` | ללא שינוי | — |
-| `book_data.js` | ללא שינוי | — |
-| `download_images.py` | ללא שינוי | — |
+### תפריט עליון — 6 קבוצות שטוחות
 
----
-
-## שלב 1.1 — מבנה HTML חדש
-
-### לפני (המצב הנוכחי)
 ```
-<header> = חיפוש + הכפתורים (התקן/נושא/שפה)
-<nav>    = תפריט קטגוריות (שורה אחת + drawer)
-<section hero> = h1 גדול + סיסמה
-<section bio>  = תמונת חתונה + ביוגרפיה מלאה (3 פסקאות)
-<section book> = כפתור ״קרא את הספר״ + תוכן נגלל
-<section about-redesigned> = הסעיף המלא של ״על שביל האהבה״
-<main> = רשת המתכונים
+1. הכל          (1,054)
+2. מרוקו         (671)  — accordion: 8 sub-categories
+3. ספרד          (73)
+4. עדות ישראל    (270)  — 9 עדות, כל אחת accordion עם 3 פריטים
+5. חגים          (80)
+6. לא כשר        (40)
 ```
 
-### אחרי (הסדר החדש)
+### מבנה כל עדה (v7.4)
+
 ```
-<header> = שם + ספירה + חיפוש + כפתורים (שורה אחת מאוחדת)
-<nav>    = תפריט קטגוריות (5 קבוצות יציבות + drawer משופר)
-<section hero> = כותרת + סיסמה + 2 כפתורי CTA (קצר)
-<section bio>  = תמונת חתונה + ביוגרפיה (נשאר כמו שהוא!)
-<main> = רשת המתכונים (מיד אחרי ה-Bio)
-<section book> = כפתור הספר (ללא שינוי)
-<section about-redesigned> = ללא שינוי
-```
-
-**שים לב:** ה-Bio נשאר במיקומו הנוכחי. המוקאפ הראה אותו "לפני רשת המתכונים" — וזה בדיוק המיקום הנוכחי שלו. ה-main (הרשת) כבר אחרי ה-bio.
-
----
-
-## שלב 1.2 — CSS חדש
-
-### שינויים ב-Header
-```css
-/* חדש: שם + ספירה כרכיב יחד */
-.hdr-brand-new {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.15;
-  flex-shrink: 0;
-}
-.hdr-brand-title {
-  color: var(--c-gold-l);
-  font-family: 'Frank Ruhl Libre', serif;
-  font-size: 1rem;
-  font-weight: 500;
-}
-.hdr-brand-count {
-  color: rgba(237,224,196,.5);
-  font-size: .7rem;
-}
+עיראק (accordion)
+├── כל המתכונים (30)              ← {id:'iraq', lbl:'כל המתכונים'}
+├── מאכלים מסורתיים לעדה (3)      ← {lbl:'...', ids:['iq7','iq16','iq23']}
+└── מאכלי חגים (תיקיה nested)     ← {lbl:'...', items:[...]}
+    ├── שבת (9)                    ← {communityHoliday:'iraq', holidayKey:'shabbat'}
+    ├── ראש השנה (5)
+    ├── יום כיפור (4)
+    ├── פסח (6)
+    ├── חנוכה (2)
+    ├── פורים (3)
+    ├── שבועות (3)
+    ├── סוכות (4)
+    └── חינה (2)
 ```
 
-### שינויים ב-Hero
-```css
-/* המצב הנוכחי: .hero מגיע עם h1 ענק + padding גדול */
-/* אחרי: שמירה על אותו עיצוב עם הוספת שורת CTA */
-.hero-cta-row {
-  display: flex;
-  gap: .6rem;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 1.2rem;
-}
-.hero-cta-primary {
-  background: var(--c-spice);
-  color: #fff;
-  border: none;
-  border-radius: 100px;
-  padding: .7rem 1.6rem;
-  font-family: inherit;
-  font-size: .95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background var(--t-fast);
-}
-.hero-cta-primary:hover { background: var(--c-spice-d); }
-.hero-cta-secondary {
-  background: transparent;
-  color: var(--c-gold-l);
-  border: 0.5px solid rgba(196,147,10,.35);
-  border-radius: 100px;
-  padding: .7rem 1.6rem;
-  font-family: inherit;
-  font-size: .95rem;
-  cursor: pointer;
-}
-```
+**9 חגים פר-עדה** (mimouna הוסרה — מסורת מרוקאית בלעדית). כל עדה זהה מבנית.
 
-### שינויים ב-Nav
-```css
-/* החלפת ה-nav-panel הקיים במבנה משופר */
-.nav-drawer {
-  background: var(--c-deep);
-  border-top: 0.5px solid rgba(196,147,10,.15);
-  padding: 1rem 1.2rem 1.2rem;
-  display: none;
-}
-.nav-drawer.open { display: block; animation: drawerSlide .2s ease-out; }
-@keyframes drawerSlide { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
-
-.nav-drawer-header {
-  display: flex; align-items: baseline; gap: .6rem;
-  margin-bottom: .8rem;
-}
-.nav-drawer-title {
-  color: var(--c-gold-l);
-  font-size: .88rem; font-weight: 500;
-}
-.nav-drawer-meta {
-  color: rgba(237,224,196,.4);
-  font-size: .72rem;
-}
-
-.nav-sub-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: .35rem;
-}
-
-/* קבוצת "חגי העדה" — מודגשת בצבע אדום-חום */
-.nav-holidays-group {
-  background: rgba(184,66,35,.1);
-  border: 0.5px solid rgba(184,66,35,.35);
-  color: #d4603a;
-}
-.nav-holidays-group:hover {
-  background: rgba(184,66,35,.18);
-}
-```
-
----
-
-## שלב 1.3 — שינויים ב-JS
-
-### `buildNav()` — שדרוג מלא
-
-הפונקציה הקיימת (שורה ~2723) תעבור שיפוץ משמעותי. הקוד החדש:
+### מבנה כל מתכון (DATA SCHEMA)
 
 ```javascript
-function buildNav() {
-  var bar = document.getElementById('cat-inner');
-  if (!bar) return;
-  bar.innerHTML = '';
-
-  // 5 רמות עליונות קבועות
-  var TOP_GROUPS = [
-    { key: 'all',     lbl: 'הכל',         ids: 'all' },
-    { key: 'morocco', lbl: 'מרוקו',       ids: ['soups','salads','veg','meat','chick','fish','hol','des'] },
-    { key: 'spain',   lbl: 'ספרד',        ids: [/* span IDs */] },
-    { key: 'communities', lbl: 'עדות ישראל', ids: ['iraq','kurd','ashk','yem','pers','buk','tun','turk','isr'] },
-    { key: 'holidays', lbl: 'חגים',       ids: ['hol'] },
-    { key: 'nonkosher', lbl: 'לא כשר',    ids: [/* nk IDs */] }
-  ];
-
-  TOP_GROUPS.forEach(function(g) {
-    var btn = makeTopButton(g);
-    bar.appendChild(btn);
-  });
-}
-
-function makeTopButton(g) {
-  var count = catCnt(g.ids);
-  var btn = document.createElement('button');
-  btn.className = 'nb-top';
-  btn.innerHTML = esc(g.lbl) + ' · <span class="nb-cnt">' + count.toLocaleString() + '</span>';
-  btn.addEventListener('click', function(e) {
-    e.stopPropagation();
-    toggleDrawer(g);
-  });
-  return btn;
-}
-
-function toggleDrawer(group) {
-  var drawer = document.getElementById('nav-drawer');
-  if (!drawer) return;
-  if (ACTIVE_DRAWER === group.key) {
-    closeDrawer();
-    return;
-  }
-  renderDrawer(group);
-  drawer.classList.add('open');
-  ACTIVE_DRAWER = group.key;
-}
-
-function renderDrawer(group) {
-  var inner = document.getElementById('nav-drawer-inner');
-  inner.innerHTML = '';
-
-  // כותרת
-  var header = document.createElement('div');
-  header.className = 'nav-drawer-header';
-  header.innerHTML = '<span class="nav-drawer-title">' + esc(group.lbl) + '</span>' +
-                     '<span class="nav-drawer-meta">' + catCnt(group.ids) + ' מתכונים</span>';
-  inner.appendChild(header);
-
-  // תת-קבוצות
-  var sub = document.createElement('div');
-  sub.className = 'nav-sub-grid';
-
-  if (group.key === 'communities') {
-    // לעדות ישראל — 9 עדות + לכל עדה פנימה יש "חגי העדה"
-    renderCommunitiesDrawer(sub, group);
-  } else if (group.key === 'holidays') {
-    // לחגים — 10 חגים
-    renderHolidaysDrawer(sub);
-  } else if (group.key === 'morocco') {
-    renderMoroccoDrawer(sub);
-  }
-  // ... וכו׳
-
-  inner.appendChild(sub);
-}
-
-function renderCommunitiesDrawer(container, group) {
-  var cuisines = [
-    { id: 'iraq', lbl: 'עיראק' },
-    { id: 'kurd', lbl: 'כורדיסטן' },
-    // ... וכו׳
-  ];
-  cuisines.forEach(function(c) {
-    var btn = makeSubButton(c);
-    container.appendChild(btn);
-  });
-
-  // חזרה אחרי בחירת עדה — renderCuisineDetail משיך ל-level 2
-}
-
-function renderCuisineDetail(cuisineId) {
-  // רמה 2: תת-קבוצות של עדה מסוימת
-  // כולל קבוצה ייחודית של "חגי העדה" בצבע אדום-חום
-  var btn = document.createElement('button');
-  btn.className = 'nav-sub nav-holidays-group';
-  btn.innerHTML = 'חגי העדה ה' + cuisineAdjective(cuisineId);
-  btn.addEventListener('click', function() {
-    filterByCuisineHolidays(cuisineId);
-  });
+{
+  id: 'unique-id',          // unique within data.js
+  cat: 'category-id',       // one of 20 (CATS array)
+  badge: 'optional badge',  // displayed on card
+  title: 'recipe title',
+  desc: 'short description',
+  time: 90,                 // minutes
+  serv: 4,                  // servings
+  diff: 'קל'|'בינוני'|'מתקדם',
+  img: 'r-id.jpg',
+  mem: 'memory note',
+  ingr: [{q:'1 cup', i:'flour'}, ...],
+  steps: [{t:'10 min', s:'do this'}, ...],
+  tip: 'optional final tip',
+  tags: ['optional','tags'],
+  h: 'optional holiday key',
+  src: 'optional source',
+  vid: 'optional video URL'
 }
 ```
 
-**הערה:** זה pseudocode — הקוד האמיתי יהיה מפורט יותר.
+### מספרי מתכונים (verified)
 
-### פונקציית `filterByCuisineHolidays`
+| מקור | קטגוריות | מתכונים |
+|---|---|---|
+| מטעמי אמא ממרוקו | 8 (soups/salads/veg/meat/chick/fish/hol/des) | 671 |
+| ספרד | 1 (span) | 73 |
+| עדות ישראל | 9 (iraq/kurd/ashk/yem/pers/buk/tun/turk/isr) | 270 |
+| לא כשר | 1 (nonkosher) | 40 |
+| **סה"כ** | **20** | **1,054** |
 
-פונקציה חדשה שמסננת מתכונים לפי עדה **וגם** לפי תיוג חג:
+---
+
+## מה נותר לעשות (Roadmap לאחר v7.6)
+
+### עדיפות גבוהה
+
+1. **רענון `HOLIDAY_TAGS` של מטעמי אמא** — הקבוע הקיים שגוי לחלוטין. אותם 80 מתכונים מופיעים בדיוק בכל 10 החגים (כנראה data שגויה מתחילה). יש לתייג בפועל מתכוני מרוקו לחג ספציפי באותה גישה כמו v7.2.
+2. **i18n מלא של תפריט העדות** — DICT מכיל 21 מפתחות חדשים (v7.6) אבל buildPanel עדיין משתמש ב-`esc(item.lbl)` ישיר. לעבור ל-`t(item.i18n_key)` עם fallback ל-`item.lbl`.
+3. **רענון תיוגי `COMMUNITY_HOLIDAY_TAGS`** — תיוג ראשוני ב-82% כיסוי, מבוסס מקורות מתועדים. אם אסף או בני המשפחה רואים שילוב לא נכון, לעדכן ידנית.
+
+### עדיפות בינונית
+
+4. **עדכון תיעוד טכני** — `HLD_Perla_CookingBook.md` ו-`LLD_Perla_CookingBook.md` עדיין מתארים v6.3. סעיף `CLAUDE_md_v7_update.md` נכתב ב-v7.6 אבל לא הוטמע ב-CLAUDE.md.
+5. **בדיקת תאימות לעדה השנייה** — האם מסורות שתויגו עובדות גם למשפחות מאזורים שונים באותה עדה (כורדי-זכו vs כורדי-ירושלים)?
+6. **תמונות חסרות** — הרבה מתכוני עדות (במיוחד טוניסיה, בוכרה) חסרים תמונה. סקריפט `download_images.py` יכול להוריד אוטומטית.
+
+### עדיפות נמוכה
+
+7. **Sitemap.xml** — לא קיים. SEO מתקדם.
+8. **Breadcrumbs** — אין breadcrumbs בעמוד מתכון.
+9. **Recipe carousel** — "מתכון יומי" שמתחלף.
+10. **Dark/Light theme polish** — בדיקת contrast ב-light mode למרכיבים החדשים של v7.x (`.pc-comm-hol`, `.hdr-brand-v7`).
+
+---
+
+## כללי עבודה מתעדכנים (v7.x)
+
+### לעולם אל
+
+- אל תחזיר את MENU_STRUCTURE למבנה nested של v6.x
+- אל תוסיף mimouna ל-`COMMUNITY_HOLIDAY_TAGS` (חג מרוקאי בלעדי)
+- אל תסיר `class="main-hidden"` מ-`<main>` (תכונת v7.1)
+- אל תשנה `WEB3FORMS_KEY` ל-placeholder — זה מפתח ציבורי-בכוונה
+- אל תהפוך את ה-`hdr-search` ל-`flex: 1` (יחזור להיות מתוח)
+- אל תחזיר `max-width: 1440` לרצועה העליונה
+
+### תמיד חובה
+
+- כל עריכת Python על `index.html` חייבת להסתיים בנירמול CRLF:
+  ```python
+  raw = open('index.html', 'rb').read()
+  text = raw.replace(b'\r', b'').replace(b'\n', b'\r\n')
+  open('index.html', 'wb').write(text)
+  ```
+- כל commit חייב לעבור `node -c data.js` ו-`node -c` על ה-JS הראשי ב-index.html
+- כל גרסה חדשה צריכה CHANGELOG משלה
+- pushing ל-git רק עם הפקודות one-at-a-time
+
+### הוספת חג חדש לעדה
+
+ב-`data.js`, מצא `const COMMUNITY_HOLIDAY_TAGS = {`. דוגמה — להוסיף מתכון `iq30` לפסח עיראקי:
 
 ```javascript
-function filterByCuisineHolidays(cuisineId) {
-  var recipes = R.filter(function(r) {
-    if (r.cat !== cuisineId) return false;
-    // בדיקה אם למתכון יש tag של חג
-    return r.h || (r.tags && r.tags.some(isHolidayTag));
-  });
-  // הצגה
-  renderGridFromRecipes(recipes);
-  setSectionTitle('חגי העדה ה' + cuisineAdjective(cuisineId));
-}
+iraq: {
+  // ...
+  pesach: ['iq5','iq8','iq14','iq19','iq20','iq24', 'iq30'],
+  // ...
+},
+```
+
+שמור, push, ותוך 30 שניות זה חי.
+
+### הוספת עדה חדשה
+
+מורכב יותר. דורש:
+1. הוספת ID חדש ל-`CATS` ב-data.js
+2. הוספת 30 מתכונים חדשים עם `cat:'newid'`
+3. הוספת בלוק חדש ל-`COMMUNITY_HOLIDAY_TAGS` עם 9 חגים
+4. הוספת בלוק חדש ל-MENU_STRUCTURE.communities עם 3 פריטים (כל המתכונים / מסורתיים / חגים)
+5. הוספת `nav_<newid>` ל-DICT ולתרגום אוטומטי
+6. עדכון מספר הכולל בכל מקום שמופיע "270" → "300"
+
+---
+
+## פקודות בדיקה מהירות
+
+```bash
+# Recipe count (must be 1054)
+grep -oE "\{id:'[^']+',cat:'\w+'" data.js | wc -l
+
+# Mimouna NOT in communities
+grep "mimouna:\['" data.js   # must return 0 in COMMUNITY_HOLIDAY_TAGS section
+
+# Web3Forms key intact
+grep -c "705d4207-c4a6-43a2-8fdc-d8e202bc6c9c" index.html  # must be ≥1
+
+# CRLF integrity
+python3 -c "raw=open('index.html','rb').read(); print('CRLF',raw.count(b'\r\n'),'LONE',raw.count(b'\n')-raw.count(b'\r\n'))"
+
+# Syntax
+node -c data.js
 ```
 
 ---
 
-## שלב 1.4 — שינויים ב-`data.js`
+## פריסה (PowerShell, אחת אחרי השנייה)
 
-### שינוי בלבד ב-MENU_STRUCTURE
-
-המבנה החדש (פסוודו-קוד):
-
-```javascript
-const MENU_STRUCTURE = [
-  { key: 'all', lbl: 'הכל', ids: 'all' },
-  { key: 'morocco', lbl: 'מרוקו', items: [ /* תתי-קבוצות של מרוקו */ ] },
-  { key: 'spain', lbl: 'ספרד', items: [ /* תתי-קבוצות של ספרד */ ] },
-  { key: 'communities', lbl: 'עדות ישראל', items: [
-    { key: 'iraq', lbl: 'עיראק', items: [
-      { key: 'iraq_all', lbl: 'הכל', cat: 'iraq' },
-      { key: 'iraq_soups', lbl: 'מרקים ותבשילים', ... },
-      { key: 'iraq_meat', lbl: 'בשר ועוף', ... },
-      // ...
-      { key: 'iraq_holidays', lbl: 'חגי העדה העיראקית',
-        className: 'nav-holidays-group',
-        filter: 'holidays' }  // ← הקבוצה החדשה
-    ]},
-    // ... וכו' לכל 9 העדות
-  ]},
-  { key: 'holidays', lbl: 'חגים', items: [ /* 10 חגים */ ]},
-  { key: 'nonkosher', lbl: 'לא כשר', items: [ ... ]}
-];
-```
-
----
-
-## שלב 1.5 — תרגומים ב-`pre_en.js`
-
-מילים חדשות שדורשות תרגום:
-
-| עברית | English |
-|--------|---------|
-| ספר הבישול של פרלה | Perla's Cookbook |
-| מתכונים | recipes |
-| עיון במתכונים | Browse Recipes |
-| קרא את הספר | Read the Book |
-| הסיפור של המשפחה | Family Story |
-| הכל | All |
-| מרוקו | Morocco |
-| ספרד | Spain |
-| עדות ישראל | Jewish Communities |
-| חגים | Holidays |
-| לא כשר | Non-Kosher |
-| חגי העדה העיראקית | Iraqi Community Holidays |
-| חגי העדה הכורדיסטאנית | Kurdish Community Holidays |
-| חגי העדה האשכנזית | Ashkenazi Community Holidays |
-| חגי העדה התימנית | Yemenite Community Holidays |
-| חגי העדה הפרסית | Persian Community Holidays |
-| חגי העדה הבוכרית | Bukharian Community Holidays |
-| חגי העדה הטוניסאית | Tunisian Community Holidays |
-| חגי העדה הטורקית | Turkish Community Holidays |
-| חגי העדה הישראלית | Israeli Community Holidays |
-
----
-
-## שלב 1.6 — בדיקות לאחר שינוי
-
-לפני push, אני אעבור על:
-
-1. **תחביר JS** — `node -c` על data.js ו-pre_en.js
-2. **ספירת מתכונים** — ודא שעדיין 1,054 מתכונים לאחר עדכון MENU_STRUCTURE
-3. **כל הקטגוריות מופיעות** — ידנית בודק שמכל 5 הקבוצות העליונות ניתן להגיע לכל 20 הקטגוריות
-4. **PWA install עובד** — כפתור נראה, modal מופיע
-5. **Back-to-Top עובד** — מופיע בגלילה
-6. **Feedback button עובד** — modal מופיע
-7. **מעבר לאנגלית** — כל הטקסטים החדשים מתורגמים
-8. **Bio מופיע לפני רשת המתכונים** — סדר הגלילה נכון
-9. **שום מתכון לא "אבד"** — רק לחיצה על "הכל" מראה 1,054
-
----
-
-## שלב 1.7 — מה יקרה אחרי הפריסה
-
-אחרי ה-commit הגדול, תעשה:
 ```powershell
-git pull
-git add index.html data.js pre_en.js CLAUDE.md CHANGELOG_19-04-2026_v7_0.md
-git commit -m "v7.0: Homepage redesign — unified header, shorter hero, improved nav with per-cuisine holidays"
+cd C:\path\to\PerlaBenHarroshCookingBook
+```
+```powershell
+Copy-Item "$env:USERPROFILE\Downloads\index.html" ".\index.html" -Force
+```
+```powershell
+Copy-Item "$env:USERPROFILE\Downloads\data.js" ".\data.js" -Force
+```
+```powershell
+git add index.html data.js CHANGELOG_*.md
+```
+```powershell
+git commit -m "v7.x: <description>"
+```
+```powershell
 git push origin main
 ```
 
-**Netlify + GH Pages יפרסו תוך 30-60 שניות.**
-
-אני מעריך את הריסק של שבירה **לא אפסי** — יכולים להופיע באגים קטנים:
-- צבע לא תואם בנושא בהיר/כהה
-- כפתור שלא מגיב ללחיצה
-- תרגום חסר
-- פריסה לא נכונה במובייל
-
-אם תראה משהו כזה — שלח screenshot ואני אתקן ב-hotfix v7.0.1.
+Netlify deploys automatically ~30s אחרי push.
 
 ---
 
-## רשימת "לא אגע" (חוזר על עצמו בכוונה)
+## CHANGELOGs קיימים (v7.x)
 
-1. שמות, מרכיבים, ושלבים של **אף מתכון**
-2. לינקי תמונות (`img` field ב-recipes)
-3. `download_images.py`
-4. `book_data.js`
-5. `about_redesigned.*`
-6. `sw.js` + `manifest.json`
-7. לוגיקת Web3Forms
-8. לוגיקת PWA install (כבר עובד)
-9. לוגיקת Back-to-Top (כבר עובד)
-
-אם תגלה שמשהו מהרשימה הזאת נשבר אחרי הפריסה — זו שגיאה שלי ואני אתקן.
+- `CHANGELOG_19-04-2026_v7_centered_hero.md` — v7.0 + v7.1 (Hero ממורכז + grid-on-demand)
+- `CHANGELOG_19-04-2026_v7_2_community_holidays.md` — v7.2 (COMMUNITY_HOLIDAY_TAGS)
+- `CHANGELOG_19-04-2026_v7_3_holidays_in_community.md` — v7.3 (חגים בתוך כל עדה)
+- `CHANGELOG_19-04-2026_v7_4_holiday_folder.md` — v7.4 (תיקיות + מימונה רק במרוקו)
+- `CHANGELOG_19-04-2026_v7_5_centered_header_strip.md` — v7.5 (header strip מצומצם)
+- `CHANGELOG_19-04-2026_v7_6_final.md` — v7.6 (i18n + DOM order + Web3Forms fix)
 
 ---
 
-## השאלה המכרעת לפני התחלה
+## אם צ'אט חדש מתחיל מכאן
 
-בחר אחת מהאפשרויות A/B/C (בתחילת המסמך) עבור "חגי העדה".
-
-אחרי שתבחר — אני מתחיל כתיבת קוד מיידית. אם תבחר C, אני יכול להתחיל תוך דקות. אם תבחר A, נצטרך קודם שיחה נפרדת על התיוג.
-
----
-
-## ═══ סיכום יישום (19/04/2026, ערב — פוסט פקטום) ═══
-
-### החלטה שהתקבלה
-
-**אפשרות C** — חגי העדה כ-container ריק (placeholder). האפשרות הזו הומלצה במקור, המשתמש אישר, והיא יושמה ב-v7.0.
-
-### מה בוצע ב-v7.0
-
-| תוכנית | מה יושם בפועל | הערות |
-|---|---|---|
-| Header מאוחד | ✓ `.hdr-brand-v7` נוסף לפני ה-search bar | שם + ספירה דינמית של מתכונים |
-| Hero מקוצר עם CTAs | ✓ "עיון במתכונים" + "קרא את הספר" | CSS: `.hero-cta-primary`, `.hero-cta-secondary` |
-| Bio לפני רשת המתכונים | ✓ `<main>` הועבר אחרי `</section>` של bio | סדר חדש: Hero → Bio → Main → Book → About |
-| MENU_STRUCTURE flat 6-group | ✓ 6 קבוצות מקבילות, עומק 2 רמות | כולל placeholder "חגי העדות (בקרוב)" |
-| תיקון אגב: WEB3FORMS_KEY | ✓ שוחזר מ-placeholder למפתח האמיתי | לא היה בתוכנית — התגלה בזמן העבודה ותוקן |
-
-### מה התווסף ב-v7.1 (שלא היה בתוכנית המקורית)
-
-לאחר פריסת v7.0, המשתמש צילם screenshot של הדף הראשי ושם לב שרשת המתכונים מופיעה מיד אחרי ה-Bio — וזה גרם לדף להיות ארוך מדי ולהסיח את הדעת מהספר והאודות.
-
-**הבקשה:** "אל תציג את המתכונים בדף הראשי בפריסה רחבה אלא רק אם אני בוחר בתפריט או מחפש מתכון"
-
-**הפתרון שיושם (v7.1):**
-- `<main class="main-hidden">` כברירת מחדל
-- `.main-hidden { display: none !important; }` ב-CSS
-- פונקציות גלובליות `showMainGrid()` / `hideMainGrid()`
-- הרשת מתגלה כש: לחיצה על ניווט / חיפוש / כפתור "עיון במתכונים" ב-Hero
-
-זה שינוי UX חשוב שלא היה בתוכנית v7.0 המקורית אך השלים אותה.
-
-### ספירה נכונה — תיקון אגב
-
-בתוכנית המקורית חושב:
-- **Morocco: 744 מתכונים** ← שגוי
-
-בפועל:
-- **Morocco: 671 מתכונים** (soups=103, salads=103, veg=87, meat=82, chick=66, fish=70, hol=80, des=80)
-
-גם מסמכי HLD ו-README.md הישנים הכילו את המספר השגוי 744. המספר הנכון 671 תוקן בכל המסמכים במסגרת עדכון התיעוד לאחר היישום.
-
-### קבצים ששונו בפועל
-
-| קובץ | v7.0 | v7.1 | סה"כ |
-|---|---|---|---|
-| `index.html` | +50 KB (CSS+HTML+JS+i18n+reorder) | +1 KB (CSS+JS+HTML attr) | שינוי משמעותי |
-| `data.js` | MENU_STRUCTURE rewrite (+313 bytes) | ללא שינוי | minimal |
-| `pre_en.js` | ללא שינוי | ללא שינוי | — |
-| `book_data.js`, `about_redesigned.*`, `sw.js`, `manifest.json`, `download_images.py` | ללא שינוי | ללא שינוי | — |
-
-**מתכונים:** 1,054 → 1,054 (שמור 100% — לא נגעתי בתוכן).
-
-### מסמכים שנוצרו לאחר היישום
-
-- `CHANGELOG_19-04-2026_v7_0.md` — פירוט מלא של v7.0
-- `CHANGELOG_19-04-2026_v7_1.md` — פירוט ה-hotfix של v7.1
-- `CHANGELOG_19-04-2026_docs_v7_1.md` — תיעוד של עדכון התיעוד
-- עדכונים ל-`CLAUDE.md`, `README.md`, `HLD_Perla_CookingBook.md`, `LLD_Perla_CookingBook.md`, `INTEGRATION_GUIDE.md`
-
-### הערות למפתחים עתידיים
-
-**אל תבטלו את v7.1:** הסתרת רשת בטעינה היא בקשה מפורשת של המשתמש. אם יבקש שינוי בעתיד — יבקש במפורש.
-
-**אל תחזירו את המבנה הישן של MENU_STRUCTURE:** v6.x השתמש ב-single wrapper nested, v7.0 עבר ל-flat 6-group. זה שיפור משמעותי ב-UX.
-
-**Option C נשאר open:** מתכוני חגי העדה **לא** תויגו. בעתיד (שלב 2) אפשר:
-- לבקש מהמשתמש רשימה של תיוגים משפחתיים אותנטיים (אפשרות A בתוכנית המקורית)
-- או להשאיר את ה-placeholder לתמיד כתזכורת לכך שצריך עבודה עתידית
-
-### שלב 2 (עתידי — לא בוצע בסשן זה)
-
-בניית `audit_recipes.py` — סקריפט Python שיסרוק את 1,054 המתכונים ויסמן בעיות מכניות (מרכיבים חסרים, שלבים קצרים מדי, זמן הכנה חסר וכו'). זו הדרך הכנה לשפר תוכן המתכונים — לא "לבדוק כל מתכון בעצמי" שהיה לוקח 175-350 שעות עבודה אמיתיות.
+1. קרא את **`PLAN_v7_0_ENGLISH.md`** — handoff טכני מלא באנגלית
+2. קרא את **`CLAUDE_md_v7_update.md`** — עדכון התיעוד הארכיטקטוני
+3. בדוק את `userMemories` בהקשר — מכיל את העדכונים האחרונים
+4. עבד נגד התיקיה הזאת בלבד: `https://github.com/asafben33/PerlaBenHarroshCookingBook.git`
+5. כל שינוי מתפרס ב: `https://perlabenharrosh-cookingbook.netlify.app/` (Netlify)
+6. גם קיים: `https://asafben33.github.io/PerlaBenHarroshCookingBook/` (GitHub Pages, mirror)
 
 ---
 
-**לזכר פרלה בן-הראש ז״ל (1933-2025)**
+**לזכר משפחת בן-הראש — קזבלנקה, מרקש, ירושלים**
