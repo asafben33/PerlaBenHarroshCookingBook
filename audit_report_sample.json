@@ -1,0 +1,6237 @@
+{
+  "generated_at": "2026-04-19T19:38:23",
+  "version": "audit_recipes.py v1.0",
+  "stats": {
+    "total_recipes": 1054,
+    "recipes_with_issues": 485,
+    "issues_total": 688,
+    "issues_by_severity": {
+      "high": 0,
+      "medium": 671,
+      "low": 17
+    },
+    "issues_by_code": {
+      "short_step": 593,
+      "bad_difficulty": 73,
+      "vague_quantity": 3,
+      "suspicious_time": 8,
+      "few_steps": 2,
+      "unparseable_serv": 9
+    },
+    "issues_by_category": {
+      "salads": 32,
+      "veg": 30,
+      "chick": 42,
+      "des": 43,
+      "soups": 67,
+      "fish": 25,
+      "meat": 53,
+      "hol": 41,
+      "span": 28,
+      "iraq": 9,
+      "kurd": 9,
+      "yem": 15,
+      "buk": 12,
+      "tun": 11,
+      "ashk": 12,
+      "pers": 6,
+      "isr": 12,
+      "turk": 18,
+      "nonkosher": 20
+    }
+  },
+  "issues": [
+    {
+      "id": "sa8",
+      "cat": "salads",
+      "title": "סלט כרוב מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (15 תווים): \"מגררים כרוב דק.\""
+    },
+    {
+      "id": "v6",
+      "cat": "veg",
+      "title": "כרוב מבושל מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (18 תווים): \"מוסיפים כרוב ומים.\""
+    },
+    {
+      "id": "c3",
+      "cat": "chick",
+      "title": "סקינה — חמין מרוקאי",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "c5",
+      "cat": "chick",
+      "title": "קוסקוס חגיגי של שבת",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "d1",
+      "cat": "des",
+      "title": "מופלטה מסורתית",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "d1",
+      "cat": "des",
+      "title": "מופלטה מסורתית",
+      "severity": "medium",
+      "code": "vague_quantity",
+      "field": "ingr[6]",
+      "detail": "כמות מעורפלת: \"לפי הצורך\" (עבור \"שמן — לעבודה\")"
+    },
+    {
+      "id": "d3",
+      "cat": "des",
+      "title": "מקרוד תמרים",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "sx1",
+      "cat": "soups",
+      "title": "מרק חומוס מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (19 תווים): \"מוסיפים חומוס ומים.\""
+    },
+    {
+      "id": "fx1",
+      "cat": "fish",
+      "title": "מז׳אוז׳ין דגים",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "mx3",
+      "cat": "meat",
+      "title": "טחול ממולא",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "mx4",
+      "cat": "meat",
+      "title": "קיבה ממולאת",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "mx7",
+      "cat": "meat",
+      "title": "תבשיל בשר עם חומוס",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "cx4",
+      "cat": "chick",
+      "title": "עוף עם קישואים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מוסיפים קישואים.\""
+    },
+    {
+      "id": "hx1",
+      "cat": "hol",
+      "title": "סלטים חגיגיים מרוקאיים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מכינים סלט גזר.\""
+    },
+    {
+      "id": "dx1",
+      "cat": "des",
+      "title": "שבקיה",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "sn3",
+      "cat": "soups",
+      "title": "מרק אפונה יבשה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "sn5",
+      "cat": "soups",
+      "title": "מרק בטטה וג׳ינג׳ר",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (19 תווים): \"מטגנים בצל עד שקוף.\""
+    },
+    {
+      "id": "sn5",
+      "cat": "soups",
+      "title": "מרק בטטה וג׳ינג׳ר",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (18 תווים): \"מוסיפים בטטה ומים.\""
+    },
+    {
+      "id": "sn6",
+      "cat": "soups",
+      "title": "ברקוקס — מרק גריסי פנינה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 45 דקות.\""
+    },
+    {
+      "id": "sn7",
+      "cat": "soups",
+      "title": "מרק סלק מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "sn9",
+      "cat": "soups",
+      "title": "חרירה צמחונית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"מבשלים 5 דקות.\""
+    },
+    {
+      "id": "sn10",
+      "cat": "soups",
+      "title": "מרק עדשים ירוקות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (19 תווים): \"מוסיפים עדשים ומים.\""
+    },
+    {
+      "id": "sn11",
+      "cat": "soups",
+      "title": "מרק שומר ולימון מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (18 תווים): \"מוסיפים שום וכמון.\""
+    },
+    {
+      "id": "san2",
+      "cat": "salads",
+      "title": "סלט כרובית מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מסננים ומצננים.\""
+    },
+    {
+      "id": "san6",
+      "cat": "salads",
+      "title": "סלט ארטישוק מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מסננים ומצננים.\""
+    },
+    {
+      "id": "san8",
+      "cat": "salads",
+      "title": "סלט פול ירוק קר עם כמון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (13 תווים): \"מצננים לגמרי.\""
+    },
+    {
+      "id": "san15",
+      "cat": "salads",
+      "title": "סלט תרד קר עם שומשום",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (13 תווים): \"מצננים לגמרי.\""
+    },
+    {
+      "id": "san16",
+      "cat": "salads",
+      "title": "סלט ברוקולי מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מסננים ומצננים.\""
+    },
+    {
+      "id": "san17",
+      "cat": "salads",
+      "title": "סלט כוסברה ולימון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"קוצצים כוסברה גס.\""
+    },
+    {
+      "id": "vn3",
+      "cat": "veg",
+      "title": "ארטישוק ממולא מרוקאי",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "vn4",
+      "cat": "veg",
+      "title": "ממולאי כרוב מרוקאי",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "hn1",
+      "cat": "hol",
+      "title": "טאג׳ין עוף עם ארטישוק ולימון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 30 דקות.\""
+    },
+    {
+      "id": "hn3",
+      "cat": "hol",
+      "title": "טאג׳ין כבש עם ירקות שורש",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 50 דקות.\""
+    },
+    {
+      "id": "hn5",
+      "cat": "hol",
+      "title": "טאג׳ין עוף עם לימון כבוש וזעפרן",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מוסיפים כוס מים.\""
+    },
+    {
+      "id": "hn5",
+      "cat": "hol",
+      "title": "טאג׳ין עוף עם לימון כבוש וזעפרן",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 35 דקות.\""
+    },
+    {
+      "id": "hn6",
+      "cat": "hol",
+      "title": "טאג׳ין בקר עם דלעת",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מוסיפים כוס מים.\""
+    },
+    {
+      "id": "hn6",
+      "cat": "hol",
+      "title": "טאג׳ין בקר עם דלעת",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 60 דקות.\""
+    },
+    {
+      "id": "hn7",
+      "cat": "hol",
+      "title": "טאג׳ין כבש עם חומוס ומשמשים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 60 דקות.\""
+    },
+    {
+      "id": "hn8",
+      "cat": "hol",
+      "title": "טאג׳ין ירקות צמחוני",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מוסיפים כוס מים.\""
+    },
+    {
+      "id": "fn1",
+      "cat": "fish",
+      "title": "דג ברוטב חרמולה ירוקה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מניחים דג ברוטב.\""
+    },
+    {
+      "id": "fn2",
+      "cat": "fish",
+      "title": "דג מלוח מרוקאי — מישייה",
+      "severity": "low",
+      "code": "suspicious_time",
+      "field": "time",
+      "detail": "זמן ארוך מאוד: 1440 דקות (30 דקות + 24 שעות)"
+    },
+    {
+      "id": "fn3",
+      "cat": "fish",
+      "title": "קלמארי ממולא מרוקאי",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "mn1",
+      "cat": "meat",
+      "title": "כבש צלוי שלם — מחוי",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "mn3",
+      "cat": "meat",
+      "title": "מרגז מרוקאי ביתי",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "mn5",
+      "cat": "meat",
+      "title": "קציצות כבש ברוטב עגבניות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"יוצרים קציצות.\""
+    },
+    {
+      "id": "mn8",
+      "cat": "meat",
+      "title": "בשר עם פול ירוק מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 50 דקות.\""
+    },
+    {
+      "id": "hn15",
+      "cat": "hol",
+      "title": "פסטייה עוף — בסטלה",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "hn16",
+      "cat": "hol",
+      "title": "קוסקוס שבעה ירקות",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "dn2",
+      "cat": "des",
+      "title": "קעב אל-ע׳זאל — קרני עזים",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "dn2",
+      "cat": "des",
+      "title": "קעב אל-ע׳זאל — קרני עזים",
+      "severity": "medium",
+      "code": "vague_quantity",
+      "field": "ingr[5]",
+      "detail": "כמות מעורפלת: \"לפי הצורך\" (עבור \"מים\")"
+    },
+    {
+      "id": "dn8",
+      "cat": "des",
+      "title": "בקלווה מרוקאית",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "spn1",
+      "cat": "span",
+      "title": "אדאפינה — חמין יהודי-ספרדי",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "spn1",
+      "cat": "span",
+      "title": "אדאפינה — חמין יהודי-ספרדי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (14 תווים): \"מביאים לרתיחה.\""
+    },
+    {
+      "id": "spn4",
+      "cat": "span",
+      "title": "סוקד — בקלה ספרדית-מרוקאית",
+      "severity": "low",
+      "code": "suspicious_time",
+      "field": "time",
+      "detail": "זמן ארוך מאוד: 1440 דקות (24 שעות + 40 דקות)"
+    },
+    {
+      "id": "sau2",
+      "cat": "span",
+      "title": "לימון כבוש ביתי",
+      "severity": "medium",
+      "code": "vague_quantity",
+      "field": "ingr[3]",
+      "detail": "כמות מעורפלת: \"לפי הצורך\" (עבור \"מיץ לימון — לכיסוי\")"
+    },
+    {
+      "id": "sane1",
+      "cat": "salads",
+      "title": "סלט חצילים עם חינה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מועכים בידיים גס.\""
+    },
+    {
+      "id": "sane2",
+      "cat": "salads",
+      "title": "סלט פול לוביא",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מסננים ומצננים.\""
+    },
+    {
+      "id": "sane4",
+      "cat": "salads",
+      "title": "סלט גמבה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (19 תווים): \"מטגנים בצל עד שקוף.\""
+    },
+    {
+      "id": "vne3",
+      "cat": "veg",
+      "title": "כרוב ממולא מרוקאי",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "vne5",
+      "cat": "veg",
+      "title": "בצלים ממולאים מרוקאיים",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "vne8",
+      "cat": "veg",
+      "title": "גרגרי חיטה עם ירקות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 60 דקות.\""
+    },
+    {
+      "id": "cne2",
+      "cat": "chick",
+      "title": "עוף עם זיתים שחורים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 35 דקות.\""
+    },
+    {
+      "id": "cne3",
+      "cat": "chick",
+      "title": "עוף עם ג׳ינג׳ר ולימון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 35 דקות.\""
+    },
+    {
+      "id": "cne4",
+      "cat": "chick",
+      "title": "סנה — עוף עם קוסקוס ועוף",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "mne1",
+      "cat": "meat",
+      "title": "בשר עם תאנים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מוסיפים כוס מים.\""
+    },
+    {
+      "id": "mne1",
+      "cat": "meat",
+      "title": "בשר עם תאנים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "mne2",
+      "cat": "meat",
+      "title": "בשר עם אגסים וזעפרן",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 60 דקות.\""
+    },
+    {
+      "id": "mne3",
+      "cat": "meat",
+      "title": "ראס אל-חנות עם שום שלם",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מוסיפים כוס מים.\""
+    },
+    {
+      "id": "mne4",
+      "cat": "meat",
+      "title": "מחמר בשר — בשר אדום מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מחממים תנור 200°.\""
+    },
+    {
+      "id": "hne1",
+      "cat": "hol",
+      "title": "טאג׳ין תרנגול הודי עם ירקות",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "hne1",
+      "cat": "hol",
+      "title": "טאג׳ין תרנגול הודי עם ירקות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 80 דקות.\""
+    },
+    {
+      "id": "hne2",
+      "cat": "hol",
+      "title": "שטיחה — פשטידת בשר מרוקאית",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "hne3",
+      "cat": "hol",
+      "title": "מחנצ׳ה — ספירלת עוף",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "hne3",
+      "cat": "hol",
+      "title": "מחנצ׳ה — ספירלת עוף",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"מערבבים מילוי.\""
+    },
+    {
+      "id": "dne2",
+      "cat": "des",
+      "title": "עוגת שקדים תפוזים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (19 תווים): \"מוסיפים אבקת אפייה.\""
+    },
+    {
+      "id": "dne4",
+      "cat": "des",
+      "title": "ריבת תאנים ואגוזים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (16 תווים): \"מעבירים לצנצנות.\""
+    },
+    {
+      "id": "spne2",
+      "cat": "span",
+      "title": "פוחרו — שעועית פאבה ספרדית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "spne2",
+      "cat": "span",
+      "title": "פוחרו — שעועית פאבה ספרדית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מוסיפים כוסברה.\""
+    },
+    {
+      "id": "spne3",
+      "cat": "span",
+      "title": "גסטרו — קדירת בשר ספרדית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (19 תווים): \"מוסיפים מים נוספים.\""
+    },
+    {
+      "id": "spne3",
+      "cat": "span",
+      "title": "גסטרו — קדירת בשר ספרדית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 50 דקות.\""
+    },
+    {
+      "id": "spne4",
+      "cat": "span",
+      "title": "ח׳וביה — מרבה ירקות ספרדי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 60 דקות.\""
+    },
+    {
+      "id": "var1",
+      "cat": "soups",
+      "title": "חרירה עם ורמיצ׳לי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 45 דקות.\""
+    },
+    {
+      "id": "var3",
+      "cat": "fish",
+      "title": "דג חריף עם אורז",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[6]",
+      "detail": "שלב 6 קצר מאוד (14 תווים): \"מפזרים כוסברה.\""
+    },
+    {
+      "id": "var4",
+      "cat": "chick",
+      "title": "עוף עם כרוב ולימון כבוש",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 35 דקות.\""
+    },
+    {
+      "id": "var5",
+      "cat": "meat",
+      "title": "קציצות בשר עם תרד",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"יוצרים קציצות.\""
+    },
+    {
+      "id": "var6",
+      "cat": "veg",
+      "title": "שעועית ירוקה עם עגבניות ולימון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מטגנים שום.\""
+    },
+    {
+      "id": "rare1",
+      "cat": "meat",
+      "title": "שינה — כבש מבושל עם תמרים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 65 דקות.\""
+    },
+    {
+      "id": "rare3",
+      "cat": "soups",
+      "title": "אמרגן — מרק שעורה מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "rare3",
+      "cat": "soups",
+      "title": "אמרגן — מרק שעורה מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 50 דקות.\""
+    },
+    {
+      "id": "rare5",
+      "cat": "salads",
+      "title": "זחלוק — סלט כרובית חריף",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מסננים ומצננים.\""
+    },
+    {
+      "id": "rare7",
+      "cat": "hol",
+      "title": "טאג׳ין חמאם — יונה מרוקאית",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "rare7",
+      "cat": "hol",
+      "title": "טאג׳ין חמאם — יונה מרוקאית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מוסיפים כוס מים.\""
+    },
+    {
+      "id": "rare7",
+      "cat": "hol",
+      "title": "טאג׳ין חמאם — יונה מרוקאית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "rare8",
+      "cat": "meat",
+      "title": "כרעיין — רגלי כבש מרוקאיות",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "rare11",
+      "cat": "soups",
+      "title": "מרק מנה ירוקה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "rare11",
+      "cat": "soups",
+      "title": "מרק מנה ירוקה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "rare12",
+      "cat": "hol",
+      "title": "ת׳ריד — לחם ברוטב",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 45 דקות.\""
+    },
+    {
+      "id": "se2",
+      "cat": "soups",
+      "title": "מרק תרד ועדשים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "se2",
+      "cat": "soups",
+      "title": "מרק תרד ועדשים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 20 דקות.\""
+    },
+    {
+      "id": "se3",
+      "cat": "soups",
+      "title": "מרק כרוב ותפוח אדמה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "se3",
+      "cat": "soups",
+      "title": "מרק כרוב ותפוח אדמה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "se3",
+      "cat": "soups",
+      "title": "מרק כרוב ותפוח אדמה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 28 דקות.\""
+    },
+    {
+      "id": "se5",
+      "cat": "soups",
+      "title": "מרק טלה ועדשים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "se6",
+      "cat": "soups",
+      "title": "מרק דלעת ואגוז",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "se6",
+      "cat": "soups",
+      "title": "מרק דלעת ואגוז",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "se7",
+      "cat": "soups",
+      "title": "מרק עוף ופרגיות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"שמים הכל בסיר.\""
+    },
+    {
+      "id": "se8",
+      "cat": "soups",
+      "title": "מרק חומוס ותרד",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מטגנים שום.\""
+    },
+    {
+      "id": "se8",
+      "cat": "soups",
+      "title": "מרק חומוס ותרד",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (16 תווים): \"מוסיפים עגבניות.\""
+    },
+    {
+      "id": "se8",
+      "cat": "soups",
+      "title": "מרק חומוס ותרד",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (19 תווים): \"מוסיפים חומוס ומים.\""
+    },
+    {
+      "id": "se9",
+      "cat": "soups",
+      "title": "מרק בצל מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (18 תווים): \"מוסיפים כמון ומרק.\""
+    },
+    {
+      "id": "se10",
+      "cat": "soups",
+      "title": "מרק עגבניות ואורז קר",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (18 תווים): \"מקררים. מגישים קר.\""
+    },
+    {
+      "id": "sle1",
+      "cat": "salads",
+      "title": "סלט כרובית חריפה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"מבשלים כרובית.\""
+    },
+    {
+      "id": "sle1",
+      "cat": "salads",
+      "title": "סלט כרובית חריפה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מסננים ומצננים.\""
+    },
+    {
+      "id": "sle2",
+      "cat": "salads",
+      "title": "סלט גזר ומיץ תפוז",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מגררים גזר.\""
+    },
+    {
+      "id": "sle3",
+      "cat": "salads",
+      "title": "סלט ברוקולי ושום קונפי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מבשלים ברוקולי.\""
+    },
+    {
+      "id": "ve1",
+      "cat": "veg",
+      "title": "כרוב אדום מבושל",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (19 תווים): \"מטגנים כרוב 5 דקות.\""
+    },
+    {
+      "id": "ve3",
+      "cat": "veg",
+      "title": "חציל עם עגבנייה וביצה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (14 תווים): \"מבשלים 7 דקות.\""
+    },
+    {
+      "id": "ve7",
+      "cat": "veg",
+      "title": "בצלים קטנים כבושים",
+      "severity": "low",
+      "code": "suspicious_time",
+      "field": "time",
+      "detail": "זמן ארוך מאוד: 2880 דקות (20 דקות + 48 שעות)"
+    },
+    {
+      "id": "fe1",
+      "cat": "fish",
+      "title": "דג ים בתנור עם לימון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (14 תווים): \"אופים 25 דקות.\""
+    },
+    {
+      "id": "fe2",
+      "cat": "fish",
+      "title": "טונה עם עגבניות מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (19 תווים): \"מניחים סטייקי טונה.\""
+    },
+    {
+      "id": "me1",
+      "cat": "meat",
+      "title": "בשר עם תפוחי אדמה ופלפלים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "me2",
+      "cat": "meat",
+      "title": "כבש עם פלפלים מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "me4",
+      "cat": "meat",
+      "title": "בשר עם שעועית לבנה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "me5",
+      "cat": "meat",
+      "title": "בשר ממולא בבצק",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "me5",
+      "cat": "meat",
+      "title": "בשר ממולא בבצק",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (13 תווים): \"מכינים מילוי.\""
+    },
+    {
+      "id": "ce1",
+      "cat": "chick",
+      "title": "עוף עם בטטה ודבש",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "ce1",
+      "cat": "chick",
+      "title": "עוף עם בטטה ודבש",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 35 דקות.\""
+    },
+    {
+      "id": "ce2",
+      "cat": "chick",
+      "title": "עוף עם פיסטוק",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 45 דקות.\""
+    },
+    {
+      "id": "ce3",
+      "cat": "chick",
+      "title": "עוף עם תרד ועגבניות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "ce3",
+      "cat": "chick",
+      "title": "עוף עם תרד ועגבניות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 38 דקות.\""
+    },
+    {
+      "id": "ce4",
+      "cat": "chick",
+      "title": "עוף עם ליצ׳י ותבלינים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (18 תווים): \"צורבים עוף עם בצל.\""
+    },
+    {
+      "id": "ce4",
+      "cat": "chick",
+      "title": "עוף עם ליצ׳י ותבלינים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "hle3",
+      "cat": "hol",
+      "title": "ראש כבש ברוטב",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "hle5",
+      "cat": "hol",
+      "title": "עוגיות גבינה לשבועות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (14 תווים): \"אופים 20 דקות.\""
+    },
+    {
+      "id": "dle1",
+      "cat": "des",
+      "title": "עוגת שוקולד ושקדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"אופים 35 דקות.\""
+    },
+    {
+      "id": "dle3",
+      "cat": "des",
+      "title": "עוגיות אניס ושומשום",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 170°.\""
+    },
+    {
+      "id": "dle3",
+      "cat": "des",
+      "title": "עוגיות אניס ושומשום",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (14 תווים): \"אופים 18 דקות.\""
+    },
+    {
+      "id": "dle4",
+      "cat": "des",
+      "title": "ריבת שזיפים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מעבירים לצנצנות.\""
+    },
+    {
+      "id": "dle5",
+      "cat": "des",
+      "title": "ריבת קאקי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"שמים הכל בסיר.\""
+    },
+    {
+      "id": "spe1",
+      "cat": "span",
+      "title": "ח׳מין ירושלמי — עדאפינה",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "spe3",
+      "cat": "span",
+      "title": "קלדו — ציר עוף ספרדי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מסננים. שומרים.\""
+    },
+    {
+      "id": "rer1",
+      "cat": "soups",
+      "title": "טפינה — מרק שעורה ועדשים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מטגנים בצל.\""
+    },
+    {
+      "id": "rer1",
+      "cat": "soups",
+      "title": "טפינה — מרק שעורה ועדשים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "rer1",
+      "cat": "soups",
+      "title": "טפינה — מרק שעורה ועדשים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 70 דקות.\""
+    },
+    {
+      "id": "rer2",
+      "cat": "salads",
+      "title": "שאקשוקה מרוקאית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (19 תווים): \"מטגנים שום ופלפלים.\""
+    },
+    {
+      "id": "rer4",
+      "cat": "meat",
+      "title": "שיפוד כבש מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מגלגלים על שיפוד.\""
+    },
+    {
+      "id": "rer5",
+      "cat": "chick",
+      "title": "עוף ים טעים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "rer6",
+      "cat": "hol",
+      "title": "ח׳ובז — לחם תנור בגחלים",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "rer6",
+      "cat": "hol",
+      "title": "ח׳ובז — לחם תנור בגחלים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"תפיחה 40 דקות.\""
+    },
+    {
+      "id": "sf1",
+      "cat": "soups",
+      "title": "מרק לוף ומנגולד",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "sf1",
+      "cat": "soups",
+      "title": "מרק לוף ומנגולד",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (18 תווים): \"מוסיפים מים וכמון.\""
+    },
+    {
+      "id": "sf3",
+      "cat": "soups",
+      "title": "מרק בצל ועגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (19 תווים): \"מטגנים בצל עד זהוב.\""
+    },
+    {
+      "id": "sf3",
+      "cat": "soups",
+      "title": "מרק בצל ועגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "sf3",
+      "cat": "soups",
+      "title": "מרק בצל ועגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 15 דקות.\""
+    },
+    {
+      "id": "sf5",
+      "cat": "soups",
+      "title": "מרק חמוצים מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (18 תווים): \"מוסיפים שום וכמון.\""
+    },
+    {
+      "id": "sf5",
+      "cat": "soups",
+      "title": "מרק חמוצים מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 10 דקות.\""
+    },
+    {
+      "id": "sf6",
+      "cat": "soups",
+      "title": "מרק פסטה מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"מביאים לרתיחה.\""
+    },
+    {
+      "id": "sf6",
+      "cat": "soups",
+      "title": "מרק פסטה מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 35 דקות.\""
+    },
+    {
+      "id": "sf7",
+      "cat": "soups",
+      "title": "מרק ים עם סרטנים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "sf8",
+      "cat": "soups",
+      "title": "מרק ירק שורש מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "sf8",
+      "cat": "soups",
+      "title": "מרק ירק שורש מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "sf8",
+      "cat": "soups",
+      "title": "מרק ירק שורש מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "sf9",
+      "cat": "soups",
+      "title": "מרק חלב ושקדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (18 תווים): \"מקררים. מגישים קר.\""
+    },
+    {
+      "id": "sf10",
+      "cat": "soups",
+      "title": "מרק קוסקוסית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מחממים ציר.\""
+    },
+    {
+      "id": "sf10",
+      "cat": "soups",
+      "title": "מרק קוסקוסית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (19 תווים): \"מוסיפים עשבים ושמן.\""
+    },
+    {
+      "id": "sf10",
+      "cat": "soups",
+      "title": "מרק קוסקוסית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מגישים עם לחמון.\""
+    },
+    {
+      "id": "slf1",
+      "cat": "salads",
+      "title": "סלט קוסקוס קר",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (7 תווים): \"מצננים.\""
+    },
+    {
+      "id": "slf5",
+      "cat": "salads",
+      "title": "סלט חומוס עם טחינה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (16 תווים): \"מזליפים שמן זית.\""
+    },
+    {
+      "id": "vef1",
+      "cat": "veg",
+      "title": "רטטוי מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "vef1",
+      "cat": "veg",
+      "title": "רטטוי מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (19 תווים): \"מוסיפים שאר הירקות.\""
+    },
+    {
+      "id": "vef2",
+      "cat": "veg",
+      "title": "כרוב עם שמן זית ולימון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"מוסיפים לימון.\""
+    },
+    {
+      "id": "vef3",
+      "cat": "veg",
+      "title": "פול עם עגבניות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מטגנים שום.\""
+    },
+    {
+      "id": "vef3",
+      "cat": "veg",
+      "title": "פול עם עגבניות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (17 תווים): \"מוסיפים פול ומים.\""
+    },
+    {
+      "id": "vef4",
+      "cat": "veg",
+      "title": "שעועית לבנה עם שמן וצלפים",
+      "severity": "medium",
+      "code": "few_steps",
+      "field": "steps",
+      "detail": "רק 1 שלבים (מומלץ לפחות 2)"
+    },
+    {
+      "id": "vef6",
+      "cat": "veg",
+      "title": "גבינה לבנה עם שמן ועשבים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (19 תווים): \"מניחים גבינה בצלחת.\""
+    },
+    {
+      "id": "vef8",
+      "cat": "veg",
+      "title": "גזר עם שמן אגוז",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (19 תווים): \"מבשלים גזר. מסננים.\""
+    },
+    {
+      "id": "fif1",
+      "cat": "fish",
+      "title": "דג עם עגבניות קלויות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (19 תווים): \"מניחים דג על הרוטב.\""
+    },
+    {
+      "id": "fif1",
+      "cat": "fish",
+      "title": "דג עם עגבניות קלויות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"אופים 15 דקות.\""
+    },
+    {
+      "id": "mef1",
+      "cat": "meat",
+      "title": "כבש עם חרוב",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 60 דקות.\""
+    },
+    {
+      "id": "mef2",
+      "cat": "meat",
+      "title": "כבש עם צנוברים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 60 דקות.\""
+    },
+    {
+      "id": "mef5",
+      "cat": "meat",
+      "title": "בשר עם כרישה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 50 דקות.\""
+    },
+    {
+      "id": "chf1",
+      "cat": "chick",
+      "title": "עוף עם עגבניות מיובשות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "chf1",
+      "cat": "chick",
+      "title": "עוף עם עגבניות מיובשות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מוסיפים כוס מים.\""
+    },
+    {
+      "id": "chf2",
+      "cat": "chick",
+      "title": "עוף עם ריבת תפוזים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "chf2",
+      "cat": "chick",
+      "title": "עוף עם ריבת תפוזים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "chf3",
+      "cat": "chick",
+      "title": "עוף עם תפוח ועלי דפנה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "chf3",
+      "cat": "chick",
+      "title": "עוף עם תפוח ועלי דפנה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 35 דקות.\""
+    },
+    {
+      "id": "chf5",
+      "cat": "chick",
+      "title": "עוף עם חמוציות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "chf5",
+      "cat": "chick",
+      "title": "עוף עם חמוציות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "holf1",
+      "cat": "hol",
+      "title": "תבשיל דבש וגזר לראש השנה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (19 תווים): \"מבשלים גזר. מסננים.\""
+    },
+    {
+      "id": "holf2",
+      "cat": "hol",
+      "title": "סמבוסק גבינה לחינה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מטגנים עד זהוב.\""
+    },
+    {
+      "id": "holf4",
+      "cat": "hol",
+      "title": "פסח מרוקאי — שולחן",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (13 תווים): \"מכינים חרוסת.\""
+    },
+    {
+      "id": "holf4",
+      "cat": "hol",
+      "title": "פסח מרוקאי — שולחן",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (18 תווים): \"מבשלים ביצים קשות.\""
+    },
+    {
+      "id": "holf5",
+      "cat": "hol",
+      "title": "שולחן מימונה שלם",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (15 תווים): \"מכינים מופלטות.\""
+    },
+    {
+      "id": "holf5",
+      "cat": "hol",
+      "title": "שולחן מימונה שלם",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (13 תווים): \"מסדרים שולחן.\""
+    },
+    {
+      "id": "def1",
+      "cat": "des",
+      "title": "ריבת אפרסק",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"שמים הכל בסיר.\""
+    },
+    {
+      "id": "def1",
+      "cat": "des",
+      "title": "ריבת אפרסק",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מבשלים 50 דקות.\""
+    },
+    {
+      "id": "def3",
+      "cat": "des",
+      "title": "כרוב בסוכר — Sfuf",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 170°.\""
+    },
+    {
+      "id": "def3",
+      "cat": "des",
+      "title": "כרוב בסוכר — Sfuf",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (19 תווים): \"מערבבים הכל לבלילה.\""
+    },
+    {
+      "id": "def4",
+      "cat": "des",
+      "title": "עוגת מי ורדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 170°.\""
+    },
+    {
+      "id": "def4",
+      "cat": "des",
+      "title": "עוגת מי ורדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"אופים 35 דקות.\""
+    },
+    {
+      "id": "def5",
+      "cat": "des",
+      "title": "לחם מתוק לשבת",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"תפיחה 45 דקות.\""
+    },
+    {
+      "id": "spf2",
+      "cat": "span",
+      "title": "פוטאז׳ — מרק עם ירקות ספרדי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מבשלים 60 דקות.\""
+    },
+    {
+      "id": "spf3",
+      "cat": "span",
+      "title": "טורוביאה — שכבות בצק ובשר",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (13 תווים): \"מכינים מילוי.\""
+    },
+    {
+      "id": "spf4",
+      "cat": "span",
+      "title": "ח׳וביאס — שעועית עם עשב",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"מבשלים שעועית.\""
+    },
+    {
+      "id": "spf5",
+      "cat": "span",
+      "title": "קרֶפּ ספרדי-מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"מנוחה 15 דקות.\""
+    },
+    {
+      "id": "add1",
+      "cat": "soups",
+      "title": "מרק שומשום מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (18 תווים): \"מוסיפים כמון ומים.\""
+    },
+    {
+      "id": "add2",
+      "cat": "soups",
+      "title": "מרק פרא — ירוק הר האטלס",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (19 תווים): \"מוסיפים ירקות ומים.\""
+    },
+    {
+      "id": "add3",
+      "cat": "soups",
+      "title": "מרק שעועית לבנה ועגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מטגנים שום.\""
+    },
+    {
+      "id": "add3",
+      "cat": "soups",
+      "title": "מרק שעועית לבנה ועגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 20 דקות.\""
+    },
+    {
+      "id": "add4",
+      "cat": "soups",
+      "title": "מרק צלי עם שומר",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "add4",
+      "cat": "soups",
+      "title": "מרק צלי עם שומר",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 50 דקות.\""
+    },
+    {
+      "id": "add7",
+      "cat": "veg",
+      "title": "פלפלים ממולאים בגבינה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"ממלאים פלפלים.\""
+    },
+    {
+      "id": "add9",
+      "cat": "fish",
+      "title": "בקלה עם תפוחי אדמה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"שורים בקלה.\""
+    },
+    {
+      "id": "add10",
+      "cat": "fish",
+      "title": "דג מרינרה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מטגנים שום.\""
+    },
+    {
+      "id": "add10",
+      "cat": "fish",
+      "title": "דג מרינרה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (10 תווים): \"מניחים דג.\""
+    },
+    {
+      "id": "add11",
+      "cat": "meat",
+      "title": "קציצות עם פול",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"מכינים קציצות.\""
+    },
+    {
+      "id": "add12",
+      "cat": "meat",
+      "title": "כבש עם שעועית לבנה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 60 דקות.\""
+    },
+    {
+      "id": "add13",
+      "cat": "chick",
+      "title": "עוף עם קציצות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "add15",
+      "cat": "hol",
+      "title": "עוף עם שבעה ירקות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "add15",
+      "cat": "hol",
+      "title": "עוף עם שבעה ירקות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 50 דקות.\""
+    },
+    {
+      "id": "add16",
+      "cat": "hol",
+      "title": "טאג׳ין עוף ולימון כבוש",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "add16",
+      "cat": "hol",
+      "title": "טאג׳ין עוף ולימון כבוש",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "add17",
+      "cat": "des",
+      "title": "ריבת שזיפים ואגוז",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "add18",
+      "cat": "des",
+      "title": "ח׳ריבה בחמאה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 160°.\""
+    },
+    {
+      "id": "add18",
+      "cat": "des",
+      "title": "ח׳ריבה בחמאה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מערבבים הכל לבצק.\""
+    },
+    {
+      "id": "add18",
+      "cat": "des",
+      "title": "ח׳ריבה בחמאה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (14 תווים): \"יוצרים כדורים.\""
+    },
+    {
+      "id": "add18",
+      "cat": "des",
+      "title": "ח׳ריבה בחמאה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"אופים 18 דקות.\""
+    },
+    {
+      "id": "add19",
+      "cat": "des",
+      "title": "עוגיות מקרון שקדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 160°.\""
+    },
+    {
+      "id": "add19",
+      "cat": "des",
+      "title": "עוגיות מקרון שקדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"אופים 15 דקות.\""
+    },
+    {
+      "id": "add22",
+      "cat": "salads",
+      "title": "סלט תפוז וזיתים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (18 תווים): \"מסדרים תפוז בצלחת.\""
+    },
+    {
+      "id": "add23",
+      "cat": "veg",
+      "title": "תרד עם אגוזי מלך",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (14 תווים): \"מוסיפים לימון.\""
+    },
+    {
+      "id": "add24",
+      "cat": "fish",
+      "title": "דג עם ירק ים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (18 תווים): \"מפוגגים אצות במים.\""
+    },
+    {
+      "id": "add25",
+      "cat": "meat",
+      "title": "כבש עם תפוח וצימוקים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מטגנים כבש.\""
+    },
+    {
+      "id": "add25",
+      "cat": "meat",
+      "title": "כבש עם תפוח וצימוקים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "add26",
+      "cat": "chick",
+      "title": "עוף עם אפרסקים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "add26",
+      "cat": "chick",
+      "title": "עוף עם אפרסקים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "add28",
+      "cat": "des",
+      "title": "עוגת יין מרוקאית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 170°.\""
+    },
+    {
+      "id": "add28",
+      "cat": "des",
+      "title": "עוגת יין מרוקאית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"אופים 38 דקות.\""
+    },
+    {
+      "id": "add30",
+      "cat": "soups",
+      "title": "מרק חומוס ועגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מטגנים שום.\""
+    },
+    {
+      "id": "add30",
+      "cat": "soups",
+      "title": "מרק חומוס ועגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (19 תווים): \"מוסיפים חומוס ומים.\""
+    },
+    {
+      "id": "add30",
+      "cat": "soups",
+      "title": "מרק חומוס ועגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 18 דקות.\""
+    },
+    {
+      "id": "add31",
+      "cat": "salads",
+      "title": "סלט ברנג׳ל — חציל ועגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"מטגנים חצילים.\""
+    },
+    {
+      "id": "add31",
+      "cat": "salads",
+      "title": "סלט ברנג׳ל — חציל ועגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 15 דקות.\""
+    },
+    {
+      "id": "add32",
+      "cat": "veg",
+      "title": "כרובית עם זיתים וצלפים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"מבשלים כרובית.\""
+    },
+    {
+      "id": "add33",
+      "cat": "fish",
+      "title": "מקרל ממרוח בחרמולה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"משרים 30 דקות.\""
+    },
+    {
+      "id": "add35",
+      "cat": "chick",
+      "title": "עוף עם ענבים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "add35",
+      "cat": "chick",
+      "title": "עוף עם ענבים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "add35",
+      "cat": "chick",
+      "title": "עוף עם ענבים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (19 תווים): \"מוסיפים ענבים ודבש.\""
+    },
+    {
+      "id": "add36",
+      "cat": "hol",
+      "title": "ברנייה — מוס שוקולד מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"מקררים 2 שעות.\""
+    },
+    {
+      "id": "add37",
+      "cat": "des",
+      "title": "עוגת שמן זית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 170°.\""
+    },
+    {
+      "id": "add37",
+      "cat": "des",
+      "title": "עוגת שמן זית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"אופים 38 דקות.\""
+    },
+    {
+      "id": "add39",
+      "cat": "soups",
+      "title": "מרק זנגביל — ג׳ינג׳ר ולימון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"שמים הכל בסיר.\""
+    },
+    {
+      "id": "add39",
+      "cat": "soups",
+      "title": "מרק זנגביל — ג׳ינג׳ר ולימון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"מביאים לרתיחה.\""
+    },
+    {
+      "id": "add41",
+      "cat": "veg",
+      "title": "שעועית אדומה עם אורז",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "add43",
+      "cat": "meat",
+      "title": "כבש עם גרגרי חרדל",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "add43",
+      "cat": "meat",
+      "title": "כבש עם גרגרי חרדל",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 60 דקות.\""
+    },
+    {
+      "id": "add45",
+      "cat": "hol",
+      "title": "מלאווי — לחם שבת שמוט",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"לשים בצק 10 דקות.\""
+    },
+    {
+      "id": "add45",
+      "cat": "hol",
+      "title": "מלאווי — לחם שבת שמוט",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"תפיחה 45 דקות.\""
+    },
+    {
+      "id": "add46",
+      "cat": "des",
+      "title": "עוגיות לב שקדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 165°.\""
+    },
+    {
+      "id": "add46",
+      "cat": "des",
+      "title": "עוגיות לב שקדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מערבבים הכל לבצק.\""
+    },
+    {
+      "id": "add47",
+      "cat": "span",
+      "title": "טרמסוס — לופינוס",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (13 תווים): \"שומרים במקרר.\""
+    },
+    {
+      "id": "add47",
+      "cat": "span",
+      "title": "טרמסוס — לופינוס",
+      "severity": "low",
+      "code": "suspicious_time",
+      "field": "time",
+      "detail": "זמן ארוך מאוד: 1440 דקות (10 דקות + 24 שעות)"
+    },
+    {
+      "id": "add48",
+      "cat": "soups",
+      "title": "מרק בטטה ואגוז קוקוס",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (19 תווים): \"מוסיפים קוקוס ומים.\""
+    },
+    {
+      "id": "add49",
+      "cat": "salads",
+      "title": "סלט עדשים עם פיסטוק",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מסננים ומצננים.\""
+    },
+    {
+      "id": "add52",
+      "cat": "meat",
+      "title": "בשר עם ירקות ים-תיכוניים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מטגנים בשר.\""
+    },
+    {
+      "id": "add52",
+      "cat": "meat",
+      "title": "בשר עם ירקות ים-תיכוניים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "add52",
+      "cat": "meat",
+      "title": "בשר עם ירקות ים-תיכוניים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 50 דקות.\""
+    },
+    {
+      "id": "add53",
+      "cat": "chick",
+      "title": "עוף עם ענבי יין",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "add53",
+      "cat": "chick",
+      "title": "עוף עם ענבי יין",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "add54",
+      "cat": "hol",
+      "title": "פיתה מרוקאית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"לשים בצק 8 דקות.\""
+    },
+    {
+      "id": "add54",
+      "cat": "hol",
+      "title": "פיתה מרוקאית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"תפיחה 30 דקות.\""
+    },
+    {
+      "id": "add55",
+      "cat": "des",
+      "title": "חלה שחורה — ריבת ענבים שחורים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"שמים הכל בסיר.\""
+    },
+    {
+      "id": "add55",
+      "cat": "des",
+      "title": "חלה שחורה — ריבת ענבים שחורים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "add55",
+      "cat": "des",
+      "title": "חלה שחורה — ריבת ענבים שחורים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מעבירים לצנצנות.\""
+    },
+    {
+      "id": "ex3",
+      "cat": "soups",
+      "title": "מרק ארוז — ספרדי-מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "ex3",
+      "cat": "soups",
+      "title": "מרק ארוז — ספרדי-מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 25 דקות.\""
+    },
+    {
+      "id": "ex4",
+      "cat": "soups",
+      "title": "מרק עדשים עם חרמולה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "ex21",
+      "cat": "meat",
+      "title": "מחנשה — בשר ממולא בתבלינים",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "ex22",
+      "cat": "meat",
+      "title": "תבשיל בשר עם חציל",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "ex23",
+      "cat": "meat",
+      "title": "בשר כבש עם ורדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 65 דקות.\""
+    },
+    {
+      "id": "ex26",
+      "cat": "chick",
+      "title": "עוף ממולא לחינה — דארג",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "ex26",
+      "cat": "chick",
+      "title": "עוף ממולא לחינה — דארג",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (13 תווים): \"מורחים ציפוי.\""
+    },
+    {
+      "id": "ex27",
+      "cat": "chick",
+      "title": "עוף ממשמש",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "ex27",
+      "cat": "chick",
+      "title": "עוף ממשמש",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (13 תווים): \"מפזרים שקדים.\""
+    },
+    {
+      "id": "ex29",
+      "cat": "chick",
+      "title": "דיגה — עוף ברוטב שחור",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "ex31",
+      "cat": "hol",
+      "title": "טאג׳ין כרוב ובשר",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "ex32",
+      "cat": "hol",
+      "title": "טאג׳ין עגל עם ירקות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "ex33",
+      "cat": "hol",
+      "title": "שבת של בשר — שולחן",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "ex36",
+      "cat": "des",
+      "title": "מסמן עם דבש",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"מנוחה 15 דקות.\""
+    },
+    {
+      "id": "ex38",
+      "cat": "des",
+      "title": "שלדה — מסה שקדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (17 תווים): \"מקררים שעה לפחות.\""
+    },
+    {
+      "id": "ex40",
+      "cat": "des",
+      "title": "בוזה — פודינג חיטה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (19 תווים): \"מחממים חלב עם סוכר.\""
+    },
+    {
+      "id": "ex44",
+      "cat": "span",
+      "title": "פשטיל ירקות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 180°.\""
+    },
+    {
+      "id": "ex45",
+      "cat": "span",
+      "title": "תורוניה — נוגט ספרדי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"מוסיפים שקדים.\""
+    },
+    {
+      "id": "ex48",
+      "cat": "veg",
+      "title": "ח׳ובז — לחם ומרוח",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (19 תווים): \"מגישים עם לחמון חם.\""
+    },
+    {
+      "id": "ex50",
+      "cat": "des",
+      "title": "ח׳מירו — עוגיות שמן",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (14 תווים): \"אופים 18 דקות.\""
+    },
+    {
+      "id": "fin1",
+      "cat": "soups",
+      "title": "מרק כרישה וגבינה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מוסיפים שום ומים.\""
+    },
+    {
+      "id": "fin2",
+      "cat": "soups",
+      "title": "מרק תירס מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "fin2",
+      "cat": "soups",
+      "title": "מרק תירס מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "fin3",
+      "cat": "salads",
+      "title": "סלט חסה ועגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (19 תווים): \"קוצצים וחותכים הכל.\""
+    },
+    {
+      "id": "fin4",
+      "cat": "salads",
+      "title": "סלט מלפפון ולבן",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (12 תווים): \"מערבבים הכל.\""
+    },
+    {
+      "id": "fin6",
+      "cat": "veg",
+      "title": "ממולאי עלי גפן מרוקאי",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "fin7",
+      "cat": "fish",
+      "title": "דג עם ורדים ירוקים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"משרים דג 30 דקות.\""
+    },
+    {
+      "id": "fin8",
+      "cat": "fish",
+      "title": "דג מרוקאי עם כרכום",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מוסיפים כוסברה.\""
+    },
+    {
+      "id": "fin11",
+      "cat": "chick",
+      "title": "עוף עם שקדים ולמון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "fin12",
+      "cat": "chick",
+      "title": "עוף עם מחמצות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "fin12",
+      "cat": "chick",
+      "title": "עוף עם מחמצות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 35 דקות.\""
+    },
+    {
+      "id": "fin14",
+      "cat": "hol",
+      "title": "מחנשה חינה",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "fin16",
+      "cat": "des",
+      "title": "עוגיות אפרסמון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 170°.\""
+    },
+    {
+      "id": "fin18",
+      "cat": "span",
+      "title": "פוצ׳רוס — קדרה ספרדית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 60 דקות.\""
+    },
+    {
+      "id": "fin21",
+      "cat": "soups",
+      "title": "מרק גריסים וירקות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מטגנים בצל.\""
+    },
+    {
+      "id": "fin21",
+      "cat": "soups",
+      "title": "מרק גריסים וירקות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "fin21",
+      "cat": "soups",
+      "title": "מרק גריסים וירקות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 45 דקות.\""
+    },
+    {
+      "id": "fin25",
+      "cat": "meat",
+      "title": "כבש עם שעורה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 80 דקות.\""
+    },
+    {
+      "id": "fin26",
+      "cat": "chick",
+      "title": "עוף עם שומר ולמון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "fin26",
+      "cat": "chick",
+      "title": "עוף עם שומר ולמון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מוסיפים כוס מים.\""
+    },
+    {
+      "id": "fin26",
+      "cat": "chick",
+      "title": "עוף עם שומר ולמון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 38 דקות.\""
+    },
+    {
+      "id": "fin28",
+      "cat": "des",
+      "title": "שהד — דבש קנוח",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (19 תווים): \"מגישים עם לחמון חם.\""
+    },
+    {
+      "id": "fin29",
+      "cat": "soups",
+      "title": "מרק חבושים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 50 דקות.\""
+    },
+    {
+      "id": "fin30",
+      "cat": "salads",
+      "title": "סלט שרוד — ירקות כבושים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מקררים 48 שעות.\""
+    },
+    {
+      "id": "fin30",
+      "cat": "salads",
+      "title": "סלט שרוד — ירקות כבושים",
+      "severity": "low",
+      "code": "suspicious_time",
+      "field": "time",
+      "detail": "זמן ארוך מאוד: 2880 דקות (20 דקות + 48 שע׳)"
+    },
+    {
+      "id": "sv1",
+      "cat": "soups",
+      "title": "מרק שחלים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (19 תווים): \"מוסיפים שחלים ומים.\""
+    },
+    {
+      "id": "sv1",
+      "cat": "soups",
+      "title": "מרק שחלים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 12 דקות.\""
+    },
+    {
+      "id": "sv2",
+      "cat": "soups",
+      "title": "מרק חמין ירקות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מטגנים בצל.\""
+    },
+    {
+      "id": "sv2",
+      "cat": "soups",
+      "title": "מרק חמין ירקות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "sv2",
+      "cat": "soups",
+      "title": "מרק חמין ירקות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "sv4",
+      "cat": "soups",
+      "title": "מרק כוסברה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 12 דקות.\""
+    },
+    {
+      "id": "sv5",
+      "cat": "soups",
+      "title": "מרק שמן ארגן ושעורה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 65 דקות.\""
+    },
+    {
+      "id": "sv6",
+      "cat": "soups",
+      "title": "מרק סולת ודבש",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מחממים מרק עוף.\""
+    },
+    {
+      "id": "sv7",
+      "cat": "soups",
+      "title": "מרק פסטה ועגל",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 35 דקות.\""
+    },
+    {
+      "id": "sv8",
+      "cat": "soups",
+      "title": "מרק ערמונים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "sv8",
+      "cat": "soups",
+      "title": "מרק ערמונים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 30 דקות.\""
+    },
+    {
+      "id": "sv8",
+      "cat": "soups",
+      "title": "מרק ערמונים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"טוחנים לחלקות.\""
+    },
+    {
+      "id": "sv9",
+      "cat": "soups",
+      "title": "מרק כרישה ועוף",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (18 תווים): \"מטגנים כרישה ושום.\""
+    },
+    {
+      "id": "sv9",
+      "cat": "soups",
+      "title": "מרק כרישה ועוף",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מוסיפים עוף וגזר.\""
+    },
+    {
+      "id": "sv9",
+      "cat": "soups",
+      "title": "מרק כרישה ועוף",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "sv10",
+      "cat": "soups",
+      "title": "חסוא — מרק לחם",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 35 דקות.\""
+    },
+    {
+      "id": "slv1",
+      "cat": "salads",
+      "title": "סלט ביצה ועגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (18 תווים): \"מזליפים שמן וחומץ.\""
+    },
+    {
+      "id": "slv2",
+      "cat": "salads",
+      "title": "סלט טחינה ועגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (18 תווים): \"קוצצים עגבניות דק.\""
+    },
+    {
+      "id": "slv4",
+      "cat": "salads",
+      "title": "סלט אבוקדו מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מועכים אבוקדו גס.\""
+    },
+    {
+      "id": "slv5",
+      "cat": "salads",
+      "title": "סלט שומשום ועגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (15 תווים): \"קוצצים עגבניות.\""
+    },
+    {
+      "id": "slv6",
+      "cat": "salads",
+      "title": "סלט ורדים ופירות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (19 תווים): \"מסדרים פירות בצלחת.\""
+    },
+    {
+      "id": "slv6",
+      "cat": "salads",
+      "title": "סלט ורדים ופירות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מפזרים עלי ורד.\""
+    },
+    {
+      "id": "slv8",
+      "cat": "salads",
+      "title": "סלט ירקות שורש חמים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"אופים 30 דקות.\""
+    },
+    {
+      "id": "slv10",
+      "cat": "salads",
+      "title": "סלט כרפס ותפוח",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (18 תווים): \"חותכים כרפס ותפוח.\""
+    },
+    {
+      "id": "vv4",
+      "cat": "veg",
+      "title": "ירקות ממולאים מרוקאיים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (13 תווים): \"מכינים מילוי.\""
+    },
+    {
+      "id": "vv4",
+      "cat": "veg",
+      "title": "ירקות ממולאים מרוקאיים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (14 תווים): \"מסדרים בתבנית.\""
+    },
+    {
+      "id": "fv4",
+      "cat": "fish",
+      "title": "דג עם כרוב",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (19 תווים): \"מניחים דג על הכרוב.\""
+    },
+    {
+      "id": "mv1",
+      "cat": "meat",
+      "title": "עצמות עוף בציר",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"שמים הכל בסיר.\""
+    },
+    {
+      "id": "mv1",
+      "cat": "meat",
+      "title": "עצמות עוף בציר",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מסננים. שומרים.\""
+    },
+    {
+      "id": "mv2",
+      "cat": "meat",
+      "title": "בשר עם זיתים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 50 דקות.\""
+    },
+    {
+      "id": "mv3",
+      "cat": "meat",
+      "title": "קציצות בקר עם שומשום",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (16 תווים): \"מגלגלים בשומשום.\""
+    },
+    {
+      "id": "cv1",
+      "cat": "chick",
+      "title": "עוף עם שזיפים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "cv3",
+      "cat": "chick",
+      "title": "עוף עם תבלין ראס אל-חנות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (18 תווים): \"צורבים מכל הצדדים.\""
+    },
+    {
+      "id": "cv3",
+      "cat": "chick",
+      "title": "עוף עם תבלין ראס אל-חנות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 50 דקות.\""
+    },
+    {
+      "id": "cv5",
+      "cat": "chick",
+      "title": "עוף עם ביצה קשה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "cv5",
+      "cat": "chick",
+      "title": "עוף עם ביצה קשה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "cv5",
+      "cat": "chick",
+      "title": "עוף עם ביצה קשה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 38 דקות.\""
+    },
+    {
+      "id": "hv3",
+      "cat": "hol",
+      "title": "קוסקוס ים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "hv4",
+      "cat": "hol",
+      "title": "פרנה מימונה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"תפיחה 45 דקות.\""
+    },
+    {
+      "id": "hv5",
+      "cat": "hol",
+      "title": "ראש שנה מרוקאי — שולחן",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "hv5",
+      "cat": "hol",
+      "title": "ראש שנה מרוקאי — שולחן",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מכינים ראש כבש.\""
+    },
+    {
+      "id": "dv4",
+      "cat": "des",
+      "title": "ריבת ענבים לבנים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"שמים הכל בסיר.\""
+    },
+    {
+      "id": "dv4",
+      "cat": "des",
+      "title": "ריבת ענבים לבנים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מבשלים 50 דקות.\""
+    },
+    {
+      "id": "dv5",
+      "cat": "des",
+      "title": "עוגת אגסים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 170°.\""
+    },
+    {
+      "id": "dv5",
+      "cat": "des",
+      "title": "עוגת אגסים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (13 תווים): \"מקפלים אגסים.\""
+    },
+    {
+      "id": "dv5",
+      "cat": "des",
+      "title": "עוגת אגסים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (14 תווים): \"אופים 40 דקות.\""
+    },
+    {
+      "id": "spv2",
+      "cat": "span",
+      "title": "קלאמרס — דיונון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "spv2",
+      "cat": "span",
+      "title": "קלאמרס — דיונון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים דיו.\""
+    },
+    {
+      "id": "spv2",
+      "cat": "span",
+      "title": "קלאמרס — דיונון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 25 דקות.\""
+    },
+    {
+      "id": "spv3",
+      "cat": "span",
+      "title": "טיירה דה פשקה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 180°.\""
+    },
+    {
+      "id": "spv5",
+      "cat": "span",
+      "title": "ביסקוצ׳ו שקדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 170°.\""
+    },
+    {
+      "id": "sw1",
+      "cat": "soups",
+      "title": "מרק חרירה כפרית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "sw2",
+      "cat": "soups",
+      "title": "מרק שבת של עדשים ושומשום",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "sw2",
+      "cat": "soups",
+      "title": "מרק שבת של עדשים ושומשום",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (19 תווים): \"מוסיפים עדשים ומים.\""
+    },
+    {
+      "id": "sw3",
+      "cat": "soups",
+      "title": "מרק דלעת וג׳ינג׳ר מסורתי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מטגנים בצל.\""
+    },
+    {
+      "id": "sw3",
+      "cat": "soups",
+      "title": "מרק דלעת וג׳ינג׳ר מסורתי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "sw4",
+      "cat": "soups",
+      "title": "מרק אפונה ועוף",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "sw4",
+      "cat": "soups",
+      "title": "מרק אפונה ועוף",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מרק.\""
+    },
+    {
+      "id": "sw4",
+      "cat": "soups",
+      "title": "מרק אפונה ועוף",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 20 דקות.\""
+    },
+    {
+      "id": "sw5",
+      "cat": "soups",
+      "title": "מרק כוסמת מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "sw5",
+      "cat": "soups",
+      "title": "מרק כוסמת מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "sw5",
+      "cat": "soups",
+      "title": "מרק כוסמת מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 28 דקות.\""
+    },
+    {
+      "id": "vw3",
+      "cat": "veg",
+      "title": "ממולאי כרישה",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "fw2",
+      "cat": "fish",
+      "title": "דג עם ירקות שורש",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (10 תווים): \"מניחים דג.\""
+    },
+    {
+      "id": "fw3",
+      "cat": "fish",
+      "title": "פשטידת טונה מרוקאית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (19 תווים): \"מטגנים בצל עד זהוב.\""
+    },
+    {
+      "id": "fw4",
+      "cat": "fish",
+      "title": "דג עם אגסים ירוקים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (10 תווים): \"מניחים דג.\""
+    },
+    {
+      "id": "mw1",
+      "cat": "meat",
+      "title": "לשון בוויניגרט",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "mw2",
+      "cat": "meat",
+      "title": "כבש עם זיתים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 60 דקות.\""
+    },
+    {
+      "id": "mw3",
+      "cat": "meat",
+      "title": "בשר עם אפרסקים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 50 דקות.\""
+    },
+    {
+      "id": "mw4",
+      "cat": "meat",
+      "title": "קציצות עם שום קונפי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"מכינים קציצות.\""
+    },
+    {
+      "id": "mw5",
+      "cat": "meat",
+      "title": "קוזידו מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (11 תווים): \"מסירים קצף.\""
+    },
+    {
+      "id": "cw1",
+      "cat": "chick",
+      "title": "עוף עם שמיר ולמון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "cw1",
+      "cat": "chick",
+      "title": "עוף עם שמיר ולמון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "cw2",
+      "cat": "chick",
+      "title": "עוף סטייל מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "cw2",
+      "cat": "chick",
+      "title": "עוף סטייל מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "cw2",
+      "cat": "chick",
+      "title": "עוף סטייל מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 48 דקות.\""
+    },
+    {
+      "id": "cw3",
+      "cat": "chick",
+      "title": "עוף עם אנשובי ורוזמרין",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "cw3",
+      "cat": "chick",
+      "title": "עוף עם אנשובי ורוזמרין",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 42 דקות.\""
+    },
+    {
+      "id": "cw4",
+      "cat": "chick",
+      "title": "עוף עם תאנים ואגוזים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "cw5",
+      "cat": "chick",
+      "title": "כנפיים בחמאת לימון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מורחים על כנפיים.\""
+    },
+    {
+      "id": "hw1",
+      "cat": "hol",
+      "title": "כבש צלוי מלא — עיד",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "hw1",
+      "cat": "hol",
+      "title": "כבש צלוי מלא — עיד",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (16 תווים): \"משהים שעה לפחות.\""
+    },
+    {
+      "id": "hw2",
+      "cat": "hol",
+      "title": "בנינו — עוגיות חינה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (17 תווים): \"אופים 18–20 דקות.\""
+    },
+    {
+      "id": "hw3",
+      "cat": "hol",
+      "title": "קוסקוס בצל",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (18 תווים): \"קוסקוס עם בצל מעל.\""
+    },
+    {
+      "id": "hw4",
+      "cat": "hol",
+      "title": "פשטידת שבועות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 170°.\""
+    },
+    {
+      "id": "dw1",
+      "cat": "des",
+      "title": "כדורי שוקולד מרוקאיים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"ממיסים שוקולד.\""
+    },
+    {
+      "id": "dw2",
+      "cat": "des",
+      "title": "עוגיות לוז — אגוזי לוז",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 155°.\""
+    },
+    {
+      "id": "dw2",
+      "cat": "des",
+      "title": "עוגיות לוז — אגוזי לוז",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"אופים 15 דקות.\""
+    },
+    {
+      "id": "dw3",
+      "cat": "des",
+      "title": "ריבת לימון ספרדית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (12 תווים): \"טוחנים קלות.\""
+    },
+    {
+      "id": "dw4",
+      "cat": "des",
+      "title": "פנה קוטה מרוקאית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"יוצקים לתבניות.\""
+    },
+    {
+      "id": "dw4",
+      "cat": "des",
+      "title": "פנה קוטה מרוקאית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"מקררים 4 שעות.\""
+    },
+    {
+      "id": "dw5",
+      "cat": "des",
+      "title": "ענבים מקורמלים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מניחים להתייצב.\""
+    },
+    {
+      "id": "spw4",
+      "cat": "span",
+      "title": "סופריטו בסיסי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (13 תווים): \"מוסיפים פלפל.\""
+    },
+    {
+      "id": "spw5",
+      "cat": "span",
+      "title": "סאינה — ירקות חמוצים ספרדיים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מצננים 48 שעות.\""
+    },
+    {
+      "id": "spw5",
+      "cat": "span",
+      "title": "סאינה — ירקות חמוצים ספרדיים",
+      "severity": "low",
+      "code": "suspicious_time",
+      "field": "time",
+      "detail": "זמן ארוך מאוד: 2880 דקות (15 דקות + 48 שע׳)"
+    },
+    {
+      "id": "saxx1",
+      "cat": "soups",
+      "title": "מרק שום קלוי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מוסיפים מרק עוף.\""
+    },
+    {
+      "id": "saxx2",
+      "cat": "soups",
+      "title": "מרק כוסברה וביצה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 10 דקות.\""
+    },
+    {
+      "id": "saxx3",
+      "cat": "soups",
+      "title": "מרק פריקה עם כבש",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (15 תווים): \"מוסיפים כוסברה.\""
+    },
+    {
+      "id": "saxx4",
+      "cat": "soups",
+      "title": "מרק שעועית שחורה מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "saxx4",
+      "cat": "soups",
+      "title": "מרק שעועית שחורה מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (14 תווים): \"מוסיפים לימון.\""
+    },
+    {
+      "id": "saxx5",
+      "cat": "soups",
+      "title": "מרק לוביא",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "saxx5",
+      "cat": "soups",
+      "title": "מרק לוביא",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "vef9",
+      "cat": "veg",
+      "title": "ממולאי ריקוטה ותרד",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 180°.\""
+    },
+    {
+      "id": "vef9",
+      "cat": "veg",
+      "title": "ממולאי ריקוטה ותרד",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"אופים 30 דקות.\""
+    },
+    {
+      "id": "vef11",
+      "cat": "veg",
+      "title": "זיתים מרוקאיים תבלינים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (19 תווים): \"מערבבים הכל בצנצנת.\""
+    },
+    {
+      "id": "vef12",
+      "cat": "veg",
+      "title": "שעועית ירוקה עם עגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מטגנים שום.\""
+    },
+    {
+      "id": "vef12",
+      "cat": "veg",
+      "title": "שעועית ירוקה עם עגבנייה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 20 דקות.\""
+    },
+    {
+      "id": "fif7",
+      "cat": "fish",
+      "title": "חריימה ירוקה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 15 דקות.\""
+    },
+    {
+      "id": "fif8",
+      "cat": "fish",
+      "title": "דג בחלב שקדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (10 תווים): \"מניחים דג.\""
+    },
+    {
+      "id": "fif9",
+      "cat": "fish",
+      "title": "דג אפוי עם פיסטוק",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 200°.\""
+    },
+    {
+      "id": "fif10",
+      "cat": "fish",
+      "title": "דג עם רוטב חרוב",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (18 תווים): \"מוסיפים כמון ומים.\""
+    },
+    {
+      "id": "fif10",
+      "cat": "fish",
+      "title": "דג עם רוטב חרוב",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (10 תווים): \"מניחים דג.\""
+    },
+    {
+      "id": "fif10",
+      "cat": "fish",
+      "title": "דג עם רוטב חרוב",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 15 דקות.\""
+    },
+    {
+      "id": "mef6",
+      "cat": "meat",
+      "title": "שיפוד בשר על גריל",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (19 תווים): \"מגלגלים על שיפודים.\""
+    },
+    {
+      "id": "mef7",
+      "cat": "meat",
+      "title": "כבש מבושל עם חרמולה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "mef7",
+      "cat": "meat",
+      "title": "כבש מבושל עם חרמולה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 65 דקות.\""
+    },
+    {
+      "id": "mef8",
+      "cat": "meat",
+      "title": "בשר עם תמרים ושקדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "mef8",
+      "cat": "meat",
+      "title": "בשר עם תמרים ושקדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (13 תווים): \"מפזרים שקדים.\""
+    },
+    {
+      "id": "mef9",
+      "cat": "meat",
+      "title": "לחמה — בשר בצק ספרדי",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "mef10",
+      "cat": "meat",
+      "title": "כבד עגל עם שרי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"מפזרים פטרוזיליה.\""
+    },
+    {
+      "id": "chfx1",
+      "cat": "chick",
+      "title": "עוף עם שום קלוי ולמון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "chfx1",
+      "cat": "chick",
+      "title": "עוף עם שום קלוי ולמון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "chfx2",
+      "cat": "chick",
+      "title": "עוף עם גרגרי חרדל",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "chfx2",
+      "cat": "chick",
+      "title": "עוף עם גרגרי חרדל",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (18 תווים): \"מוסיפים שום וחרדל.\""
+    },
+    {
+      "id": "chfx2",
+      "cat": "chick",
+      "title": "עוף עם גרגרי חרדל",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (17 תווים): \"מוסיפים יין ומים.\""
+    },
+    {
+      "id": "chfx3",
+      "cat": "chick",
+      "title": "עוף עם ענבי יין שחורים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "chfx3",
+      "cat": "chick",
+      "title": "עוף עם ענבי יין שחורים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 38 דקות.\""
+    },
+    {
+      "id": "chfx5",
+      "cat": "chick",
+      "title": "עוף עם ריבת תאנים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "chfx5",
+      "cat": "chick",
+      "title": "עוף עם ריבת תאנים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (13 תווים): \"מפזרים שקדים.\""
+    },
+    {
+      "id": "holfx2",
+      "cat": "hol",
+      "title": "בריואט סרדינים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מטגנים עד זהוב.\""
+    },
+    {
+      "id": "holfx5",
+      "cat": "hol",
+      "title": "פסה — לחם מקושקש",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"תפיחה 30 דקות.\""
+    },
+    {
+      "id": "def6",
+      "cat": "des",
+      "title": "קרמל מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (11 תווים): \"מחממים חלב.\""
+    },
+    {
+      "id": "def7",
+      "cat": "des",
+      "title": "עוגת תאנים ושקדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 170°.\""
+    },
+    {
+      "id": "def7",
+      "cat": "des",
+      "title": "עוגת תאנים ושקדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (14 תווים): \"אופים 40 דקות.\""
+    },
+    {
+      "id": "def9",
+      "cat": "des",
+      "title": "מוצ׳ה מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"ממיסים שוקולד.\""
+    },
+    {
+      "id": "def10",
+      "cat": "des",
+      "title": "ריבת שומר",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"שמים הכל בסיר.\""
+    },
+    {
+      "id": "def10",
+      "cat": "des",
+      "title": "ריבת שומר",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מעבירים לצנצנות.\""
+    },
+    {
+      "id": "spnx1",
+      "cat": "span",
+      "title": "אייולי מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (18 תווים): \"מוסיפים כמון ומלח.\""
+    },
+    {
+      "id": "spnx5",
+      "cat": "span",
+      "title": "ח׳מון קון מלון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מניחים גבינה מעל.\""
+    },
+    {
+      "id": "sn15",
+      "cat": "soups",
+      "title": "מרק חיטה ועדשים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "sn15",
+      "cat": "soups",
+      "title": "מרק חיטה ועדשים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מוסיפים כוסברה.\""
+    },
+    {
+      "id": "sn16",
+      "cat": "soups",
+      "title": "מרק ז׳שמה — מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 30 דקות.\""
+    },
+    {
+      "id": "sn17",
+      "cat": "soups",
+      "title": "מרק שיבולת שועל ותמרים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים חלב ומים.\""
+    },
+    {
+      "id": "sn18",
+      "cat": "soups",
+      "title": "מרק עדשים ובטטה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "sn18",
+      "cat": "soups",
+      "title": "מרק עדשים ובטטה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "sn19",
+      "cat": "soups",
+      "title": "מרק ירוק מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (19 תווים): \"מוסיפים עשבים ומים.\""
+    },
+    {
+      "id": "ve10",
+      "cat": "veg",
+      "title": "כרובית עם ציפוי תהינה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (18 תווים): \"מכינים רוטב טחינה.\""
+    },
+    {
+      "id": "ve12",
+      "cat": "veg",
+      "title": "ארוגולה ופרמזן מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (19 תווים): \"מזליפים שמן ולימון.\""
+    },
+    {
+      "id": "fe8",
+      "cat": "fish",
+      "title": "בוריד — דג עם שמן ותבלין",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (10 תווים): \"מניחים דג.\""
+    },
+    {
+      "id": "fe9",
+      "cat": "fish",
+      "title": "דג עם כרוב ים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (19 תווים): \"מטגנים כרוב 8 דקות.\""
+    },
+    {
+      "id": "fe9",
+      "cat": "fish",
+      "title": "דג עם כרוב ים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (10 תווים): \"מניחים דג.\""
+    },
+    {
+      "id": "me6",
+      "cat": "meat",
+      "title": "בשר עם פסטה מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 45 דקות.\""
+    },
+    {
+      "id": "me7",
+      "cat": "meat",
+      "title": "כבש עם תפוח אדמה ושמיר",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "me7",
+      "cat": "meat",
+      "title": "כבש עם תפוח אדמה ושמיר",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "me8",
+      "cat": "meat",
+      "title": "טאג׳ין בקר עם זיתים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "me9",
+      "cat": "meat",
+      "title": "קציצות עם כרישה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"מכינים קציצות.\""
+    },
+    {
+      "id": "me9",
+      "cat": "meat",
+      "title": "קציצות עם כרישה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (13 תווים): \"מוסיפים שמנת.\""
+    },
+    {
+      "id": "me10",
+      "cat": "meat",
+      "title": "כבש עם כרובית ורוטב",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "ce6",
+      "cat": "chick",
+      "title": "עוף קריספי בתנור",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 220°.\""
+    },
+    {
+      "id": "ce6",
+      "cat": "chick",
+      "title": "עוף קריספי בתנור",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (14 תווים): \"משהים 15 דקות.\""
+    },
+    {
+      "id": "ce7",
+      "cat": "chick",
+      "title": "כנפיים עם תמרים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (14 תווים): \"אופים 35 דקות.\""
+    },
+    {
+      "id": "ce7",
+      "cat": "chick",
+      "title": "כנפיים עם תמרים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (13 תווים): \"מפזרים שקדים.\""
+    },
+    {
+      "id": "ce9",
+      "cat": "chick",
+      "title": "עוף עם ריבת שזיפים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 38 דקות.\""
+    },
+    {
+      "id": "ce10",
+      "cat": "chick",
+      "title": "עוף בדרום מרוקו",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (19 תווים): \"מוסיפים ב׳לחה ומים.\""
+    },
+    {
+      "id": "ce10",
+      "cat": "chick",
+      "title": "עוף בדרום מרוקו",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 50 דקות.\""
+    },
+    {
+      "id": "hn19",
+      "cat": "hol",
+      "title": "כאב אל-ע׳זאל ורד",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "hn20",
+      "cat": "hol",
+      "title": "בטבוט — לחם מרוקאי חגיגי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"לשים בצק 8 דקות.\""
+    },
+    {
+      "id": "hn20",
+      "cat": "hol",
+      "title": "בטבוט — לחם מרוקאי חגיגי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"תפיחה 40 דקות.\""
+    },
+    {
+      "id": "dn11",
+      "cat": "des",
+      "title": "עוגיות חינה שקדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 160°.\""
+    },
+    {
+      "id": "dn11",
+      "cat": "des",
+      "title": "עוגיות חינה שקדים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"אופים 18 דקות.\""
+    },
+    {
+      "id": "dn12",
+      "cat": "des",
+      "title": "ריבת קיווי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"שמים הכל בסיר.\""
+    },
+    {
+      "id": "dn12",
+      "cat": "des",
+      "title": "ריבת קיווי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מבשלים 40 דקות.\""
+    },
+    {
+      "id": "dn14",
+      "cat": "des",
+      "title": "ריבת כרוב אדום",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"שמים הכל בסיר.\""
+    },
+    {
+      "id": "spe7",
+      "cat": "span",
+      "title": "חוקינוס ספרדיים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 165°.\""
+    },
+    {
+      "id": "spe7",
+      "cat": "span",
+      "title": "חוקינוס ספרדיים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (12 תווים): \"מערבבים הכל.\""
+    },
+    {
+      "id": "spe7",
+      "cat": "span",
+      "title": "חוקינוס ספרדיים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"אופים 15 דקות.\""
+    },
+    {
+      "id": "spe8",
+      "cat": "span",
+      "title": "מנחה אנדלוסית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (16 תווים): \"מניחים על לחמון.\""
+    },
+    {
+      "id": "spe9",
+      "cat": "span",
+      "title": "ביסקוצ׳ו בורצ׳ו",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (17 תווים): \"מחממים תנור 170°.\""
+    },
+    {
+      "id": "spe9",
+      "cat": "span",
+      "title": "ביסקוצ׳ו בורצ׳ו",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"אופים 35 דקות.\""
+    },
+    {
+      "id": "spe10",
+      "cat": "span",
+      "title": "פאן דה-מוארטוס",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"לשים בצק 8 דקות.\""
+    },
+    {
+      "id": "spe10",
+      "cat": "span",
+      "title": "פאן דה-מוארטוס",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"תפיחה 40 דקות.\""
+    },
+    {
+      "id": "iq1",
+      "cat": "iraq",
+      "title": "קובה בסלק אדום",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "iq2",
+      "cat": "iraq",
+      "title": "קובה חמוסטה (ירוק לימוני)",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "iq4",
+      "cat": "iraq",
+      "title": "דולמה עיראקית",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "ku1",
+      "cat": "kurd",
+      "title": "קובה קדרה (שמנת)",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "ku3",
+      "cat": "kurd",
+      "title": "שישבראק (כיסוני בשר בלבן)",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "ye5",
+      "cat": "yem",
+      "title": "זחוק (ממרח תבלינים תימני)",
+      "severity": "low",
+      "code": "unparseable_serv",
+      "field": "serv",
+      "detail": "לא הצלחתי לפענח את מספר המנות: \"כלי קטן\""
+    },
+    {
+      "id": "bu4",
+      "cat": "buk",
+      "title": "מנטי (כיסוני קיטור בוכאריים)",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "tn2",
+      "cat": "tun",
+      "title": "חריסה ביתית טוניסאית",
+      "severity": "low",
+      "code": "unparseable_serv",
+      "field": "serv",
+      "detail": "לא הצלחתי לפענח את מספר המנות: \"צנצנת גדולה\""
+    },
+    {
+      "id": "iq12",
+      "cat": "iraq",
+      "title": "ג׳אג׳יק (יוגורט ומלפפון)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (11 תווים): \"מצננים שעה.\""
+    },
+    {
+      "id": "iq16",
+      "cat": "iraq",
+      "title": "חמוצים בגדדיים (מכלל)",
+      "severity": "low",
+      "code": "unparseable_serv",
+      "field": "serv",
+      "detail": "לא הצלחתי לפענח את מספר המנות: \"צנצנת גדולה\""
+    },
+    {
+      "id": "iq20",
+      "cat": "iraq",
+      "title": "כבד ולב עיראקי מטוגן",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (18 תווים): \"מגישים מיד עם לחם.\""
+    },
+    {
+      "id": "iq22",
+      "cat": "iraq",
+      "title": "בקלאוה בגדדית",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "iq26",
+      "cat": "iraq",
+      "title": "פגל (לפת כבושה בסגול)",
+      "severity": "low",
+      "code": "unparseable_serv",
+      "field": "serv",
+      "detail": "לא הצלחתי לפענח את מספר המנות: \"צנצנת גדולה\""
+    },
+    {
+      "id": "iq29",
+      "cat": "iraq",
+      "title": "טמר (עוגיות תמר עיראקיות)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"אופים 18–20 דקות.\""
+    },
+    {
+      "id": "ku9",
+      "cat": "kurd",
+      "title": "דולמה כורדית (עלי גפן)",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "ku13",
+      "cat": "kurd",
+      "title": "כבוב כורדי בתבנית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"אופים 25 דקות.\""
+    },
+    {
+      "id": "ku22",
+      "cat": "kurd",
+      "title": "ריבת חבוש כורדית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"מביאים לרתיחה.\""
+    },
+    {
+      "id": "ku24",
+      "cat": "kurd",
+      "title": "גמה (פשטידת שמרים ממלאת)",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "ku27",
+      "cat": "kurd",
+      "title": "ממחל (שדה אגוזים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מגישים עם לחם חם.\""
+    },
+    {
+      "id": "ku28",
+      "cat": "kurd",
+      "title": "תבשיל גבינה ועגבניות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (18 תווים): \"מגישים עם לחם טרי.\""
+    },
+    {
+      "id": "ku30",
+      "cat": "kurd",
+      "title": "מרק בצל כורדי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (19 תווים): \"מגישים עם לחם קלוי.\""
+    },
+    {
+      "id": "as8",
+      "cat": "ashk",
+      "title": "קרפלך (כיסוני בשר)",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "as8",
+      "cat": "ashk",
+      "title": "קרפלך (כיסוני בשר)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (16 תווים): \"מגישים במרק עוף.\""
+    },
+    {
+      "id": "as12",
+      "cat": "ashk",
+      "title": "צימעס (גזר עם פירות יבשים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מבשלים 20 דקות.\""
+    },
+    {
+      "id": "as14",
+      "cat": "ashk",
+      "title": "בלינצ׳ס (פנקייק שמרים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (17 תווים): \"תפיחה 30–40 דקות.\""
+    },
+    {
+      "id": "as15",
+      "cat": "ashk",
+      "title": "עוגת שמרים עם קינמון (שטרויזל)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (16 תווים): \"מחממים תנור 180.\""
+    },
+    {
+      "id": "as16",
+      "cat": "ashk",
+      "title": "גאלחד (כרוב כבוש)",
+      "severity": "low",
+      "code": "unparseable_serv",
+      "field": "serv",
+      "detail": "לא הצלחתי לפענח את מספר המנות: \"צנצנת גדולה\""
+    },
+    {
+      "id": "as17",
+      "cat": "ashk",
+      "title": "פשטידת גבינה (קוגל גבינה)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (14 תווים): \"אופים 45 דקות.\""
+    },
+    {
+      "id": "as18",
+      "cat": "ashk",
+      "title": "איינגמאכ׳טס (ריבת צנוניות)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"יוצקים לצנצנות.\""
+    },
+    {
+      "id": "as23",
+      "cat": "ashk",
+      "title": "סלט הרינג (דג מלוח)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (17 תווים): \"מצננים שעה לפחות.\""
+    },
+    {
+      "id": "as25",
+      "cat": "ashk",
+      "title": "מרק ירק אשכנזי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (11 תווים): \"מסירים קצף.\""
+    },
+    {
+      "id": "as26",
+      "cat": "ashk",
+      "title": "לאקסנין קופ (ראש אטריות)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (16 תווים): \"מחממים תנור 180.\""
+    },
+    {
+      "id": "as28",
+      "cat": "ashk",
+      "title": "עוגת תפוחים שמרים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (16 תווים): \"מחממים תנור 175.\""
+    },
+    {
+      "id": "as28",
+      "cat": "ashk",
+      "title": "עוגת תפוחים שמרים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (16 תווים): \"מכסים בבצק השני.\""
+    },
+    {
+      "id": "as28",
+      "cat": "ashk",
+      "title": "עוגת תפוחים שמרים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (17 תווים): \"אופים 33–35 דקות.\""
+    },
+    {
+      "id": "as30",
+      "cat": "ashk",
+      "title": "חנקלך (לחמניות מטוגנות)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"מפזרים אבקת סוכר.\""
+    },
+    {
+      "id": "ye8",
+      "cat": "yem",
+      "title": "אסיד (בצק בישול)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (19 תווים): \"מרתיחים מים עם מלח.\""
+    },
+    {
+      "id": "ye9",
+      "cat": "yem",
+      "title": "פחסה (ראש כבש)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (19 תווים): \"לרתיחה. מסירים קצף.\""
+    },
+    {
+      "id": "ye12",
+      "cat": "yem",
+      "title": "שמר (שמרי יין תימני)",
+      "severity": "low",
+      "code": "suspicious_time",
+      "field": "time",
+      "detail": "זמן ארוך מאוד: 1440 דקות (15 דקות + 24 שעות)"
+    },
+    {
+      "id": "ye12",
+      "cat": "yem",
+      "title": "שמר (שמרי יין תימני)",
+      "severity": "low",
+      "code": "unparseable_serv",
+      "field": "serv",
+      "detail": "לא הצלחתי לפענח את מספר המנות: \"כד גדול\""
+    },
+    {
+      "id": "ye14",
+      "cat": "yem",
+      "title": "שניה (בצק מטוגן ממולא)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (14 תווים): \"מערבבים מילוי.\""
+    },
+    {
+      "id": "ye15",
+      "cat": "yem",
+      "title": "מרק פחסה (ציר עצמות)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (11 תווים): \"מסירים קצף.\""
+    },
+    {
+      "id": "ye18",
+      "cat": "yem",
+      "title": "ביניות (ירקות מבושלים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (16 תווים): \"מוסיפים תבלינים.\""
+    },
+    {
+      "id": "ye18",
+      "cat": "yem",
+      "title": "ביניות (ירקות מבושלים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (19 תווים): \"מוסיפים ירקות ומים.\""
+    },
+    {
+      "id": "ye20",
+      "cat": "yem",
+      "title": "קדיד (בשר מיובש)",
+      "severity": "low",
+      "code": "unparseable_serv",
+      "field": "serv",
+      "detail": "לא הצלחתי לפענח את מספר המנות: \"מנה שמירה\""
+    },
+    {
+      "id": "ye21",
+      "cat": "yem",
+      "title": "בנת א-שאן (לחם דבש)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"אופים 23–25 דקות.\""
+    },
+    {
+      "id": "ye22",
+      "cat": "yem",
+      "title": "מרק עוף תימני עם זחוק",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (11 תווים): \"מסירים קצף.\""
+    },
+    {
+      "id": "ye23",
+      "cat": "yem",
+      "title": "כחלן (כבד עוף מטוגן)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מתבלים כבד.\""
+    },
+    {
+      "id": "ye24",
+      "cat": "yem",
+      "title": "גרגושה (עוגיות טחינה תימניות)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 165.\""
+    },
+    {
+      "id": "ye24",
+      "cat": "yem",
+      "title": "גרגושה (עוגיות טחינה תימניות)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מערבבים הכל לבצק.\""
+    },
+    {
+      "id": "ye24",
+      "cat": "yem",
+      "title": "גרגושה (עוגיות טחינה תימניות)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"אופים 16–18 דקות.\""
+    },
+    {
+      "id": "ye26",
+      "cat": "yem",
+      "title": "אל-פת (לחם עגול אפוי)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"מגישים חם עם גהי.\""
+    },
+    {
+      "id": "ye28",
+      "cat": "yem",
+      "title": "חבש (עוגת דבש)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 170.\""
+    },
+    {
+      "id": "ye28",
+      "cat": "yem",
+      "title": "חבש (עוגת דבש)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (19 תווים): \"מקציפים ביצים ודבש.\""
+    },
+    {
+      "id": "ye28",
+      "cat": "yem",
+      "title": "חבש (עוגת דבש)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"אופים 33–35 דקות.\""
+    },
+    {
+      "id": "ye30",
+      "cat": "yem",
+      "title": "מן (לחם סוכר ואניס)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (16 תווים): \"מחממים תנור 175.\""
+    },
+    {
+      "id": "ye30",
+      "cat": "yem",
+      "title": "מן (לחם סוכר ואניס)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"אופים 28–30 דקות.\""
+    },
+    {
+      "id": "pe10",
+      "cat": "pers",
+      "title": "פלאו (אורז פרסי קלאסי)",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "pe12",
+      "cat": "pers",
+      "title": "כבב קובידה (קציצה פרסית)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (13 תווים): \"מקרר 30 דקות.\""
+    },
+    {
+      "id": "pe19",
+      "cat": "pers",
+      "title": "ג׳וז׳ (ממרח אגוזי מלך)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (14 תווים): \"מגישים עם לחם.\""
+    },
+    {
+      "id": "pe23",
+      "cat": "pers",
+      "title": "נאן-ה-ברנג׳ (עוגיות אורז פרסיות)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 160.\""
+    },
+    {
+      "id": "pe23",
+      "cat": "pers",
+      "title": "נאן-ה-ברנג׳ (עוגיות אורז פרסיות)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"מקשטים בפיסטוקים.\""
+    },
+    {
+      "id": "pe23",
+      "cat": "pers",
+      "title": "נאן-ה-ברנג׳ (עוגיות אורז פרסיות)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (17 תווים): \"אופים 18–20 דקות.\""
+    },
+    {
+      "id": "pe25",
+      "cat": "pers",
+      "title": "מרגן (לחם שטוח)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"אופים 6–8 דקות.\""
+    },
+    {
+      "id": "pe29",
+      "cat": "pers",
+      "title": "פלאו זעפרן (אורז חגיגי)",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "bu8",
+      "cat": "buk",
+      "title": "שורבה (מרק בוכרי)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (11 תווים): \"מסירים קצף.\""
+    },
+    {
+      "id": "bu9",
+      "cat": "buk",
+      "title": "ירוגי (סלט ירקות בוכרי)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (11 תווים): \"מגישים מיד.\""
+    },
+    {
+      "id": "bu12",
+      "cat": "buk",
+      "title": "קיסמיק (חזרת עם סלק)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מגרדים סלק מבושל.\""
+    },
+    {
+      "id": "bu12",
+      "cat": "buk",
+      "title": "קיסמיק (חזרת עם סלק)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"מצננים לפני הגשה.\""
+    },
+    {
+      "id": "bu15",
+      "cat": "buk",
+      "title": "מנטי בבוכרה (כיסוני בשר גדולים)",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "bu17",
+      "cat": "buk",
+      "title": "דימלמה (ירקות ממולאים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (13 תווים): \"מכינים מילוי.\""
+    },
+    {
+      "id": "bu17",
+      "cat": "buk",
+      "title": "דימלמה (ירקות ממולאים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מכינים רוטב.\""
+    },
+    {
+      "id": "bu19",
+      "cat": "buk",
+      "title": "נאן-ה-קנד (לחם מתוק)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"אופים 23–25 דקות.\""
+    },
+    {
+      "id": "bu21",
+      "cat": "buk",
+      "title": "קסונסוי (כיסוני בשר קטנים)",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "bu21",
+      "cat": "buk",
+      "title": "קסונסוי (כיסוני בשר קטנים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (13 תווים): \"מכינים מילוי.\""
+    },
+    {
+      "id": "bu27",
+      "cat": "buk",
+      "title": "משוא (חציל בשמן)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (17 תווים): \"מצננים לפני הגשה.\""
+    },
+    {
+      "id": "bu28",
+      "cat": "buk",
+      "title": "נישאלדה (ריבת ורדים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"יוצקים לצנצנות.\""
+    },
+    {
+      "id": "bu29",
+      "cat": "buk",
+      "title": "טמל (עוגיות שמן)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 165.\""
+    },
+    {
+      "id": "bu29",
+      "cat": "buk",
+      "title": "טמל (עוגיות שמן)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מערבבים הכל לבצק.\""
+    },
+    {
+      "id": "bu29",
+      "cat": "buk",
+      "title": "טמל (עוגיות שמן)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"אופים 16–18 דקות.\""
+    },
+    {
+      "id": "bu30",
+      "cat": "buk",
+      "title": "חלואי לוח (חלווה גזר)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"מוסיפים מי ורדים.\""
+    },
+    {
+      "id": "tn8",
+      "cat": "tun",
+      "title": "לחם תוניסי (חובז)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"אופים 22–25 דקות.\""
+    },
+    {
+      "id": "tn9",
+      "cat": "tun",
+      "title": "מרק קוסקוס (צ׳ורבה)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (16 תווים): \"ממשיכים 20 דקות.\""
+    },
+    {
+      "id": "tn18",
+      "cat": "tun",
+      "title": "כבב תוניסי בחריסה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"מחממים גריל חם.\""
+    },
+    {
+      "id": "tn21",
+      "cat": "tun",
+      "title": "גרבאח׳ (עוגיות שקדים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 170.\""
+    },
+    {
+      "id": "tn21",
+      "cat": "tun",
+      "title": "גרבאח׳ (עוגיות שקדים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מערבבים הכל לבצק.\""
+    },
+    {
+      "id": "tn21",
+      "cat": "tun",
+      "title": "גרבאח׳ (עוגיות שקדים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"אופים 16–18 דקות.\""
+    },
+    {
+      "id": "tn21",
+      "cat": "tun",
+      "title": "גרבאח׳ (עוגיות שקדים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (17 תווים): \"מפזרים אבקת סוכר.\""
+    },
+    {
+      "id": "tn22",
+      "cat": "tun",
+      "title": "מרזגן (חמוצים תוניסיים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (16 תווים): \"שלושה ימים בחדר.\""
+    },
+    {
+      "id": "tn22",
+      "cat": "tun",
+      "title": "מרזגן (חמוצים תוניסיים)",
+      "severity": "low",
+      "code": "unparseable_serv",
+      "field": "serv",
+      "detail": "לא הצלחתי לפענח את מספר המנות: \"צנצנת\""
+    },
+    {
+      "id": "tn25",
+      "cat": "tun",
+      "title": "מחלביה (פודינג ורד)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (17 תווים): \"מוסיפים מי ורדים.\""
+    },
+    {
+      "id": "tn25",
+      "cat": "tun",
+      "title": "מחלביה (פודינג ורד)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (17 תווים): \"מקשטים בפיסטוקים.\""
+    },
+    {
+      "id": "tn26",
+      "cat": "tun",
+      "title": "עג׳ה (חביתה ירקות)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 180.\""
+    },
+    {
+      "id": "tn26",
+      "cat": "tun",
+      "title": "עג׳ה (חביתה ירקות)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (17 תווים): \"מחממים שמן במחבת.\""
+    },
+    {
+      "id": "tn27",
+      "cat": "tun",
+      "title": "גריוון (עוגיית שמן)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 165.\""
+    },
+    {
+      "id": "tn27",
+      "cat": "tun",
+      "title": "גריוון (עוגיית שמן)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מערבבים הכל לבצק.\""
+    },
+    {
+      "id": "tn27",
+      "cat": "tun",
+      "title": "גריוון (עוגיית שמן)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"אופים 16–18 דקות.\""
+    },
+    {
+      "id": "tn28",
+      "cat": "tun",
+      "title": "כבדה חריפה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"מתבלים כבד.\""
+    },
+    {
+      "id": "tn29",
+      "cat": "tun",
+      "title": "סמסה תוניסית (מאפה גבינה)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 180.\""
+    },
+    {
+      "id": "tn29",
+      "cat": "tun",
+      "title": "סמסה תוניסית (מאפה גבינה)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"אופים 16–18 דקות.\""
+    },
+    {
+      "id": "is10",
+      "cat": "isr",
+      "title": "עוף בפול ירוק",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (19 תווים): \"מוסיפים עוף ומשחים.\""
+    },
+    {
+      "id": "is11",
+      "cat": "isr",
+      "title": "עוגיות הקפה (עוגיות שוקולד)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 170.\""
+    },
+    {
+      "id": "is11",
+      "cat": "isr",
+      "title": "עוגיות הקפה (עוגיות שוקולד)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מערבבים הכל לבצק.\""
+    },
+    {
+      "id": "is11",
+      "cat": "isr",
+      "title": "עוגיות הקפה (עוגיות שוקולד)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"אופים 13–15 דקות.\""
+    },
+    {
+      "id": "is15",
+      "cat": "isr",
+      "title": "עוף שוק מרינד לימון-שום",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (16 תווים): \"מחממים תנור 200.\""
+    },
+    {
+      "id": "is17",
+      "cat": "isr",
+      "title": "עוגת תפוחים ישראלית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 170.\""
+    },
+    {
+      "id": "is17",
+      "cat": "isr",
+      "title": "עוגת תפוחים ישראלית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (14 תווים): \"אופים 50 דקות.\""
+    },
+    {
+      "id": "is19",
+      "cat": "isr",
+      "title": "ג׳חנון ישראלי (גרסה מהירה)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (19 תווים): \"מניחים בתבנית שמנה.\""
+    },
+    {
+      "id": "is20",
+      "cat": "isr",
+      "title": "קרמבו ביתי",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "is20",
+      "cat": "isr",
+      "title": "קרמבו ביתי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 180.\""
+    },
+    {
+      "id": "is22",
+      "cat": "isr",
+      "title": "לחמניות שמרים עם זרעים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (17 תווים): \"אופים 16–18 דקות.\""
+    },
+    {
+      "id": "is25",
+      "cat": "isr",
+      "title": "עוגת שוקולד חוקית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 170.\""
+    },
+    {
+      "id": "is27",
+      "cat": "isr",
+      "title": "ממרח גבינה עם עגבניות",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (18 תווים): \"מגישים עם לחם טרי.\""
+    },
+    {
+      "id": "is28",
+      "cat": "isr",
+      "title": "חמין ישראלי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (16 תווים): \"מוסיפים תבלינים.\""
+    },
+    {
+      "id": "is29",
+      "cat": "isr",
+      "title": "גזפצ׳ו ישראלי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (18 תווים): \"טוחנים הכל בבלנדר.\""
+    },
+    {
+      "id": "is30",
+      "cat": "isr",
+      "title": "עוגיות קוקוס",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 170.\""
+    },
+    {
+      "id": "is30",
+      "cat": "isr",
+      "title": "עוגיות קוקוס",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (12 תווים): \"מערבבים הכל.\""
+    },
+    {
+      "id": "tr1",
+      "cat": "turk",
+      "title": "בורקס טורקי — גבינה ופטרוזיליה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 180.\""
+    },
+    {
+      "id": "tr7",
+      "cat": "turk",
+      "title": "ג׳אג׳יק (יוגורט מלפפון)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (17 תווים): \"מצננים שעה לפחות.\""
+    },
+    {
+      "id": "tr8",
+      "cat": "turk",
+      "title": "חנום (כיסוני בשר אפויים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (13 תווים): \"מכינים מילוי.\""
+    },
+    {
+      "id": "tr8",
+      "cat": "turk",
+      "title": "חנום (כיסוני בשר אפויים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"מאדים 20 דקות.\""
+    },
+    {
+      "id": "tr9",
+      "cat": "turk",
+      "title": "פאסטל (פשטידת בשר)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[6]",
+      "detail": "שלב 6 קצר מאוד (17 תווים): \"אופים 33–35 דקות.\""
+    },
+    {
+      "id": "tr11",
+      "cat": "turk",
+      "title": "בריאם (ירקות אפויים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (17 תווים): \"אופים 38–40 דקות.\""
+    },
+    {
+      "id": "tr13",
+      "cat": "turk",
+      "title": "אימאם ביילדי (חצילים ממולאים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (14 תווים): \"אופים 35 דקות.\""
+    },
+    {
+      "id": "tr16",
+      "cat": "turk",
+      "title": "פאשטל (סמבוסק אפוי)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 180.\""
+    },
+    {
+      "id": "tr16",
+      "cat": "turk",
+      "title": "פאשטל (סמבוסק אפוי)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (14 תווים): \"מערבבים מילוי.\""
+    },
+    {
+      "id": "tr17",
+      "cat": "turk",
+      "title": "כבב איסטנבול",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (13 תווים): \"מקרר 15 דקות.\""
+    },
+    {
+      "id": "tr18",
+      "cat": "turk",
+      "title": "מוחלבייה (פודינג ורד)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (17 תווים): \"מוסיפים מי ורדים.\""
+    },
+    {
+      "id": "tr20",
+      "cat": "turk",
+      "title": "שושה (ריבת אגוזים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"יוצקים לצנצנות.\""
+    },
+    {
+      "id": "tr21",
+      "cat": "turk",
+      "title": "קאדאיף (חוטי בצק במי ורדים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 180.\""
+    },
+    {
+      "id": "tr21",
+      "cat": "turk",
+      "title": "קאדאיף (חוטי בצק במי ורדים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (13 תווים): \"מכינים סירופ.\""
+    },
+    {
+      "id": "tr22",
+      "cat": "turk",
+      "title": "מרמלאדה (ריבת תפוז)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (16 תווים): \"סוחטים מיץ תפוז.\""
+    },
+    {
+      "id": "tr22",
+      "cat": "turk",
+      "title": "מרמלאדה (ריבת תפוז)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (15 תווים): \"יוצקים לצנצנות.\""
+    },
+    {
+      "id": "tr25",
+      "cat": "turk",
+      "title": "אורז פילאף (טורקי)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (14 תווים): \"אידוי 10 דקות.\""
+    },
+    {
+      "id": "tr26",
+      "cat": "turk",
+      "title": "מוסקה טורקית-יהודית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (14 תווים): \"אופים 30 דקות.\""
+    },
+    {
+      "id": "tr27",
+      "cat": "turk",
+      "title": "סרמה (עלי גפן ממולאים)",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "tr27",
+      "cat": "turk",
+      "title": "סרמה (עלי גפן ממולאים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (15 תווים): \"גוללים עלי גפן.\""
+    },
+    {
+      "id": "tr28",
+      "cat": "turk",
+      "title": "בקלאוה טורקית",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "tr28",
+      "cat": "turk",
+      "title": "בקלאוה טורקית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מחממים תנור 175.\""
+    },
+    {
+      "id": "tr28",
+      "cat": "turk",
+      "title": "בקלאוה טורקית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (17 תווים): \"אופים 28–30 דקות.\""
+    },
+    {
+      "id": "tr29",
+      "cat": "turk",
+      "title": "חלבה טורקית (חלבה שומשום)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (18 תווים): \"מחממים טחינה לחמה.\""
+    },
+    {
+      "id": "tr29",
+      "cat": "turk",
+      "title": "חלבה טורקית (חלבה שומשום)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (14 תווים): \"מצננים 2 שעות.\""
+    },
+    {
+      "id": "tr30",
+      "cat": "turk",
+      "title": "פשטידת אורז ועוף טורקית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (12 תווים): \"מערבבים הכל.\""
+    },
+    {
+      "id": "me11",
+      "cat": "meat",
+      "title": "חמין קפה דה מסה — סכינה מלאה",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "me13",
+      "cat": "meat",
+      "title": "ח׳לייע — בשר מרוקאי מיובש ומשומר",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "me15",
+      "cat": "meat",
+      "title": "אולייה פודרידה — קדרת שבת ספרדית מלאה",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "spx1",
+      "cat": "span",
+      "title": "חמין אדאפינה שלם — שבת של ספרד",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "sn25",
+      "cat": "soups",
+      "title": "מרק ראס אל-עין — ראש כבש מרוקאי",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "sn30",
+      "cat": "soups",
+      "title": "קלדו ברדו — ציר ספרדי יהודי עמוק",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (18 תווים): \"מסירים קצף בקפידה.\""
+    },
+    {
+      "id": "ve19",
+      "cat": "veg",
+      "title": "חצילים ממולאים בשר וצימוקים",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "fe14",
+      "cat": "fish",
+      "title": "דג מלוח מרוקאי — שמורא",
+      "severity": "low",
+      "code": "suspicious_time",
+      "field": "time",
+      "detail": "זמן ארוך מאוד: 2880 דקות (48 שעות + 10 דקות הכנה)"
+    },
+    {
+      "id": "fe14",
+      "cat": "fish",
+      "title": "דג מלוח מרוקאי — שמורא",
+      "severity": "low",
+      "code": "unparseable_serv",
+      "field": "serv",
+      "detail": "לא הצלחתי לפענח את מספר המנות: \"גרניש\""
+    },
+    {
+      "id": "me17",
+      "cat": "meat",
+      "title": "כרשה ממולאת — מעיים ממולאים מרוקאיים",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "dn19",
+      "cat": "des",
+      "title": "קראב-ביסו — עוגיות תמרים ושקדים לאורח",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (17 תווים): \"מפדרים אבקת סוכר.\""
+    },
+    {
+      "id": "sle19",
+      "cat": "salads",
+      "title": "סלט תפוז וזיתים מרוקאי",
+      "severity": "medium",
+      "code": "few_steps",
+      "field": "steps",
+      "detail": "רק 1 שלבים (מומלץ לפחות 2)"
+    },
+    {
+      "id": "sle21",
+      "cat": "salads",
+      "title": "סלט ביצים קשות ועגבניות מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (17 תווים): \"מפזרים פטרוזיליה.\""
+    },
+    {
+      "id": "nk_fn3",
+      "cat": "nonkosher",
+      "title": "קלמארי ממולא מרוקאי",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "nk_hv3",
+      "cat": "nonkosher",
+      "title": "קוסקוס ים",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "nk_spv2",
+      "cat": "nonkosher",
+      "title": "קלאמרס — דיונון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (16 תווים): \"מטגנים בצל ושום.\""
+    },
+    {
+      "id": "nk_spv2",
+      "cat": "nonkosher",
+      "title": "קלאמרס — דיונון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים דיו.\""
+    },
+    {
+      "id": "nk_spv2",
+      "cat": "nonkosher",
+      "title": "קלאמרס — דיונון",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 25 דקות.\""
+    },
+    {
+      "id": "nk_c5",
+      "cat": "nonkosher",
+      "title": "קוסקוס חגיגי של שבת",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "nk_hn15",
+      "cat": "nonkosher",
+      "title": "פסטייה עוף — בסטלה",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "nk_hn16",
+      "cat": "nonkosher",
+      "title": "קוסקוס שבעה ירקות",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "nk_cne4",
+      "cat": "nonkosher",
+      "title": "סנה — עוף עם קוסקוס ועוף",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "nk_se9",
+      "cat": "nonkosher",
+      "title": "מרק בצל מרוקאי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (18 תווים): \"מוסיפים כמון ומרק.\""
+    },
+    {
+      "id": "nk_chf3",
+      "cat": "nonkosher",
+      "title": "עוף עם תפוח ועלי דפנה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "nk_chf3",
+      "cat": "nonkosher",
+      "title": "עוף עם תפוח ועלי דפנה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 35 דקות.\""
+    },
+    {
+      "id": "nk_add43",
+      "cat": "nonkosher",
+      "title": "כבש עם גרגרי חרדל",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (12 תווים): \"מוסיפים מים.\""
+    },
+    {
+      "id": "nk_add43",
+      "cat": "nonkosher",
+      "title": "כבש עם גרגרי חרדל",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 60 דקות.\""
+    },
+    {
+      "id": "nk_ex26",
+      "cat": "nonkosher",
+      "title": "עוף ממולא לחינה — דארג",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "nk_ex26",
+      "cat": "nonkosher",
+      "title": "עוף ממולא לחינה — דארג",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (13 תווים): \"מורחים ציפוי.\""
+    },
+    {
+      "id": "nk_ex31",
+      "cat": "nonkosher",
+      "title": "טאג׳ין כרוב ובשר",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (15 תווים): \"מבשלים 55 דקות.\""
+    },
+    {
+      "id": "nk_cw3",
+      "cat": "nonkosher",
+      "title": "עוף עם אנשובי ורוזמרין",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "nk_cw3",
+      "cat": "nonkosher",
+      "title": "עוף עם אנשובי ורוזמרין",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (15 תווים): \"מבשלים 42 דקות.\""
+    },
+    {
+      "id": "nk_chfx2",
+      "cat": "nonkosher",
+      "title": "עוף עם גרגרי חרדל",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (11 תווים): \"צורבים עוף.\""
+    },
+    {
+      "id": "nk_chfx2",
+      "cat": "nonkosher",
+      "title": "עוף עם גרגרי חרדל",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (18 תווים): \"מוסיפים שום וחרדל.\""
+    },
+    {
+      "id": "nk_chfx2",
+      "cat": "nonkosher",
+      "title": "עוף עם גרגרי חרדל",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (17 תווים): \"מוסיפים יין ומים.\""
+    },
+    {
+      "id": "nk_me9",
+      "cat": "nonkosher",
+      "title": "קציצות עם כרישה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[1]",
+      "detail": "שלב 1 קצר מאוד (14 תווים): \"מכינים קציצות.\""
+    },
+    {
+      "id": "nk_me9",
+      "cat": "nonkosher",
+      "title": "קציצות עם כרישה",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[3]",
+      "detail": "שלב 3 קצר מאוד (13 תווים): \"מוסיפים שמנת.\""
+    },
+    {
+      "id": "nk_ku3",
+      "cat": "nonkosher",
+      "title": "שישבראק (כיסוני בשר בלבן)",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    },
+    {
+      "id": "nk_ku30",
+      "cat": "nonkosher",
+      "title": "מרק בצל כורדי",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (19 תווים): \"מגישים עם לחם קלוי.\""
+    },
+    {
+      "id": "nk_tr8",
+      "cat": "nonkosher",
+      "title": "חנום (כיסוני בשר אפויים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[2]",
+      "detail": "שלב 2 קצר מאוד (13 תווים): \"מכינים מילוי.\""
+    },
+    {
+      "id": "nk_tr8",
+      "cat": "nonkosher",
+      "title": "חנום (כיסוני בשר אפויים)",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[4]",
+      "detail": "שלב 4 קצר מאוד (14 תווים): \"מאדים 20 דקות.\""
+    },
+    {
+      "id": "nk_tr26",
+      "cat": "nonkosher",
+      "title": "מוסקה טורקית-יהודית",
+      "severity": "medium",
+      "code": "short_step",
+      "field": "steps[5]",
+      "detail": "שלב 5 קצר מאוד (14 תווים): \"אופים 30 דקות.\""
+    },
+    {
+      "id": "nk_bu4",
+      "cat": "nonkosher",
+      "title": "מנטי (כיסוני קיטור בוכאריים)",
+      "severity": "medium",
+      "code": "bad_difficulty",
+      "field": "diff",
+      "detail": "ערך קושי לא תקני: \"מתקדם\" (מותר: קל, בינוני, קשה)"
+    }
+  ]
+}

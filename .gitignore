@@ -23,3 +23,6 @@
 !edit_recipe.py
 !proxy_config.txt
 !recipe_utils.py
+!audit_recipes.py
+!audit_report_sample.csv
+!audit_report_sample.json
