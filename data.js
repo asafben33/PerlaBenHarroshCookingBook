@@ -18775,54 +18775,50 @@ const HOLIDAY_TAGS = {
 };
 
 const MENU_STRUCTURE = [
-  /* ═══ SINGLE TOP-LEVEL: כל המתכונים ═══
-     Contains ALL original groups as sub-items */
-  {lbl:'כל המתכונים', key:'all_master', items:[
-    {id:'all', lbl:'הכל'},
+  /* v7.0 — Flat 6 top-level groups (Homepage redesign — Option C)
+     Replaces the old single-wrapper nested structure for cleaner 2-level hierarchy. */
 
-    /* ── מטעמים של אמא ממרוקו (Moroccan core — 744 recipes) ── */
-    {lbl:'מטעמים של אמא ממרוקו', ids:['soups','salads','veg','meat','chick','fish','hol','des'], items:[
+  /* ── 1. הכל ── */
+  {key:'all', lbl:'הכל', id:'all'},
+
+  /* ── 2. מרוקו (671 recipes) ── */
+  {key:'morocco', lbl:'מרוקו',
+    ids:['soups','salads','veg','meat','chick','fish','hol','des'],
+    items:[
       {ids:['soups','salads','veg','meat','chick','fish','hol','des'], lbl:'הכל'},
       {id:'soups',  lbl:'מרקים'},
       {id:'salads', lbl:'סלטים'},
-      {ids:['meat','chick','fish'], lbl:'מנות עיקריות', items:[
+      {lbl:'מנות עיקריות', ids:['meat','chick','fish'], items:[
         {id:'meat',  lbl:'בשר וקציצות'},
         {id:'chick', lbl:'עוף ושבת'},
         {id:'fish',  lbl:'דגים'},
       ]},
-      {id:'veg',  lbl:'ירקות ותוספות'},
-      {id:'hol',  lbl:'חגים ומועדים', sub:[
-        {id:'hol', h:null,       lbl:'כל החגים'},
-        {sep:true},
-        {id:'hol', h:'shabbat',  lbl:'שבת'},
-        {id:'hol', h:'rosh',     lbl:'ראש השנה'},
-        {id:'hol', h:'kippur',   lbl:'יום כיפור'},
-        {id:'hol', h:'pesach',   lbl:'פסח'},
-        {id:'hol', h:'mimouna',  lbl:'מימונה'},
-        {id:'hol', h:'hanukkah', lbl:'חנוכה'},
-        {id:'hol', h:'purim',    lbl:'פורים'},
-        {id:'hol', h:'shavuot',  lbl:'שבועות'},
-        {id:'hol', h:'sukkot',   lbl:'סוכות'},
-        {id:'hol', h:'henna',    lbl:'חינה'},
-      ]},
+      {id:'veg', lbl:'ירקות ותוספות'},
+      {id:'hol', lbl:'חגים ומועדים'},
       {id:'des', lbl:'קינוחים ומאפים'},
-      /* ── ספרדי-מרוקאי וסביבות (8 sub-categories by recipe IDs) ── */
-      {lbl:'מורשת ספרד', ids:['sp3','spf2','spe3','sp2','sp4','sp6','spne3','spf3','ex41','fin18','spx3','spn1','spe1','spv1','spx1','spn4','spv3','spx2','sp1','sp5','sp7','sp8','spne1','spne2','spne4','spe2','spe4','spe5','spf4','add20','add38','add47','ex44','spv4','spw3','spw4','spw5','spnx1','spnx2','spnx3','spnx4','spnx5','spe6','spe7','spe8','spx6','sau1','sau2','sau3','sau4','spn2','spf1','spf5','add29','add56','spw1','spw2','spx5','rare10','sp9','spn3','spn5','ex42','ex43','ex45','fin19','fin20','spv5','spx4','spx7','spe9','spe10','spv2'], items:[
-        {ids:['sp3','spf2','spe3','sp2','sp4','sp6','spne3','spf3','ex41','fin18','spx3','spn1','spe1','spv1','spx1','spn4','spv3','spx2','sp1','sp5','sp7','sp8','spne1','spne2','spne4','spe2','spe4','spe5','spf4','add20','add38','add47','ex44','spv4','spw3','spw4','spw5','spnx1','spnx2','spnx3','spnx4','spnx5','spe6','spe7','spe8','spx6','sau1','sau2','sau3','sau4','spn2','spf1','spf5','add29','add56','spw1','spw2','spx5','rare10','sp9','spn3','spn5','ex42','ex43','ex45','fin19','fin20','spv5','spx4','spx7','spe9','spe10','spv2'], lbl:'הכל'},
-        {ids:['sp3','spf2','spe3'], lbl:'מרקים ומינסטרות'},
-        {ids:['sp2','sp4','sp6','spne3','spf3','ex41','fin18','spx3'], lbl:'בשר וקציצות'},
-        {ids:['spn4','spv3','spx2','spv2'], lbl:'דגים'},
-        {ids:['sp1','sp5','sp7','sp8','spne1','spne2','spne4','spe2','spe4','spe5','spf4','add20','add38','add47','ex44','spv4','spw3','spw4','spw5','spnx1','spnx2','spnx3','spnx4','spnx5','spe6','spe7','spe8','spx6'], lbl:'ירקות ותוספות'},
-        {ids:['spn1','spe1','spv1','spx1'], lbl:'שבת וחגים'},
-        {ids:['sau1','sau2','sau3','sau4'], lbl:'רטבים ותבלינים'},
-        {ids:['spn2','spf1','spf5','add29','add56','spw1','spw2','spx5','rare10'], lbl:'לחמים ומאפים'},
-        {ids:['sp9','spn3','spn5','ex42','ex43','ex45','fin19','fin20','spv5','spx4','spx7','spe9','spe10'], lbl:'קינוחים ומתוקים'},
-      ]},
+    ]
+  },
 
+  /* ── 3. ספרד (73 recipes) ── */
+  {key:'spain', lbl:'ספרד',
+    ids:['sp3','spf2','spe3','sp2','sp4','sp6','spne3','spf3','ex41','fin18','spx3','spn1','spe1','spv1','spx1','spn4','spv3','spx2','sp1','sp5','sp7','sp8','spne1','spne2','spne4','spe2','spe4','spe5','spf4','add20','add38','add47','ex44','spv4','spw3','spw4','spw5','spnx1','spnx2','spnx3','spnx4','spnx5','spe6','spe7','spe8','spx6','sau1','sau2','sau3','sau4','spn2','spf1','spf5','add29','add56','spw1','spw2','spx5','rare10','sp9','spn3','spn5','ex42','ex43','ex45','fin19','fin20','spv5','spx4','spx7','spe9','spe10','spv2'],
+    items:[
+      {ids:['sp3','spf2','spe3','sp2','sp4','sp6','spne3','spf3','ex41','fin18','spx3','spn1','spe1','spv1','spx1','spn4','spv3','spx2','sp1','sp5','sp7','sp8','spne1','spne2','spne4','spe2','spe4','spe5','spf4','add20','add38','add47','ex44','spv4','spw3','spw4','spw5','spnx1','spnx2','spnx3','spnx4','spnx5','spe6','spe7','spe8','spx6','sau1','sau2','sau3','sau4','spn2','spf1','spf5','add29','add56','spw1','spw2','spx5','rare10','sp9','spn3','spn5','ex42','ex43','ex45','fin19','fin20','spv5','spx4','spx7','spe9','spe10','spv2'], lbl:'הכל'},
+      {ids:['sp3','spf2','spe3'], lbl:'מרקים ומינסטרות'},
+      {ids:['sp2','sp4','sp6','spne3','spf3','ex41','fin18','spx3'], lbl:'בשר וקציצות'},
+      {ids:['spn4','spv3','spx2','spv2'], lbl:'דגים'},
+      {ids:['sp1','sp5','sp7','sp8','spne1','spne2','spne4','spe2','spe4','spe5','spf4','add20','add38','add47','ex44','spv4','spw3','spw4','spw5','spnx1','spnx2','spnx3','spnx4','spnx5','spe6','spe7','spe8','spx6'], lbl:'ירקות ותוספות'},
+      {ids:['spn1','spe1','spv1','spx1'], lbl:'שבת וחגים'},
+      {ids:['sau1','sau2','sau3','sau4'], lbl:'רטבים ותבלינים'},
+      {ids:['spn2','spf1','spf5','add29','add56','spw1','spw2','spx5','rare10'], lbl:'לחמים ומאפים'},
+      {ids:['sp9','spn3','spn5','ex42','ex43','ex45','fin19','fin20','spv5','spx4','spx7','spe9','spe10'], lbl:'קינוחים ומתוקים'},
+    ]
+  },
 
-      {sep:true},
-      /* ── מתכונים מהעדות (9 cuisines + Israeli sub-categories) ── */
-      {lbl:'מתכונים מהעדות', ids:['iraq','kurd','ashk','yem','pers','buk','tun','turk','isr'], items:[
+  /* ── 4. עדות ישראל (270 recipes) — 9 cuisines + Option C community holidays placeholder ── */
+  {key:'communities', lbl:'עדות ישראל',
+    ids:['iraq','kurd','ashk','yem','pers','buk','tun','turk','isr'],
+    items:[
       {ids:['iraq','kurd','ashk','yem','pers','buk','tun','turk','isr'], lbl:'הכל'},
       {id:'iraq', lbl:'עיראק'},
       {id:'kurd', lbl:'כורדיסטן'},
@@ -18839,21 +18835,39 @@ const MENU_STRUCTURE = [
         {ids:['is6','is19','is22','is24'], lbl:'לחמים ומאפים'},
         {ids:['is11','is17','is20','is25','is27','is29','is30'], lbl:'קינוחים ועוגות'},
       ]},
-    ]},
-
       {sep:true},
-      /* ── מתכונים לא כשרים (corrected: 14 seafood + 26 meat+dairy) ── */
-      {lbl:'מתכונים לא כשרים', ids:['nk_fn3','nk_fn4','nk_fe3','nk_fe5','nk_add34','nk_ex19','nk_hv3','nk_spv2','nk_fe10','nk_ku25','nk_tr8','nk_bu2','nk_bu4','nk_spx3','nk_c5','nk_h2','nk_sp2','nk_sp4','nk_hn15','nk_hn16','nk_rn7','nk_cne4','nk_se9','nk_chf3','nk_chf4','nk_add43','nk_add44','nk_ex26','nk_ex31','nk_fin13','nk_cw3','nk_chfx2','nk_holfx4','nk_me9','nk_hn18','nk_ku3','nk_ku30','nk_ye19','nk_tr26','nk_sn23'], items:[
+      /* Option C: Community Holidays placeholder — future tagging will activate this */
+      {placeholder:'communityHolidays', lbl:'חגי העדות (בקרוב)',
+        emptyMsg:'מתכונים לחגי העדות יתווספו בעתיד. כרגע רק מתכוני מרוקו מתויגים לחגים.'},
+    ]
+  },
+
+  /* ── 5. חגים (80 recipes — Moroccan holidays only for now) ── */
+  {key:'holidays', lbl:'חגים',
+    ids:['hol'],
+    items:[
+      {id:'hol', h:null, lbl:'כל החגים'},
+      {sep:true},
+      {id:'hol', h:'shabbat',  lbl:'שבת'},
+      {id:'hol', h:'rosh',     lbl:'ראש השנה'},
+      {id:'hol', h:'kippur',   lbl:'יום כיפור'},
+      {id:'hol', h:'pesach',   lbl:'פסח'},
+      {id:'hol', h:'mimouna',  lbl:'מימונה'},
+      {id:'hol', h:'hanukkah', lbl:'חנוכה'},
+      {id:'hol', h:'purim',    lbl:'פורים'},
+      {id:'hol', h:'shavuot',  lbl:'שבועות'},
+      {id:'hol', h:'sukkot',   lbl:'סוכות'},
+      {id:'hol', h:'henna',    lbl:'חינה'},
+    ]
+  },
+
+  /* ── 6. לא כשר (40 recipes) ── */
+  {key:'nonkosher', lbl:'לא כשר',
+    ids:['nk_fn3','nk_fn4','nk_fe3','nk_fe5','nk_add34','nk_ex19','nk_hv3','nk_spv2','nk_fe10','nk_ku25','nk_tr8','nk_bu2','nk_bu4','nk_spx3','nk_c5','nk_h2','nk_sp2','nk_sp4','nk_hn15','nk_hn16','nk_rn7','nk_cne4','nk_se9','nk_chf3','nk_chf4','nk_add43','nk_add44','nk_ex26','nk_ex31','nk_fin13','nk_cw3','nk_chfx2','nk_holfx4','nk_me9','nk_hn18','nk_ku3','nk_ku30','nk_ye19','nk_tr26','nk_sn23'],
+    items:[
       {ids:['nk_fn3','nk_fn4','nk_fe3','nk_fe5','nk_add34','nk_ex19','nk_hv3','nk_spv2','nk_fe10','nk_ku25','nk_tr8','nk_bu2','nk_bu4','nk_spx3','nk_c5','nk_h2','nk_sp2','nk_sp4','nk_hn15','nk_hn16','nk_rn7','nk_cne4','nk_se9','nk_chf3','nk_chf4','nk_add43','nk_add44','nk_ex26','nk_ex31','nk_fin13','nk_cw3','nk_chfx2','nk_holfx4','nk_me9','nk_hn18','nk_ku3','nk_ku30','nk_ye19','nk_tr26','nk_sn23'], lbl:'הכל'},
       {ids:['nk_fn3','nk_fn4','nk_fe3','nk_fe5','nk_add34','nk_ex19','nk_hv3','nk_spv2','nk_fe10','nk_ku25','nk_tr8','nk_bu2','nk_bu4','nk_spx3'], lbl:'פירות ים'},
       {ids:['nk_c5','nk_h2','nk_sp2','nk_sp4','nk_hn15','nk_hn16','nk_rn7','nk_cne4','nk_se9','nk_chf3','nk_chf4','nk_add43','nk_add44','nk_ex26','nk_ex31','nk_fin13','nk_cw3','nk_chfx2','nk_holfx4','nk_me9','nk_hn18','nk_ku3','nk_ku30','nk_ye19','nk_tr26','nk_sn23'], lbl:'בשר וחלב'},
-    ]},
-    ]},
-
-
-
-
-
-  ]},
+    ]
+  },
 ];
-
