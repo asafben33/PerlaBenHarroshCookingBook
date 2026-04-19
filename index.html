@@ -150,37 +150,6 @@ ol { padding-right: 1.2rem; }
   gap: 1rem;
 }
 
-/* v7.0 — Header brand (site name + recipe count) */
-.hdr-brand-v7 {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.15;
-  flex-shrink: 0;
-  padding-inline-end: .9rem;
-  border-inline-end: 1px solid rgba(196,147,10,.2);
-}
-.hdr-brand-title {
-  color: var(--c-gold-l);
-  font-family: 'Frank Ruhl Libre', serif;
-  font-size: 1rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.hdr-brand-count {
-  color: rgba(237,224,196,.55);
-  font-size: .72rem;
-  margin-top: .15rem;
-  white-space: nowrap;
-}
-#hdr-count { font-weight: 700; color: var(--c-gold-d); }
-html.light .hdr-brand-title { color: #6e3c14; }
-html.light .hdr-brand-count { color: rgba(74,42,20,.6); }
-html.light .hdr-brand-v7 { border-inline-end-color: rgba(196,147,10,.3); }
-@media (max-width: 640px) {
-  .hdr-brand-count { display: none; }
-  .hdr-brand-title { font-size: .88rem; }
-}
-
 
 
 .hdr-brand { flex: 1; min-width: 0; }
@@ -323,24 +292,6 @@ html.light .hdr-brand-v7 { border-inline-end-color: rgba(196,147,10,.3); }
 .pc:hover { background: rgba(196,147,10,.18); color: var(--c-gold-l); border-color: rgba(196,147,10,.45); }
 .pc.active { background: rgba(196,147,10,.25); border-color: rgba(196,147,10,.6); color: var(--c-gold-l); }
 .pc-cnt { font-size: .92rem; opacity: .75; font-weight: 600; }
-
-/* v7.0 — "חגי העדות" placeholder chip (Option C: empty container for future) */
-.pc-holidays {
-  background: rgba(184,66,35,.12) !important;
-  border-color: rgba(184,66,35,.4) !important;
-  color: #d4603a !important;
-}
-.pc-holidays:hover {
-  background: rgba(184,66,35,.22) !important;
-  border-color: rgba(184,66,35,.6) !important;
-  color: #e87e4a !important;
-}
-.pc-holidays.pc-placeholder {
-  opacity: .75;
-  cursor: help;
-}
-.pc-holidays .pc-cnt { color: inherit; opacity: .8; }
-html.light .pc-holidays { color: #a64020 !important; }
 .acc-hdr {
   display: inline-flex;
   direction: rtl;
@@ -375,8 +326,6 @@ html.light .pc-holidays { color: #a64020 !important; }
 .acc-sep { width: 100%; height: 1px; background: rgba(196,147,10,.12); margin: .2rem 0; }
 
 /* ── Hero ─────────────────────────────────────────────────── */
-/* v7.1 — Hide recipe grid until user picks category or searches */
-.main-hidden { display: none !important; }
 .hero {
   direction: rtl;
   background: linear-gradient(165deg,
@@ -387,18 +336,21 @@ html.light .pc-holidays { color: #a64020 !important; }
   position: relative;
   overflow: hidden;
 }
+/* v7.0+v7.1: centered hero (was right-aligned). Per mockup: all hero
+   content is centered horizontally in the viewport, matching the Bio
+   section below. The green-arrow target in the screenshot was the Bio
+   heading — the user wants Hero to align the same way. */
 .hero-inner {
   max-width: 760px;
-  margin-left: auto;
-  margin-right: 0;
+  margin: 0 auto;
   position: relative;
   direction: rtl;
-  text-align: right;
+  text-align: center;
 }
-.hero-orn { font-size: 1rem; color: var(--c-gold-d); opacity: .4; letter-spacing: .5rem; margin-bottom: .6rem; }
+.hero-orn { font-size: 1rem; color: var(--c-gold-d); opacity: .4; letter-spacing: .5rem; margin-bottom: .6rem; text-align: center; }
 .hero-h1 {
   direction: rtl;
-  text-align: right;
+  text-align: center;
   font-size: clamp(2rem, 5vw, 3.2rem);
   font-weight: 900;
   color: var(--c-bg);
@@ -407,63 +359,60 @@ html.light .pc-holidays { color: #a64020 !important; }
 }
 .hero-h1 em { font-style: normal; color: var(--c-gold-l); }
 .hero-tagline {
-  direction: rtl; text-align: right; font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-bottom: .9rem; letter-spacing: .03em; text-shadow: 0 1px 3px rgba(0,0,0,.35); }
+  direction: rtl; text-align: center; font-size: 1.15rem; font-weight: 700;
+  color: #ffffff; margin-bottom: .9rem; letter-spacing: .03em;
+  text-shadow: 0 1px 3px rgba(0,0,0,.35);
+}
 
-/* v7.0 — Hero CTA row */
+/* v7.0: Hero CTA buttons (replaces old hero-pills / about-btn) */
 .hero-cta-row {
-  direction: rtl;
-  display: flex;
-  gap: .6rem;
-  flex-wrap: wrap;
-  margin-top: 1.3rem;
+  display: flex; gap: .75rem; justify-content: center;
+  flex-wrap: wrap; margin-top: 1.4rem;
 }
 .hero-cta-primary, .hero-cta-secondary {
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 100px;
-  padding: .75rem 1.7rem;
-  cursor: pointer;
-  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
-  white-space: nowrap;
+  border-radius: 100px; padding: .75rem 1.8rem;
+  font-family: inherit; font-size: 1rem; font-weight: 600;
+  cursor: pointer; transition: all var(--t-fast);
 }
 .hero-cta-primary {
-  background: var(--c-spice);
-  color: #fff;
-  border: 1px solid var(--c-spice);
-  box-shadow: 0 2px 8px rgba(184,66,35,.3);
+  background: var(--c-spice); color: #fff; border: none;
 }
-.hero-cta-primary:hover { background: #a23518; border-color: #a23518; transform: translateY(-1px); }
+.hero-cta-primary:hover { background: var(--c-spice-d, #922f18); transform: translateY(-1px); }
 .hero-cta-secondary {
-  background: transparent;
+  background: transparent; color: var(--c-gold-l);
+  border: 1px solid rgba(196,147,10,.55);
+}
+.hero-cta-secondary:hover { border-color: var(--c-gold); color: var(--c-gold); }
+html.light .hero-cta-secondary { color: #7a3a18; border-color: rgba(184,66,35,.45); }
+
+/* Legacy classes kept for backward safety (hidden) */
+.hero-pills, .hero-about-btn { display: none !important; }
+
+/* v7.0: Unified header brand (site name + dynamic recipe count) */
+.hdr-brand-v7 {
+  display: flex; flex-direction: column;
+  line-height: 1.15; flex-shrink: 0;
+  direction: rtl; text-align: right;
+  padding-right: .5rem;
+}
+.hdr-brand-v7 .hdr-brand-title {
   color: var(--c-gold-l);
-  border: 1px solid rgba(196,147,10,.45);
+  font-family: 'Frank Ruhl Libre', serif;
+  font-size: 1.05rem; font-weight: 500;
+  white-space: nowrap;
 }
-.hero-cta-secondary:hover { background: rgba(196,147,10,.15); border-color: rgba(196,147,10,.7); transform: translateY(-1px); }
-html.light .hero-cta-secondary { color: #6e3c14; border-color: rgba(140,70,30,.45); }
-html.light .hero-cta-secondary:hover { background: rgba(196,147,10,.2); }
-@media (max-width: 480px) {
-  .hero-cta-row { gap: .5rem; }
-  .hero-cta-primary, .hero-cta-secondary { font-size: .9rem; padding: .65rem 1.3rem; }
+.hdr-brand-v7 .hdr-brand-count {
+  color: rgba(237,224,196,.5);
+  font-size: .72rem; font-weight: 400;
+  white-space: nowrap;
 }
-.hero-pills {
-  direction: rtl; display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.3rem; }
-.hp {
-  background: rgba(196,147,10,.18);
-  border: 1px solid rgba(196,147,10,.45);
-  color: var(--c-gold-l);
-  border-radius: 100px;
-  padding: .28rem .8rem;
-  font-size: .76rem;
+@media (max-width: 640px) {
+  .hdr-brand-v7 .hdr-brand-count { display: none; }
+  .hdr-brand-v7 .hdr-brand-title { font-size: .95rem; }
 }
-.hero-about-btn {
-  display: inline-flex;
-  direction: rtl; align-items: center; gap: .5rem;
-  color: var(--c-gold-d); font-size: .84rem; cursor: pointer;
-  background: none; border: none; font-family: inherit;
-  text-decoration: underline;
-}
-.hero-about-btn:hover { color: var(--c-gold-l); }
+
+/* v7.1: Hide recipe grid until user picks nav/search/CTA */
+.main-hidden { display: none !important; }
 
 /* ── About ────────────────────────────────────────────────── */
 .about {
@@ -1645,10 +1594,11 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
 
 <noscript><style>body::before{content:"JavaScript נדרש";display:block;padding:1rem;background:#3e1c00;color:#f5ecd7;text-align:center;}</style></noscript>
 
-<!-- ════════ HEADER (v7.0) ═════════════════════════════════ -->
+<!-- ════════ HEADER ════════════════════════════════════════ -->
 <header class="hdr" role="banner">
   <div class="hdr-inner">
-    <div class="hdr-brand-v7" aria-label="ספר הבישול של פרלה בן הראש">
+    <!-- v7.0: Unified brand (right side in RTL) -->
+    <div class="hdr-brand-v7">
       <span class="hdr-brand-title" data-i18n="site_name_short">ספר הבישול של פרלה</span>
       <span class="hdr-brand-count"><span id="hdr-count">1,054</span> <span data-i18n="recipes_label">מתכונים</span></span>
     </div>
@@ -1686,15 +1636,15 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
   </div>
 </nav>
 
-<!-- ════════ HERO (v7.0 — shortened with CTAs) ═════════════ -->
+<!-- ════════ HERO (v7.0: centered + CTA buttons) ═══════════ -->
 <section class="hero" aria-labelledby="hero-h1">
   <div class="hero-inner">
     <div class="hero-orn" aria-hidden="true">✦ ✦ ✦</div>
     <h1 class="hero-h1" id="hero-h1">המטבח של <em>משפחת בן הראש (ארוש\הרוש)</em></h1>
     <p class="hero-tagline" data-i18n="hero_tagline">לזכרם של פרלה ופנחס בן הראש ז״ל — טעמים שמעלים זכרונות שכמעט שכחנו...</p>
     <div class="hero-cta-row">
-      <button type="button" class="hero-cta-primary" id="hero-cta-browse" data-i18n="hero_cta_browse" aria-label="עיון במתכונים">עיון במתכונים</button>
-      <button type="button" class="hero-cta-secondary" id="hero-cta-book" data-i18n="hero_cta_book" aria-label="קרא את הספר">קרא את הספר</button>
+      <button type="button" class="hero-cta-primary" id="hero-cta-browse" data-i18n="hero_cta_browse">עיון במתכונים</button>
+      <button type="button" class="hero-cta-secondary" id="hero-cta-book" data-i18n="hero_cta_book">קרא את הספר</button>
     </div>
   </div>
 </section>
@@ -1717,34 +1667,6 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
     </div>
   </div>
 </section>
-
-<!-- ════════ MAIN CONTENT ══════════════════════════════════ -->
-<main id="main" class="main-hidden" role="main" aria-hidden="true">
-  <div class="grid-header">
-    <div>
-      <span id="sec-title">כל המתכונים</span>
-      <span id="sec-cnt"></span>
-    </div>
-    <div class="filter-bar">
-      <div class="diff-btns" role="group" aria-label="סנן לפי רמת קושי">
-        <button class="diff-btn active" data-diff="all">הכל</button>
-        <button class="diff-btn" data-diff="קל">קל</button>
-        <button class="diff-btn" data-diff="בינוני">בינוני</button>
-        <button class="diff-btn" data-diff="מתקדם">מתקדם</button>
-      </div>
-      <select id="time-filter" class="time-filter" aria-label="סנן לפי זמן הכנה">
-        <option value="all">כל הזמנים</option>
-        <option value="30">עד 30 דקות</option>
-        <option value="60">עד שעה</option>
-        <option value="120">עד שעתיים</option>
-        <option value="121">מעל שעתיים</option>
-      </select>
-    </div>
-  </div>
-  <div id="grid" class="grid" role="list" aria-label="רשימת מתכונים" aria-busy="true"></div>
-</main>
-
-
 
 <!-- ════════ BOOK + TAGS ══════════════════════════════════ -->
 <section id="book-wrapper" class="book-wrapper" dir="rtl" lang="he">
@@ -2161,6 +2083,34 @@ Requires:
   </div>
 
 </section>
+
+
+<!-- ════════ MAIN CONTENT ══════════════════════════════════ -->
+<main id="main" class="main-hidden" role="main" aria-hidden="true">
+  <div class="grid-header">
+    <div>
+      <span id="sec-title">כל המתכונים</span>
+      <span id="sec-cnt"></span>
+    </div>
+    <div class="filter-bar">
+      <div class="diff-btns" role="group" aria-label="סנן לפי רמת קושי">
+        <button class="diff-btn active" data-diff="all">הכל</button>
+        <button class="diff-btn" data-diff="קל">קל</button>
+        <button class="diff-btn" data-diff="בינוני">בינוני</button>
+        <button class="diff-btn" data-diff="מתקדם">מתקדם</button>
+      </div>
+      <select id="time-filter" class="time-filter" aria-label="סנן לפי זמן הכנה">
+        <option value="all">כל הזמנים</option>
+        <option value="30">עד 30 דקות</option>
+        <option value="60">עד שעה</option>
+        <option value="120">עד שעתיים</option>
+        <option value="121">מעל שעתיים</option>
+      </select>
+    </div>
+  </div>
+  <div id="grid" class="grid" role="list" aria-label="רשימת מתכונים" aria-busy="true"></div>
+</main>
+
 <!-- ════════ BACK TO TOP ════════════════════════════════════ -->
 <button id="back-top" aria-label="חזור למעלה">↑</button>
 
@@ -7771,16 +7721,6 @@ function observeLazy() {
 ═══════════════════════════════════════════════ */
 var _navKey = null;
 
-/* v7.1 — Show/hide the recipe grid on demand (instead of displaying on load) */
-function showMainGrid() {
-  var m = document.getElementById('main');
-  if (m) { m.classList.remove('main-hidden'); m.setAttribute('aria-hidden', 'false'); }
-}
-function hideMainGrid() {
-  var m = document.getElementById('main');
-  if (m) { m.classList.add('main-hidden'); m.setAttribute('aria-hidden', 'true'); }
-}
-
 function closePanel() {
   var panel = document.getElementById('nav-panel');
   if (panel) { var _f = panel.querySelector(':focus'); if (_f) _f.blur(); panel.classList.remove('open'); panel.setAttribute('aria-hidden', 'true'); }
@@ -7808,38 +7748,89 @@ if (!window._navInit) {
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closePanel(); } });
 }
 
+/* ═══════════════════════════════════════════════
+   v7.0 + v7.1 helpers — grid reveal + CTAs + brand count
+═══════════════════════════════════════════════ */
+
+/* v7.1: Recipe grid is hidden on initial page load.
+   Reveals when user picks nav, searches, or clicks the Hero
+   "Browse" CTA. Once revealed, stays visible until refresh. */
+window.showMainGrid = function() {
+  var m = document.getElementById('main');
+  if (m && m.classList.contains('main-hidden')) {
+    m.classList.remove('main-hidden');
+    m.removeAttribute('aria-hidden');
+  }
+};
+window.hideMainGrid = function() {
+  var m = document.getElementById('main');
+  if (m) {
+    m.classList.add('main-hidden');
+    m.setAttribute('aria-hidden', 'true');
+  }
+};
+
+/* v7.0: Initialize header recipe count from R.length */
+window.initHdrCount = function() {
+  var el = document.getElementById('hdr-count');
+  if (el && typeof R !== 'undefined' && R && R.length) {
+    el.textContent = R.length.toLocaleString();
+  }
+};
+
+/* v7.0: Hero CTA handlers — wired in DOMContentLoaded */
+window.initHeroCTAs = function() {
+  var browseBtn = document.getElementById('hero-cta-browse');
+  if (browseBtn && !browseBtn._wired) {
+    browseBtn._wired = true;
+    browseBtn.addEventListener('click', function() {
+      // Reveal grid by simulating "All" nav click
+      var allBtn = document.querySelector('.nb');
+      if (allBtn) allBtn.click();
+      else if (typeof window.showMainGrid === 'function') window.showMainGrid();
+      // Smooth scroll to grid
+      setTimeout(function() {
+        var m = document.getElementById('main');
+        if (m) m.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 120);
+    });
+  }
+  var bookBtn = document.getElementById('hero-cta-book');
+  if (bookBtn && !bookBtn._wired) {
+    bookBtn._wired = true;
+    bookBtn.addEventListener('click', function() {
+      var book = document.getElementById('book-wrapper')
+                 || document.querySelector('.book-wrap')
+                 || document.querySelector('[id*="book"]');
+      if (book) book.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+};
+
 function buildNav() {
   var bar = document.getElementById('cat-inner');
   if (!bar) return;
   bar.innerHTML = '';
 
-  // --- Helpers ---
   function catCnt(id) {
     if (!id) return 0;
     if (typeof id === 'string') return id === 'all' ? R.length : R.filter(function(r) { return r && r.cat === id; }).length;
-    if (Array.isArray(id)) {
-      if (id.length > 0 && /[0-9]/.test(id[0])) {
-        // Recipe-ID array (e.g., span/nonkosher)
-        return R.filter(function(r) { return r && id.indexOf(r.id) >= 0; }).length;
-      }
-      // Category-ID array
-      return R.filter(function(r) { return r && id.indexOf(r.cat) >= 0; }).length;
-    }
+    if (Array.isArray(id)) return R.filter(function(r) { return r && id.indexOf(r.cat) >= 0; }).length;
     return 0;
   }
 
   function isActiveLeaf(catId, hol, ids) {
     if (ids) {
       if (ACT_IDS) return ids.every(function(id) { return ACT_IDS.has(id); }) && ids.length === ACT_IDS.size;
-      return ids.length && ACT_CATS.length === ids.length && ids.every(function(id) { return ACT_CATS.indexOf(id) >= 0; });
+      return ids.length && ids.every(function(id) { return ACT_CATS.indexOf(id) >= 0; });
     }
-    if (hol) return ACT_CAT === catId && ACT_HOLIDAY === hol;
+    if (hol)  return ACT_CAT === catId && ACT_HOLIDAY === hol;
     return ACT_CAT === catId && !ACT_HOLIDAY && !ACT_CATS.length && !ACT_IDS;
   }
 
-  function makeChip(lbl, c, onClick, active, extraClass) {
+  function makeChip(lbl, c, onClick, active) {
     var b = document.createElement('button');
-    b.className = 'pc' + (active ? ' active' : '') + (extraClass ? ' ' + extraClass : '');
+    b.className = 'pc' + (active ? ' active' : '');
     b.setAttribute('role', 'menuitem');
     var cnt = c != null ? ' <span class="pc-cnt">(' + c + ')</span>' : '';
     b.innerHTML = esc(lbl) + cnt;
@@ -7848,170 +7839,343 @@ function buildNav() {
   }
 
   function selectCat(catId, hol, groupKey) {
-    showMainGrid();
-    ACT_CATS = []; ACT_IDS = null; ACT_CAT = catId;
+    if (typeof window.showMainGrid === 'function') window.showMainGrid();
+    ACT_CATS    = [];
+    ACT_IDS     = null;
+    ACT_CAT     = catId;
     ACT_HOLIDAY = hol || null;
     if (groupKey) ACT_NAV_KEY = groupKey;
-    SEARCH = '';
-    var si = document.getElementById('srch'); if (si) si.value = '';
-    hide('srch-clr'); closePanel(); updateNavActive(); renderGrid();
+    SEARCH      = '';
+    var si = document.getElementById('srch');
+    if (si) si.value = '';
+    hide('srch-clr');
+    closePanel();
+    updateNavActive();
+    renderGrid();
     var ttl = document.getElementById('sec-title');
     if (ttl) ttl.textContent = hol ? 'חגים: ' + (holName(hol) || hol) : catLbl(catId);
   }
 
   function selectMulti(ids, label, groupKey) {
-    showMainGrid();
-    ACT_CATS = ids.slice(); ACT_IDS = null; ACT_CAT = ''; ACT_HOLIDAY = null;
+    if (typeof window.showMainGrid === 'function') window.showMainGrid();
+    ACT_CATS    = ids.slice();
+    ACT_IDS     = null;
+    ACT_CAT     = '';
+    ACT_HOLIDAY = null;
     if (groupKey) ACT_NAV_KEY = groupKey;
-    SEARCH = '';
-    var si = document.getElementById('srch'); if (si) si.value = '';
-    hide('srch-clr'); closePanel(); updateNavActive(); renderGrid();
+    SEARCH      = '';
+    var si = document.getElementById('srch');
+    if (si) si.value = '';
+    hide('srch-clr');
+    closePanel();
+    updateNavActive();
+    renderGrid();
     var ttl = document.getElementById('sec-title');
-    if (ttl) ttl.textContent = label || (_LANG === 'en' ? 'Recipes' : 'מתכונים');
+    if (ttl) ttl.textContent = label || (_LANG==='en'?'Recipes':'מתכונים');
   }
 
   function selectByIds(recipeIds, label, groupKey) {
-    showMainGrid();
-    ACT_IDS = new Set(recipeIds); ACT_CATS = []; ACT_CAT = 'span'; ACT_HOLIDAY = null;
+    if (typeof window.showMainGrid === 'function') window.showMainGrid();
+    ACT_IDS     = new Set(recipeIds);
+    ACT_CATS    = [];
+    ACT_CAT     = 'span';
+    ACT_HOLIDAY = null;
     if (groupKey) ACT_NAV_KEY = groupKey;
-    SEARCH = '';
-    var si = document.getElementById('srch'); if (si) si.value = '';
-    hide('srch-clr'); closePanel(); updateNavActive(); renderGrid();
+    SEARCH      = '';
+    var si = document.getElementById('srch');
+    if (si) si.value = '';
+    hide('srch-clr');
+    closePanel();
+    updateNavActive();
+    renderGrid();
     var ttl = document.getElementById('sec-title');
     if (ttl) ttl.textContent = label || 'ספרדי-מרוקאי';
   }
 
-  // --- Render a single drawer item ---
-  function renderItem(item, nodeKey, parentEl) {
-    if (item.sep) {
-      var hr = document.createElement('div');
-      hr.className = 'acc-sep';
-      parentEl.appendChild(hr);
-      return;
-    }
-
-    // Option C: Community Holidays placeholder (empty, informational)
-    if (item.placeholder === 'communityHolidays') {
-      var lbl = (I18N && I18N.community_holidays_lbl) ? (_LANG === 'en' ? I18N.community_holidays_lbl.en : I18N.community_holidays_lbl.he) : item.lbl;
-      var msg = (I18N && I18N.community_holidays_msg) ? (_LANG === 'en' ? I18N.community_holidays_msg.en : I18N.community_holidays_msg.he) : (item.emptyMsg || '');
-      var chip = makeChip(lbl, null,
-        function() { if (typeof showToast === 'function') showToast(msg); },
-        false, 'pc-holidays pc-placeholder');
-      chip.setAttribute('title', msg);
-      chip.setAttribute('aria-disabled', 'true');
-      parentEl.appendChild(chip);
-      return;
-    }
-
-    // Holiday filter: {id:'hol', h:'shabbat', lbl:'שבת'} or {id:'hol', h:null, lbl:'כל החגים'}
-    if (item.id === 'hol' && 'h' in item) {
-      var hc = item.h ? ((typeof HOLIDAY_TAGS !== 'undefined' && HOLIDAY_TAGS[item.h]) ? HOLIDAY_TAGS[item.h].length : 0) : catCnt('hol');
-      parentEl.appendChild(makeChip(item.lbl, hc || null,
-        function() { selectCat('hol', item.h || null, nodeKey); },
-        isActiveLeaf('hol', item.h || null, null)));
-      return;
-    }
-
-    // Nested accordion: {lbl:'מנות עיקריות', ids:[...], items:[...]}
-    if (item.items) {
-      var subItems = item.items;
-      var ic = item.ids ? catCnt(item.ids) : (item.id ? catCnt(item.id) : 0);
-      var hdr = document.createElement('button');
-      hdr.className = 'acc-hdr';
-      hdr.setAttribute('aria-expanded', 'false');
-      hdr.innerHTML = esc(item.lbl)
-        + (ic ? ' <span class="pc-cnt">(' + ic + ')</span>' : '')
-        + '<span class="acc-a" aria-hidden="true">&#9662;</span>';
-      var body = document.createElement('div');
-      body.className = 'acc-body';
-      subItems.forEach(function(s) { renderItem(s, nodeKey, body); });
-      hdr.addEventListener('click', function(e) {
-        e.stopPropagation();
-        var o = body.classList.toggle('open');
-        hdr.classList.toggle('open', o);
-        hdr.setAttribute('aria-expanded', o);
-      });
-      parentEl.appendChild(hdr);
-      parentEl.appendChild(body);
-      return;
-    }
-
-    // Multi-cat or recipe-ID array: {ids:[...], lbl:'הכל'}
-    if (item.ids) {
-      var isRecipeIds = item.ids.length > 0 && /[0-9]/.test(item.ids[0]);
-      var _rids = item.ids, _lbl = item.lbl;
-      if (isRecipeIds) {
-        var activeSub = ACT_IDS && _rids.every(function(r){return ACT_IDS.has(r);}) && _rids.length === ACT_IDS.size;
-        parentEl.appendChild(makeChip(item.lbl, item.ids.length,
-          function() { selectByIds(_rids, _lbl, nodeKey); }, activeSub));
-      } else {
-        parentEl.appendChild(makeChip(item.lbl, catCnt(item.ids),
-          function() { selectMulti(_rids, _lbl, nodeKey); },
-          isActiveLeaf(null, null, _rids)));
-      }
-      return;
-    }
-
-    // Simple cat leaf: {id:'soups', lbl:'מרקים'}
-    if (item.id) {
-      parentEl.appendChild(makeChip(item.lbl, catCnt(item.id),
-        function() { selectCat(item.id, null, nodeKey); },
-        isActiveLeaf(item.id, null, null)));
-      return;
-    }
-  }
-
-  // --- Build drawer for a top-level group ---
   function buildPanel(node, pi) {
     var row = document.createElement('div');
     row.className = 'panel-row';
-    (node.items || []).forEach(function(item) { renderItem(item, node.key, row); });
+
+    (node.items || []).forEach(function(item) {
+      // Separator
+      if (item.sep) {
+        var hr = document.createElement('div');
+        hr.className = 'acc-sep';
+        row.appendChild(hr);
+        return;
+      }
+
+      // v7.0: Placeholder (Option C — חגי העדות "בקרוב")
+      if (item.placeholder) {
+        var phBtn = document.createElement('button');
+        phBtn.className = 'pc';
+        phBtn.style.opacity = '.55';
+        phBtn.style.cursor = 'help';
+        phBtn.setAttribute('role', 'menuitem');
+        phBtn.innerHTML = esc(item.lbl);
+        phBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (typeof showToast === 'function') {
+            showToast('חגי העדות יתווספו בעתיד');
+          }
+        });
+        row.appendChild(phBtn);
+        return;
+      }
+
+      // Accordion group (has sub-items)
+      if (item.items || item.sub) {
+        var subItems = item.items || item.sub || [];
+        var ic = item.ids ? catCnt(item.ids) : catCnt(item.id);
+        var accWrap = document.createElement('div');
+        accWrap.style.cssText = 'display:contents';
+
+        var hdr = document.createElement('button');
+        hdr.className = 'acc-hdr';
+        hdr.setAttribute('aria-expanded', 'false');
+        hdr.innerHTML = esc(item.lbl)
+          + (ic ? ' <span class="pc-cnt">(' + ic + ')</span>' : '')
+          + '<span class="acc-a" aria-hidden="true">▾</span>';
+
+        var body = document.createElement('div');
+        body.className = 'acc-body';
+
+        if (item.ids) {
+          body.appendChild(makeChip('הכל ב' + item.lbl, catCnt(item.ids),
+            function() { selectMulti(item.ids, item.lbl, node.key); },
+            isActiveLeaf(null, null, item.ids)));
+        }
+
+        subItems.forEach(function(s) {
+          if (s.sep) {
+            var hr = document.createElement('div');
+            hr.className = 'acc-sep';
+            body.appendChild(hr); return;
+          }
+
+          // ── Nested accordion (e.g. מתכונים מהעדות inside מטעמים, מטבח ישראלי inside עדות) ──
+          if (s.items || s.sub) {
+            var nestedItems = s.items || s.sub || [];
+            var nic = s.ids ? catCnt(s.ids) : (s.id ? catCnt(s.id) : 0);
+            var nhdr = document.createElement('button');
+            nhdr.className = 'acc-hdr';
+            nhdr.setAttribute('aria-expanded', 'false');
+            nhdr.innerHTML = esc(s.lbl)
+              + (nic ? ' <span class="pc-cnt">(' + nic + ')</span>' : '')
+              + '<span class="acc-a" aria-hidden="true">&#9662;</span>';
+
+            var nbody = document.createElement('div');
+            nbody.className = 'acc-body';
+
+            if (s.ids && !s.sub) {
+              var _nids = s.ids, _nlbl = s.lbl;
+              var isNR = _nids.length > 0 && /[0-9]/.test(_nids[0]);
+              nbody.appendChild(makeChip('הכל ב' + s.lbl, isNR ? _nids.length : catCnt(_nids),
+                function() { if (isNR) selectByIds(_nids, _nlbl, node.key); else selectMulti(_nids, _nlbl, node.key); },
+                isActiveLeaf(null, null, _nids)));
+            }
+
+            nestedItems.forEach(function(ns) {
+              if (ns.sep) { var nhr = document.createElement('div'); nhr.className = 'acc-sep'; nbody.appendChild(nhr); return; }
+              if (ns.ids && !ns.h) {
+                var isNR2 = ns.ids.length > 0 && /[0-9]/.test(ns.ids[0]);
+                if (isNR2) {
+                  var _nr = ns.ids, _nl = ns.lbl;
+                  nbody.appendChild(makeChip(ns.lbl, ns.ids.length,
+                    function() { selectByIds(_nr, _nl, node.key); },
+                    ACT_IDS && _nr.every(function(r){ return ACT_IDS.has(r); }) && _nr.length === ACT_IDS.size));
+                } else {
+                  nbody.appendChild(makeChip(ns.lbl, catCnt(ns.ids),
+                    function() { selectMulti(ns.ids, ns.lbl, node.key); },
+                    isActiveLeaf(null, null, ns.ids)));
+                }
+                return;
+              }
+              if (ns.items || ns.sub) {
+                // 3rd level: render as expandable too
+                var deep = ns.items || ns.sub || [];
+                var dic = ns.ids ? catCnt(ns.ids) : (ns.id ? catCnt(ns.id) : 0);
+                var dhdr = document.createElement('button');
+                dhdr.className = 'acc-hdr';
+                dhdr.setAttribute('aria-expanded', 'false');
+                dhdr.innerHTML = esc(ns.lbl) + (dic ? ' <span class="pc-cnt">(' + dic + ')</span>' : '') + '<span class="acc-a" aria-hidden="true">&#9662;</span>';
+                var dbody = document.createElement('div');
+                dbody.className = 'acc-body';
+                deep.forEach(function(ds) {
+                  if (ds.sep) return;
+                  if (ds.ids) {
+                    var isdr = ds.ids.length > 0 && /[0-9]/.test(ds.ids[0]);
+                    var _dr = ds.ids, _dl = ds.lbl;
+                    dbody.appendChild(makeChip(ds.lbl, isdr ? ds.ids.length : catCnt(ds.ids),
+                      function() { if (isdr) selectByIds(_dr, _dl, node.key); else selectMulti(_dr, _dl, node.key); },
+                      false));
+                  } else if (ds.id) {
+                    dbody.appendChild(makeChip(ds.lbl, catCnt(ds.id),
+                      function() { selectCat(ds.id, ds.h || null, node.key); },
+                      isActiveLeaf(ds.id, ds.h || null, null)));
+                  }
+                });
+                dhdr.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  var o = dbody.classList.toggle('open');
+                  dhdr.classList.toggle('open', o);
+                  dhdr.setAttribute('aria-expanded', o);
+                });
+                nbody.appendChild(dhdr);
+                nbody.appendChild(dbody);
+                return;
+              }
+              var nsc = ns.h ? (HOLIDAY_TAGS[ns.h] || []).length : catCnt(ns.id);
+              nbody.appendChild(makeChip(ns.lbl, nsc || null,
+                function() { selectCat(ns.id, ns.h || null, node.key); },
+                isActiveLeaf(ns.id, ns.h || null, null)));
+            });
+
+            nhdr.addEventListener('click', function(e) {
+              e.stopPropagation();
+              var o = nbody.classList.toggle('open');
+              nhdr.classList.toggle('open', o);
+              nhdr.setAttribute('aria-expanded', o);
+            });
+            body.appendChild(nhdr);
+            body.appendChild(nbody);
+            return;
+          }
+
+          // Handle recipe-ID arrays (isr/span subcategories)
+          if (s.ids && !s.h) {
+            var isRecipeIds = s.ids.length > 0 && /[0-9]/.test(s.ids[0]);
+            if (isRecipeIds) {
+              var _sr = s.ids, _sl = s.lbl;
+              var activeSub = ACT_IDS && _sr.every(function(r){ return ACT_IDS.has(r); }) && _sr.length === ACT_IDS.size;
+              body.appendChild(makeChip(s.lbl, s.ids.length,
+                function() { selectByIds(_sr, _sl, node.key); }, activeSub));
+            } else {
+              body.appendChild(makeChip(s.lbl, catCnt(s.ids),
+                function() { selectMulti(s.ids, s.lbl, node.key); },
+                isActiveLeaf(null, null, s.ids)));
+            }
+            return;
+          }
+          // Standard: holiday or category
+          var sc = s.h ? (HOLIDAY_TAGS[s.h] || []).length : catCnt(s.id);
+          body.appendChild(makeChip(s.lbl, sc || null,
+            function() { selectCat(s.id, s.h || null, node.key); },
+            isActiveLeaf(s.id, s.h || null, null)));
+        });
+
+        // Auto-open if child active
+        var childActive = (item.id && ACT_CAT === item.id)
+          || (item.sub && item.sub.some(function(s) { return s.h && ACT_HOLIDAY === s.h; }));
+        if (childActive) { body.classList.add('open'); hdr.classList.add('open'); hdr.setAttribute('aria-expanded', 'true'); }
+
+        hdr.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var open = body.classList.toggle('open');
+          hdr.classList.toggle('open', open);
+          hdr.setAttribute('aria-expanded', open);
+        });
+
+        row.appendChild(hdr);
+        row.appendChild(body);
+        return;
+      }
+
+      // Multi-cat leaf (הכל, or span subcat by recipe IDs)
+      if (item.ids && !item.items) {
+        // Detect if ids are recipe IDs (contain digits) vs category IDs
+        var isRecipeIds = item.ids.length > 0 && /[0-9]/.test(item.ids[0]);
+        if (isRecipeIds) {
+          // Span subcategory — filter by recipe ID set
+          var _rids = item.ids, _lbl = item.lbl;
+          var activeSubcat = ACT_IDS && _rids.every(function(rid) { return ACT_IDS.has(rid); })
+                             && _rids.length === ACT_IDS.size;
+          row.appendChild(makeChip(item.lbl, item.ids.length,
+            function() { selectByIds(_rids, _lbl, node.key); },
+            activeSubcat));
+        } else {
+          row.appendChild(makeChip(item.lbl, catCnt(item.ids),
+            function() { selectMulti(item.ids, item.lbl, node.key); },
+            isActiveLeaf(null, null, item.ids)));
+        }
+        return;
+      }
+
+      // Simple chip
+      row.appendChild(makeChip(item.lbl, catCnt(item.id),
+        function() { selectCat(item.id, null, node.key); },
+        isActiveLeaf(item.id, null, null)));
+    });
+
     pi.appendChild(row);
   }
 
-  // --- Iterate top-level MENU_STRUCTURE ---
   MENU_STRUCTURE.forEach(function(node, idx) {
-    var key = node.key || ('g' + idx);
+    var key = node.id || ('g' + idx);
 
-    // Simple leaf top-level (e.g., "הכל")
+    // Simple leaf
     if (node.id && !node.items) {
-      var c = node.id === 'all' ? R.length : catCnt(node.id);
+      var c = catCnt(node.id);
       var btn = document.createElement('button');
       btn.className = 'nb' + (isActiveLeaf(node.id, null, null) ? ' active' : '');
       btn.setAttribute('role', 'menuitem');
-      btn.setAttribute('data-nav-key', key);
-      btn.innerHTML = esc(node.lbl) + (c ? '<span class="nb-cnt">' + c.toLocaleString() + '</span>' : '');
+      btn.innerHTML = esc(node.lbl) + (c ? '<span class="nb-cnt">' + c + '</span>' : '');
       btn.addEventListener('click', function(e) {
         e.stopPropagation();
         closePanel();
-        selectCat(node.id, null, key);
+        selectCat(node.id, null, node.key || ('g' + idx));
       });
       bar.appendChild(btn);
       return;
     }
 
-    // Group button with drawer
-    var total = catCnt(node.ids || []);
+    // Group with dropdown
+    // Compute correct group total — use the 'הכל' item to avoid double-counting
+    var total = (function() {
+      if (node.key === 'all_group' || node.key === 'all_master') return R.length;
+      // Find the 'הכל' aggregate item
+      var allItem = (node.items || []).find(function(it) { return it.lbl === 'הכל' && it.ids; });
+      if (allItem) {
+        var isRecipeArr = allItem.ids.length > 0 && /[0-9]/.test(allItem.ids[0]);
+        if (isRecipeArr) {
+          // Recipe-ID array (span_group, nonkosher_group) → count by cat directly
+          // Use Set to get unique cats, then sum
+          var uniqueCats = {};
+          allItem.ids.forEach(function(rid) {
+            var rec = R.find(function(r) { return r && r.id === rid; });
+            if (rec) uniqueCats[rec.cat] = (uniqueCats[rec.cat] || 0) + 1;
+          });
+          return Object.keys(uniqueCats).reduce(function(s, c) { return s + uniqueCats[c]; }, 0);
+        }
+        return catCnt(allItem.ids);  // cat-ID array (moroccan, katamon)
+      }
+      // No 'הכל' item: sum non-duplicate leaf items
+      return (node.items || []).reduce(function(a, it) {
+        if (it.items || it.sub || it.lbl === 'הכל') return a;
+        return a + (it.ids ? catCnt(it.ids) : it.id ? catCnt(it.id) : 0);
+      }, 0);
+    })();
+
     var grpActive = (node.key && node.key === ACT_NAV_KEY);
 
     var btn = document.createElement('button');
     btn.className = 'nb' + (grpActive ? ' active' : '');
     btn.setAttribute('role', 'menuitem');
     btn.setAttribute('aria-haspopup', 'true');
-    btn.setAttribute('data-nav-key', key);
     btn.innerHTML = esc(node.lbl)
-      + (total ? '<span class="nb-cnt">' + total.toLocaleString() + '</span>' : '')
-      + '<span class="nb-arr" aria-hidden="true">&#9662;</span>';
+      + (total ? '<span class="nb-cnt">' + total + '</span>' : '')
+      + '<span class="nb-arr" aria-hidden="true">▾</span>';
 
-    var _k = key, _n = node;
+    var _k = key;
+    var _n = node;
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
       openPanel(_k, btn, function(pi) { buildPanel(_n, pi); });
     });
+
     bar.appendChild(btn);
   });
 }
-
 
 function updateNavActive() {
   var bar = document.getElementById('cat-inner');
@@ -8209,10 +8373,9 @@ function navRecipe(dir) {
 ═══════════════════════════════════════════════ */
 function doSearch(val) {
   SEARCH = (val || '').trim().toLowerCase();
-  // v7.1 — Any search (even clearing) keeps the grid visible once revealed
-  if (SEARCH) showMainGrid();
   var clr = document.getElementById('srch-clr');
   if (clr) clr.hidden = !SEARCH;
+  if (SEARCH && typeof window.showMainGrid === 'function') window.showMainGrid();
   updateTitle();
   renderGrid();
 }
@@ -8704,43 +8867,13 @@ document.addEventListener('DOMContentLoaded', function() {
     _LANG = 'en';
   }
 
+  // v7.0: Header recipe count + Hero CTA handlers
+  if (typeof window.initHdrCount === 'function') window.initHdrCount();
+  if (typeof window.initHeroCTAs === 'function') window.initHeroCTAs();
+
   // Pill counter
   var pill = document.getElementById('pill-cnt');
   if (pill) pill.textContent = R.length + t('recipes_count');
-
-  // v7.0 — Header recipe count
-  var hdrCnt = document.getElementById('hdr-count');
-  if (hdrCnt) hdrCnt.textContent = R.length.toLocaleString();
-
-  // v7.0 — Hero CTA buttons
-  var ctaBrowse = document.getElementById('hero-cta-browse');
-  if (ctaBrowse) ctaBrowse.addEventListener('click', function() {
-    // v7.1 — Simulate click on "הכל" nav button to reveal grid with all recipes
-    var allBtn = document.querySelector('#cat-inner .nb[data-nav-key="all"]');
-    if (allBtn) {
-      allBtn.click();
-    } else {
-      // Fallback: just show grid
-      showMainGrid();
-    }
-    setTimeout(function() {
-      var main = document.getElementById('main');
-      if (main) main.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 50);
-  });
-  var ctaBook = document.getElementById('hero-cta-book');
-  if (ctaBook) ctaBook.addEventListener('click', function() {
-    var bookBtn = document.getElementById('book-toggle');
-    if (bookBtn) {
-      // Scroll to book section and open it
-      var bookWrap = document.getElementById('book-wrapper');
-      if (bookWrap) bookWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      // Trigger toggle if closed
-      setTimeout(function() {
-        if (bookBtn.getAttribute('aria-expanded') !== 'true') bookBtn.click();
-      }, 400);
-    }
-  });
 
   // Search input
   var srch = document.getElementById('srch');
@@ -11604,22 +11737,6 @@ function getEnTip(r) {
 
 var _LANG = 'he';
 var I18N = {
-  // v7.0 — Header brand + recipe count
-  site_name_short: {he:'ספר הבישול של פרלה', en:"Perla's Cookbook"},
-  recipes_label:   {he:'מתכונים', en:'recipes'},
-  // v7.0 — Hero CTAs
-  hero_cta_browse: {he:'עיון במתכונים', en:'Browse Recipes'},
-  hero_cta_book:   {he:'קרא את הספר',   en:'Read the Book'},
-  // v7.0 — Top-level nav groups
-  nav_grp_all:        {he:'הכל',         en:'All'},
-  nav_grp_morocco:    {he:'מרוקו',       en:'Morocco'},
-  nav_grp_spain:      {he:'ספרד',        en:'Spain'},
-  nav_grp_communities:{he:'עדות ישראל',  en:'Jewish Communities'},
-  nav_grp_holidays:   {he:'חגים',        en:'Holidays'},
-  nav_grp_nonkosher:  {he:'לא כשר',      en:'Non-Kosher'},
-  // v7.0 — Community holidays placeholder (Option C)
-  community_holidays_lbl:  {he:'חגי העדות (בקרוב)', en:'Community Holidays (Coming Soon)'},
-  community_holidays_msg:  {he:'מתכונים לחגי העדות יתווספו בעתיד. כרגע רק מתכוני מרוקו מתויגים לחגים.', en:'Community holiday recipes will be added in the future. Currently only Moroccan recipes are tagged by holiday.'},
   // Header
   hdr_title:     {he:'ספר הבישול של משפחת בן הראש', en:'The Ben-Harrosh Family Cookbook'},
   tree_title:    {he:'תפריט מתכונים', en:'Recipe Menu'},
@@ -12067,7 +12184,7 @@ function exportFullCookbook() {
   /* Web3Forms Access Key — PUBLIC (not secret, it's an alias to your email).
      Get yours at https://web3forms.com → sign up → Create Access Key.
      Paste the UUID-style string below (e.g. 'a1b2c3d4-e5f6-7890-ab12-cd34ef56ab78'). */
-  var WEB3FORMS_KEY  = '705d4207-c4a6-43a2-8fdc-d8e202bc6c9c';
+  var WEB3FORMS_KEY  = 'PASTE_YOUR_WEB3FORMS_ACCESS_KEY_HERE';
   var WEB3FORMS_URL  = 'https://api.web3forms.com/submit';
   var FORMSUBMIT_EMAIL_B64 = 'YXNhZmJlbjMzQGdtYWlsLmNvbQ==';  /* retained for mailto fallback only */
   var FORM_NAME = 'perla-feedback';
