@@ -414,6 +414,23 @@ html.light .hero-cta-secondary { color: #7a3a18; border-color: rgba(184,66,35,.4
 /* v7.1: Hide recipe grid until user picks nav/search/CTA */
 .main-hidden { display: none !important; }
 
+/* v7.2: Community-holiday chips (distinct accent — coral over the gold base) */
+.pc-comm-hol {
+  background: rgba(184,66,35,.10);
+  border-color: rgba(184,66,35,.40);
+  color: #d4603a;
+}
+.pc-comm-hol:hover {
+  background: rgba(184,66,35,.20);
+  border-color: rgba(184,66,35,.65);
+  color: var(--c-spice);
+}
+.pc-comm-hol.pc-empty {
+  opacity: .5;
+  cursor: help;
+}
+html.light .pc-comm-hol { color: #8c2e14; }
+
 /* ── About ────────────────────────────────────────────────── */
 .about {
   direction: rtl; text-align: right;
@@ -7892,6 +7909,36 @@ function buildNav() {
     if (ttl) ttl.textContent = label || 'ספרדי-מרוקאי';
   }
 
+  /* v7.2: Filter by community + holiday combination.
+     Uses COMMUNITY_HOLIDAY_TAGS[community][holiday] = [recipeIds].
+     If no recipes are tagged for that combo, shows toast and does nothing. */
+  function selectCommunityHoliday(community, holidayKey, label, groupKey) {
+    if (typeof window.showMainGrid === 'function') window.showMainGrid();
+    var ids = (typeof COMMUNITY_HOLIDAY_TAGS !== 'undefined'
+               && COMMUNITY_HOLIDAY_TAGS[community]
+               && COMMUNITY_HOLIDAY_TAGS[community][holidayKey]) || [];
+    if (!ids.length) {
+      if (typeof showToast === 'function') {
+        showToast('אין עדיין מתכונים מתויגים לשילוב הזה');
+      }
+      return;
+    }
+    ACT_IDS     = new Set(ids);
+    ACT_CATS    = [];
+    ACT_CAT     = community;
+    ACT_HOLIDAY = holidayKey;
+    if (groupKey) ACT_NAV_KEY = groupKey;
+    SEARCH      = '';
+    var si = document.getElementById('srch');
+    if (si) si.value = '';
+    hide('srch-clr');
+    closePanel();
+    updateNavActive();
+    renderGrid();
+    var ttl = document.getElementById('sec-title');
+    if (ttl) ttl.textContent = label || (community + ' — ' + holidayKey);
+  }
+
   function buildPanel(node, pi) {
     var row = document.createElement('div');
     row.className = 'panel-row';
@@ -7920,6 +7967,40 @@ function buildNav() {
           }
         });
         row.appendChild(phBtn);
+        return;
+      }
+
+      // v7.2: Community-holiday combo (e.g., עיראק × פסח)
+      if (item.communityHoliday && item.holidayKey) {
+        var _comm = item.communityHoliday;
+        var _hkey = item.holidayKey;
+        var _hlbl = item.lbl;
+        var ids = (typeof COMMUNITY_HOLIDAY_TAGS !== 'undefined'
+                   && COMMUNITY_HOLIDAY_TAGS[_comm]
+                   && COMMUNITY_HOLIDAY_TAGS[_comm][_hkey]) || [];
+        var chBtn = document.createElement('button');
+        chBtn.className = 'pc pc-comm-hol' + (ids.length === 0 ? ' pc-empty' : '');
+        chBtn.setAttribute('role', 'menuitem');
+        var cntHtml = ids.length ? ' <span class="pc-cnt">(' + ids.length + ')</span>' : '';
+        chBtn.innerHTML = esc(_hlbl) + cntHtml;
+        chBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (ids.length === 0) {
+            if (typeof showToast === 'function') {
+              showToast('אין עדיין מתכונים מתויגים לחג זה בעדה הזו');
+            }
+            return;
+          }
+          // Find parent community label from outer node
+          var parentLbl = '';
+          (node.items || []).forEach(function(it) {
+            if (it.sub && it.sub.indexOf(item) >= 0) parentLbl = '';  // not directly accessible
+          });
+          selectCommunityHoliday(_comm, _hkey,
+            (catLbl(_comm) || _comm) + ' — ' + _hlbl,
+            node.key);
+        });
+        row.appendChild(chBtn);
         return;
       }
 

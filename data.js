@@ -18774,6 +18774,123 @@ const HOLIDAY_TAGS = {
   henna:['add15','add16','add27','add36','add45','add54','ex31','ex32','ex33','ex34','ex35','fin13','fin14','fin27','h1','h2','h3','hle1','hle2','hle3','hle4','hle5','hn1','hn10','hn11','hn12','hn13','hn14','hn15','hn16','hn17','hn18','hn19','hn2','hn20','hn21','hn22','hn23','hn24','hn3','hn4','hn5','hn6','hn7','hn8','hn9','hne1','hne2','hne3','hne4','holf1','holf2','holf3','holf4','holf5','holfx1','holfx2','holfx3','holfx4','holfx5','hv1','hv2','hv3','hv4','hv5','hw1','hw2','hw3','hw4','hw5','hx1','hx2','hx3','hx4','hx5','rare12','rare2','rare7','rer6','var7']
 };
 
+// ═══ COMMUNITY_HOLIDAY_TAGS — v7.2 ═══
+// Maps community → holiday → recipe IDs
+// Based on documented Sephardic/Mizrahi/Ashkenazi food traditions.
+// First-pass tagging — variations exist between families and regions.
+// Mimouna intentionally empty for non-Moroccan communities.
+const COMMUNITY_HOLIDAY_TAGS = {
+  iraq: {
+    shabbat:['iq1','iq2','iq4','iq8','iq10','iq13','iq14','iq21','iq28'],
+    rosh:['iq6','iq8','iq11','iq25','iq30'],
+    kippur:['iq3','iq11','iq17','iq30'],
+    pesach:['iq5','iq8','iq14','iq19','iq20','iq24'],
+    mimouna:[],
+    hanukkah:['iq15','iq18'],
+    purim:['iq22','iq27','iq29'],
+    shavuot:['iq6','iq12','iq18'],
+    sukkot:['iq4','iq9','iq19','iq26'],
+    henna:['iq22','iq27']
+  },
+  kurd: {
+    shabbat:['ku1','ku2','ku3','ku4','ku9','ku12','ku17'],
+    rosh:['ku5','ku22','ku25'],
+    kippur:['ku15','ku23','ku30'],
+    pesach:['ku9','ku17','ku26','ku29'],
+    mimouna:[],
+    hanukkah:['ku11','ku18','ku24'],
+    purim:['ku22','ku27','ku28','ku29'],
+    shavuot:['ku4','ku10','ku14','ku19','ku24','ku28'],
+    sukkot:['ku9','ku20','ku21'],
+    henna:['ku22','ku27']
+  },
+  ashk: {
+    shabbat:['as1','as2','as3','as4','as7','as12','as14','as17','as25','as27'],
+    rosh:['as12','as18'],
+    kippur:['as20','as25','as27'],
+    pesach:['as2','as3','as5','as10','as11'],
+    mimouna:[],
+    hanukkah:['as5','as14','as30'],
+    purim:['as6','as8','as9','as22'],
+    shavuot:['as4','as14','as17','as24','as28'],
+    sukkot:['as3','as11','as12','as19'],
+    henna:[]
+  },
+  yem: {
+    shabbat:['ye1','ye2','ye3','ye7','ye15','ye16','ye17','ye21','ye22'],
+    rosh:['ye3','ye5','ye6','ye22','ye28'],
+    kippur:['ye3','ye15','ye25','ye29'],
+    pesach:['ye4','ye8','ye9','ye20','ye27'],
+    mimouna:[],
+    hanukkah:['ye6','ye14','ye24'],
+    purim:['ye21','ye28','ye30'],
+    shavuot:['ye2','ye5','ye10','ye13'],
+    sukkot:['ye4','ye10','ye15','ye17','ye18'],
+    henna:['ye21','ye24','ye28','ye30']
+  },
+  pers: {
+    shabbat:['pe1','pe9','pe10','pe17','pe18','pe24','pe29'],
+    rosh:['pe2','pe5','pe10','pe17','pe27','pe29'],
+    kippur:['pe5','pe7','pe11','pe28'],
+    pesach:['pe1','pe2','pe17','pe21'],
+    mimouna:[],
+    hanukkah:['pe6','pe16','pe23','pe30'],
+    purim:['pe6','pe19','pe23','pe27','pe30'],
+    shavuot:['pe2','pe14','pe22','pe24','pe26'],
+    sukkot:['pe4','pe10','pe18','pe29'],
+    henna:['pe6','pe14','pe27','pe30']
+  },
+  buk: {
+    shabbat:['bu1','bu3','bu4','bu5','bu13','bu15','bu23'],
+    rosh:['bu1','bu7','bu23','bu25'],
+    kippur:['bu5','bu8','bu22'],
+    pesach:['bu4','bu11','bu15','bu17','bu24'],
+    mimouna:[],
+    hanukkah:['bu2','bu11','bu20','bu29'],
+    purim:['bu7','bu25','bu28','bu29','bu30'],
+    shavuot:['bu5','bu14','bu16'],
+    sukkot:['bu1','bu17','bu21','bu23'],
+    henna:['bu7','bu25','bu28','bu29','bu30']
+  },
+  tun: {
+    shabbat:['tn1','tn3','tn6','tn8','tn13','tn17'],
+    rosh:['tn2','tn3','tn5','tn9'],
+    kippur:['tn9','tn12','tn24'],
+    pesach:['tn1','tn5','tn7','tn10','tn14','tn16'],
+    mimouna:['tn4','tn19','tn21','tn25','tn27','tn30'],
+    hanukkah:['tn19','tn21','tn29'],
+    purim:['tn4','tn21','tn22','tn25','tn27','tn30'],
+    shavuot:['tn4','tn26','tn29'],
+    sukkot:['tn3','tn10','tn14','tn26'],
+    henna:['tn4','tn19','tn21','tn25','tn27','tn30']
+  },
+  turk: {
+    shabbat:['tr1','tr6','tr8','tr9','tr11','tr17','tr25','tr26','tr30'],
+    rosh:['tr2','tr4','tr6','tr20','tr22'],
+    kippur:['tr10','tr14','tr23'],
+    pesach:['tr3','tr9','tr11','tr15','tr16','tr26','tr30'],
+    mimouna:[],
+    hanukkah:['tr5','tr19','tr24','tr28'],
+    purim:['tr18','tr20','tr21','tr22','tr28','tr29'],
+    shavuot:['tr1','tr2','tr7','tr11','tr13','tr15','tr16','tr19','tr29'],
+    sukkot:['tr2','tr11','tr13','tr27'],
+    henna:['tr18','tr20','tr21','tr22','tr28','tr29']
+  },
+  isr: {
+    shabbat:['is2','is4','is14','is15','is16','is18','is28'],
+    rosh:['is2','is7','is17'],
+    kippur:['is2','is3','is4','is7','is21'],
+    pesach:['is14','is15','is16','is18','is26','is28'],
+    mimouna:[],
+    hanukkah:['is11','is19','is25','is30'],
+    purim:['is6','is11','is20','is25','is30'],
+    shavuot:['is6','is7','is17','is24','is25','is26','is27'],
+    sukkot:['is3','is7','is10','is22','is29'],
+    henna:['is11','is25','is30']
+  }
+};
+
+
 const MENU_STRUCTURE = [
   /* ═══ v7.0 FLAT 6-GROUP TOP-LEVEL ═══ */
 
@@ -18795,18 +18912,144 @@ const MENU_STRUCTURE = [
   /* 3. ספרד (Andalusian — 73 recipes) */
   {id:'span', lbl:'ספרד'},
 
-  /* 4. עדות ישראל (communities — 270 recipes across 9 ethnicities) */
+    /* 4. עדות ישראל (communities — 270 recipes across 9 ethnicities)
+        v7.2: each community now has its own holiday sub-categories */
   {lbl:'עדות ישראל', key:'communities', items:[
-    {id:'iraq', lbl:'עיראק'},
-    {id:'kurd', lbl:'כורדיסטן'},
-    {id:'ashk', lbl:'אשכנז'},
-    {id:'yem',  lbl:'תימן'},
-    {id:'pers', lbl:'פרס'},
-    {id:'buk',  lbl:'בוכרה'},
-    {id:'tun',  lbl:'טוניסיה'},
-    {id:'turk', lbl:'טורקיה'},
-    {id:'isr',  lbl:'מטבח ישראלי'},
-    {placeholder:'communityHolidays', lbl:'חגי העדות (בקרוב)'}
+    {lbl:'עיראק', items:[
+      {id:'iraq', lbl:'כל המתכונים'},
+      {lbl:'חגי העדה', sub:[
+        {communityHoliday:'iraq',holidayKey:'shabbat',lbl:'שבת'},
+        {communityHoliday:'iraq',holidayKey:'rosh',lbl:'ראש השנה'},
+        {communityHoliday:'iraq',holidayKey:'kippur',lbl:'יום כיפור'},
+        {communityHoliday:'iraq',holidayKey:'pesach',lbl:'פסח'},
+        {communityHoliday:'iraq',holidayKey:'mimouna',lbl:'מימונה'},
+        {communityHoliday:'iraq',holidayKey:'hanukkah',lbl:'חנוכה'},
+        {communityHoliday:'iraq',holidayKey:'purim',lbl:'פורים'},
+        {communityHoliday:'iraq',holidayKey:'shavuot',lbl:'שבועות'},
+        {communityHoliday:'iraq',holidayKey:'sukkot',lbl:'סוכות'},
+        {communityHoliday:'iraq',holidayKey:'henna',lbl:'חינה'}
+      ]}
+    ]},
+    {lbl:'כורדיסטן', items:[
+      {id:'kurd', lbl:'כל המתכונים'},
+      {lbl:'חגי העדה', sub:[
+        {communityHoliday:'kurd',holidayKey:'shabbat',lbl:'שבת'},
+        {communityHoliday:'kurd',holidayKey:'rosh',lbl:'ראש השנה'},
+        {communityHoliday:'kurd',holidayKey:'kippur',lbl:'יום כיפור'},
+        {communityHoliday:'kurd',holidayKey:'pesach',lbl:'פסח'},
+        {communityHoliday:'kurd',holidayKey:'mimouna',lbl:'מימונה'},
+        {communityHoliday:'kurd',holidayKey:'hanukkah',lbl:'חנוכה'},
+        {communityHoliday:'kurd',holidayKey:'purim',lbl:'פורים'},
+        {communityHoliday:'kurd',holidayKey:'shavuot',lbl:'שבועות'},
+        {communityHoliday:'kurd',holidayKey:'sukkot',lbl:'סוכות'},
+        {communityHoliday:'kurd',holidayKey:'henna',lbl:'חינה'}
+      ]}
+    ]},
+    {lbl:'אשכנז', items:[
+      {id:'ashk', lbl:'כל המתכונים'},
+      {lbl:'חגי העדה', sub:[
+        {communityHoliday:'ashk',holidayKey:'shabbat',lbl:'שבת'},
+        {communityHoliday:'ashk',holidayKey:'rosh',lbl:'ראש השנה'},
+        {communityHoliday:'ashk',holidayKey:'kippur',lbl:'יום כיפור'},
+        {communityHoliday:'ashk',holidayKey:'pesach',lbl:'פסח'},
+        {communityHoliday:'ashk',holidayKey:'mimouna',lbl:'מימונה'},
+        {communityHoliday:'ashk',holidayKey:'hanukkah',lbl:'חנוכה'},
+        {communityHoliday:'ashk',holidayKey:'purim',lbl:'פורים'},
+        {communityHoliday:'ashk',holidayKey:'shavuot',lbl:'שבועות'},
+        {communityHoliday:'ashk',holidayKey:'sukkot',lbl:'סוכות'},
+        {communityHoliday:'ashk',holidayKey:'henna',lbl:'חינה'}
+      ]}
+    ]},
+    {lbl:'תימן', items:[
+      {id:'yem', lbl:'כל המתכונים'},
+      {lbl:'חגי העדה', sub:[
+        {communityHoliday:'yem',holidayKey:'shabbat',lbl:'שבת'},
+        {communityHoliday:'yem',holidayKey:'rosh',lbl:'ראש השנה'},
+        {communityHoliday:'yem',holidayKey:'kippur',lbl:'יום כיפור'},
+        {communityHoliday:'yem',holidayKey:'pesach',lbl:'פסח'},
+        {communityHoliday:'yem',holidayKey:'mimouna',lbl:'מימונה'},
+        {communityHoliday:'yem',holidayKey:'hanukkah',lbl:'חנוכה'},
+        {communityHoliday:'yem',holidayKey:'purim',lbl:'פורים'},
+        {communityHoliday:'yem',holidayKey:'shavuot',lbl:'שבועות'},
+        {communityHoliday:'yem',holidayKey:'sukkot',lbl:'סוכות'},
+        {communityHoliday:'yem',holidayKey:'henna',lbl:'חינה'}
+      ]}
+    ]},
+    {lbl:'פרס', items:[
+      {id:'pers', lbl:'כל המתכונים'},
+      {lbl:'חגי העדה', sub:[
+        {communityHoliday:'pers',holidayKey:'shabbat',lbl:'שבת'},
+        {communityHoliday:'pers',holidayKey:'rosh',lbl:'ראש השנה'},
+        {communityHoliday:'pers',holidayKey:'kippur',lbl:'יום כיפור'},
+        {communityHoliday:'pers',holidayKey:'pesach',lbl:'פסח'},
+        {communityHoliday:'pers',holidayKey:'mimouna',lbl:'מימונה'},
+        {communityHoliday:'pers',holidayKey:'hanukkah',lbl:'חנוכה'},
+        {communityHoliday:'pers',holidayKey:'purim',lbl:'פורים'},
+        {communityHoliday:'pers',holidayKey:'shavuot',lbl:'שבועות'},
+        {communityHoliday:'pers',holidayKey:'sukkot',lbl:'סוכות'},
+        {communityHoliday:'pers',holidayKey:'henna',lbl:'חינה'}
+      ]}
+    ]},
+    {lbl:'בוכרה', items:[
+      {id:'buk', lbl:'כל המתכונים'},
+      {lbl:'חגי העדה', sub:[
+        {communityHoliday:'buk',holidayKey:'shabbat',lbl:'שבת'},
+        {communityHoliday:'buk',holidayKey:'rosh',lbl:'ראש השנה'},
+        {communityHoliday:'buk',holidayKey:'kippur',lbl:'יום כיפור'},
+        {communityHoliday:'buk',holidayKey:'pesach',lbl:'פסח'},
+        {communityHoliday:'buk',holidayKey:'mimouna',lbl:'מימונה'},
+        {communityHoliday:'buk',holidayKey:'hanukkah',lbl:'חנוכה'},
+        {communityHoliday:'buk',holidayKey:'purim',lbl:'פורים'},
+        {communityHoliday:'buk',holidayKey:'shavuot',lbl:'שבועות'},
+        {communityHoliday:'buk',holidayKey:'sukkot',lbl:'סוכות'},
+        {communityHoliday:'buk',holidayKey:'henna',lbl:'חינה'}
+      ]}
+    ]},
+    {lbl:'טוניסיה', items:[
+      {id:'tun', lbl:'כל המתכונים'},
+      {lbl:'חגי העדה', sub:[
+        {communityHoliday:'tun',holidayKey:'shabbat',lbl:'שבת'},
+        {communityHoliday:'tun',holidayKey:'rosh',lbl:'ראש השנה'},
+        {communityHoliday:'tun',holidayKey:'kippur',lbl:'יום כיפור'},
+        {communityHoliday:'tun',holidayKey:'pesach',lbl:'פסח'},
+        {communityHoliday:'tun',holidayKey:'mimouna',lbl:'מימונה'},
+        {communityHoliday:'tun',holidayKey:'hanukkah',lbl:'חנוכה'},
+        {communityHoliday:'tun',holidayKey:'purim',lbl:'פורים'},
+        {communityHoliday:'tun',holidayKey:'shavuot',lbl:'שבועות'},
+        {communityHoliday:'tun',holidayKey:'sukkot',lbl:'סוכות'},
+        {communityHoliday:'tun',holidayKey:'henna',lbl:'חינה'}
+      ]}
+    ]},
+    {lbl:'טורקיה', items:[
+      {id:'turk', lbl:'כל המתכונים'},
+      {lbl:'חגי העדה', sub:[
+        {communityHoliday:'turk',holidayKey:'shabbat',lbl:'שבת'},
+        {communityHoliday:'turk',holidayKey:'rosh',lbl:'ראש השנה'},
+        {communityHoliday:'turk',holidayKey:'kippur',lbl:'יום כיפור'},
+        {communityHoliday:'turk',holidayKey:'pesach',lbl:'פסח'},
+        {communityHoliday:'turk',holidayKey:'mimouna',lbl:'מימונה'},
+        {communityHoliday:'turk',holidayKey:'hanukkah',lbl:'חנוכה'},
+        {communityHoliday:'turk',holidayKey:'purim',lbl:'פורים'},
+        {communityHoliday:'turk',holidayKey:'shavuot',lbl:'שבועות'},
+        {communityHoliday:'turk',holidayKey:'sukkot',lbl:'סוכות'},
+        {communityHoliday:'turk',holidayKey:'henna',lbl:'חינה'}
+      ]}
+    ]},
+    {lbl:'מטבח ישראלי', items:[
+      {id:'isr', lbl:'כל המתכונים'},
+      {lbl:'חגי העדה', sub:[
+        {communityHoliday:'isr',holidayKey:'shabbat',lbl:'שבת'},
+        {communityHoliday:'isr',holidayKey:'rosh',lbl:'ראש השנה'},
+        {communityHoliday:'isr',holidayKey:'kippur',lbl:'יום כיפור'},
+        {communityHoliday:'isr',holidayKey:'pesach',lbl:'פסח'},
+        {communityHoliday:'isr',holidayKey:'mimouna',lbl:'מימונה'},
+        {communityHoliday:'isr',holidayKey:'hanukkah',lbl:'חנוכה'},
+        {communityHoliday:'isr',holidayKey:'purim',lbl:'פורים'},
+        {communityHoliday:'isr',holidayKey:'shavuot',lbl:'שבועות'},
+        {communityHoliday:'isr',holidayKey:'sukkot',lbl:'סוכות'},
+        {communityHoliday:'isr',holidayKey:'henna',lbl:'חינה'}
+      ]}
+    ]}
   ]},
 
   /* 5. חגים (holiday recipes — 80 tagged in hol category) */
