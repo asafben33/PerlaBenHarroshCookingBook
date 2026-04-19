@@ -8099,6 +8099,36 @@ function buildNav() {
 
             nestedItems.forEach(function(ns) {
               if (ns.sep) { var nhr = document.createElement('div'); nhr.className = 'acc-sep'; nbody.appendChild(nhr); return; }
+
+              // v7.4: Community-holiday inside a nested accordion (e.g. עיראק → מאכלי חגים → שבת)
+              if (ns.communityHoliday && ns.holidayKey) {
+                var _ncomm = ns.communityHoliday;
+                var _nhkey = ns.holidayKey;
+                var _nhlbl = ns.lbl;
+                var _nids = (typeof COMMUNITY_HOLIDAY_TAGS !== 'undefined'
+                             && COMMUNITY_HOLIDAY_TAGS[_ncomm]
+                             && COMMUNITY_HOLIDAY_TAGS[_ncomm][_nhkey]) || [];
+                var _nbtn = document.createElement('button');
+                _nbtn.className = 'pc pc-comm-hol' + (_nids.length === 0 ? ' pc-empty' : '');
+                _nbtn.setAttribute('role', 'menuitem');
+                var _ncntH = _nids.length ? ' <span class="pc-cnt">(' + _nids.length + ')</span>' : '';
+                _nbtn.innerHTML = esc(_nhlbl) + _ncntH;
+                _nbtn.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  if (_nids.length === 0) {
+                    if (typeof showToast === 'function') {
+                      showToast('אין עדיין מתכונים מתויגים לחג זה בעדה הזו');
+                    }
+                    return;
+                  }
+                  selectCommunityHoliday(_ncomm, _nhkey,
+                    (catLbl(_ncomm) || _ncomm) + ' — ' + _nhlbl,
+                    node.key);
+                });
+                nbody.appendChild(_nbtn);
+                return;
+              }
+
               if (ns.ids && !ns.h) {
                 var isNR2 = ns.ids.length > 0 && /[0-9]/.test(ns.ids[0]);
                 if (isNR2) {
