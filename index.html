@@ -89,7 +89,10 @@ p, h1, h2, h3, h4, span, li, button, label, input, a {
 ol, ul { direction: rtl; padding-right: 1.4rem; padding-left: 0; }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; font-size: 17px; /* v6.8: +6% for better readability; all rem values scale */ }
+@media (max-width: 480px) {
+  html { font-size: 16px; /* v6.8: keep mobile at 16px to avoid horizontal overflow on narrow screens */ }
+}
 body {
   font-family: 'Frank Ruhl Libre', 'David Libre', serif;
   background: transparent;
@@ -353,7 +356,7 @@ ol { padding-right: 1.2rem; }
 }
 .hero-h1 em { font-style: normal; color: var(--c-gold-l); }
 .hero-tagline {
-  direction: rtl; text-align: right; font-size: .96rem; color: var(--c-gold-l); margin-bottom: .9rem; letter-spacing: .03em; }
+  direction: rtl; text-align: right; font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-bottom: .9rem; letter-spacing: .03em; text-shadow: 0 1px 3px rgba(0,0,0,.35); }
 .hero-pills {
   direction: rtl; display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.3rem; }
 .hp {
@@ -436,7 +439,7 @@ html.light .book-ch-page{color:#a08060}
 .book-sub{color:var(--c-gold-l);font-size:.95rem;font-weight:700;margin:1.2rem 0 .3rem;padding-top:.6rem;border-top:1px solid rgba(196,147,10,.08);direction:rtl;text-align:right}
 .book-sub:first-child{border-top:none;padding-top:0}
 html.light .book-sub{color:#7a3a18}
-.book-p{line-height:1.95;margin:.5rem 0;text-align:justify;direction:rtl;color:rgba(237,224,196,.85);font-size:.92rem}
+.book-p{line-height:1.95;margin:.5rem 0;text-align:justify;direction:rtl;color:rgba(237,224,196,.9);font-size:1.02rem}
 html.light .book-p{color:#3a2010}
 .book-placeholder{font-style:italic;text-align:center;color:rgba(237,224,196,.25);font-size:.82rem}
 html.light .book-placeholder{color:#bba080}
@@ -699,8 +702,8 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 .m-hero img { width: 100%; height: 100%; object-fit: cover; }
 .m-hero-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,.45); color: #fff; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; z-index: 3; display: none; align-items: center; justify-content: center; transition: background .2s; }
 .m-hero-nav:hover { background: rgba(196,147,10,.7); }
-.m-hero-nav.prev { left: .5rem; }
-.m-hero-nav.next { right: .5rem; }
+.m-hero-nav.prev { right: .5rem; }
+.m-hero-nav.next { left: .5rem; }
 .m-hero-dots { position: absolute; bottom: .5rem; left: 50%; transform: translateX(-50%); display: none; gap: 6px; z-index: 3; }
 .m-hero-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.5); border: none; padding: 0; cursor: pointer; transition: background .2s; }
 .m-hero-dot.active { background: #fff; }
@@ -711,9 +714,22 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
   color: var(--c-gold-d); cursor: pointer; font-family: inherit;
 }
 .m-hero-change:hover, .m-hero-del:hover { background: rgba(196,147,10,.3); color: var(--c-gold-l); }
-.m-nav { display: flex; justify-content: space-between; align-items: center;
-  position: absolute; top: .5rem; right: .5rem; gap: .35rem; z-index: 2; }
+/* v6.7: .m-nav is now sticky at top of scrolling #mbox so the close/prev/next
+   controls remain visible as the user scrolls through long recipes.
+   Negative margin-bottom pulls the following .m-hero up so the nav visually
+   overlays the top-right of the hero image, matching the previous absolute
+   layout. pointer-events on the container is disabled so the empty area between
+   buttons doesn't block clicks on the hero gallery or body content below. */
+.m-nav {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; justify-content: flex-start; align-items: center;
+  gap: .35rem;
+  padding: .5rem .5rem 0;
+  margin-bottom: -3rem;
+  pointer-events: none;
+}
 .m-close, .m-prev, .m-next {
+  pointer-events: auto;
   background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.2);
   border-radius: 100px; width: 32px; height: 32px;
   color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -855,7 +871,7 @@ html.light .pc:hover, html.light .pc.active { background: rgba(196,147,10,.15); 
 html.light .hero { background: linear-gradient(165deg, rgba(253,248,238,.85), rgba(245,236,215,.9)); }
 html.light .hero-h1 { color: #2a1508; }
 html.light .hero-h1 em { color: #b84223; }
-html.light .hero-tagline { color: #7a3a18; }
+html.light .hero-tagline { color: #4a2a14; font-weight: 700; text-shadow: none; }
 html.light .hp { background: rgba(196,147,10,.12); border-color: rgba(196,147,10,.3); color: #4e2010; }
 html.light .hero-about-btn { color: #7a3a18; }
 html.light .about { background: #fdf8ee; }
@@ -1986,6 +2002,13 @@ Requires:
   <div id="mbox" role="dialog" dir="rtl" aria-modal="true" aria-label="מתכון">
     <div id="m-progress" aria-hidden="true"></div>
 
+    <!-- Nav buttons: sticky at top of scrolling modal — stays visible during scroll -->
+    <div class="m-nav">
+      <button id="m-prev" class="m-prev" aria-label="מתכון קודם">‹</button>
+      <button id="m-close" class="m-close" aria-label="סגור">✕</button>
+      <button id="m-next" class="m-next" aria-label="מתכון הבא">›</button>
+    </div>
+
     <!-- Hero image -->
     <div class="m-hero" id="m-hero">
       <button class="m-hero-nav prev" id="m-hero-prev" aria-label="Previous image">&#8249;</button>
@@ -1995,13 +2018,6 @@ Requires:
         <button id="m-hero-change" class="m-hero-change" aria-label="שנה תמונה" hidden>🖼</button>
         <button id="m-hero-del" class="m-hero-del" aria-label="מחק תמונה" hidden>✕</button>
       </div>
-    </div>
-
-    <!-- Nav buttons -->
-    <div class="m-nav">
-      <button id="m-prev" class="m-prev" aria-label="מתכון קודם">‹</button>
-      <button id="m-close" class="m-close" aria-label="סגור">✕</button>
-      <button id="m-next" class="m-next" aria-label="מתכון הבא">›</button>
     </div>
 
     <!-- Body -->
@@ -6968,7 +6984,7 @@ function exportFullCookbook() {
   /* Web3Forms Access Key — PUBLIC (not secret, it's an alias to your email).
      Get yours at https://web3forms.com → sign up → Create Access Key.
      Paste the UUID-style string below (e.g. 'a1b2c3d4-e5f6-7890-ab12-cd34ef56ab78'). */
-  var WEB3FORMS_KEY  = '705d4207-c4a6-43a2-8fdc-d8e202bc6c9c';
+  var WEB3FORMS_KEY  = 'PASTE_YOUR_WEB3FORMS_ACCESS_KEY_HERE';
   var WEB3FORMS_URL  = 'https://api.web3forms.com/submit';
   var FORMSUBMIT_EMAIL_B64 = 'YXNhZmJlbjMzQGdtYWlsLmNvbQ==';  /* retained for mailto fallback only */
   var FORM_NAME = 'perla-feedback';
