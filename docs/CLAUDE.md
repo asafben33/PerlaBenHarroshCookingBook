@@ -1,6 +1,6 @@
 # ספר הבישול של פרלה בן הראש ז"ל
 
-**גרסה: 6.9 | 19/04/2026**
+**גרסה: 6.10 | 19/04/2026**
 
 ## זהות הפרויקט
 - אתר (Netlify): https://perlabenharrosh-cookingbook.netlify.app/
@@ -80,15 +80,18 @@
 - Fallback: mailto (base64) — עובד תמיד ללא אינטרנט
 - הסרו: iframe/hidden-form + FormSubmit CSP entries
 
-## PWA Install Button (v6.9 — תמיד נראה)
+## PWA Install Button (v6.10 — תמיד נראה + Custom Modal)
 - Button: `#pwa-install-btn` ב-`.hdr-tools`
 - CSS: `.hdr-btn-install` עם `@keyframes pwa-pulse`
 - **v6.9:** הכפתור **תמיד נראה** (`style="display:none"` הוסר מה-HTML)
+- **v6.10:** `alert()` הוחלף ב-**Custom Modal** (`#pwa-modal-ovl` + `#pwa-modal-box`) — מונע את ה-prefix "<origin> says" של הדפדפן. עיצוב תואם לאתר, bilingual (HE/EN), עם OL מובנה לשלבי התקנה ו-note בגוון שונה לטיפים
 - JS: IIFE לפני `</body>`, מסתיר רק ב-3 מקרים:
   1. רץ כ-PWA מותקן (standalone mode)
   2. המשתמש דחה דרך `SEEN_KEY` ב-localStorage
   3. האפליקציה הותקנה (`appinstalled` event)
-- Click handler זיהוי-דפדפן לפי 5 מסלולים: iOS Safari, Android, Firefox desktop, Safari macOS, Chrome/Edge desktop — הוראות התקנה מותאמות לכל אחד
+- Click handler זיהוי-דפדפן לפי 5 מסלולים: iOS Safari, Android, Firefox desktop, Safari macOS, Chrome/Edge desktop — כל מסלול עם `{title, steps, note}` מותאם בעברית ובאנגלית
+- כל הטקסטים מזכירים את שם האתר "ספר הבישול של פרלה" ולא URL של הדומיין
+- Modal מקבל: OK button, click-outside close, Escape key
 - i18n: `pwa_label / pwa_title / pwa_aria`
 
 ## Back-to-Top Button (v6.9 — משופר)
@@ -124,6 +127,7 @@
 - **אל תנסה לשמור את ה-Web3Forms access_key כ-base64** — הוא מיועד להיות ציבורי
 
 ## שינויים בסשנים (19/04/2026)
+- **v6.10:** PWA install dialog שוחזר מ-native `alert()` ל-Custom Modal — נעלם ה-prefix "asafben33.github.io says". הטקסטים עודכנו ומזכירים "ספר הבישול של פרלה".
 - **v6.9:** PWA Install button תמיד נראה (הוסרה הסתרה ברירת מחדל); Back-to-top הוגדל ומשופר (סף 300, בדיקה בטעינה). תיקון תלות ב-Chrome engagement heuristic.
 - **v6.8:** Hero tagline הוגדל/הודגש/הולבן. Base font 17px גלובלי (16px במובייל). `.book-p` ל-1.02rem.
 - **v6.7:** `.m-nav` sticky, חיצי גלריה ל-RTL (prev→ימין, next→שמאל).

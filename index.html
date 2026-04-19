@@ -856,6 +856,62 @@ html.light .hdr-search { background: rgba(0,0,0,.04); border-color: rgba(196,147
 .hdr-btn-install:active { transform: translateY(0); }
 .hdr-btn-install svg { flex-shrink: 0; display: block; }
 .pwa-label { font-family: inherit; white-space: nowrap; }
+
+/* v6.10: Custom PWA install modal — avoids the browser-prefixed "origin says"
+   text that appears in native alert() dialogs. Replaces alert() with a
+   themed modal matching the site aesthetic. */
+#pwa-modal-ovl {
+  position: fixed; inset: 0; z-index: 950;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(1,5,15,.72);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  padding: 1rem;
+}
+#pwa-modal-ovl.open { display: flex; animation: pwaFade .2s ease-out; }
+@keyframes pwaFade { from { opacity: 0; } to { opacity: 1; } }
+#pwa-modal-box {
+  direction: rtl; text-align: right;
+  background: var(--c-bg); color: var(--c-ink);
+  border-radius: var(--r-xl);
+  max-width: 480px; width: 100%;
+  padding: 1.5rem 1.6rem 1.3rem;
+  box-shadow: var(--sh-xl);
+  border: 1px solid rgba(196,147,10,.25);
+  position: relative;
+  animation: pwaSlide .28s var(--ease);
+}
+@keyframes pwaSlide { from { opacity: 0; transform: translateY(16px) scale(.97); }
+                     to   { opacity: 1; transform: translateY(0) scale(1); } }
+#pwa-modal-box h3 {
+  font-family: inherit; color: var(--c-spice-d); font-size: 1.15rem;
+  font-weight: 700; margin: 0 0 .8rem; line-height: 1.4;
+  direction: rtl; text-align: right;
+}
+#pwa-modal-box .pwa-steps {
+  direction: rtl; text-align: right;
+  margin: 0 0 1.2rem; padding: 0 1.2rem 0 0;
+  color: var(--c-ink-m); line-height: 1.75; font-size: .98rem;
+}
+#pwa-modal-box .pwa-steps li { margin-bottom: .35rem; }
+#pwa-modal-box .pwa-note {
+  font-size: .86rem; color: var(--c-ink-l); font-style: italic;
+  margin-top: .6rem; padding-top: .8rem;
+  border-top: 1px solid rgba(196,147,10,.15);
+}
+#pwa-modal-box .pwa-actions {
+  display: flex; justify-content: flex-start; gap: .6rem; margin-top: 1.2rem;
+}
+#pwa-modal-box button.pwa-ok {
+  background: var(--c-spice); color: #fff;
+  border: none; border-radius: 100px;
+  padding: .6rem 1.5rem; font-family: inherit; font-weight: 700;
+  font-size: .95rem; cursor: pointer; transition: background var(--t-fast);
+}
+#pwa-modal-box button.pwa-ok:hover { background: var(--c-spice-d); }
+html.dark #pwa-modal-box { background: var(--c-dark); color: var(--c-gold-l); border-color: rgba(196,147,10,.35); }
+html.dark #pwa-modal-box h3 { color: var(--c-gold-l); }
+html.dark #pwa-modal-box .pwa-steps { color: rgba(237,224,196,.9); }
+html.dark #pwa-modal-box .pwa-note  { color: rgba(237,224,196,.55); border-top-color: rgba(196,147,10,.18); }
 @keyframes pwa-pulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(196,147,10,.35); }
   50%      { box-shadow: 0 0 0 6px rgba(196,147,10,.04); }
@@ -2010,6 +2066,19 @@ Requires:
 
 <!-- ════════ BACK TO TOP ════════════════════════════════════ -->
 <button id="back-top" aria-label="חזור למעלה">↑</button>
+
+<!-- v6.10: Custom PWA install modal (replaces native alert() to avoid the
+     "<origin> says" browser-prefixed dialog header) -->
+<div id="pwa-modal-ovl" role="dialog" aria-modal="true" aria-labelledby="pwa-modal-title" aria-hidden="true">
+  <div id="pwa-modal-box" role="document">
+    <h3 id="pwa-modal-title"></h3>
+    <ol id="pwa-modal-steps" class="pwa-steps"></ol>
+    <p id="pwa-modal-note" class="pwa-note" hidden></p>
+    <div class="pwa-actions">
+      <button type="button" class="pwa-ok" id="pwa-modal-ok">הבנתי</button>
+    </div>
+  </div>
+</div>
 
 <!-- ════════ OVERLAY + MODAL ══════════════════════════════ -->
 <div id="ovl" role="none" aria-hidden="true">
@@ -7404,7 +7473,9 @@ if(typeof BOOK_HTML!=='undefined'){
       return;
     }
 
-    /* No native prompt available — show manual install instructions per browser */
+    /* No native prompt available — show custom modal with install instructions.
+       v6.10: replaced browser alert() (which prefixes "<origin> says") with
+       themed in-page modal. */
     var ua = navigator.userAgent || '';
     var isIOS      = /iphone|ipad|ipod/i.test(ua);
     var isAndroid  = /android/i.test(ua);
@@ -7413,31 +7484,151 @@ if(typeof BOOK_HTML!=='undefined'){
     var isDesktop  = !isIOS && !isAndroid;
     var lang       = (document.documentElement.lang || navigator.language || 'he').slice(0,2);
     var isHe       = lang === 'he';
-    var msg;
 
+    var data;
     if (isIOS) {
-      msg = isHe
-        ? 'להתקנה ב-iPhone/iPad:\n1. לחצו על כפתור "שיתוף" (המשולש עם חץ) בתחתית Safari\n2. גללו למטה ובחרו "הוסף למסך הבית"\n3. לחצו "הוסף" בפינה העליונה'
-        : 'To install on iPhone/iPad:\n1. Tap the Share button (square with arrow) at the bottom of Safari\n2. Scroll down and choose "Add to Home Screen"\n3. Tap "Add" in the top corner';
+      data = isHe ? {
+        title: 'התקנה ב-iPhone או iPad',
+        steps: [
+          'לחצו על כפתור "שיתוף" (הריבוע עם החץ כלפי מעלה) בתחתית Safari.',
+          'גללו למטה ובחרו "הוסף למסך הבית".',
+          'לחצו "הוסף" בפינה העליונה.'
+        ],
+        note: 'לאחר ההתקנה, "ספר הבישול של פרלה" יופיע במסך הבית שלכם כאפליקציה רגילה.'
+      } : {
+        title: 'Install on iPhone or iPad',
+        steps: [
+          'Tap the Share button (square with arrow) at the bottom of Safari.',
+          'Scroll down and choose "Add to Home Screen".',
+          'Tap "Add" in the top corner.'
+        ],
+        note: 'After installation, "Perla\u0027s Cookbook" will appear on your home screen as a regular app.'
+      };
     } else if (isAndroid) {
-      msg = isHe
-        ? 'להתקנה ב-Android:\n1. פתחו את תפריט הדפדפן (שלוש נקודות מימין למעלה)\n2. בחרו "התקן אפליקציה" או "הוסף למסך הבית"\n3. אשרו "התקן"'
-        : 'To install on Android:\n1. Open the browser menu (three dots, top right)\n2. Choose "Install app" or "Add to Home Screen"\n3. Confirm "Install"';
+      data = isHe ? {
+        title: 'התקנה במכשיר Android',
+        steps: [
+          'פתחו את תפריט הדפדפן (שלוש הנקודות בפינה הימנית למעלה).',
+          'בחרו "התקן אפליקציה" או "הוסף למסך הבית".',
+          'אשרו בלחיצה על "התקן".'
+        ],
+        note: 'האפליקציה תופיע ברשימת האפליקציות שלכם, ותוכלו לפתוח אותה ללא הדפדפן.'
+      } : {
+        title: 'Install on Android',
+        steps: [
+          'Open the browser menu (three dots, top right).',
+          'Choose "Install app" or "Add to Home Screen".',
+          'Confirm by tapping "Install".'
+        ],
+        note: 'The app will appear in your app list and will open without the browser.'
+      };
     } else if (isFirefox) {
-      msg = isHe
-        ? 'Firefox במחשב אינו תומך בהתקנה כאפליקציה.\nאנא השתמשו ב-Chrome, Edge או Brave להתקנה,\nאו הוסיפו סימנייה (Ctrl+D) כקיצור מהיר.'
-        : 'Firefox on desktop does not support app installation.\nPlease use Chrome, Edge or Brave to install,\nor add a bookmark (Ctrl+D) as a quick shortcut.';
+      data = isHe ? {
+        title: 'Firefox במחשב אינו תומך בהתקנה',
+        steps: [
+          'לחוויה מלאה כאפליקציה, פתחו את האתר ב-Chrome, Edge או Brave.',
+          'לחלופין, הוסיפו סימנייה (Ctrl+D) לגישה מהירה.'
+        ],
+        note: 'במובייל, Firefox כן תומך בהתקנה דרך התפריט הראשי.'
+      } : {
+        title: 'Firefox desktop does not support installation',
+        steps: [
+          'For a full app experience, open the site in Chrome, Edge or Brave.',
+          'Alternatively, add a bookmark (Ctrl+D) for quick access.'
+        ],
+        note: 'On mobile, Firefox does support installation via the main menu.'
+      };
     } else if (isSafari && isDesktop) {
-      msg = isHe
-        ? 'להתקנה ב-Safari (macOS):\n1. לחצו על כפתור "שיתוף" בסרגל הכלים\n2. בחרו "הוסף ל-Dock"'
-        : 'To install in Safari (macOS):\n1. Click the Share button in the toolbar\n2. Choose "Add to Dock"';
+      data = isHe ? {
+        title: 'התקנה ב-Safari על macOS',
+        steps: [
+          'לחצו על כפתור "שיתוף" בסרגל הכלים של Safari.',
+          'בחרו "הוסף ל-Dock".'
+        ],
+        note: 'האייקון של האתר יופיע ב-Dock ויפתח כחלון עצמאי.'
+      } : {
+        title: 'Install in Safari on macOS',
+        steps: [
+          'Click the Share button in Safari\u0027s toolbar.',
+          'Choose "Add to Dock".'
+        ],
+        note: 'The site icon will appear in your Dock and open as a standalone window.'
+      };
     } else {
-      /* Chrome/Edge/Brave — usually trigger beforeinstallprompt; if not, guide manually */
-      msg = isHe
-        ? 'להתקנה במחשב:\n1. לחצו על אייקון ההתקנה בסרגל הכתובת (מסך עם חץ)\n   או פתחו את התפריט (שלוש נקודות) ובחרו "התקן ספר הבישול…"\n2. אשרו "התקן"\n\nאם האייקון לא מופיע — נסו לרענן את הדף ולחזור.'
-        : 'To install on desktop:\n1. Click the install icon in the address bar (monitor with arrow)\n   or open the menu (three dots) and choose "Install Perla Cookbook…"\n2. Confirm "Install"\n\nIf the icon does not appear, try refreshing the page.';
+      /* Chrome/Edge/Brave desktop without beforeinstallprompt */
+      data = isHe ? {
+        title: 'התקנה במחשב',
+        steps: [
+          'לחצו על אייקון ההתקנה בסרגל הכתובת (מסך עם חץ), או פתחו את התפריט (שלוש נקודות) ובחרו "התקן ספר הבישול של פרלה...".',
+          'אשרו בלחיצה על "התקן".'
+        ],
+        note: 'אם האייקון לא מופיע — נסו לרענן את הדף וחזרו ללחוץ על "התקן".'
+      } : {
+        title: 'Install on desktop',
+        steps: [
+          'Click the install icon in the address bar (monitor with arrow), or open the menu (three dots) and choose "Install Perla\u0027s Cookbook...".',
+          'Confirm by clicking "Install".'
+        ],
+        note: 'If the icon does not appear, try refreshing the page and clicking "Install" again.'
+      };
     }
-    alert(msg);
+
+    _showPwaModal(data);
+  });
+
+  /* Custom modal renderer & controller */
+  function _showPwaModal(data) {
+    var ovl   = document.getElementById('pwa-modal-ovl');
+    var title = document.getElementById('pwa-modal-title');
+    var steps = document.getElementById('pwa-modal-steps');
+    var note  = document.getElementById('pwa-modal-note');
+    var ok    = document.getElementById('pwa-modal-ok');
+    if (!ovl || !title || !steps || !ok) { alert(data.title); return; }
+
+    title.textContent = data.title;
+    steps.innerHTML = '';
+    (data.steps || []).forEach(function(s) {
+      var li = document.createElement('li');
+      li.textContent = s;
+      steps.appendChild(li);
+    });
+    if (data.note) {
+      note.textContent = data.note;
+      note.hidden = false;
+    } else {
+      note.hidden = true;
+    }
+
+    /* Localize OK button by document lang */
+    var lang = (document.documentElement.lang || 'he').slice(0, 2);
+    ok.textContent = (lang === 'en') ? 'Got it' : 'הבנתי';
+
+    ovl.classList.add('open');
+    ovl.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function() { ok.focus(); }, 50);
+  }
+
+  function _hidePwaModal() {
+    var ovl = document.getElementById('pwa-modal-ovl');
+    if (!ovl) return;
+    ovl.classList.remove('open');
+    ovl.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  /* Modal dismissal: OK button, click outside, or Escape */
+  document.addEventListener('click', function(e) {
+    var ovl = document.getElementById('pwa-modal-ovl');
+    if (!ovl || !ovl.classList.contains('open')) return;
+    if (e.target && e.target.id === 'pwa-modal-ok') { _hidePwaModal(); return; }
+    if (e.target === ovl) { _hidePwaModal(); }
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      var ovl = document.getElementById('pwa-modal-ovl');
+      if (ovl && ovl.classList.contains('open')) _hidePwaModal();
+    }
   });
 })();
 </script>
