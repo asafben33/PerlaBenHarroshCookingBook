@@ -202,7 +202,7 @@ html.light .bg-light-layer { display: block; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.hdr-subtitle { font-size: .68rem; color: var(--c-gold-d); margin-top: .05rem; opacity: .8; }
+.hdr-subtitle { font-size: .78rem; color: var(--c-gold-d); margin-top: .05rem; opacity: .85; font-weight: 500; }
 .hdr-search {
   display: flex;
   align-items: center;
@@ -376,15 +376,14 @@ html.light .bg-light-layer { display: block; }
   background: linear-gradient(165deg,
     rgba(2,6,16,.50) 0%, rgba(6,16,36,.42) 45%,
     rgba(18,7,2,.35) 100%);
-  padding: 3.5rem 1.5rem 2.8rem;
+  padding: 1.4rem 1.5rem 1.4rem;
   text-align: right;
   position: relative;
   overflow: hidden;
 }
-/* v7.0+v7.1: centered hero (was right-aligned). Per mockup: all hero
-   content is centered horizontally in the viewport, matching the Bio
-   section below. The green-arrow target in the screenshot was the Bio
-   heading — the user wants Hero to align the same way. */
+/* v7.0+v7.1+v8.11: compact centered hero — was 3.5rem padding (~430px tall),
+   now ~190px tall per user mockup with green outline.
+   Title size reduced, ornament minimized, tagline tightened. */
 .hero-inner {
   max-width: 760px;
   margin: 0 auto;
@@ -392,31 +391,31 @@ html.light .bg-light-layer { display: block; }
   direction: rtl;
   text-align: center;
 }
-.hero-orn { font-size: 1rem; color: var(--c-gold-d); opacity: .4; letter-spacing: .5rem; margin-bottom: .6rem; text-align: center; }
+.hero-orn { font-size: .75rem; color: var(--c-gold-d); opacity: .4; letter-spacing: .4rem; margin-bottom: .25rem; text-align: center; }
 .hero-h1 {
   direction: rtl;
   text-align: center;
-  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-size: clamp(1.4rem, 3.2vw, 2rem);
   font-weight: 900;
   color: var(--c-bg);
-  line-height: 1.1;
-  margin: 0 0 .5rem;
+  line-height: 1.15;
+  margin: 0 0 .35rem;
 }
 .hero-h1 em { font-style: normal; color: var(--c-gold-l); }
 .hero-tagline {
-  direction: rtl; text-align: center; font-size: 1.15rem; font-weight: 700;
-  color: #ffffff; margin-bottom: .9rem; letter-spacing: .03em;
+  direction: rtl; text-align: center; font-size: .88rem; font-weight: 700;
+  color: #ffffff; margin-bottom: .55rem; letter-spacing: .02em;
   text-shadow: 0 1px 3px rgba(0,0,0,.35);
 }
 
 /* v7.0: Hero CTA buttons (replaces old hero-pills / about-btn) */
 .hero-cta-row {
-  display: flex; gap: .75rem; justify-content: center;
-  flex-wrap: wrap; margin-top: 1.4rem;
+  display: flex; gap: .55rem; justify-content: center;
+  flex-wrap: wrap; margin-top: .7rem;
 }
 .hero-cta-primary, .hero-cta-secondary {
-  border-radius: 100px; padding: .75rem 1.8rem;
-  font-family: inherit; font-size: 1rem; font-weight: 600;
+  border-radius: 100px; padding: .5rem 1.2rem;
+  font-family: inherit; font-size: .85rem; font-weight: 600;
   cursor: pointer; transition: all var(--t-fast);
 }
 .hero-cta-primary {
@@ -627,7 +626,7 @@ html.light .rotd-title { color: var(--c-spice-d, #7a3a18); }
   margin-top: .3rem;
 }
 .rotd-meta-chip {
-  font-size: .68rem; padding: .18rem .55rem;
+  font-size: .76rem; padding: .2rem .6rem;
   border-radius: 100px;
   background: rgba(196,147,10,.13);
   color: var(--c-gold-l);
@@ -834,40 +833,72 @@ html.light .hero-cta-primary:hover {
 }
 .about-avatar-caption {
   text-align: center; margin-top: .4rem;
-  font-size: .68rem; color: var(--c-gold-d); opacity: .7; font-style: italic;
+  font-size: .78rem; color: var(--c-gold-d); opacity: .85; font-style: italic; font-weight: 500;
 }
 .about-body { flex: 1; }
-.book-section{margin-top:1.5rem;padding:0 .5rem;max-width:860px;margin-left:auto;margin-right:auto}
-.book-main-title{text-align:center;font-size:1.5rem;font-weight:900;color:var(--c-gold-l);margin:0 0 .2rem}
-.book-subtitle{text-align:center;font-size:.85rem;color:rgba(237,224,196,.55);font-style:italic;margin:0 0 .3rem}
-html.light .book-subtitle{color:#7a5a30}
-.book-nav{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:0 0 1.2rem;padding:.6rem;position:sticky;top:100px;z-index:50;background:var(--c-deep);border-radius:8px;border-bottom:1px solid rgba(196,147,10,.15)}
-html.light .book-nav{background:#fdf8ee}
-.book-nav-btn{background:rgba(196,147,10,.1);border:1px solid rgba(196,147,10,.2);color:rgba(237,224,196,.7);padding:.25rem .6rem;border-radius:100px;font-size:.7rem;cursor:pointer;transition:all .2s;font-family:inherit;direction:rtl}
-.book-nav-btn:hover{background:rgba(196,147,10,.2);color:var(--c-gold-l)}
-.book-nav-btn.active{background:rgba(196,147,10,.3);color:var(--c-gold-l);border-color:var(--c-gold)}
-html.light .book-nav-btn{background:rgba(196,147,10,.08);color:#7a5a30;border-color:rgba(196,147,10,.15)}
-html.light .book-nav-btn:hover,html.light .book-nav-btn.active{background:rgba(196,147,10,.2);color:#4e2010}
-.book-chapter{margin:0;padding:1.5rem 0;border-bottom:1px solid rgba(196,147,10,.12)}
+/* ═══════════════════════════════════════════════════════════════════════════
+   v8.12: Book reader — comprehensive readability improvements
+   - Larger font (1.15rem ≈ 18.5px, was 1.02rem ≈ 16px)
+   - Higher contrast in light mode (#1a0a04, was #3a2010)
+   - Narrower max-width (720px, was 860px) — optimal 60-75 chars/line
+   - Slight font-weight bump on light mode for parchment legibility
+   - Better spacing, larger sub-headings
+   ═══════════════════════════════════════════════════════════════════════════ */
+.book-section{margin-top:1.5rem;padding:0 .8rem;max-width:720px;margin-left:auto;margin-right:auto}
+.book-main-title{text-align:center;font-size:1.7rem;font-weight:900;color:var(--c-gold-l);margin:0 0 .3rem;font-family:'Frank Ruhl Libre',serif;line-height:1.2}
+html.light .book-main-title{color:#7a3a18;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.book-subtitle{text-align:center;font-size:.95rem;color:rgba(237,224,196,.7);font-style:italic;margin:0 0 .5rem}
+html.light .book-subtitle{color:#6a3814;font-weight:500}
+.book-nav{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;margin:0 0 1.4rem;padding:.7rem;position:sticky;top:100px;z-index:50;background:var(--c-deep);border-radius:8px;border-bottom:1px solid rgba(196,147,10,.15)}
+html.light .book-nav{background:rgba(255,250,238,.95);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.book-nav-btn{background:rgba(196,147,10,.12);border:1px solid rgba(196,147,10,.25);color:rgba(237,224,196,.85);padding:.3rem .75rem;border-radius:100px;font-size:.82rem;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit;direction:rtl}
+.book-nav-btn:hover{background:rgba(196,147,10,.22);color:var(--c-gold-l)}
+.book-nav-btn.active{background:rgba(196,147,10,.32);color:var(--c-gold-l);border-color:var(--c-gold)}
+html.light .book-nav-btn{background:rgba(196,147,10,.12);color:#5a3014;border-color:rgba(196,147,10,.3);font-weight:600}
+html.light .book-nav-btn:hover{background:rgba(196,147,10,.25);color:#3a1f0a}
+html.light .book-nav-btn.active{background:rgba(184,66,35,.18);color:#3a1f0a;border-color:#b84223}
+.book-chapter{margin:0;padding:1.8rem 0;border-bottom:1px solid rgba(196,147,10,.15)}
 .book-chapter:last-child{border-bottom:none}
-.book-ch-title{color:var(--c-gold);font-size:1.15rem;font-weight:700;margin:0 0 .1rem;direction:rtl;text-align:right}
-.book-ch-page{font-size:.65rem;color:rgba(237,224,196,.3);margin:0 0 .6rem;direction:rtl;text-align:right}
-html.light .book-ch-page{color:#a08060}
-.book-sub{color:var(--c-gold-l);font-size:.95rem;font-weight:700;margin:1.2rem 0 .3rem;padding-top:.6rem;border-top:1px solid rgba(196,147,10,.08);direction:rtl;text-align:right}
+.book-ch-title{color:var(--c-gold);font-size:1.4rem;font-weight:700;margin:0 0 .25rem;direction:rtl;text-align:right;font-family:'Frank Ruhl Libre',serif;line-height:1.3}
+html.light .book-ch-title{color:#7a3a18;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.book-ch-page{font-size:.78rem;color:rgba(237,224,196,.5);margin:0 0 .8rem;direction:rtl;text-align:right;font-style:italic}
+html.light .book-ch-page{color:#6a4828;font-weight:500}
+.book-sub{color:var(--c-gold-l);font-size:1.1rem;font-weight:700;margin:1.5rem 0 .5rem;padding-top:.8rem;border-top:1px solid rgba(196,147,10,.12);direction:rtl;text-align:right;font-family:'Frank Ruhl Libre',serif}
 .book-sub:first-child{border-top:none;padding-top:0}
-html.light .book-sub{color:#7a3a18}
-.book-p{line-height:1.95;margin:.5rem 0;text-align:justify;direction:rtl;color:rgba(237,224,196,.9);font-size:1.02rem}
-html.light .book-p{color:#3a2010}
-.book-placeholder{font-style:italic;text-align:center;color:rgba(237,224,196,.25);font-size:.82rem}
-html.light .book-placeholder{color:#bba080}
-.book-photo{margin:1.2rem auto;max-width:500px;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.3);border:2px solid rgba(196,147,10,.25);position:relative}
+html.light .book-sub{color:#6a2812;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+/* THE CRITICAL ONE — body paragraph text */
+.book-p{
+  line-height:1.85;
+  margin:.7rem 0;
+  text-align:justify;
+  direction:rtl;
+  color:rgba(237,224,196,.95);
+  font-size:1.15rem;
+  font-family:'Frank Ruhl Libre','Frank Ruhl Libre Hebrew',Georgia,serif;
+  letter-spacing:.005em;
+}
+html.light .book-p{
+  color:#1a0a04;
+  font-weight:500;
+  text-shadow:0 1px 0 rgba(255,255,255,.5);
+}
+.book-placeholder{font-style:italic;text-align:center;color:rgba(237,224,196,.4);font-size:.92rem;padding:1rem 0}
+html.light .book-placeholder{color:#8a5a30;font-weight:500}
+.book-photo{margin:1.4rem auto;max-width:560px;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.3);border:2px solid rgba(196,147,10,.25);position:relative}
 .book-photo img{width:100%;height:auto;display:block;transition:transform .3s}
 .book-photo:hover img{transform:scale(1.02)}
-.book-photo-cap{padding:.5rem .8rem;background:rgba(0,0,0,.6);color:rgba(237,224,196,.9);font-size:.78rem;text-align:center;direction:rtl;line-height:1.5;backdrop-filter:blur(4px)}
-html.light .book-photo{border-color:rgba(196,147,10,.2);box-shadow:0 4px 16px rgba(0,0,0,.1)}
-html.light .book-photo-cap{background:rgba(255,255,255,.85);color:#4a2a14}
-.book-photo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
+.book-photo-cap{padding:.6rem .9rem;background:rgba(0,0,0,.65);color:rgba(237,224,196,.95);font-size:.88rem;text-align:center;direction:rtl;line-height:1.5;backdrop-filter:blur(4px);font-weight:500}
+html.light .book-photo{border-color:rgba(196,147,10,.35);box-shadow:0 4px 16px rgba(0,0,0,.12)}
+html.light .book-photo-cap{background:rgba(255,255,255,.92);color:#2a1407;font-weight:500}
+.book-photo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.5rem 0}
 .book-photo-grid .book-photo{margin:0}
+/* Mobile: keep readable on small screens */
+@media (max-width: 600px) {
+  .book-section { padding: 0 1rem; }
+  .book-p { font-size: 1.05rem; line-height: 1.8; }
+  .book-ch-title { font-size: 1.25rem; }
+  .book-sub { font-size: 1.05rem; }
+}
 
 /* ── NEW: Book collapsible (hidden by default, expanded on click) ── */
 .book-toggle-wrap {
@@ -1067,31 +1098,31 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
   background: transparent;
   border: 1.5px dashed rgba(196,147,10,.5);
   border-radius: var(--r-sm); padding: .2rem .5rem;
-  font-size: .68rem; color: #fff; cursor: pointer; font-family: inherit; z-index: 2;
+  font-size: .75rem; color: #fff; cursor: pointer; font-family: inherit; z-index: 2;
 }
 .c-upload-btn:hover { background: rgba(196,147,10,.3); border-color: var(--c-gold); }
-.c-info { direction: rtl; text-align: right; padding: .65rem .7rem; }
+.c-info { direction: rtl; text-align: right; padding: .7rem .75rem; }
 .c-badge {
   direction: rtl;
   display: inline-block; background: var(--c-spice); color: #fff;
-  font-size: .64rem; font-weight: 700; border-radius: 100px;
-  padding: .15rem .5rem; margin-bottom: .35rem;
+  font-size: .72rem; font-weight: 700; border-radius: 100px;
+  padding: .18rem .55rem; margin-bottom: .4rem;
 }
 .c-title {
   direction: rtl; text-align: right;
-  font-size: .85rem; font-weight: 700; color: var(--c-ink); line-height: 1.3; margin-bottom: .25rem;
+  font-size: .95rem; font-weight: 700; color: var(--c-ink); line-height: 1.3; margin-bottom: .3rem;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .c-desc {
   direction: rtl; text-align: right;
-  font-size: .74rem; color: var(--c-ink-m); line-height: 1.5;
+  font-size: .82rem; color: var(--c-ink-m); line-height: 1.55;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.c-meta { direction: rtl; display: flex; gap: .4rem; font-size: .69rem; color: var(--c-ink-l); margin-top: .4rem; flex-wrap: wrap; }
-.c-tag { background: var(--c-bg2); border: 1px solid var(--c-bdr2); border-radius: 100px; padding: .1rem .4rem; }
-.c-diff-קל { background: #e8f5e9; color: #2e7d32; border-radius: 100px; padding: .1rem .4rem; }
-.c-diff-בינוני { background: #fff3e0; color: #e65100; border-radius: 100px; padding: .1rem .4rem; }
-.c-diff-מתקדם { background: #fce4ec; color: #c62828; border-radius: 100px; padding: .1rem .4rem; }
+.c-meta { direction: rtl; display: flex; gap: .4rem; font-size: .76rem; color: var(--c-ink-l); margin-top: .45rem; flex-wrap: wrap; }
+.c-tag { background: var(--c-bg2); border: 1px solid var(--c-bdr2); border-radius: 100px; padding: .12rem .45rem; }
+.c-diff-קל { background: #e8f5e9; color: #2e7d32; border-radius: 100px; padding: .12rem .45rem; }
+.c-diff-בינוני { background: #fff3e0; color: #e65100; border-radius: 100px; padding: .12rem .45rem; }
+.c-diff-מתקדם { background: #fce4ec; color: #c62828; border-radius: 100px; padding: .12rem .45rem; }
 .c-fav { position: absolute; top: .4rem; right: .4rem; cursor: pointer; font-size: 1.1rem; opacity: .6; background: none; border: none; }
 .c-fav:hover, .c-fav.active { opacity: 1; }
 
@@ -1157,11 +1188,11 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 .m-badge {
   direction: rtl;
   display: inline-block; background: var(--c-spice); color: #fff;
-  font-size: .64rem; font-weight: 700; border-radius: 100px;
-  padding: .15rem .55rem; margin-bottom: .4rem;
+  font-size: .76rem; font-weight: 700; border-radius: 100px;
+  padding: .2rem .65rem; margin-bottom: .45rem;
 }
-.m-title { direction: rtl; text-align: right; color: var(--c-ink); font-size: 1.35rem; font-weight: 900; line-height: 1.2; }
-.m-subdesc { direction: rtl; text-align: right; color: var(--c-ink-m); font-size: .84rem; margin-top: .25rem; }
+.m-title { direction: rtl; text-align: right; color: var(--c-ink); font-size: 1.45rem; font-weight: 900; line-height: 1.25; }
+.m-subdesc { direction: rtl; text-align: right; color: var(--c-ink-m); font-size: .92rem; margin-top: .35rem; line-height: 1.6; }
 .m-meta { display: flex; flex-wrap: wrap; gap: .45rem; margin: .7rem 0 1rem; }
 .m-chip {
   display: inline-flex;
@@ -1173,26 +1204,26 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
   direction: rtl; text-align: right;
   background: linear-gradient(to left, rgba(196,147,10,.1), rgba(196,147,10,.03));
   border-right: 3px solid var(--c-gold-d); border-radius: var(--r-sm);
-  padding: .7rem .9rem; margin-bottom: 1rem;
-  font-style: italic; color: var(--c-ink-m); font-size: .88rem; line-height: 1.7;
+  padding: .8rem 1rem; margin-bottom: 1rem;
+  font-style: italic; color: var(--c-ink-m); font-size: .96rem; line-height: 1.7;
 }
-.m-sec-h { direction: rtl; text-align: right; font-size: .78rem; font-weight: 700; color: var(--c-gold-d); text-transform: uppercase; letter-spacing: .06em; margin: .8rem 0 .4rem; }
+.m-sec-h { direction: rtl; text-align: right; font-size: .88rem; font-weight: 700; color: var(--c-gold-d); text-transform: uppercase; letter-spacing: .06em; margin: .9rem 0 .5rem; }
 /* v8.5: ingredient row — quantity + name flow together right-aligned (RTL).
    Was: justify-content: space-between (pushed name to far left, quantity to far right).
    Now: justify-content: flex-start with gap — name appears immediately after quantity. */
-.m-ingr-item { direction: rtl; display: flex; justify-content: flex-start; align-items: baseline; gap: .6rem; padding: .3rem 0; border-bottom: 1px solid var(--c-bg3); }
-.m-ingr-q { direction: rtl; text-align: right; font-weight: 600; min-width: 80px; flex-shrink: 0; color: var(--c-ink); font-size: .88rem; }
-.m-ingr-i { direction: rtl; text-align: right; color: var(--c-ink-m); font-size: .88rem; flex: 1; }
+.m-ingr-item { direction: rtl; display: flex; justify-content: flex-start; align-items: baseline; gap: .65rem; padding: .35rem 0; border-bottom: 1px solid var(--c-bg3); }
+.m-ingr-q { direction: rtl; text-align: right; font-weight: 700; min-width: 85px; flex-shrink: 0; color: var(--c-ink); font-size: .98rem; }
+.m-ingr-i { direction: rtl; text-align: right; color: var(--c-ink-m); font-size: .98rem; flex: 1; line-height: 1.5; }
 .m-steps { padding-right: 1.3rem; margin: .5rem 0; }
-.m-step { direction: rtl; text-align: right; padding: .4rem 0; border-bottom: 1px solid var(--c-bg3); line-height: 1.7; font-size: .88rem; color: var(--c-ink-m); }
+.m-step { direction: rtl; text-align: right; padding: .55rem 0; border-bottom: 1px solid var(--c-bg3); line-height: 1.75; font-size: 1rem; color: var(--c-ink-m); }
 .m-step-t { color: var(--c-gold); font-weight: 700; }
-.m-tip-wrap { direction: rtl; text-align: right; background: rgba(196,147,10,.07); border: 1px solid rgba(196,147,10,.25); border-radius: var(--r-md); padding: .7rem 1rem; margin-top: .8rem; }
-.m-tip-label { direction: rtl; text-align: right; font-size: .72rem; font-weight: 700; color: var(--c-gold-d); margin-bottom: .3rem; }
-.m-src-box { direction: rtl; text-align: right; margin-top: .6rem; padding: .42rem .8rem; background: rgba(196,147,10,.07); border: 1px solid rgba(196,147,10,.2); border-radius: var(--r-sm); }
-.m-src-box a { color: var(--c-gold); font-size: .84rem; }
-.m-vid-wrap { margin-top: .6rem; padding-top: .6rem; border-top: 1px solid var(--c-bg3); }
-.m-vid-list { display: flex; flex-direction: column; gap: .4rem; margin-top: .4rem; }
-.m-vid-item { direction: rtl; display: flex; align-items: center; gap: .5rem; background: var(--c-bg2); border: 1px solid var(--c-bdr2); border-radius: var(--r-sm); padding: .35rem .6rem; font-size: .8rem; }
+.m-tip-wrap { direction: rtl; text-align: right; background: rgba(196,147,10,.07); border: 1px solid rgba(196,147,10,.25); border-radius: var(--r-md); padding: .8rem 1.1rem; margin-top: .9rem; font-size: .96rem; line-height: 1.65; }
+.m-tip-label { direction: rtl; text-align: right; font-size: .82rem; font-weight: 700; color: var(--c-gold-d); margin-bottom: .35rem; }
+.m-src-box { direction: rtl; text-align: right; margin-top: .6rem; padding: .5rem .9rem; background: rgba(196,147,10,.07); border: 1px solid rgba(196,147,10,.2); border-radius: var(--r-sm); }
+.m-src-box a { color: var(--c-gold); font-size: .92rem; }
+.m-vid-wrap { margin-top: .7rem; padding-top: .7rem; border-top: 1px solid var(--c-bg3); }
+.m-vid-list { display: flex; flex-direction: column; gap: .45rem; margin-top: .45rem; }
+.m-vid-item { direction: rtl; display: flex; align-items: center; gap: .5rem; background: var(--c-bg2); border: 1px solid var(--c-bdr2); border-radius: var(--r-sm); padding: .42rem .7rem; font-size: .88rem; }
 .m-vid-link { flex: 1; color: var(--c-gold); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .m-vid-del { flex-shrink: 0; background: transparent; border: 1px solid rgba(220,50,50,.3); border-radius: 100px; width: 24px; height: 24px; color: #f99; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: .8rem; }
 .m-vid-del:hover { background: rgba(220,50,50,.2); }
@@ -1316,7 +1347,7 @@ html.lang-en .m-nav { direction: ltr !important; }
 .hdr-btn:hover { background: rgba(196,147,10,.2); color: var(--c-gold-l); }
 
 /* ── Light Theme ─────────────────────────────────────────── */
-html.light { --c-bg: #fffcf5; --c-bg2: #f5ecd7; --c-bg3: #e8dcc0; --c-ink: #1c1008; --c-ink-m: #4a2a14; --c-ink-l: #8a6040; }
+html.light { --c-bg: #fffcf5; --c-bg2: #f5ecd7; --c-bg3: #e8dcc0; --c-ink: #15080a; --c-ink-m: #2d1407; --c-ink-l: #5a3a18; }
 html.light .casablanca-bg { opacity: .08; }
 html.light .hdr { background: linear-gradient(to bottom, #fdf8ee 0%, #f5ecd7 100%); border-bottom-color: rgba(196,147,10,.35); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
 html.light .hdr-title { color: #4e2010; }
@@ -1436,12 +1467,12 @@ html.light .hero { background: linear-gradient(165deg, rgba(253,248,238,.55), rg
 html.light .hero-h1 { color: #2a1508; }
 html.light .hero-h1 em { color: #a04020; }
 html.light .hero-tagline { color: #4a2a14; font-weight: 700; text-shadow: none; }
-html.light .hp { background: rgba(196,147,10,.12); border-color: rgba(196,147,10,.3); color: #4e2010; }
-html.light .hero-about-btn { color: #7a3a18; }
+html.light .hp { background: rgba(196,147,10,.12); border-color: rgba(196,147,10,.3); color: #4e2010; font-weight: 600; }
+html.light .hero-about-btn { color: #5a2810; }
 html.light .about { background: rgba(253,248,238,.55); }
-html.light .about-h { color: #4e2010; }
-html.light .about-memorial { color: #7a3a18; }
-html.light .about-p { color: #4a2a14; }
+html.light .about-h { color: #2e1208; font-weight: 700; }
+html.light .about-memorial { color: #4e1f0a; font-weight: 600; }
+html.light .about-p { color: #1f0e04; font-weight: 500; line-height: 1.85; }
 html.light main { background: rgba(253,248,238,.45); }
 /* v8.9: bio section in light mode — semi-transparent parchment so zellige pattern shows through */
 html.light .bio {
@@ -1452,6 +1483,10 @@ html.light .bio {
   border-top-color: rgba(196,147,10,.3);
   border-bottom-color: rgba(196,147,10,.3);
 }
+/* v8.12: stronger text in bio for light mode */
+html.light .bio .about-h { color: #2e1208; }
+html.light .bio .about-memorial { color: #4e1f0a; }
+html.light .bio .about-p { color: #1f0e04; font-weight: 500; }
 html.light .grid-header { background: rgba(245,236,215,.8); border-bottom-color: rgba(196,147,10,.15); }
 html.light .diff-btn { background: rgba(0,0,0,.03); color: #4a2a14; border-color: rgba(196,147,10,.2); }
 html.light .diff-btn.active { background: #c4930a; color: #fff; }
@@ -1465,6 +1500,38 @@ html.light .footer-quote { color: #9a7208; }
 html.light #toast { background: #fff; color: #4e2010; border-color: #c4930a; }
 html.light #back-top { background: #4e2010; color: #fdf8ee; }
 html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10,.2); color: #4a2a14; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v8.12: Global readability boost for light theme
+   On parchment-cream backgrounds, light-weight text washes out. Boost weight,
+   contrast, and add subtle text-shadow for legibility.
+   ═══════════════════════════════════════════════════════════════════════════ */
+html.light body {
+  font-weight: 500;  /* default Heebo is 400 - too thin on parchment */
+  color: #1a0a04;
+}
+/* Recipe cards in grid */
+html.light .c-title { color: #1a0a04; font-weight: 700; }
+html.light .c-desc { color: #2d1407; font-weight: 500; }
+html.light .c-meta { color: #5a3a18; font-weight: 600; }
+/* Recipe modal — ALL text inside modal */
+html.light .m-title { color: #1a0a04; font-weight: 800; }
+html.light .m-subdesc { color: #2d1407; font-weight: 500; }
+html.light .m-sec-h { color: #6a2812; font-weight: 700; }
+html.light .m-step { color: #1f0e04; font-weight: 500; line-height: 1.8; }
+html.light .m-ingr-q { color: #1a0a04; font-weight: 700; }
+html.light .m-ingr-i { color: #2d1407; font-weight: 500; }
+html.light .m-tip-wrap { color: #1f0e04; font-weight: 500; }
+html.light .m-tip-label { color: #6a2812; font-weight: 700; }
+html.light .m-mem { color: #2d1407; font-weight: 500; font-style: italic; }
+/* Recipe of the Day card — already strong but ensure consistency */
+html.light .rotd-desc { color: #2d1407; font-weight: 500; }
+/* Search and filter inputs */
+html.light .hdr-search input { color: #1a0a04; font-weight: 500; }
+html.light .hdr-search input::placeholder { color: #6a3a18; opacity: 0.7; }
+/* Footer text */
+html.light .footer-memorial { color: #2e1208; font-weight: 600; }
+html.light .footer-sub { color: #4e1f0a; font-weight: 500; }
 
 /* ── Cooking Timer ───────────────────────────────────────── */
 .step-timer-btn {
@@ -1514,7 +1581,7 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
 @media (max-width: 1200px) { .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); } }
 @media (max-width: 768px) {
   .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: .75rem; padding: .8rem 1rem 1.5rem; }
-  .hero { padding: 2.5rem 1rem 2rem; }
+  .hero { padding: 1.1rem 1rem 1.1rem; }
   #mbox { border-radius: var(--r-lg); max-height: 95vh; }
   .about-inner { flex-direction: column; align-items: center; }
   .filter-bar { justify-content: center; }
