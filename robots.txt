@@ -1,7 +1,63 @@
-# robots.txt — Perla Ben-Harrosh Cookbook
-# v8.0 — Apr 2026
+# robots.txt — ספר הבישול של פרלה בן הראש ז״ל
+# v8.7 — Apr 2026 (comprehensive — supports Search Console submission)
 
+# ════════════════════════════════════════════════
+# All search engines (default policy)
+# ════════════════════════════════════════════════
 User-agent: *
 Allow: /
+# Block legacy/internal paths that shouldn't be indexed:
+Disallow: /logs/
+Disallow: /scripts/
+Disallow: /*.bak$
+Disallow: /*.tmp$
+# Crawl politely — wait 1 second between requests
+Crawl-delay: 1
 
+# ════════════════════════════════════════════════
+# Sitemaps — submit BOTH to Search Console
+# ════════════════════════════════════════════════
 Sitemap: https://perlabenharrosh-cookingbook.netlify.app/sitemap.xml
+Sitemap: https://asafben33.github.io/PerlaBenHarroshCookingBook/sitemap.xml
+
+# ════════════════════════════════════════════════
+# Specific bots — explicit allow (good practice)
+# ════════════════════════════════════════════════
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /images/
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Yandex
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+# ════════════════════════════════════════════════
+# Block known SEO-spam scrapers
+# ════════════════════════════════════════════════
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /

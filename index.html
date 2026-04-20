@@ -15,6 +15,25 @@
   content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com; media-src 'self' blob:; connect-src 'self' https://api.web3forms.com; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta name="referrer" content="no-referrer">
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     v8.7: Search engine verification (for Search Console submission)
+     Replace YOUR-VERIFICATION-CODE-HERE with the code from each platform:
+       1. Google: https://search.google.com/search-console → "Add Property"
+          → URL prefix → enter site URL → "HTML tag" method → copy meta value
+       2. Bing:   https://www.bing.com/webmasters → "Add a Site"
+          → "HTML Meta Tag" method → copy content value
+       3. Yandex: https://webmaster.yandex.com/ → "Add Site" (optional, has
+          smaller market share but still indexes for Russian/Hebrew searches)
+     If you don't yet have codes — leave the placeholders, they don't break
+     anything. They only ACTIVATE verification once you replace the value.
+     ════════════════════════════════════════════════════════════════════════ -->
+<meta name="google-site-verification" content="REPLACE-WITH-GOOGLE-CODE-FROM-SEARCH-CONSOLE">
+<meta name="msvalidate.01"            content="REPLACE-WITH-BING-CODE-FROM-WEBMASTER-TOOLS">
+<meta name="yandex-verification"      content="REPLACE-WITH-YANDEX-CODE-IF-USED">
+<!-- Sitemap link (also in robots.txt - both work, but explicit link helps crawlers) -->
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
 <meta property="og:title" content="ספר הבישול של פרלה בן הראש ז״ל">
 <meta property="og:description" content="1,054 מתכונים מרוקאיים וספרדיים אותנטיים">
 <meta property="og:type"  content="website">
@@ -1568,22 +1587,80 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
 }
 
 </style>
+<!-- ════════════════════════════════════════════════════════════════════════
+     v8.7: Comprehensive Schema.org markup for SEO + rich results
+     Multiple @type entries via @graph: WebSite, Organization, BreadcrumbList,
+     CollectionPage. Helps Google show site links + sitelinks-search-box +
+     breadcrumbs in search results.
+     ════════════════════════════════════════════════════════════════════════ -->
 <script type="application/ld+json">{
   "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "ספר הבישול של משפחת בן הראש",
-  "description": "1,054 מתכונים אותנטיים מהמטבח המרוקאי, הספרדי-יהודי ומטבחי יהדות המזרח — לזכרם של פרלה ופנחס בן הראש שזכרונם יהיה לברכה וגאווה הלאה לדורי דורות דרך הטעם המעלה...",
-  "url": "https://perlabenharrosh-cookingbook.netlify.app/",
-  "inLanguage": "he",
-  "image": "https://perlabenharrosh-cookingbook.netlify.app/images/site_images/og-image.jpg",
-  "author": {
-    "@type": "Person",
-    "name": "אסף בן הראש"
-  },
-  "about": {
-    "@type": "Thing",
-    "name": "מטבח מרוקאי-ספרדי-יהודי"
-  }
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://perlabenharrosh-cookingbook.netlify.app/#website",
+      "name": "ספר הבישול של משפחת בן הראש",
+      "alternateName": "Perla Ben-Harrosh Cookbook",
+      "description": "1,054 מתכונים אותנטיים מהמטבח המרוקאי, הספרדי-יהודי ומטבחי יהדות המזרח — לזכרם של פרלה ופנחס בן הראש שזכרונם יהיה לברכה וגאווה הלאה לדורי דורות דרך הטעם המעלה...",
+      "url": "https://perlabenharrosh-cookingbook.netlify.app/",
+      "inLanguage": ["he", "en"],
+      "image": "https://perlabenharrosh-cookingbook.netlify.app/images/site_images/og-image.jpg",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://perlabenharrosh-cookingbook.netlify.app/?search={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      },
+      "publisher": {
+        "@id": "https://perlabenharrosh-cookingbook.netlify.app/#person"
+      }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://perlabenharrosh-cookingbook.netlify.app/#person",
+      "name": "אסף יעקב בן הראש",
+      "alternateName": "Asaf Yaakov Ben-Harrosh",
+      "description": "בנם הצעיר של פרלה ופנחס בן הראש ז״ל, מנציח את מורשת המטבח המרוקאי-ספרדי של המשפחה"
+    },
+    {
+      "@type": "CollectionPage",
+      "@id": "https://perlabenharrosh-cookingbook.netlify.app/#collection",
+      "name": "אוסף מתכונים מרוקאיים-ספרדיים",
+      "description": "אוסף של 1,054 מתכונים מרוקאיים, ספרדיים-אנדלוסיים ומטבחי 9 עדות יהודיות",
+      "numberOfItems": 1054,
+      "isPartOf": {
+        "@id": "https://perlabenharrosh-cookingbook.netlify.app/#website"
+      },
+      "about": [
+        {"@type": "Thing", "name": "מטבח מרוקאי"},
+        {"@type": "Thing", "name": "מטבח ספרדי-אנדלוסי"},
+        {"@type": "Thing", "name": "מטבח יהודי-מזרחי"},
+        {"@type": "Thing", "name": "טאג'ין"},
+        {"@type": "Thing", "name": "קוסקוס"},
+        {"@type": "Thing", "name": "מימונה"},
+        {"@type": "Thing", "name": "חמין מרוקאי"}
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "דף הבית",
+          "item": "https://perlabenharrosh-cookingbook.netlify.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "כל המתכונים",
+          "item": "https://perlabenharrosh-cookingbook.netlify.app/#main"
+        }
+      ]
+    }
+  ]
 }</script>
 </head><body>
 
