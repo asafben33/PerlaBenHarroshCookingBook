@@ -2279,7 +2279,7 @@ _BAD_DOMAINS = [
 #
 # Image must score ≥ 40 to pass. Cross-source validation can boost +20.
 
-MIN_RELEVANCE_SCORE = 40   # threshold for accepting an image
+MIN_RELEVANCE_SCORE = 30   # threshold for accepting an image (v6.0.2: was 40, lowered after empirical testing showed 40 too strict)
 CROSS_SOURCE_BONUS = 20    # bonus if same image found via 2+ search sources
 
 # Negative phrases — appear in URLs of "ingredient/raw food/market" pages,
@@ -2354,11 +2354,24 @@ def _score_url_relevance(url, recipe_title="", category_kw="", primary_ingredien
         if url_low.endswith('/' + bad) or url_low.endswith('-' + bad):
             return -30
 
-    # Layer 4: Known-good food domain (+25)
+    # Layer 4: Known-good food domain (+35 — boosted in v6.0.2 from +25)
+    # Rationale: empirical testing showed even allrecipes/foodnetwork URLs
+    # weren't passing threshold despite being curated food sites.
     for domain in _FOOD_DOMAINS_SAFE:
         if domain in url_low:
-            score += 25
+            score += 35
             break
+
+    # Layer 4b (v6.0.2): Wikimedia/Wikipedia commons — high quality images
+    # but didn't qualify under "food domain" since they're general-purpose.
+    # If URL path contains food/dish keyword + Wikimedia, give bonus.
+    if 'wikimedia' in url_low or 'wikipedia' in url_low:
+        if any(k in url_low for k in ['food', 'dish', 'cuisine', 'cooked', 'recipe']):
+            score += 25
+        else:
+            # Even non-food-tagged Wikimedia is usually high-quality if it returned
+            # for a food query — give a smaller but real boost
+            score += 15
 
     # Layer 5: Strong food-image phrases (+20 each, capped)
     strong_count = sum(1 for p in _STRONG_FOOD_PHRASES if p in url_low)
@@ -2372,6 +2385,15 @@ def _score_url_relevance(url, recipe_title="", category_kw="", primary_ingredien
     # Layer 7: Hebrew URL (often Israeli food site) (+15)
     if '%D7%' in url and any(c in url_low for c in ['food', 'recipe', '.co.il']):
         score += 15
+
+    # Layer 7b (v6.0.2): Israeli domains even without Hebrew encoding —
+    # ynet/walla/mako food sections often use random IDs in image URLs
+    # (e.g. PicServer5/2024/12345.jpg) but are still legitimate food images.
+    israeli_domains_loose = ['ynet.co.il', 'walla.co.il', 'mako.co.il',
+                              'haaretz.co.il', 'foodil.co.il', 'mevashlim.co.il',
+                              'matkonation.co.il', 'pascale.co.il']
+    if any(d in url_low for d in israeli_domains_loose):
+        score += 15  # boost — these are curated Israeli food sites
 
     # Layer 8: Category keyword from query in URL (+15)
     if category_kw:
@@ -3633,15 +3655,37 @@ def main():
             else:
                 fail_count += 1
                 _consec_fails += 1
-                log(f"     FAIL — no images from {len(collected_urls)} URLs ({elapsed:.0f}s)")
-                # Auto-bail: if 10 consecutive recipes yielded 0 URLs, network is blocked
-                if _consec_fails >= 20:
+                # v6.0.2: distinguish between "no URLs found" (network blocked)
+                # vs "URLs found but all rejected by scoring" (threshold too strict)
+                if len(collected_urls) == 0:
+                    log(f"     FAIL — no URLs returned from any source ({elapsed:.0f}s) [likely network issue]")
+                else:
+                    # Show the highest score we found, so user can calibrate --min-score
+                    best_score = max([_score_url_relevance(
+                        u if isinstance(u, str) else (u[0] if isinstance(u, (list, tuple)) and u else ''),
+                        recipe.get('title', ''), query, []
+                    ) for u in collected_urls[:20] if u]) if collected_urls else 0
+                    log(f"     FAIL — {len(collected_urls)} URLs found but all scored below {MIN_RELEVANCE_SCORE} "
+                        f"(best: {best_score}) ({elapsed:.0f}s)")
+
+                # Auto-bail: only if we got 0 URLs for 20+ recipes (real network block)
+                # If URLs ARE coming in but failing scoring, it's a calibration issue —
+                # don't bail, just keep going.
+                if _consec_fails >= 20 and len(collected_urls) == 0:
                     log("")
                     log("     ════════════════════════════════════════════════════════")
-                    log(f"     ✗ 10 מתכונים רצופים ללא אף URL — כנראה רשת חסומה.")
+                    log(f"     ✗ 20 מתכונים רצופים ללא אף URL — כנראה רשת חסומה.")
                     log(f"     ✗ מפסיק למנוע בזבוז זמן. נסה שוב מרשת אחרת.")
                     log("     ════════════════════════════════════════════════════════")
                     break
+                elif _consec_fails == 30:
+                    # If we have URLs but all fail scoring for 30 recipes — warn but don't bail
+                    log("")
+                    log("     ════════════════════════════════════════════════════════")
+                    log(f"     ⚠ 30 מתכונים רצופים — URLs מתקבלים אך לא עוברים סף ניקוד.")
+                    log(f"     ⚠ הסף הנוכחי: {MIN_RELEVANCE_SCORE}. נסה להוריד עם --min-score 30 או 25.")
+                    log(f"     ⚠ ממשיך לרוץ — אולי מתכונים מאוחרים יצליחו.")
+                    log("     ════════════════════════════════════════════════════════")
 
             # ── Live progress bar (updates in-place) ──
             progress_bar(i + 1, total, ok=ok_count, fail=fail_count,
