@@ -3588,7 +3588,8 @@ def main():
                 if not u_str:
                     continue
                 cross_n = url_source_count.get(u_str, 1)
-                _score = _score_url_relevance(u_str, r.get('title', ''), q, [])
+                # v6.0 fix: use main loop's `recipe` and `query` (not `r`/`q` which don't exist here)
+                _score = _score_url_relevance(u_str, recipe.get('title', ''), query, [])
                 if cross_n >= 2:
                     _score += CROSS_SOURCE_BONUS
                 scored_urls.append((_score, u_str))
@@ -3614,10 +3615,10 @@ def main():
                 try:
                     # v6.0: pass recipe + score + query for provenance tracking
                     dl_ok = _call_with_timeout(
-                        lambda u=url, d=img_dest, sc=url_score:
-                            download_and_save(u, d, recipe=r,
+                        lambda u=url, d=img_dest, sc=url_score, rec=recipe, qu=query:
+                            download_and_save(u, d, recipe=rec,
                                               source_name=f"score:{sc}",
-                                              relevance_score=sc, query_kw=q),
+                                              relevance_score=sc, query_kw=qu),
                         timeout_sec=10)
                     if dl_ok:
                         saved_count += 1

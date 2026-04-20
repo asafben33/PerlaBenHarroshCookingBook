@@ -878,6 +878,79 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 .m-vid-del { flex-shrink: 0; background: transparent; border: 1px solid rgba(220,50,50,.3); border-radius: 100px; width: 24px; height: 24px; color: #f99; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: .8rem; }
 .m-vid-del:hover { background: rgba(220,50,50,.2); }
 .m-vid-add { display: inline-flex; align-items: center; gap: .35rem; background: rgba(196,147,10,.1); border: 1.5px dashed rgba(196,147,10,.4); border-radius: var(--r-md); padding: .42rem 1.1rem; color: var(--c-gold-d); font-size: .8rem; cursor: pointer; margin-top: .35rem; width: 100%; justify-content: center; transition: all var(--t-fast); font-family: inherit; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v8.6: English-mode direction overrides for modal content.
+   When user toggles to EN, these flip text alignment + flex direction so that
+   all recipe content reads naturally left-to-right (English natural direction).
+   When user returns to HE — the overrides do NOT apply, and original RTL stays.
+   ═══════════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════════
+   v8.6: STRENGTHENED English-mode (lang-en) LTR overrides
+   --------------------------------------------------------
+   When `<html class="lang-en">` is set, ALL recipe modal content flips to LTR
+   and aligns to the left. This complete override (with !important where
+   needed) ensures no inner element (with its own `direction: rtl`) leaks
+   through and creates a mixed-direction display.
+
+   When user toggles back to Hebrew, the `lang-en` class is removed and
+   original RTL/right-alignment is restored automatically (no JS reset needed).
+   ═══════════════════════════════════════════════════════════════════════════ */
+html.lang-en #mbox { direction: ltr !important; }
+html.lang-en .m-title,
+html.lang-en .m-subdesc,
+html.lang-en .m-sec-h,
+html.lang-en .m-step,
+html.lang-en .m-tip-wrap,
+html.lang-en .m-tip-label,
+html.lang-en .m-src-box,
+html.lang-en .m-vid-item,
+html.lang-en .m-mem { direction: ltr !important; text-align: left !important; }
+/* m-mem has a right border (Hebrew quote-aside) — flip to left in EN */
+html.lang-en .m-mem {
+  border-right: none;
+  border-left: 3px solid var(--c-gold-d);
+  background: linear-gradient(to right, rgba(196,147,10,.1), rgba(196,147,10,.03));
+}
+/* v8.6: Ingredient row in English — flip to left-anchored layout.
+   Was: items still appeared right-anchored due to inner `direction: rtl`.
+   Fix: !important on the row + children, so quantity + name flow left-to-right. */
+html.lang-en .m-ingr-item {
+  direction: ltr !important;
+  justify-content: flex-start !important;
+}
+html.lang-en .m-ingr-q,
+html.lang-en .m-ingr-i {
+  direction: ltr !important;
+  text-align: left !important;
+}
+/* v8.6: Meta row (time/servings/difficulty chips) — anchor to left in English */
+html.lang-en .m-meta {
+  direction: ltr !important;
+  justify-content: flex-start !important;
+}
+html.lang-en .m-chip {
+  direction: ltr !important;
+}
+/* v8.6: Steps padding flip — Hebrew uses padding-right for the numbered list,
+   English needs padding-left for the same visual effect on the opposite side */
+html.lang-en .m-steps {
+  padding-right: 0 !important;
+  padding-left: 1.3rem !important;
+  direction: ltr !important;
+}
+/* v8.6: Video list + actions — also LTR in English */
+html.lang-en .m-vid-list { direction: ltr !important; }
+html.lang-en .m-vid-wrap { direction: ltr !important; text-align: left !important; }
+html.lang-en .m-actions { direction: ltr !important; }
+html.lang-en .m-act-media { direction: ltr !important; }
+/* v8.6: Source box, sub-description, body — comprehensive coverage */
+html.lang-en .m-body { direction: ltr !important; }
+html.lang-en .m-hero-nav { direction: ltr !important; }
+html.lang-en .m-hero-dots { direction: ltr !important; }
+/* v8.6: Modal navigation strip + close button area in English */
+html.lang-en .m-nav { direction: ltr !important; }
+
 .m-vid-add:hover { background: rgba(196,147,10,.22); border-style: solid; color: var(--c-gold-l); }
 .m-actions { direction: rtl; display: flex; flex-wrap: wrap; gap: .4rem; padding-top: .6rem; border-top: 1px solid var(--c-bg3); margin-top: .6rem; }
 .m-act-media { direction: rtl; display: flex; align-items: center; gap: .35rem; background: rgba(196,147,10,.12); border: 1.5px solid rgba(196,147,10,.3); border-radius: 100px; padding: .38rem .9rem; font-size: .78rem; color: var(--c-gold-d); cursor: pointer; font-family: inherit; transition: background var(--t-fast); }
@@ -12124,6 +12197,20 @@ function applyLang(lang) {
   _LANG = lang;
   var btn = document.getElementById('lang-toggle');
   if (btn) btn.textContent = lang === 'en' ? 'HE' : 'EN';
+
+  // v8.6: toggle html class + dir + lang attribute for direction-aware CSS
+  // When EN: add 'lang-en' class — CSS overrides flip modal content to LTR.
+  // When HE: remove the class — original RTL definitions apply.
+  var html = document.documentElement;
+  if (lang === 'en') {
+    html.classList.add('lang-en');
+    html.setAttribute('lang', 'en');
+    html.setAttribute('dir', 'ltr');
+  } else {
+    html.classList.remove('lang-en');
+    html.setAttribute('lang', 'he');
+    html.setAttribute('dir', 'rtl');
+  }
 
   // Update ALL data-i18n elements (pills, about, footer, tags, etc.)
   document.querySelectorAll('[data-i18n]').forEach(function(el) {
