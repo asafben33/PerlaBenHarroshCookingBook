@@ -29,27 +29,17 @@ python download_images.py --inline-alias
 ```
 כמו לעיל, ובסוף גם מחדיר את ה-alias map ישירות ל-`index.html` (חוסך copy-paste).
 ### 3. אתחול מלא — התחלה מאפס
-```bash
 python download_images.py --reset-images --inline-alias
-```
-מוחק את **כל** תמונות המתכונים ומוריד הכל מחדש. שימושי אם הספרייה מלאה זבל.
+# מוחק את **כל** תמונות המתכונים ומוריד הכל מחדש. שימושי אם הספרייה מלאה זבל.
 ### 4. רק לבדוק מה יקרה (ללא שינויים)
-```bash
 python download_images.py --dry-run
-```
-מציג רשימה של מה יימחק ומה יורד, בלי לבצע כלום.
+# מציג רשימה של מה יימחק ומה יורד, בלי לבצע כלום.
 ### 5. רק ניקוי חשודים (להתחיל מנקה)
-```bash
 python download_images.py --clean-only
-```
-או עם תצוגה מקדימה:
-```bash
+# או עם תצוגה מקדימה:
 python download_images.py --clean-only --dry-run
-```
-או עם פילטר קפדני יותר:
-```bash
+# או עם פילטר קפדני יותר:
 python download_images.py --clean-only --aggressive-clean
-```
 ### 6. רק להוריד (דלג על ניקוי)
 ```bash
 python download_images.py --skip-clean
@@ -71,49 +61,37 @@ python download_images.py --overwrite
 ---
 ## תרחישי Proxy (ברשת gov.il)
 ### לגלות proxy אוטומטית ולשמור
-```bash
 python download_images.py --detect-only
-```
-הסקריפט יגלה את ה-proxy מה-Registry/PAC ויישמור ל-`proxy_config.txt`. לא מוריד תמונות.
+# הסקריפט יגלה את ה-proxy מה-Registry/PAC ויישמור ל-`proxy_config.txt`. לא מוריד תמונות.
 ### לבדוק באופן אקטיבי כל proxy מועמד
-```bash
 python download_images.py --test-proxy
-```
-איטי יותר אבל מוצא את ה-proxy הראשון שאכן עובד.
+# איטי יותר אבל מוצא את ה-proxy הראשון שאכן עובד.
 ### להגדיר proxy ידנית
-```bash
 python download_images.py --proxy http://proxy.gov.il:8080
-```
 ### להתעלם מ-proxy לחלוטין
-```bash
 python download_images.py --no-proxy
-```
-שימושי אם אתה מריץ מהבית או מ-hotspot.
+# שימושי אם אתה מריץ מהבית או מ-hotspot.
 ---
 ## שילובים מומלצים
-# 1. דרי ראן
+# שלב 1 — סבב strict (סף 60): רוב המתכונים הקלאסיים
+python download_images.py --skip-clean --skip-dedup --strict --provenance
+# שלב 2 — סבב בינוני (סף 45): מתכונים אזוטריים יותר
+python download_images.py --skip-clean --skip-dedup --min-score 45 --provenance
+# שלב 3 — סבב ברירת מחדל (סף 30): השלמת חסרים
+python download_images.py --skip-clean --skip-dedup --provenance
+# שלב 4 — ניקוי אגרסיבי + dedup + alias מאוחד
+python download_images.py --skip-download --aggressive-clean --inline-alias
+## 1. דרי ראן
 python download_images.py --dry-run --strict --provenance
 # 2. ריצה אמיתית
 python download_images.py --strict --provenance
-# 3. אם יוצא נמוך מדי — הרץ עם סף יותר נמוך
-python download_images.py --min-score 50 --provenance
-**פעם ראשונה, אחרי שההורדה הקודמת הביאה תמונות לא רלוונטיות:**
-```bash
+# פעם ראשונה, אחרי שההורדה הקודמת הביאה תמונות לא רלוונטיות:
 python download_images.py --aggressive-clean --inline-alias
-```
-**לחזור למצב נקי ולהתחיל מאפס:**
-```bash
+# לחזור למצב נקי ולהתחיל מאפס:
 python download_images.py --reset-images --inline-alias
-```
-**לבדוק מה קורה בלי לקלקל כלום:**
-```bash
+# לבדוק מה קורה בלי לקלקל כלום:
 python download_images.py --dry-run --aggressive-clean
-```
-**להוסיף תמונות חדשות בלי להרוס קיימות:**
-```bash
+# להוסיף תמונות חדשות בלי להרוס קיימות:
 python download_images.py --skip-clean --inline-alias
-```
-**רק לרענן את ה-alias ב-`index.html`:**
-```bash
+# רק לרענן את ה-alias ב-`index.html:
 python download_images.py --skip-clean --skip-download --inline-alias
-```
