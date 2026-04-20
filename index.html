@@ -837,67 +837,734 @@ html.light .hero-cta-primary:hover {
 }
 .about-body { flex: 1; }
 /* ═══════════════════════════════════════════════════════════════════════════
-   v8.12: Book reader — comprehensive readability improvements
-   - Larger font (1.15rem ≈ 18.5px, was 1.02rem ≈ 16px)
-   - Higher contrast in light mode (#1a0a04, was #3a2010)
-   - Narrower max-width (720px, was 860px) — optimal 60-75 chars/line
-   - Slight font-weight bump on light mode for parchment legibility
-   - Better spacing, larger sub-headings
+   v8.16: Book reader — comprehensive redesign for engagement & readability
+   - Wider layout (980px max, was 720px) — uses screen real estate
+   - Larger paragraph font (1.25rem ≈ 20px, was 1.15rem)
+   - Drop caps (initial letter) on first paragraph of each chapter — classic book design
+   - Ornate chapter headers with decorative dividers (✦)
+   - Parchment "page" feel via subtle background per chapter
+   - First-line indent on body paragraphs (typographic standard for prose)
+   - Numbered chapter ornaments
    ═══════════════════════════════════════════════════════════════════════════ */
-.book-section{margin-top:1.5rem;padding:0 .8rem;max-width:720px;margin-left:auto;margin-right:auto}
-.book-main-title{text-align:center;font-size:1.7rem;font-weight:900;color:var(--c-gold-l);margin:0 0 .3rem;font-family:'Frank Ruhl Libre',serif;line-height:1.2}
-html.light .book-main-title{color:#7a3a18;text-shadow:0 1px 0 rgba(255,255,255,.4)}
-.book-subtitle{text-align:center;font-size:.95rem;color:rgba(237,224,196,.7);font-style:italic;margin:0 0 .5rem}
-html.light .book-subtitle{color:#6a3814;font-weight:500}
-.book-nav{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;margin:0 0 1.4rem;padding:.7rem;position:sticky;top:100px;z-index:50;background:var(--c-deep);border-radius:8px;border-bottom:1px solid rgba(196,147,10,.15)}
-html.light .book-nav{background:rgba(255,250,238,.95);box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.book-nav-btn{background:rgba(196,147,10,.12);border:1px solid rgba(196,147,10,.25);color:rgba(237,224,196,.85);padding:.3rem .75rem;border-radius:100px;font-size:.82rem;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit;direction:rtl}
-.book-nav-btn:hover{background:rgba(196,147,10,.22);color:var(--c-gold-l)}
-.book-nav-btn.active{background:rgba(196,147,10,.32);color:var(--c-gold-l);border-color:var(--c-gold)}
-html.light .book-nav-btn{background:rgba(196,147,10,.12);color:#5a3014;border-color:rgba(196,147,10,.3);font-weight:600}
-html.light .book-nav-btn:hover{background:rgba(196,147,10,.25);color:#3a1f0a}
-html.light .book-nav-btn.active{background:rgba(184,66,35,.18);color:#3a1f0a;border-color:#b84223}
-.book-chapter{margin:0;padding:1.8rem 0;border-bottom:1px solid rgba(196,147,10,.15)}
-.book-chapter:last-child{border-bottom:none}
-.book-ch-title{color:var(--c-gold);font-size:1.4rem;font-weight:700;margin:0 0 .25rem;direction:rtl;text-align:right;font-family:'Frank Ruhl Libre',serif;line-height:1.3}
-html.light .book-ch-title{color:#7a3a18;text-shadow:0 1px 0 rgba(255,255,255,.4)}
-.book-ch-page{font-size:.78rem;color:rgba(237,224,196,.5);margin:0 0 .8rem;direction:rtl;text-align:right;font-style:italic}
-html.light .book-ch-page{color:#6a4828;font-weight:500}
-.book-sub{color:var(--c-gold-l);font-size:1.1rem;font-weight:700;margin:1.5rem 0 .5rem;padding-top:.8rem;border-top:1px solid rgba(196,147,10,.12);direction:rtl;text-align:right;font-family:'Frank Ruhl Libre',serif}
-.book-sub:first-child{border-top:none;padding-top:0}
-html.light .book-sub{color:#6a2812;text-shadow:0 1px 0 rgba(255,255,255,.4)}
-/* THE CRITICAL ONE — body paragraph text */
-.book-p{
-  line-height:1.85;
-  margin:.7rem 0;
-  text-align:justify;
-  direction:rtl;
-  color:rgba(237,224,196,.95);
-  font-size:1.15rem;
-  font-family:'Frank Ruhl Libre','Frank Ruhl Libre Hebrew',Georgia,serif;
-  letter-spacing:.005em;
+.book-section {
+  margin-top: 1.5rem;
+  padding: 0 1.5rem;
+  max-width: 980px;
+  margin-left: auto;
+  margin-right: auto;
 }
-html.light .book-p{
-  color:#1a0a04;
-  font-weight:500;
-  text-shadow:0 1px 0 rgba(255,255,255,.5);
+.book-main-title {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--c-gold-l);
+  margin: 0 0 .4rem;
+  font-family: 'Frank Ruhl Libre', serif;
+  line-height: 1.2;
+  letter-spacing: .01em;
+  text-shadow: 0 0 24px rgba(196,147,10,.25);
 }
-.book-placeholder{font-style:italic;text-align:center;color:rgba(237,224,196,.4);font-size:.92rem;padding:1rem 0}
-html.light .book-placeholder{color:#8a5a30;font-weight:500}
-.book-photo{margin:1.4rem auto;max-width:560px;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.3);border:2px solid rgba(196,147,10,.25);position:relative}
-.book-photo img{width:100%;height:auto;display:block;transition:transform .3s}
-.book-photo:hover img{transform:scale(1.02)}
-.book-photo-cap{padding:.6rem .9rem;background:rgba(0,0,0,.65);color:rgba(237,224,196,.95);font-size:.88rem;text-align:center;direction:rtl;line-height:1.5;backdrop-filter:blur(4px);font-weight:500}
-html.light .book-photo{border-color:rgba(196,147,10,.35);box-shadow:0 4px 16px rgba(0,0,0,.12)}
-html.light .book-photo-cap{background:rgba(255,255,255,.92);color:#2a1407;font-weight:500}
-.book-photo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin:1.5rem 0}
-.book-photo-grid .book-photo{margin:0}
-/* Mobile: keep readable on small screens */
-@media (max-width: 600px) {
+html.light .book-main-title { color: #6a2812; text-shadow: 0 1px 0 rgba(255,255,255,.5); }
+.book-subtitle {
+  text-align: center;
+  font-size: 1.05rem;
+  color: rgba(237,224,196,.75);
+  font-style: italic;
+  margin: 0 0 1rem;
+  font-family: 'Frank Ruhl Libre', serif;
+}
+html.light .book-subtitle { color: #6a3814; font-weight: 500; }
+.book-nav {
+  display: flex; flex-wrap: wrap; gap: .5rem;
+  justify-content: center;
+  margin: 0 0 1.8rem;
+  padding: .8rem 1rem;
+  position: sticky; top: 100px; z-index: 50;
+  background: var(--c-deep);
+  border-radius: 10px;
+  border: 1px solid rgba(196,147,10,.18);
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+}
+html.light .book-nav {
+  background: rgba(255,250,238,.97);
+  box-shadow: 0 3px 12px rgba(0,0,0,.08);
+  border-color: rgba(196,147,10,.25);
+}
+.book-nav-btn {
+  background: rgba(196,147,10,.13);
+  border: 1px solid rgba(196,147,10,.28);
+  color: rgba(237,224,196,.88);
+  padding: .35rem .85rem; border-radius: 100px;
+  font-size: .88rem; font-weight: 500;
+  cursor: pointer; transition: all .2s;
+  font-family: inherit; direction: rtl;
+}
+.book-nav-btn:hover {
+  background: rgba(196,147,10,.25);
+  color: var(--c-gold-l);
+  transform: translateY(-1px);
+}
+.book-nav-btn.active {
+  background: rgba(196,147,10,.35);
+  color: var(--c-gold-l);
+  border-color: var(--c-gold);
+  box-shadow: 0 0 12px rgba(196,147,10,.3);
+}
+html.light .book-nav-btn { background: rgba(196,147,10,.15); color: #4a2010; border-color: rgba(184,66,35,.3); font-weight: 600; }
+html.light .book-nav-btn:hover { background: rgba(196,147,10,.28); color: #2a1008; }
+html.light .book-nav-btn.active { background: rgba(184,66,35,.2); color: #2a1008; border-color: #b84223; }
+/* CHAPTER — like a page in a printed book */
+.book-chapter {
+  margin: 0 0 1.5rem;
+  padding: 2.5rem 2rem 2rem;
+  position: relative;
+  background: linear-gradient(180deg,
+    rgba(28,15,8,.35) 0%,
+    rgba(28,15,8,.25) 100%);
+  border: 1px solid rgba(196,147,10,.18);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.25),
+              inset 0 1px 0 rgba(255,255,255,.04);
+}
+html.light .book-chapter {
+  background: linear-gradient(180deg,
+    rgba(255,251,242,.85) 0%,
+    rgba(252,246,232,.85) 100%);
+  border-color: rgba(196,147,10,.25);
+  box-shadow: 0 4px 18px rgba(184,66,35,.08),
+              inset 0 1px 0 rgba(255,255,255,.6);
+}
+.book-chapter:last-child { margin-bottom: 0; }
+/* Decorative top ornament on each chapter */
+.book-chapter::before {
+  content: '✦  ✦  ✦';
+  display: block;
+  text-align: center;
+  font-size: .85rem;
+  letter-spacing: .8em;
+  color: var(--c-gold-d);
+  opacity: .55;
+  margin: 0 0 1.2rem;
+  padding-right: .8em;
+}
+html.light .book-chapter::before { color: #a06028; opacity: .55; }
+/* CHAPTER TITLE — bold, centered, with lower decoration line */
+.book-ch-title {
+  color: var(--c-gold);
+  font-size: 1.85rem;
+  font-weight: 800;
+  margin: 0 0 .3rem;
+  direction: rtl;
+  text-align: center;
+  font-family: 'Frank Ruhl Libre', serif;
+  line-height: 1.25;
+  letter-spacing: .005em;
+  text-shadow: 0 0 18px rgba(196,147,10,.2);
+}
+html.light .book-ch-title { color: #6a2812; text-shadow: 0 1px 0 rgba(255,255,255,.5); }
+/* Page indicator under chapter title */
+.book-ch-page {
+  font-size: .82rem;
+  color: rgba(237,224,196,.55);
+  margin: 0 0 1.5rem;
+  direction: rtl;
+  text-align: center;
+  font-style: italic;
+  position: relative;
+  padding-bottom: 1rem;
+}
+.book-ch-page::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 80px; height: 2px;
+  background: linear-gradient(to left,
+    transparent 0%,
+    rgba(196,147,10,.5) 50%,
+    transparent 100%);
+}
+html.light .book-ch-page { color: #6a4828; font-weight: 500; }
+/* SUB-HEADING within a chapter */
+.book-sub {
+  color: var(--c-gold-l);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 2rem 0 .7rem;
+  padding: 0;
+  direction: rtl;
+  text-align: right;
+  font-family: 'Frank Ruhl Libre', serif;
+  border-bottom: 1px dotted rgba(196,147,10,.3);
+  padding-bottom: .35rem;
+}
+.book-sub:first-of-type { margin-top: 1rem; }
+html.light .book-sub { color: #6a2812; text-shadow: 0 1px 0 rgba(255,255,255,.4); border-bottom-color: rgba(184,66,35,.35); }
+/* THE PARAGRAPHS — the heart of the reading experience */
+.book-p {
+  line-height: 1.9;
+  margin: 0 0 1.1rem;
+  text-align: justify;
+  text-justify: inter-word;
+  direction: rtl;
+  color: rgba(237,224,196,.95);
+  font-size: 1.25rem;
+  font-family: 'Frank Ruhl Libre', 'Frank Ruhl Libre Hebrew', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: .005em;
+  text-indent: 1.5em;
+  transition: background .3s ease;
+}
+.book-p:first-of-type { text-indent: 0; }
+html.light .book-p {
+  color: #1a0a04;
+  font-weight: 500;
+  text-shadow: 0 1px 0 rgba(255,255,255,.55);
+}
+/* DROP CAP — first letter of first paragraph in each chapter, gigantic and golden */
+.book-p:first-of-type::first-letter,
+.book-chapter > .book-sub + .book-p::first-letter {
+  font-size: 4em;
+  font-weight: 900;
+  font-family: 'Frank Ruhl Libre', serif;
+  color: var(--c-gold);
+  float: right;
+  line-height: .85;
+  margin: .1em .15em 0 0;
+  padding: 0;
+  text-shadow: 0 2px 8px rgba(196,147,10,.35);
+}
+html.light .book-p:first-of-type::first-letter,
+html.light .book-chapter > .book-sub + .book-p::first-letter {
+  color: #b84223;
+  text-shadow: 0 2px 6px rgba(184,66,35,.3);
+}
+/* Subtle hover highlight on paragraphs (focus-friendly reading) */
+.book-p:hover {
+  background: rgba(196,147,10,.04);
+  border-radius: 4px;
+}
+html.light .book-p:hover {
+  background: rgba(196,147,10,.06);
+}
+.book-placeholder {
+  font-style: italic;
+  text-align: center;
+  color: rgba(237,224,196,.45);
+  font-size: 1rem;
+  padding: 1.5rem 0;
+  font-family: 'Frank Ruhl Libre', serif;
+}
+html.light .book-placeholder { color: #8a5a30; font-weight: 500; }
+/* PHOTO — like an antique framed picture inside a book */
+.book-photo {
+  margin: 1.8rem auto;
+  max-width: 580px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0,0,0,.4),
+              0 0 0 1px rgba(196,147,10,.4),
+              0 0 0 6px var(--c-deep, #1a0c06),
+              0 0 0 7px rgba(196,147,10,.5);
+  position: relative;
+}
+.book-photo img { width: 100%; height: auto; display: block; transition: transform .5s; }
+.book-photo:hover img { transform: scale(1.03); }
+.book-photo-cap {
+  padding: .7rem 1rem;
+  background: rgba(28,15,8,.85);
+  color: rgba(237,224,196,.95);
+  font-size: .92rem;
+  text-align: center;
+  direction: rtl;
+  line-height: 1.5;
+  font-style: italic;
+  font-family: 'Frank Ruhl Libre', serif;
+  font-weight: 500;
+  letter-spacing: .01em;
+}
+html.light .book-photo {
+  box-shadow: 0 6px 20px rgba(184,66,35,.18),
+              0 0 0 1px rgba(196,147,10,.5),
+              0 0 0 6px #fcf6e8,
+              0 0 0 7px rgba(196,147,10,.6);
+}
+html.light .book-photo-cap {
+  background: rgba(252,246,232,.95);
+  color: #2a1407;
+  font-weight: 500;
+}
+.book-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.2rem;
+  margin: 1.8rem 0;
+}
+.book-photo-grid .book-photo { margin: 0; }
+/* Decorative END-OF-CHAPTER ornament */
+.book-chapter::after {
+  content: '※';
+  display: block;
+  text-align: center;
+  font-size: 1.4rem;
+  color: var(--c-gold-d);
+  opacity: .5;
+  margin: 1.5rem 0 0;
+}
+html.light .book-chapter::after { color: #a06028; opacity: .55; }
+/* ═══════════════════════════════════════════════════════════════════════════
+   v8.17: 3D ANIMATED BOOK READER — "Neverending Story" style
+   ═══════════════════════════════════════════════════════════════════════════
+   Two display modes for the book content:
+   - "scroll" mode (default v8.16) — fluid scroll through chapters
+   - "book3d" mode (NEW v8.17) — animated 3D book with page-flip
+   Mode is toggled via .book-mode-scroll / .book-mode-3d on #book-content-wrap
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Mode toggle controls — sits above the book */
+.book-mode-toggle {
+  display: flex; gap: .5rem; justify-content: center;
+  margin: 0 0 1rem; padding: .4rem;
+  background: rgba(28,15,8,.5);
+  border: 1px solid rgba(196,147,10,.25);
+  border-radius: 100px;
+  width: fit-content; margin-left: auto; margin-right: auto;
+}
+html.light .book-mode-toggle { background: rgba(255,250,238,.7); border-color: rgba(184,66,35,.25); }
+.book-mode-btn {
+  background: transparent; border: none;
+  color: rgba(237,224,196,.7);
+  padding: .5rem 1.1rem; border-radius: 100px;
+  font-size: .92rem; font-weight: 600;
+  cursor: pointer; transition: all .25s var(--ease);
+  font-family: inherit;
+  display: inline-flex; align-items: center; gap: .4rem;
+}
+.book-mode-btn:hover { color: var(--c-gold-l); }
+.book-mode-btn.active {
+  background: rgba(196,147,10,.25);
+  color: var(--c-gold-l);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+}
+html.light .book-mode-btn { color: #5a3014; }
+html.light .book-mode-btn:hover { color: #2a1008; }
+html.light .book-mode-btn.active { background: rgba(184,66,35,.18); color: #2a1008; }
+
+/* Hide-show by mode */
+.book-mode-3d-content { display: none; }
+.book-mode-3d-active .book-mode-scroll-content { display: none; }
+.book-mode-3d-active .book-mode-3d-content { display: block; }
+
+/* ─── 3D BOOK CONTAINER ─────────────────────────────────────────────── */
+.book3d-stage {
+  position: relative;
+  width: 100%;
+  min-height: 720px;
+  margin: 0 auto;
+  perspective: 2400px;
+  perspective-origin: 50% 50%;
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(ellipse at center, rgba(28,15,8,.85) 0%, rgba(8,4,2,.95) 70%),
+    radial-gradient(ellipse at top, rgba(196,147,10,.08) 0%, transparent 50%);
+  border-radius: 16px;
+  overflow: hidden;
+  padding: 2rem 1rem;
+}
+html.light .book3d-stage {
+  background:
+    radial-gradient(ellipse at center, rgba(252,246,232,.92) 0%, rgba(232,220,192,.95) 70%),
+    radial-gradient(ellipse at top, rgba(196,147,10,.12) 0%, transparent 50%);
+}
+
+/* Particle layer — golden floating dust */
+.book3d-particles { position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+.book3d-particle {
+  position: absolute; width: 3px; height: 3px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(229,176,32,.95) 0%, rgba(196,147,10,.5) 50%, transparent 100%);
+  box-shadow: 0 0 8px rgba(229,176,32,.6);
+  pointer-events: none; opacity: 0;
+}
+@keyframes book3d-particle-rise {
+  0%   { opacity: 0; transform: translate(0, 0) scale(.3); }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx, 30px), var(--dy, -200px)) scale(1.2); }
+}
+
+/* ─── THE BOOK ITSELF ───────────────────────────────────────────────── */
+.book3d {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 1.2s cubic-bezier(.4,0,.2,1);
+  z-index: 5;
+}
+.book3d.is-closed {
+  width: 360px; height: 520px;
+  transform: rotateX(15deg) rotateY(-8deg);
+  cursor: pointer;
+}
+.book3d.is-closed:hover { transform: rotateX(12deg) rotateY(-5deg) translateY(-8px); }
+.book3d.is-open {
+  width: min(1100px, 95vw); height: min(700px, 85vh);
+  transform: rotateX(0deg);
+}
+
+/* ─── COVER ─────────────────────────────────────────────────────────── */
+.book3d-cover {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(135deg, #4a2818 0%, #2e1808 50%, #4a2818 100%),
+    radial-gradient(circle at 30% 30%, rgba(120,60,30,.3) 0%, transparent 60%);
+  border-radius: 4px 12px 12px 4px;
+  box-shadow:
+    inset 0 0 50px rgba(0,0,0,.6),
+    inset 4px 0 12px rgba(0,0,0,.5),
+    0 20px 60px rgba(0,0,0,.7),
+    0 8px 16px rgba(0,0,0,.4);
+  transform: translateZ(8px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 3rem 2rem; text-align: center;
+  border-right: 8px solid #1a0c06;
+  transition: transform 1.4s cubic-bezier(.4,0,.2,1);
+  transform-origin: right center;
+  backface-visibility: hidden;
+}
+.book3d.is-open .book3d-cover {
+  transform: translateZ(8px) rotateY(-160deg);
+  pointer-events: none;
+}
+.book3d-cover::before {
+  content: ''; position: absolute; inset: 16px 24px 16px 32px;
+  border: 2px solid rgba(196,147,10,.55); border-radius: 2px;
+  box-shadow: inset 0 0 20px rgba(196,147,10,.15), 0 0 12px rgba(196,147,10,.2);
+  pointer-events: none;
+}
+.book3d-cover::after {
+  content: ''; position: absolute; inset: 22px 30px 22px 38px;
+  border: 1px solid rgba(196,147,10,.35); border-radius: 1px; pointer-events: none;
+}
+.book3d-cover-title {
+  font-family: 'Frank Ruhl Libre', serif;
+  font-size: 1.75rem; font-weight: 900; color: #d4a020;
+  text-shadow: 0 0 12px rgba(229,176,32,.6), 0 2px 0 #1a0c06, 1px 1px 0 rgba(229,176,32,.4);
+  line-height: 1.25; margin: 0 0 1rem; letter-spacing: .015em;
+  position: relative; z-index: 2; direction: rtl;
+}
+.book3d-cover-subtitle {
+  font-family: 'Frank Ruhl Libre', serif;
+  font-size: .95rem; color: rgba(212,160,32,.8);
+  font-style: italic; margin: 0 0 2.5rem;
+  position: relative; z-index: 2; direction: rtl;
+}
+.book3d-cover-ornament {
+  font-size: 3rem; color: rgba(229,176,32,.85);
+  text-shadow: 0 0 24px rgba(229,176,32,.6);
+  margin: 0; position: relative; z-index: 2; line-height: 1;
+}
+.book3d-cover-byline {
+  font-family: 'Frank Ruhl Libre', serif;
+  font-size: .85rem; color: rgba(212,160,32,.7);
+  margin-top: 2rem; letter-spacing: .1em;
+  position: relative; z-index: 2; direction: rtl;
+}
+.book3d-cover-cta {
+  position: absolute; bottom: 1.2rem; left: 50%;
+  transform: translateX(-50%);
+  font-size: .82rem; color: rgba(229,176,32,.65);
+  font-style: italic; letter-spacing: .15em; z-index: 2;
+  animation: book3d-cta-pulse 2.5s ease-in-out infinite;
+  white-space: nowrap;
+}
+@keyframes book3d-cta-pulse {
+  0%, 100% { opacity: .55; }
+  50% { opacity: 1; }
+}
+.book3d-back {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #3a1f10 0%, #2e1808 100%);
+  border-radius: 12px 4px 4px 12px;
+  transform: translateZ(-8px);
+  box-shadow: inset 0 0 40px rgba(0,0,0,.6);
+  border-left: 8px solid #1a0c06;
+}
+
+/* ─── INNER PAGES ───────────────────────────────────────────────────── */
+.book3d-pages {
+  position: absolute; inset: 0;
+  display: grid; grid-template-columns: 1fr 1fr;
+  background:
+    linear-gradient(to right, rgba(0,0,0,.15) 0%, transparent 5%, transparent 50%, transparent 95%, rgba(0,0,0,.15) 100%),
+    linear-gradient(180deg, #faf3e0 0%, #f5ecd0 100%);
+  border-radius: 6px;
+  box-shadow: inset 0 0 40px rgba(120,80,40,.12), inset 0 2px 8px rgba(0,0,0,.05);
+  opacity: 0;
+  transition: opacity .4s ease .9s;
+  pointer-events: none;
+  overflow: hidden;
+}
+.book3d.is-open .book3d-pages { opacity: 1; pointer-events: auto; }
+.book3d-pages::before {
+  content: '';
+  position: absolute; top: 0; bottom: 0; left: 50%;
+  width: 30px; transform: translateX(-50%);
+  background: linear-gradient(to right, transparent 0%, rgba(80,50,20,.18) 30%, rgba(60,30,10,.35) 50%, rgba(80,50,20,.18) 70%, transparent 100%);
+  pointer-events: none; z-index: 5;
+}
+.book3d-page {
+  position: relative;
+  padding: 2.5rem 2.2rem;
+  overflow: hidden;
+  font-family: 'Frank Ruhl Libre', 'Frank Ruhl Libre Hebrew', Georgia, serif;
+  color: #2a1407;
+  direction: rtl;
+}
+.book3d-page-right { border-left: 1px solid rgba(196,147,10,.18); }
+.book3d-page-content {
+  font-size: 1.08rem; line-height: 1.85;
+  text-align: justify; color: #1a0a04;
+  font-weight: 500;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+  letter-spacing: .003em;
+}
+.book3d-page-content h3 {
+  text-align: center; font-size: 1.55rem; font-weight: 800;
+  color: #6a2812; margin: 0 0 .4rem;
+  font-family: 'Frank Ruhl Libre', serif;
+}
+.book3d-page-content h4 {
+  font-size: 1.15rem; font-weight: 700; color: #6a2812;
+  margin: 1.2rem 0 .5rem; text-align: right;
+  border-bottom: 1px dotted rgba(184,66,35,.3); padding-bottom: .25rem;
+}
+.book3d-page-content .book-ch-page-num {
+  text-align: center; font-size: .8rem; color: #6a4828;
+  font-style: italic; margin: 0 0 1.2rem;
+  position: relative; padding-bottom: .8rem;
+}
+.book3d-page-content .book-ch-page-num::after {
+  content: ''; position: absolute; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 60px; height: 2px;
+  background: linear-gradient(to left, transparent, rgba(184,66,35,.4), transparent);
+}
+.book3d-page-content p { margin: 0 0 .9rem; text-indent: 1.4em; }
+.book3d-page-content p:first-of-type { text-indent: 0; }
+.book3d-page-content .has-dropcap::first-letter,
+.book3d-page-content > p:first-of-type::first-letter {
+  font-size: 3.6em; font-weight: 900; color: #b84223;
+  float: right; line-height: .85;
+  margin: .08em .12em 0 0;
+  text-shadow: 0 2px 6px rgba(184,66,35,.3);
+  font-family: 'Frank Ruhl Libre', serif;
+}
+.book3d-page-num {
+  position: absolute; bottom: 1rem; left: 50%;
+  transform: translateX(-50%);
+  font-size: .78rem; color: #8a5a30;
+  font-style: italic; letter-spacing: .1em;
+  font-family: 'Frank Ruhl Libre', serif; z-index: 6;
+}
+.book3d-page-content figure.book-inline-photo {
+  margin: 1rem auto; max-width: 80%; text-align: center;
+}
+.book3d-page-content figure.book-inline-photo img {
+  width: 100%; height: auto; border-radius: 4px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.25), 0 0 0 1px rgba(196,147,10,.4), 0 0 0 5px #faf3e0, 0 0 0 6px rgba(196,147,10,.5);
+}
+.book3d-page-content figure.book-inline-photo figcaption {
+  font-size: .82rem; color: #5a3a18; font-style: italic;
+  margin-top: .5rem; font-weight: 500;
+}
+
+/* ─── FLIPPING PAGE OVERLAY ─────────────────────────────────────────── */
+.book3d-flipping {
+  position: absolute; top: 0; bottom: 0; width: 50%;
+  transform-style: preserve-3d;
+  transform-origin: right center;
+  pointer-events: none; z-index: 20; display: none;
+}
+.book3d-flipping.flip-forward {
+  display: block; right: 50%;
+  animation: book3d-flip-forward 1.0s cubic-bezier(.4,0,.2,1) forwards;
+}
+.book3d-flipping.flip-backward {
+  display: block; left: 50%;
+  transform-origin: left center;
+  animation: book3d-flip-backward 1.0s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes book3d-flip-forward {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(-180deg); }
+}
+@keyframes book3d-flip-backward {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(180deg); }
+}
+.book3d-flip-face {
+  position: absolute; inset: 0;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  background: linear-gradient(180deg, #faf3e0 0%, #f5ecd0 100%);
+  padding: 2.5rem 2.2rem; overflow: hidden;
+  font-family: 'Frank Ruhl Libre', 'Frank Ruhl Libre Hebrew', Georgia, serif;
+  direction: rtl; color: #1a0a04;
+  font-size: 1.08rem; line-height: 1.85; font-weight: 500;
+  text-align: justify;
+  box-shadow: inset 0 0 30px rgba(120,80,40,.1);
+}
+.book3d-flip-face-back { transform: rotateY(180deg); }
+
+/* ─── NAVIGATION CONTROLS ───────────────────────────────────────────── */
+.book3d-nav {
+  position: absolute; bottom: 1.5rem; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 1rem; align-items: center;
+  z-index: 50;
+  pointer-events: none; opacity: 0;
+  transition: opacity .4s ease 1s;
+}
+.book3d.is-open + .book3d-nav,
+.book3d3d-nav-visible .book3d-nav {
+  pointer-events: auto; opacity: 1;
+}
+.book3d-stage.is-open-state .book3d-nav {
+  pointer-events: auto; opacity: 1;
+}
+.book3d-nav-btn {
+  background: rgba(28,15,8,.85);
+  border: 1px solid rgba(196,147,10,.4);
+  color: var(--c-gold-l);
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  font-size: 1.3rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s ease;
+  font-family: inherit;
+  box-shadow: 0 4px 12px rgba(0,0,0,.4);
+}
+.book3d-nav-btn:hover:not(:disabled) {
+  background: rgba(196,147,10,.4); color: #fff;
+  transform: scale(1.08);
+}
+.book3d-nav-btn:disabled { opacity: .35; cursor: default; }
+html.light .book3d-nav-btn {
+  background: rgba(252,246,232,.95); color: #6a2812;
+  border-color: rgba(184,66,35,.45);
+}
+html.light .book3d-nav-btn:hover:not(:disabled) {
+  background: #b84223; color: #fff;
+}
+.book3d-nav-info {
+  background: rgba(28,15,8,.85);
+  border: 1px solid rgba(196,147,10,.3);
+  color: var(--c-gold-l);
+  padding: .6rem 1.2rem; border-radius: 100px;
+  font-size: .9rem; font-weight: 500;
+  font-family: 'Frank Ruhl Libre', serif;
+  letter-spacing: .04em;
+  min-width: 130px; text-align: center;
+}
+html.light .book3d-nav-info {
+  background: rgba(252,246,232,.95); color: #6a2812;
+  border-color: rgba(184,66,35,.3);
+}
+
+/* Click zones — invisible but cursor changes */
+.book3d-pages .book3d-page-right { cursor: w-resize; }
+.book3d-pages .book3d-page-left { cursor: e-resize; }
+.book3d-pages .book3d-page-right:hover,
+.book3d-pages .book3d-page-left:hover {
+  filter: brightness(1.02);
+}
+
+/* Chapter quick-nav (sits at top of stage) */
+.book3d-quicknav {
+  position: absolute; top: .8rem; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: .35rem; flex-wrap: wrap; justify-content: center;
+  max-width: 92%;
+  z-index: 30;
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s ease;
+}
+.book3d-stage.is-open-state .book3d-quicknav { opacity: 1; pointer-events: auto; }
+.book3d-quicknav-btn {
+  background: rgba(28,15,8,.7);
+  border: 1px solid rgba(196,147,10,.3);
+  color: rgba(229,176,32,.85);
+  padding: .25rem .6rem; border-radius: 100px;
+  font-size: .72rem; cursor: pointer;
+  font-family: inherit; transition: all .2s;
+}
+.book3d-quicknav-btn:hover { background: rgba(196,147,10,.3); color: #fff; }
+html.light .book3d-quicknav-btn {
+  background: rgba(252,246,232,.85); color: #5a2812; border-color: rgba(184,66,35,.3);
+}
+html.light .book3d-quicknav-btn:hover { background: #b84223; color: #fff; }
+
+/* ─── MOBILE MODE: SINGLE PAGE WITH SWIPE ───────────────────────────── */
+@media (max-width: 720px) {
+  .book3d-stage { min-height: 580px; padding: 1rem .5rem; }
+  .book3d.is-closed {
+    width: 280px; height: 400px;
+    transform: rotateX(10deg) rotateY(-5deg);
+  }
+  .book3d.is-open {
+    width: 95vw; height: 78vh; max-height: 640px;
+  }
+  .book3d-cover-title { font-size: 1.35rem; margin-bottom: .7rem; }
+  .book3d-cover-subtitle { font-size: .85rem; margin-bottom: 1.8rem; }
+  .book3d-cover-ornament { font-size: 2.4rem; }
+  .book3d-cover-byline { font-size: .75rem; margin-top: 1.5rem; }
+  .book3d-cover-cta { font-size: .72rem; }
+  .book3d-pages { grid-template-columns: 1fr; }
+  .book3d-pages::before { display: none; }
+  .book3d-page-right { border-left: none; }
+  .book3d-page { padding: 2rem 1.4rem 3rem; }
+  .book3d-page-content { font-size: 1.05rem; line-height: 1.8; }
+  .book3d-page-content h3 { font-size: 1.3rem; }
+  .book3d-page-content h4 { font-size: 1.05rem; }
+  .book3d-page-content > p:first-of-type::first-letter,
+  .book3d-page-content .has-dropcap::first-letter { font-size: 3em; }
+  .book3d-page-left { display: none; }
+  .book3d-flipping { width: 100%; }
+  .book3d-flipping.flip-forward { right: 0; }
+  .book3d-flipping.flip-backward { left: 0; }
+  .book3d-flip-face { padding: 2rem 1.4rem 3rem; font-size: 1.05rem; }
+  .book3d-nav { bottom: 1rem; gap: .6rem; }
+  .book3d-nav-btn { width: 42px; height: 42px; font-size: 1.15rem; }
+  .book3d-nav-info { padding: .45rem .9rem; font-size: .82rem; min-width: 110px; }
+  .book3d-quicknav { display: none; }  /* Mobile: nav buttons only */
+}
+
+/* ─── REDUCED MOTION ────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .book3d, .book3d-cover, .book3d-flipping {
+    transition: none !important;
+    animation: none !important;
+  }
+  .book3d-particle { display: none; }
+  .book3d-cover-cta { animation: none; opacity: .8; }
+}
+
+/* MOBILE: scaled-down but still beautiful */
+@media (max-width: 720px) {
   .book-section { padding: 0 1rem; }
-  .book-p { font-size: 1.05rem; line-height: 1.8; }
-  .book-ch-title { font-size: 1.25rem; }
-  .book-sub { font-size: 1.05rem; }
+  .book-chapter { padding: 1.8rem 1.2rem 1.5rem; }
+  .book-main-title { font-size: 1.7rem; }
+  .book-subtitle { font-size: .95rem; }
+  .book-ch-title { font-size: 1.45rem; }
+  .book-sub { font-size: 1.1rem; }
+  .book-p {
+    font-size: 1.12rem;
+    line-height: 1.85;
+    text-indent: 1.2em;
+  }
+  .book-p:first-of-type::first-letter,
+  .book-chapter > .book-sub + .book-p::first-letter {
+    font-size: 3.2em;
+  }
 }
 
 /* ── NEW: Book collapsible (hidden by default, expanded on click) ── */
@@ -2130,7 +2797,23 @@ html.light .footer-sub { color: #4e1f0a; font-weight: 500; }
     </button>
   </div>
   <div id="book-content-wrap" class="book-collapsible" aria-hidden="true">
-    <div id="book-content"></div>
+    <!-- v8.17: Mode toggle - Scroll vs 3D Book -->
+    <div class="book-mode-toggle" role="tablist" aria-label="מצב תצוגה">
+      <button type="button" class="book-mode-btn active" id="book-mode-scroll-btn" role="tab" aria-selected="true" data-mode="scroll">
+        <span aria-hidden="true">📄</span>
+        <span>מצב טקסט</span>
+      </button>
+      <button type="button" class="book-mode-btn" id="book-mode-3d-btn" role="tab" aria-selected="false" data-mode="3d">
+        <span aria-hidden="true">📖</span>
+        <span>מצב ספר</span>
+      </button>
+    </div>
+    <!-- Scroll mode content (default v8.16) -->
+    <div class="book-mode-scroll-content">
+      <div id="book-content"></div>
+    </div>
+    <!-- 3D book mode content (v8.17, populated by JS) -->
+    <div class="book-mode-3d-content" id="book3d-host"></div>
   </div>
 </section>
 
@@ -13269,6 +13952,9 @@ function exportFullCookbook() {
 <script src="about_redesigned.js"></script>
 <script src="book_data.js"></script>
 <script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   v8.17: BOOK LOAD + 3D BOOK READER ("Neverending Story" style)
+   ═══════════════════════════════════════════════════════════════════════════ */
 if(typeof BOOK_HTML!=='undefined'){
   var bc=document.getElementById('book-content');
   if(bc){
@@ -13276,6 +13962,389 @@ if(typeof BOOK_HTML!=='undefined'){
     bc.outerHTML=bk;
   }
 }
+
+/* ─── 3D BOOK READER ─────────────────────────────────────────────────────── */
+(function(){
+  // State
+  var pages = [];           // array of HTML strings, one per page
+  var chapters = [];        // [{title, startPage}]
+  var currentPage = 0;      // 0-indexed; on desktop shows pages [N, N+1]
+  var isOpen = false;
+  var isFlipping = false;
+  var isMobile = false;
+  var initialized = false;
+
+  function checkMobile() { isMobile = window.innerWidth <= 720; }
+
+  // Mode toggle handler
+  function setupModeToggle() {
+    var wrap = document.getElementById('book-content-wrap');
+    var btnScroll = document.getElementById('book-mode-scroll-btn');
+    var btn3d = document.getElementById('book-mode-3d-btn');
+    if (!wrap || !btnScroll || !btn3d) return;
+
+    function setMode(mode) {
+      if (mode === '3d') {
+        wrap.classList.add('book-mode-3d-active');
+        btnScroll.classList.remove('active'); btnScroll.setAttribute('aria-selected', 'false');
+        btn3d.classList.add('active'); btn3d.setAttribute('aria-selected', 'true');
+        if (!initialized) buildBook3D();
+      } else {
+        wrap.classList.remove('book-mode-3d-active');
+        btn3d.classList.remove('active'); btn3d.setAttribute('aria-selected', 'false');
+        btnScroll.classList.add('active'); btnScroll.setAttribute('aria-selected', 'true');
+      }
+      try { localStorage.setItem('perla_book_mode', mode); } catch(e) {}
+    }
+    btnScroll.addEventListener('click', function(){ setMode('scroll'); });
+    btn3d.addEventListener('click', function(){ setMode('3d'); });
+
+    // Restore preferred mode from previous visit
+    try {
+      var saved = localStorage.getItem('perla_book_mode');
+      if (saved === '3d') setMode('3d');
+    } catch(e) {}
+  }
+
+  // Pagination engine — splits BOOK_HTML into discrete pages
+  function paginateContent() {
+    var bookSrc = (typeof _LANG !== 'undefined' && _LANG === 'en' && typeof BOOK_HTML_EN !== 'undefined')
+                  ? BOOK_HTML_EN : BOOK_HTML;
+    if (!bookSrc) return;
+
+    // Parse the book HTML into a temporary DOM
+    var tmp = document.createElement('div');
+    tmp.innerHTML = bookSrc;
+    var allChapters = tmp.querySelectorAll('.book-chapter');
+    pages = [];
+    chapters = [];
+
+    // Per-page word budget (rough heuristic; refined by char count)
+    // Desktop: ~280-340 words per page (smaller pages because 2 pages side-by-side)
+    // Mobile: ~220-280 words per page (single full-width page)
+    var WORD_BUDGET = isMobile ? 250 : 320;
+    var CHAR_BUDGET = WORD_BUDGET * 5;  // approx 5 chars/word for Hebrew
+
+    allChapters.forEach(function(chap) {
+      var chapTitle = chap.querySelector('.book-ch-title');
+      var chapPageNum = chap.querySelector('.book-ch-page');
+      var chTitleText = chapTitle ? chapTitle.textContent : '';
+      chapters.push({ title: chTitleText, startPage: pages.length });
+
+      // Build pages from chapter content: title goes on first page, then content
+      var pageBuf = '';
+      var charCount = 0;
+      var isFirstPageOfChapter = true;
+
+      // Add chapter header to first page
+      if (chapTitle || chapPageNum) {
+        pageBuf += '<h3>' + (chapTitle ? chapTitle.innerHTML : '') + '</h3>';
+        if (chapPageNum) pageBuf += '<p class="book-ch-page-num">' + chapPageNum.innerHTML + '</p>';
+        charCount = pageBuf.length;
+      }
+
+      // Walk through child nodes and accumulate
+      var children = Array.from(chap.children).filter(function(c) {
+        return !c.classList.contains('book-ch-title') && !c.classList.contains('book-ch-page');
+      });
+
+      children.forEach(function(node) {
+        // If it's a section block, dive into its children
+        var nodes = node.classList && node.classList.contains('book-sub-block')
+                    ? Array.from(node.children) : [node];
+        nodes.forEach(function(n) {
+          var html = n.outerHTML || '';
+          var text = (n.textContent || '').length;
+          // If adding would exceed budget AND we already have content, push current page
+          if (charCount + text > CHAR_BUDGET && pageBuf.trim().length > 100) {
+            pages.push(pageBuf);
+            pageBuf = '';
+            charCount = 0;
+            isFirstPageOfChapter = false;
+          }
+          pageBuf += html;
+          charCount += text;
+        });
+      });
+
+      // Push last page of chapter
+      if (pageBuf.trim().length > 0) {
+        pages.push(pageBuf);
+      }
+    });
+
+    // Ensure even page count for nice spread on desktop
+    if (!isMobile && pages.length % 2 !== 0) {
+      pages.push('<p style="text-align:center;font-style:italic;color:#8a5a30;margin-top:50%;">— סוף הפרק —</p>');
+    }
+  }
+
+  // Particle system — golden dust around the book
+  function spawnParticles(host, count) {
+    if (!host) return;
+    var existing = host.querySelector('.book3d-particles');
+    if (existing) existing.remove();
+    var layer = document.createElement('div');
+    layer.className = 'book3d-particles';
+    host.appendChild(layer);
+    var actual = isMobile ? Math.min(count, 12) : count;
+    for (var i = 0; i < actual; i++) {
+      var p = document.createElement('div');
+      p.className = 'book3d-particle';
+      var x = Math.random() * 100;
+      var y = 60 + Math.random() * 40;
+      var dx = (Math.random() - 0.5) * 80;
+      var dy = -(80 + Math.random() * 200);
+      var dur = 4 + Math.random() * 4;
+      var delay = Math.random() * 5;
+      p.style.cssText = 'left:'+x+'%;top:'+y+'%;--dx:'+dx+'px;--dy:'+dy+'px;animation:book3d-particle-rise '+dur+'s ease-out '+delay+'s infinite;';
+      layer.appendChild(p);
+    }
+  }
+
+  function buildBook3D() {
+    if (initialized) return;
+    initialized = true;
+    checkMobile();
+    paginateContent();
+
+    var host = document.getElementById('book3d-host');
+    if (!host || pages.length === 0) {
+      if (host) host.innerHTML = '<p style="text-align:center;color:#8a5a30;padding:2rem;">לא נמצא תוכן הספר.</p>';
+      return;
+    }
+
+    // Build the stage HTML
+    host.innerHTML =
+      '<div class="book3d-stage" id="book3d-stage">' +
+        '<div class="book3d-quicknav" id="book3d-quicknav"></div>' +
+        '<div class="book3d is-closed" id="book3d-book">' +
+          '<div class="book3d-back"></div>' +
+          '<div class="book3d-cover">' +
+            '<div class="book3d-cover-title">על שביל האהבה<br>ממרוקו לירושלים</div>' +
+            '<div class="book3d-cover-subtitle">פרלה ופנחס בן-הראש ז״ל</div>' +
+            '<div class="book3d-cover-ornament">✦</div>' +
+            '<div class="book3d-cover-byline">— זיכרונות משפחתיים —</div>' +
+            '<div class="book3d-cover-cta">לחץ לפתיחת הספר</div>' +
+          '</div>' +
+          '<div class="book3d-pages">' +
+            '<div class="book3d-page book3d-page-right" id="book3d-page-right">' +
+              '<div class="book3d-page-content"></div>' +
+              '<div class="book3d-page-num"></div>' +
+            '</div>' +
+            '<div class="book3d-page book3d-page-left" id="book3d-page-left">' +
+              '<div class="book3d-page-content"></div>' +
+              '<div class="book3d-page-num"></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="book3d-nav" id="book3d-nav">' +
+          '<button type="button" class="book3d-nav-btn" id="book3d-prev" aria-label="דף קודם">▶</button>' +
+          '<div class="book3d-nav-info" id="book3d-info">— ספר סגור —</div>' +
+          '<button type="button" class="book3d-nav-btn" id="book3d-next" aria-label="דף הבא">◀</button>' +
+        '</div>' +
+      '</div>';
+
+    var book = document.getElementById('book3d-book');
+    var stage = document.getElementById('book3d-stage');
+    var prevBtn = document.getElementById('book3d-prev');
+    var nextBtn = document.getElementById('book3d-next');
+    var quicknav = document.getElementById('book3d-quicknav');
+
+    // Build quick chapter navigation
+    chapters.forEach(function(ch, idx) {
+      var b = document.createElement('button');
+      b.className = 'book3d-quicknav-btn';
+      b.textContent = ch.title.length > 22 ? ch.title.substring(0, 20) + '…' : ch.title;
+      b.title = ch.title;
+      b.addEventListener('click', function(e){
+        e.stopPropagation();
+        if (!isOpen) openBook();
+        setTimeout(function(){ goToPage(ch.startPage); }, isOpen ? 50 : 1300);
+      });
+      quicknav.appendChild(b);
+    });
+
+    spawnParticles(stage, 25);
+
+    // Cover click → open
+    book.addEventListener('click', function(e) {
+      if (book.classList.contains('is-closed')) {
+        openBook();
+      }
+    });
+
+    // Page-area click → flip pages
+    var pagesEl = book.querySelector('.book3d-pages');
+    pagesEl.addEventListener('click', function(e) {
+      if (!isOpen || isFlipping) return;
+      var pageRight = e.target.closest('.book3d-page-right');
+      var pageLeft = e.target.closest('.book3d-page-left');
+      if (pageRight) flipPage('forward');     // right page click = next (in RTL: going forward = forward in time)
+      else if (pageLeft) flipPage('backward'); // left page click = previous
+    });
+
+    // Nav buttons
+    prevBtn.addEventListener('click', function(e){ e.stopPropagation(); flipPage('backward'); });
+    nextBtn.addEventListener('click', function(e){ e.stopPropagation(); flipPage('forward'); });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+      var wrap = document.getElementById('book-content-wrap');
+      if (!wrap || !wrap.classList.contains('book-mode-3d-active')) return;
+      if (wrap.getAttribute('aria-hidden') === 'true') return;
+      if (e.key === 'ArrowRight' || e.key === 'PageUp') { e.preventDefault(); flipPage('backward'); }
+      else if (e.key === 'ArrowLeft' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); flipPage('forward'); }
+      else if (e.key === 'Escape' && isOpen) { closeBook(); }
+    });
+
+    // Touch swipe (mobile)
+    var touchStartX = null;
+    pagesEl.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 1) touchStartX = e.touches[0].clientX;
+    }, {passive: true});
+    pagesEl.addEventListener('touchend', function(e) {
+      if (touchStartX === null) return;
+      var endX = (e.changedTouches[0] || {}).clientX;
+      if (endX === undefined) return;
+      var dx = endX - touchStartX;
+      touchStartX = null;
+      if (Math.abs(dx) < 50) return;
+      // RTL: swipe right (positive dx) = previous page; swipe left = next
+      if (dx > 0) flipPage('backward');
+      else flipPage('forward');
+    }, {passive: true});
+
+    // Window resize handling
+    window.addEventListener('resize', function() {
+      var was = isMobile;
+      checkMobile();
+      // If breakpoint changed, re-render current page (different layout)
+      if (was !== isMobile && isOpen) renderPages();
+    });
+  }
+
+  function openBook() {
+    var book = document.getElementById('book3d-book');
+    var stage = document.getElementById('book3d-stage');
+    if (!book || !stage) return;
+    book.classList.remove('is-closed');
+    book.classList.add('is-open');
+    stage.classList.add('is-open-state');
+    isOpen = true;
+    setTimeout(function() { renderPages(); }, 800);  // wait for cover to mostly open
+  }
+
+  function closeBook() {
+    var book = document.getElementById('book3d-book');
+    var stage = document.getElementById('book3d-stage');
+    if (!book || !stage) return;
+    book.classList.remove('is-open');
+    book.classList.add('is-closed');
+    stage.classList.remove('is-open-state');
+    isOpen = false;
+    currentPage = 0;
+  }
+
+  function renderPages() {
+    var rightContent = document.querySelector('#book3d-page-right .book3d-page-content');
+    var leftContent = document.querySelector('#book3d-page-left .book3d-page-content');
+    var rightNum = document.querySelector('#book3d-page-right .book3d-page-num');
+    var leftNum = document.querySelector('#book3d-page-left .book3d-page-num');
+    var info = document.getElementById('book3d-info');
+    var prevBtn = document.getElementById('book3d-prev');
+    var nextBtn = document.getElementById('book3d-next');
+    if (!rightContent) return;
+
+    if (isMobile) {
+      // Single page view
+      rightContent.innerHTML = pages[currentPage] || '';
+      if (rightNum) rightNum.textContent = '— ' + (currentPage + 1) + ' / ' + pages.length + ' —';
+      if (info) info.textContent = 'עמוד ' + (currentPage + 1) + ' / ' + pages.length;
+      if (prevBtn) prevBtn.disabled = (currentPage === 0);
+      if (nextBtn) nextBtn.disabled = (currentPage >= pages.length - 1);
+    } else {
+      // Two-page spread: right page = currentPage, left page = currentPage + 1
+      rightContent.innerHTML = pages[currentPage] || '';
+      leftContent.innerHTML = pages[currentPage + 1] || '';
+      if (rightNum) rightNum.textContent = '— ' + (currentPage + 1) + ' —';
+      if (leftNum) leftNum.textContent = '— ' + (currentPage + 2) + ' —';
+      if (info) info.textContent = 'עמודים ' + (currentPage + 1) + '-' + (currentPage + 2) + ' / ' + pages.length;
+      if (prevBtn) prevBtn.disabled = (currentPage === 0);
+      if (nextBtn) nextBtn.disabled = (currentPage + 2 >= pages.length);
+    }
+  }
+
+  function flipPage(direction) {
+    if (isFlipping || !isOpen) return;
+    var step = isMobile ? 1 : 2;
+    if (direction === 'forward') {
+      if (currentPage + step >= pages.length) return;
+      isFlipping = true;
+      animateFlip('forward', function() {
+        currentPage += step;
+        renderPages();
+        isFlipping = false;
+      });
+    } else {
+      if (currentPage <= 0) return;
+      isFlipping = true;
+      animateFlip('backward', function() {
+        currentPage = Math.max(0, currentPage - step);
+        renderPages();
+        isFlipping = false;
+      });
+    }
+  }
+
+  function animateFlip(direction, callback) {
+    var pagesEl = document.querySelector('#book3d-book .book3d-pages');
+    if (!pagesEl) { if(callback) callback(); return; }
+
+    // Build the flipping page overlay
+    var step = isMobile ? 1 : 2;
+    var frontIdx, backIdx;
+    if (direction === 'forward') {
+      frontIdx = isMobile ? currentPage : currentPage + 1;
+      backIdx = isMobile ? currentPage + 1 : currentPage + 2;
+    } else {
+      frontIdx = currentPage;
+      backIdx = isMobile ? currentPage - 1 : currentPage - 2;
+    }
+    var frontHtml = pages[frontIdx] || '';
+    var backHtml = pages[backIdx] || '';
+
+    var flipper = document.createElement('div');
+    flipper.className = 'book3d-flipping ' + (direction === 'forward' ? 'flip-forward' : 'flip-backward');
+    flipper.innerHTML =
+      '<div class="book3d-flip-face book3d-flip-face-front"><div class="book3d-page-content">' + frontHtml + '</div></div>' +
+      '<div class="book3d-flip-face book3d-flip-face-back"><div class="book3d-page-content">' + backHtml + '</div></div>';
+    pagesEl.appendChild(flipper);
+
+    setTimeout(function() {
+      if (flipper && flipper.parentNode) flipper.parentNode.removeChild(flipper);
+      if (callback) callback();
+    }, 1000);
+  }
+
+  function goToPage(targetPage) {
+    if (!isOpen) return;
+    var step = isMobile ? 1 : 2;
+    // Round to even for desktop spread
+    var target = isMobile ? targetPage : (targetPage % 2 === 0 ? targetPage : targetPage - 1);
+    target = Math.max(0, Math.min(target, pages.length - 1));
+    if (target === currentPage) return;
+    currentPage = target;
+    renderPages();
+  }
+
+  // Initialize toggle on DOM ready (book content already loaded above)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupModeToggle);
+  } else {
+    setupModeToggle();
+  }
+})();
 </script>
 
 <!-- Feedback uses FormSubmit.co AJAX — no hidden form needed, JS posts directly. -->
