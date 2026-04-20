@@ -1302,15 +1302,40 @@ html.light .book3d-stage {
   opacity: 0;
   transition: opacity .4s ease .9s;
   pointer-events: none;
-  overflow: hidden;
+  overflow: visible;  /* v8.18: was hidden - prevented flipping page from being seen */
+  perspective: 2000px; /* v8.18: perspective on pages container itself */
+  perspective-origin: 50% 50%;
+  transform-style: preserve-3d;
 }
 .book3d.is-open .book3d-pages { opacity: 1; pointer-events: auto; }
+
+/* v8.18: Stronger spine - dark line + shadow on both sides */
 .book3d-pages::before {
   content: '';
   position: absolute; top: 0; bottom: 0; left: 50%;
-  width: 30px; transform: translateX(-50%);
-  background: linear-gradient(to right, transparent 0%, rgba(80,50,20,.18) 30%, rgba(60,30,10,.35) 50%, rgba(80,50,20,.18) 70%, transparent 100%);
-  pointer-events: none; z-index: 5;
+  width: 40px; transform: translateX(-50%);
+  background:
+    linear-gradient(to right,
+      transparent 0%,
+      rgba(80,50,20,.15) 25%,
+      rgba(40,20,8,.55) 48%,
+      rgba(20,10,4,.7) 50%,
+      rgba(40,20,8,.55) 52%,
+      rgba(80,50,20,.15) 75%,
+      transparent 100%);
+  pointer-events: none;
+  z-index: 6;
+}
+/* v8.18: Page-curl shadow on each page (gives 3D depth even when not flipping) */
+.book3d-pages::after {
+  content: '';
+  position: absolute; top: 0; bottom: 0; left: 0; right: 0;
+  background:
+    linear-gradient(to right,
+      rgba(0,0,0,.12) 0%, transparent 8%,
+      transparent 92%, rgba(0,0,0,.12) 100%);
+  pointer-events: none;
+  z-index: 7;
 }
 .book3d-page {
   position: relative;
@@ -1321,27 +1346,39 @@ html.light .book3d-stage {
   direction: rtl;
 }
 .book3d-page-right { border-left: 1px solid rgba(196,147,10,.18); }
+/* v8.18: !important on colors to override dark-theme cascade.
+   The book pages always show parchment + dark text, regardless of site theme. */
 .book3d-page-content {
-  font-size: 1.08rem; line-height: 1.85;
-  text-align: justify; color: #1a0a04;
-  font-weight: 500;
-  text-shadow: 0 1px 0 rgba(255,255,255,.5);
-  letter-spacing: .003em;
+  font-size: 1.08rem !important;
+  line-height: 1.85 !important;
+  text-align: justify !important;
+  color: #1a0a04 !important;
+  font-weight: 500 !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5) !important;
+  letter-spacing: .003em !important;
 }
+.book3d-page-content * { color: inherit !important; }
 .book3d-page-content h3 {
-  text-align: center; font-size: 1.55rem; font-weight: 800;
-  color: #6a2812; margin: 0 0 .4rem;
-  font-family: 'Frank Ruhl Libre', serif;
+  text-align: center !important;
+  font-size: 1.55rem !important;
+  font-weight: 800 !important;
+  color: #6a2812 !important;
+  margin: 0 0 .4rem !important;
+  font-family: 'Frank Ruhl Libre', serif !important;
 }
 .book3d-page-content h4 {
-  font-size: 1.15rem; font-weight: 700; color: #6a2812;
-  margin: 1.2rem 0 .5rem; text-align: right;
-  border-bottom: 1px dotted rgba(184,66,35,.3); padding-bottom: .25rem;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  color: #6a2812 !important;
+  margin: 1.2rem 0 .5rem !important;
+  text-align: right !important;
+  border-bottom: 1px dotted rgba(184,66,35,.3) !important;
+  padding-bottom: .25rem !important;
 }
 .book3d-page-content .book-ch-page-num {
-  text-align: center; font-size: .8rem; color: #6a4828;
-  font-style: italic; margin: 0 0 1.2rem;
-  position: relative; padding-bottom: .8rem;
+  text-align: center !important; font-size: .8rem !important; color: #6a4828 !important;
+  font-style: italic !important; margin: 0 0 1.2rem !important;
+  position: relative; padding-bottom: .8rem !important;
 }
 .book3d-page-content .book-ch-page-num::after {
   content: ''; position: absolute; bottom: 0; left: 50%;
@@ -1349,15 +1386,25 @@ html.light .book3d-stage {
   width: 60px; height: 2px;
   background: linear-gradient(to left, transparent, rgba(184,66,35,.4), transparent);
 }
-.book3d-page-content p { margin: 0 0 .9rem; text-indent: 1.4em; }
-.book3d-page-content p:first-of-type { text-indent: 0; }
+.book3d-page-content p {
+  margin: 0 0 .9rem !important;
+  text-indent: 1.4em !important;
+  color: #1a0a04 !important;
+  font-weight: 500 !important;
+  line-height: 1.85 !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5) !important;
+}
+.book3d-page-content p:first-of-type { text-indent: 0 !important; }
 .book3d-page-content .has-dropcap::first-letter,
 .book3d-page-content > p:first-of-type::first-letter {
-  font-size: 3.6em; font-weight: 900; color: #b84223;
-  float: right; line-height: .85;
-  margin: .08em .12em 0 0;
-  text-shadow: 0 2px 6px rgba(184,66,35,.3);
-  font-family: 'Frank Ruhl Libre', serif;
+  font-size: 3.6em !important;
+  font-weight: 900 !important;
+  color: #b84223 !important;
+  float: right !important;
+  line-height: .85 !important;
+  margin: .08em .12em 0 0 !important;
+  text-shadow: 0 2px 6px rgba(184,66,35,.3) !important;
+  font-family: 'Frank Ruhl Libre', serif !important;
 }
 .book3d-page-num {
   position: absolute; bottom: 1rem; left: 50%;
@@ -1378,42 +1425,138 @@ html.light .book3d-stage {
   margin-top: .5rem; font-weight: 500;
 }
 
-/* ─── FLIPPING PAGE OVERLAY ─────────────────────────────────────────── */
+/* ─── FLIPPING PAGE OVERLAY (v8.18 — properly 3D with depth & shadows) ─── */
 .book3d-flipping {
-  position: absolute; top: 0; bottom: 0; width: 50%;
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 50%;
   transform-style: preserve-3d;
-  transform-origin: right center;
-  pointer-events: none; z-index: 20; display: none;
+  -webkit-transform-style: preserve-3d;
+  pointer-events: none;
+  z-index: 50;
+  display: none;
+  will-change: transform;
 }
+/* RTL: forward (next page) - the right page is the "current page" being flipped to the left */
 .book3d-flipping.flip-forward {
-  display: block; right: 50%;
-  animation: book3d-flip-forward 1.0s cubic-bezier(.4,0,.2,1) forwards;
+  display: block;
+  right: 50%;  /* sits on the right half of the book */
+  transform-origin: left center;  /* hinges at the spine (left edge in this position) */
+  -webkit-transform-origin: left center;
+  animation: book3d-flip-forward 1.2s cubic-bezier(.45,.05,.55,.95) forwards;
+  -webkit-animation: book3d-flip-forward 1.2s cubic-bezier(.45,.05,.55,.95) forwards;
 }
+/* RTL: backward (prev page) - the left page flips to the right */
 .book3d-flipping.flip-backward {
-  display: block; left: 50%;
-  transform-origin: left center;
-  animation: book3d-flip-backward 1.0s cubic-bezier(.4,0,.2,1) forwards;
+  display: block;
+  left: 50%;  /* sits on the left half */
+  transform-origin: right center;  /* hinges at the spine (right edge) */
+  -webkit-transform-origin: right center;
+  animation: book3d-flip-backward 1.2s cubic-bezier(.45,.05,.55,.95) forwards;
+  -webkit-animation: book3d-flip-backward 1.2s cubic-bezier(.45,.05,.55,.95) forwards;
 }
+/* Forward animation: rotates from 0° to +180° around left axis (going from right side to left side) */
 @keyframes book3d-flip-forward {
-  0%   { transform: rotateY(0deg); }
-  100% { transform: rotateY(-180deg); }
-}
-@keyframes book3d-flip-backward {
   0%   { transform: rotateY(0deg); }
   100% { transform: rotateY(180deg); }
 }
-.book3d-flip-face {
-  position: absolute; inset: 0;
-  backface-visibility: hidden; -webkit-backface-visibility: hidden;
-  background: linear-gradient(180deg, #faf3e0 0%, #f5ecd0 100%);
-  padding: 2.5rem 2.2rem; overflow: hidden;
-  font-family: 'Frank Ruhl Libre', 'Frank Ruhl Libre Hebrew', Georgia, serif;
-  direction: rtl; color: #1a0a04;
-  font-size: 1.08rem; line-height: 1.85; font-weight: 500;
-  text-align: justify;
-  box-shadow: inset 0 0 30px rgba(120,80,40,.1);
+@-webkit-keyframes book3d-flip-forward {
+  0%   { -webkit-transform: rotateY(0deg); }
+  100% { -webkit-transform: rotateY(180deg); }
 }
-.book3d-flip-face-back { transform: rotateY(180deg); }
+/* Backward animation: rotates from 0° to -180° around right axis */
+@keyframes book3d-flip-backward {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(-180deg); }
+}
+@-webkit-keyframes book3d-flip-backward {
+  0%   { -webkit-transform: rotateY(0deg); }
+  100% { -webkit-transform: rotateY(-180deg); }
+}
+
+/* The two faces of the flipping page */
+.book3d-flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: linear-gradient(180deg, #faf3e0 0%, #f5ecd0 100%);
+  padding: 2.5rem 2.2rem;
+  overflow: hidden;
+  font-family: 'Frank Ruhl Libre', 'Frank Ruhl Libre Hebrew', Georgia, serif;
+  direction: rtl;
+  color: #1a0a04 !important;
+  font-size: 1.08rem !important;
+  line-height: 1.85 !important;
+  font-weight: 500 !important;
+  text-align: justify !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5) !important;
+  box-shadow:
+    inset 0 0 30px rgba(120,80,40,.1),
+    0 4px 18px rgba(0,0,0,.3);
+  border-radius: 2px;
+}
+.book3d-flip-face *,
+.book3d-flip-face p {
+  color: #1a0a04 !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5) !important;
+}
+.book3d-flip-face h3 {
+  text-align: center !important; font-size: 1.55rem !important;
+  font-weight: 800 !important; color: #6a2812 !important;
+  margin: 0 0 .4rem !important;
+}
+.book3d-flip-face h4 {
+  font-size: 1.15rem !important; font-weight: 700 !important;
+  color: #6a2812 !important; margin: 1.2rem 0 .5rem !important;
+  text-align: right !important;
+  border-bottom: 1px dotted rgba(184,66,35,.3); padding-bottom: .25rem;
+}
+.book3d-flip-face .book-ch-page-num {
+  text-align: center !important; font-size: .8rem !important; color: #6a4828 !important;
+  font-style: italic !important; margin: 0 0 1.2rem !important;
+}
+.book3d-flip-face p {
+  margin: 0 0 .9rem !important;
+  text-indent: 1.4em !important;
+}
+.book3d-flip-face p:first-of-type { text-indent: 0 !important; }
+.book3d-flip-face .has-dropcap::first-letter,
+.book3d-flip-face > p:first-of-type::first-letter {
+  font-size: 3.6em !important; font-weight: 900 !important; color: #b84223 !important;
+  float: right !important; line-height: .85 !important;
+  margin: .08em .12em 0 0 !important;
+  text-shadow: 0 2px 6px rgba(184,66,35,.3) !important;
+  font-family: 'Frank Ruhl Libre', serif !important;
+}
+.book3d-flip-face-back {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+}
+/* v8.18: Dynamic shadow gradient over flipping page — gives "curl" feel */
+.book3d-flip-shadow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(0,0,0,.5) 0%, rgba(0,0,0,0) 35%);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 5;
+  animation: book3d-shadow-sweep 1.2s ease-in-out forwards;
+}
+.book3d-flipping.flip-backward .book3d-flip-shadow {
+  background: linear-gradient(to left, rgba(0,0,0,.5) 0%, rgba(0,0,0,0) 35%);
+}
+@keyframes book3d-shadow-sweep {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+/* v8.18: Hide the underlying page that's being flipped on top of, during animation */
+.book3d.is-flipping .book3d-page-right .book3d-page-content,
+.book3d.is-flipping .book3d-page-left .book3d-page-content {
+  /* Keep static text visible underneath - it's the destination of the flip */
+}
 
 /* ─── NAVIGATION CONTROLS ───────────────────────────────────────────── */
 .book3d-nav {
@@ -14298,33 +14441,74 @@ if(typeof BOOK_HTML!=='undefined'){
   }
 
   function animateFlip(direction, callback) {
+    var book = document.getElementById('book3d-book');
     var pagesEl = document.querySelector('#book3d-book .book3d-pages');
     if (!pagesEl) { if(callback) callback(); return; }
 
-    // Build the flipping page overlay
-    var step = isMobile ? 1 : 2;
+    /* v8.18: Logic for which page goes on the FRONT and BACK of the flipping element.
+       In RTL Hebrew book:
+       - FORWARD (next): the LEFT page (currentPage+1) flips RIGHTWARD onto the right side,
+         revealing the new pages (currentPage+2, currentPage+3) underneath.
+         Front face = currentPage+1 (visible at start, going away). Back face = currentPage+2 (next page coming).
+       - BACKWARD (prev): the RIGHT page (currentPage) flips LEFTWARD onto the left side,
+         revealing the new pages (currentPage-2, currentPage-1) underneath.
+         Front face = currentPage. Back face = currentPage-1.
+       For mobile (single-page mode):
+       - FORWARD: front = currentPage, back = currentPage+1
+       - BACKWARD: front = currentPage, back = currentPage-1
+    */
     var frontIdx, backIdx;
-    if (direction === 'forward') {
-      frontIdx = isMobile ? currentPage : currentPage + 1;
-      backIdx = isMobile ? currentPage + 1 : currentPage + 2;
+    if (isMobile) {
+      if (direction === 'forward') {
+        frontIdx = currentPage; backIdx = currentPage + 1;
+      } else {
+        frontIdx = currentPage; backIdx = currentPage - 1;
+      }
     } else {
-      frontIdx = currentPage;
-      backIdx = isMobile ? currentPage - 1 : currentPage - 2;
+      if (direction === 'forward') {
+        // Left page (currentPage+1) lifts up and flies to the right
+        frontIdx = currentPage + 1; backIdx = currentPage + 2;
+      } else {
+        // Right page (currentPage) lifts up and flies to the left
+        frontIdx = currentPage; backIdx = currentPage - 1;
+      }
     }
     var frontHtml = pages[frontIdx] || '';
     var backHtml = pages[backIdx] || '';
+
+    // First, IMMEDIATELY swap the destination pages underneath, so when the flip completes,
+    // the user sees the new content. The flipping page covers it during animation.
+    var rightContent = document.querySelector('#book3d-page-right .book3d-page-content');
+    var leftContent = document.querySelector('#book3d-page-left .book3d-page-content');
+    if (!isMobile) {
+      if (direction === 'forward') {
+        // After flip, right=currentPage+2, left=currentPage+3
+        if (rightContent) rightContent.innerHTML = pages[currentPage + 2] || '';
+        if (leftContent) leftContent.innerHTML = pages[currentPage + 3] || '';
+      } else {
+        // After flip, right=currentPage-2, left=currentPage-1
+        if (rightContent) rightContent.innerHTML = pages[currentPage - 2] || '';
+        if (leftContent) leftContent.innerHTML = pages[currentPage - 1] || '';
+      }
+    } else {
+      if (rightContent) rightContent.innerHTML = backHtml;
+    }
 
     var flipper = document.createElement('div');
     flipper.className = 'book3d-flipping ' + (direction === 'forward' ? 'flip-forward' : 'flip-backward');
     flipper.innerHTML =
       '<div class="book3d-flip-face book3d-flip-face-front"><div class="book3d-page-content">' + frontHtml + '</div></div>' +
-      '<div class="book3d-flip-face book3d-flip-face-back"><div class="book3d-page-content">' + backHtml + '</div></div>';
+      '<div class="book3d-flip-face book3d-flip-face-back"><div class="book3d-page-content">' + backHtml + '</div></div>' +
+      '<div class="book3d-flip-shadow"></div>';
     pagesEl.appendChild(flipper);
+
+    if (book) book.classList.add('is-flipping');
 
     setTimeout(function() {
       if (flipper && flipper.parentNode) flipper.parentNode.removeChild(flipper);
+      if (book) book.classList.remove('is-flipping');
       if (callback) callback();
-    }, 1000);
+    }, 1200);
   }
 
   function goToPage(targetPage) {
