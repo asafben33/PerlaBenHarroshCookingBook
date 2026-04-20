@@ -33,3 +33,6 @@
 !sitemap.xml
 !sw.js
 !_headers
+!IMAGE_MAPPING_v8_25.csv
+!IMAGE_MAPPING_v8_25.json
+!rebuild_book_images.py
