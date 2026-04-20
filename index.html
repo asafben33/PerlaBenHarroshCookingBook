@@ -406,6 +406,153 @@ html.light .hero-cta-secondary { color: #7a3a18; border-color: rgba(184,66,35,.4
 /* Legacy classes kept for backward safety (hidden) */
 .hero-pills, .hero-about-btn { display: none !important; }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   v8.7: Recipe of the Day — appears after Hero, before Bio
+   Shows a randomly-selected recipe each day (deterministic based on date)
+   so the same visitor sees the same recipe all day, but tomorrow it changes.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.rotd-section {
+  direction: rtl;
+  background: linear-gradient(180deg,
+    rgba(196,147,10,.04) 0%,
+    rgba(184,66,35,.04) 50%,
+    rgba(28,15,8,0) 100%);
+  padding: 1.5rem 1rem 2rem;
+  margin: 0 auto;
+  max-width: 1100px;
+}
+.rotd-inner {
+  max-width: 720px; margin: 0 auto;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 1rem;
+}
+.rotd-eyebrow {
+  font-size: .72rem; font-weight: 700;
+  color: var(--c-gold-d); text-transform: uppercase;
+  letter-spacing: .12em; opacity: .85;
+}
+.rotd-card {
+  width: 100%;
+  background: rgba(28,15,8,.4);
+  border: 1px solid rgba(196,147,10,.25);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all var(--t-fast);
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 0;
+}
+.rotd-card:hover {
+  border-color: rgba(196,147,10,.55);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+html.light .rotd-card {
+  background: rgba(255,250,240,.85);
+  border-color: rgba(196,147,10,.3);
+}
+.rotd-img {
+  width: 100%; height: 100%;
+  min-height: 160px;
+  object-fit: cover;
+  background: rgba(28,15,8,.3);
+}
+.rotd-body {
+  padding: 1rem 1.2rem;
+  display: flex; flex-direction: column;
+  gap: .5rem; justify-content: center;
+}
+.rotd-title {
+  font-family: 'Frank Ruhl Libre', serif;
+  font-size: 1.15rem; font-weight: 700;
+  color: var(--c-gold-l); margin: 0;
+  line-height: 1.3;
+}
+html.light .rotd-title { color: var(--c-spice-d, #7a3a18); }
+.rotd-desc {
+  font-size: .85rem; color: var(--c-ink-m);
+  line-height: 1.5; margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.rotd-meta-row {
+  display: flex; flex-wrap: wrap; gap: .4rem;
+  margin-top: .3rem;
+}
+.rotd-meta-chip {
+  font-size: .72rem; padding: .15rem .55rem;
+  border-radius: 100px;
+  background: rgba(196,147,10,.15);
+  color: var(--c-gold-d);
+  border: 1px solid rgba(196,147,10,.2);
+}
+.rotd-cta {
+  font-size: .8rem; color: var(--c-gold);
+  font-weight: 600; margin-top: .3rem;
+}
+@media (max-width: 600px) {
+  .rotd-card { grid-template-columns: 1fr; }
+  .rotd-img { height: 180px; min-height: 180px; }
+}
+
+/* English-mode override for Recipe of the Day */
+html.lang-en .rotd-section,
+html.lang-en .rotd-inner,
+html.lang-en .rotd-card,
+html.lang-en .rotd-body,
+html.lang-en .rotd-title,
+html.lang-en .rotd-desc,
+html.lang-en .rotd-meta-row,
+html.lang-en .rotd-cta { direction: ltr !important; text-align: left !important; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v8.7: Offline toast — shown when network is unavailable
+   PWA already caches the site; this just informs the user gracefully.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.offline-toast {
+  position: fixed;
+  bottom: 1.5rem; left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  background: rgba(28,15,8,.95);
+  color: var(--c-gold-l);
+  border: 1px solid rgba(196,147,10,.4);
+  border-radius: 100px;
+  padding: .65rem 1.4rem;
+  font-size: .85rem; font-weight: 500;
+  box-shadow: 0 8px 28px rgba(0,0,0,.4);
+  z-index: 10000;
+  display: flex; align-items: center; gap: .5rem;
+  transition: transform var(--t-base);
+  pointer-events: none;
+  direction: rtl;
+  font-family: 'Heebo', sans-serif;
+}
+.offline-toast.show {
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+.offline-toast.online-restored {
+  background: rgba(40,80,40,.95);
+  border-color: rgba(80,160,80,.5);
+  color: #c8e6c8;
+}
+.offline-toast::before {
+  content: '⚠';
+  font-size: 1rem;
+}
+.offline-toast.online-restored::before {
+  content: '✓';
+}
+html.lang-en .offline-toast { direction: ltr !important; font-family: 'Heebo', sans-serif; }
+html.light .offline-toast {
+  background: rgba(250,243,224,.98);
+  color: var(--c-ink);
+  border-color: rgba(196,147,10,.45);
+}
+
 /* v7.0: Unified header brand (site name + dynamic recipe count) */
 .hdr-brand-v7 {
   display: flex; flex-direction: column;
@@ -1788,6 +1935,30 @@ html.light .acc-hdr { background: rgba(0,0,0,.03); border-color: rgba(196,147,10
     </div>
   </div>
 </section>
+
+<!-- ════════ v8.7: RECIPE OF THE DAY ═══════════════════════════════════════ -->
+<!-- Deterministic daily-rotating recipe selection. Same recipe shown all day. -->
+<!-- Populated by buildRecipeOfTheDay() on DOMContentLoaded. -->
+<section class="rotd-section" id="rotd-section" aria-labelledby="rotd-eyebrow" hidden>
+  <div class="rotd-inner">
+    <div class="rotd-eyebrow" id="rotd-eyebrow" data-i18n="rotd_eyebrow">המתכון של היום</div>
+    <article class="rotd-card" id="rotd-card" role="button" tabindex="0"
+             aria-label="פתח את המתכון של היום">
+      <img class="rotd-img" id="rotd-img" alt="" loading="lazy">
+      <div class="rotd-body">
+        <h3 class="rotd-title" id="rotd-title"></h3>
+        <p class="rotd-desc" id="rotd-desc"></p>
+        <div class="rotd-meta-row" id="rotd-meta"></div>
+        <div class="rotd-cta" data-i18n="rotd_cta">לחץ לפתיחת המתכון ←</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- v8.7: Offline / online-restored toast -->
+<div class="offline-toast" id="offline-toast" role="status" aria-live="polite" aria-atomic="true">
+  <span id="offline-toast-text">אין חיבור לאינטרנט — האתר עובד במצב לא-מקוון</span>
+</div>
 
 <!-- ════════ BIO (was 'About' top-block) ═══════════════════ -->
 <!-- Moved to top of page per user's request (green arrow target) -->
@@ -7948,6 +8119,151 @@ window.initHeroCTAs = function() {
   }
 };
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   v8.7: Recipe of the Day
+   Selects ONE recipe per day (deterministic by date) and displays it in the
+   #rotd-section element. Uses simple hash of YYYY-MM-DD to pick an index.
+   Same recipe shows all day for all visitors → consistent shareable experience.
+   ═══════════════════════════════════════════════════════════════════════════ */
+window.buildRecipeOfTheDay = function() {
+  if (typeof R === 'undefined' || !Array.isArray(R) || R.length === 0) {
+    // Recipes not yet loaded - retry shortly
+    setTimeout(window.buildRecipeOfTheDay, 250);
+    return;
+  }
+  var section = document.getElementById('rotd-section');
+  if (!section) return;
+
+  // Deterministic daily seed: YYYYMMDD → numeric → modulo recipe count
+  var today = new Date();
+  var seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+  var idx = seed % R.length;
+  var rec = R[idx];
+
+  // Skip recipes without basic data (defensive)
+  var attempts = 0;
+  while (rec && (!rec.title || !rec.id) && attempts < 20) {
+    idx = (idx + 1) % R.length;
+    rec = R[idx];
+    attempts++;
+  }
+  if (!rec || !rec.title) return;
+
+  // Populate the card
+  var img = document.getElementById('rotd-img');
+  var title = document.getElementById('rotd-title');
+  var desc = document.getElementById('rotd-desc');
+  var meta = document.getElementById('rotd-meta');
+  var card = document.getElementById('rotd-card');
+
+  if (img) {
+    // Use local image if exists, fallback to recipe img URL
+    var localPath = './images/recipes_images/r-' + rec.id + '.jpg';
+    img.src = localPath;
+    img.onerror = function() { img.src = rec.img || ''; img.onerror = null; };
+    img.alt = rec.title;
+  }
+
+  // Localized title/desc based on current language
+  var lang = (typeof _LANG !== 'undefined') ? _LANG : 'he';
+  var displayTitle = rec.title;
+  var displayDesc = rec.desc || '';
+  if (lang === 'en' && typeof _PRE_EN !== 'undefined' && _PRE_EN[rec.id]) {
+    displayTitle = _PRE_EN[rec.id].title || rec.title;
+    displayDesc = _PRE_EN[rec.id].desc || rec.desc || '';
+  }
+
+  if (title) title.textContent = displayTitle;
+  if (desc) desc.textContent = displayDesc;
+
+  if (meta) {
+    meta.innerHTML = '';
+    var chips = [];
+    if (rec.time) chips.push(rec.time);
+    if (rec.serv) chips.push(rec.serv);
+    if (rec.diff) chips.push(rec.diff);
+    chips.forEach(function(t) {
+      var span = document.createElement('span');
+      span.className = 'rotd-meta-chip';
+      span.textContent = t;
+      meta.appendChild(span);
+    });
+  }
+
+  // Wire click + keyboard
+  if (card && !card._wired) {
+    card._wired = true;
+    var openIt = function() {
+      if (typeof openM === 'function') openM(rec.id);
+    };
+    card.addEventListener('click', openIt);
+    card.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openIt();
+      }
+    });
+  }
+
+  // Reveal section (was hidden initially to avoid layout flash)
+  section.removeAttribute('hidden');
+};
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v8.7: Offline / Online detection toast
+   Shows a graceful message when the user goes offline (PWA cache still works
+   for the current session — this just lets them know that fresh content
+   won't load until connection returns).
+   ═══════════════════════════════════════════════════════════════════════════ */
+window.initOfflineDetection = function() {
+  var toast = document.getElementById('offline-toast');
+  var toastText = document.getElementById('offline-toast-text');
+  if (!toast || !toastText) return;
+
+  var hideTimer = null;
+
+  function tFor(key) {
+    if (typeof DICT !== 'undefined' && DICT[key]) {
+      var lang = (typeof _LANG !== 'undefined') ? _LANG : 'he';
+      return DICT[key][lang] || DICT[key].he || '';
+    }
+    return key === 'offline_msg'
+      ? 'אין חיבור לאינטרנט — האתר עובד במצב לא-מקוון'
+      : 'החיבור חזר — כל המתכונים זמינים';
+  }
+
+  function showToast(textKey, isRestored) {
+    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+    toastText.textContent = tFor(textKey);
+    toast.classList.toggle('online-restored', !!isRestored);
+    toast.classList.add('show');
+    if (isRestored) {
+      // Auto-hide success message after 3 seconds
+      hideTimer = setTimeout(function() {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+    // Offline message stays visible until back online
+  }
+
+  function hideToast() {
+    toast.classList.remove('show');
+  }
+
+  window.addEventListener('offline', function() {
+    showToast('offline_msg', false);
+  });
+
+  window.addEventListener('online', function() {
+    showToast('online_msg', true);
+  });
+
+  // Initial state — show toast if already offline at page load
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    showToast('offline_msg', false);
+  }
+};
+
 function buildNav() {
   var bar = document.getElementById('cat-inner');
   if (!bar) return;
@@ -9136,6 +9452,10 @@ document.addEventListener('DOMContentLoaded', function() {
   if (typeof window.initHdrCount === 'function') window.initHdrCount();
   if (typeof window.initHeroCTAs === 'function') window.initHeroCTAs();
 
+  // v8.7: Recipe of the Day + Offline detection
+  if (typeof window.buildRecipeOfTheDay === 'function') window.buildRecipeOfTheDay();
+  if (typeof window.initOfflineDetection === 'function') window.initOfflineDetection();
+
   // Pill counter
   var pill = document.getElementById('pill-cnt');
   if (pill) pill.textContent = R.length + t('recipes_count');
@@ -9303,11 +9623,45 @@ document.addEventListener('DOMContentLoaded', function() {
   // ── Apply full language translation (UI labels, pills, about, footer) ──
   if (_LANG === 'en') applyLang('en');
 
-  // Handle URL hash deep-link
+  // v8.7: Enhanced URL hash deep-linking — supports:
+  //   #r=ID    → opens recipe modal (e.g. #r=iq8)
+  //   #cat=ID  → filters to category (e.g. #cat=soups)
+  //   #ID      → legacy: opens recipe by bare id (back-compat with old links)
   if (location.hash && location.hash.length > 1) {
-    var id = location.hash.slice(1);
-    var r = R.find(function(x) { return x && x.id === id; });
-    if (r) setTimeout(function() { openM(id); }, 300);
+    var hash = location.hash.slice(1); // strip the #
+    var hashLower = hash.toLowerCase();
+
+    // Format: #r=ID — open recipe
+    if (hashLower.indexOf('r=') === 0) {
+      var rid = hash.slice(2);
+      var r = R.find(function(x) { return x && x.id === rid; });
+      if (r) setTimeout(function() { openM(rid); }, 300);
+    }
+    // Format: #cat=ID — filter to category
+    else if (hashLower.indexOf('cat=') === 0) {
+      var catId = hash.slice(4);
+      setTimeout(function() {
+        if (typeof selectCat === 'function') {
+          selectCat(catId);
+        } else {
+          // Fallback: click matching nav button
+          var btns = document.querySelectorAll('.nb');
+          for (var i = 0; i < btns.length; i++) {
+            if (btns[i].dataset && btns[i].dataset.cat === catId) {
+              btns[i].click();
+              break;
+            }
+          }
+        }
+        var m = document.getElementById('main');
+        if (m) m.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+    }
+    // Format: bare #ID — legacy back-compat (opens as recipe)
+    else {
+      var legacyR = R.find(function(x) { return x && x.id === hash; });
+      if (legacyR) setTimeout(function() { openM(hash); }, 300);
+    }
   }
 
   // ── Service Worker registration ─────────────────────────
@@ -12017,6 +12371,12 @@ var I18N = {
   // v7.6: Hero CTA buttons (per v7.0 plan)
   hero_cta_browse: {he:'עיון במתכונים', en:'Browse Recipes'},
   hero_cta_book:   {he:'קרא את הספר', en:'Read the Book'},
+  // v8.7: Recipe of the Day
+  rotd_eyebrow:    {he:'המתכון של היום', en:'Recipe of the Day'},
+  rotd_cta:        {he:'לחץ לפתיחת המתכון ←', en:'Click to view recipe →'},
+  // v8.7: Offline / online toasts
+  offline_msg:     {he:'אין חיבור לאינטרנט — האתר עובד במצב לא-מקוון', en:'No internet connection — site running in offline mode'},
+  online_msg:      {he:'החיבור חזר — כל המתכונים זמינים', en:'Connection restored — all recipes available'},
   hero_title:    {he:'המטבח של ', en:'The Kitchen of '},
   hero_title_em:   {he:'משפחת בן הראש (ארוש\\הרוש)', en:'the Ben-Harrosh / Ben-Arrush Family'},
   hero_tagline:  {he:'לזכרם של פרלה ופנחס בן הראש ז״ל — טעמים שמעלים זכרונות שכמעט שכחנו...', en:'In memory of Perla & Pinchas Ben-Harrosh z"l — flavors that awaken memories we almost forgot...'},
