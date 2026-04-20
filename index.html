@@ -440,7 +440,7 @@ html.light .hero-cta-secondary { color: #7a3a18; border-color: rgba(184,66,35,.4
    ═══════════════════════════════════════════════════════════════════════════ */
 .rotd-section {
   direction: rtl;
-  padding: 2rem 1rem 2.5rem;
+  padding: .8rem 1rem 1rem;
   margin: 0 auto;
   max-width: 1100px;
   position: relative;
@@ -449,32 +449,32 @@ html.light .hero-cta-secondary { color: #7a3a18; border-color: rgba(184,66,35,.4
 .rotd-section::before {
   content: '';
   display: block;
-  width: 180px; height: 1px;
-  margin: 0 auto 1.2rem;
+  width: 140px; height: 1px;
+  margin: 0 auto .5rem;
   background: linear-gradient(to left,
     transparent 0%,
     rgba(196,147,10,.5) 50%,
     transparent 100%);
 }
 .rotd-inner {
-  max-width: 540px; margin: 0 auto;
+  max-width: 480px; margin: 0 auto;
   display: flex; flex-direction: column; align-items: center;
-  gap: .8rem;
+  gap: .35rem;
 }
 /* Eyebrow row with side ornaments — "✦ המתכון של היום ✦" feel */
 .rotd-eyebrow {
-  font-size: .72rem; font-weight: 700;
+  font-size: .65rem; font-weight: 700;
   color: var(--c-gold); text-transform: uppercase;
-  letter-spacing: .22em;
+  letter-spacing: .2em;
   font-family: 'Frank Ruhl Libre', serif;
-  display: flex; align-items: center; gap: .7rem;
-  margin-bottom: .15rem;
-  text-shadow: 0 0 14px rgba(196,147,10,.35);
+  display: flex; align-items: center; gap: .55rem;
+  margin-bottom: .05rem;
+  text-shadow: 0 0 12px rgba(196,147,10,.35);
 }
 .rotd-eyebrow::before,
 .rotd-eyebrow::after {
   content: '✦';
-  font-size: .6rem;
+  font-size: .55rem;
   color: var(--c-gold-d);
   opacity: .65;
 }
@@ -492,17 +492,17 @@ html.light .hero-cta-secondary { color: #7a3a18; border-color: rgba(184,66,35,.4
   cursor: pointer;
   transition: all .35s cubic-bezier(.2,.8,.2,1);
   display: grid;
-  grid-template-columns: 180px 1fr;
+  grid-template-columns: 130px 1fr;
   gap: 0;
   box-shadow:
-    0 4px 18px rgba(0,0,0,.35),
+    0 3px 14px rgba(0,0,0,.3),
     inset 0 1px 0 rgba(255,255,255,.04);
 }
 /* Inner gold "frame line" via pseudo-element — gives etched feel */
 .rotd-card::before {
   content: '';
   position: absolute;
-  inset: 5px;
+  inset: 4px;
   border: 1px solid rgba(196,147,10,.18);
   border-radius: calc(var(--r-md) - 4px);
   pointer-events: none;
@@ -580,7 +580,7 @@ html.light .rotd-img-wrap::after {
 }
 .rotd-img {
   width: 100%; height: 100%;
-  min-height: 160px;
+  min-height: 120px;
   object-fit: cover;
   display: block;
   transition: transform .6s cubic-bezier(.2,.8,.2,1);
@@ -588,9 +588,9 @@ html.light .rotd-img-wrap::after {
 .rotd-card:hover .rotd-img { transform: scale(1.05); }
 /* Body — generous spacing, layered text */
 .rotd-body {
-  padding: 1.1rem 1.1rem 1rem;
+  padding: .7rem .85rem .65rem;
   display: flex; flex-direction: column;
-  gap: .45rem; justify-content: center;
+  gap: .3rem; justify-content: center;
   position: relative;
   z-index: 1;
 }
@@ -598,22 +598,22 @@ html.light .rotd-img-wrap::after {
 .rotd-body::before {
   content: '✧';
   position: absolute;
-  top: 0.5rem; right: 1.1rem;
-  font-size: .7rem;
+  top: 0.35rem; right: .85rem;
+  font-size: .62rem;
   color: var(--c-gold-d);
   opacity: .5;
 }
 .rotd-title {
   font-family: 'Frank Ruhl Libre', serif;
-  font-size: 1.2rem; font-weight: 700;
+  font-size: 1rem; font-weight: 700;
   color: var(--c-gold-l); margin: 0;
-  line-height: 1.25;
+  line-height: 1.2;
   letter-spacing: .005em;
 }
 html.light .rotd-title { color: var(--c-spice-d, #7a3a18); }
 .rotd-desc {
-  font-size: .82rem; color: var(--c-ink-m);
-  line-height: 1.55; margin: 0;
+  font-size: .72rem; color: var(--c-ink-m);
+  line-height: 1.45; margin: 0;
   font-family: 'Heebo', sans-serif;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -622,11 +622,11 @@ html.light .rotd-title { color: var(--c-spice-d, #7a3a18); }
 }
 /* Meta row — chips with refined styling */
 .rotd-meta-row {
-  display: flex; flex-wrap: wrap; gap: .35rem;
-  margin-top: .3rem;
+  display: flex; flex-wrap: wrap; gap: .25rem;
+  margin-top: .2rem;
 }
 .rotd-meta-chip {
-  font-size: .76rem; padding: .2rem .6rem;
+  font-size: .65rem; padding: .12rem .45rem;
   border-radius: 100px;
   background: rgba(196,147,10,.13);
   color: var(--c-gold-l);
@@ -641,9 +641,9 @@ html.light .rotd-meta-chip {
 }
 /* CTA — clear visual signal, separated from body */
 .rotd-cta {
-  font-size: .78rem; color: var(--c-gold);
-  font-weight: 600; margin-top: .55rem;
-  padding-top: .55rem;
+  font-size: .68rem; color: var(--c-gold);
+  font-weight: 600; margin-top: .35rem;
+  padding-top: .35rem;
   border-top: 1px solid rgba(196,147,10,.18);
   display: flex; align-items: center; gap: .3rem;
   font-family: 'Heebo', sans-serif;
@@ -652,13 +652,13 @@ html.light .rotd-meta-chip {
 
 /* Mobile — stack image above body, reduce padding */
 @media (max-width: 600px) {
-  .rotd-section { padding: 1.5rem .8rem 2rem; }
+  .rotd-section { padding: .7rem .8rem .8rem; }
   .rotd-inner { max-width: 100%; }
   .rotd-card { grid-template-columns: 1fr; }
-  .rotd-img { height: 160px; min-height: 160px; }
-  .rotd-body { padding: 1rem 1rem .9rem; }
-  .rotd-title { font-size: 1.1rem; }
-  .rotd-desc { font-size: .8rem; }
+  .rotd-img { height: 120px; min-height: 120px; }
+  .rotd-body { padding: .7rem .9rem .65rem; }
+  .rotd-title { font-size: .95rem; }
+  .rotd-desc { font-size: .72rem; }
   .rotd-img-wrap::after {
     background: linear-gradient(to top, rgba(28,15,8,.0) 70%, rgba(28,15,8,.4) 100%);
   }
@@ -674,7 +674,7 @@ html.lang-en .rotd-desc,
 html.lang-en .rotd-meta-row,
 html.lang-en .rotd-cta { direction: ltr !important; text-align: left !important; }
 html.lang-en .rotd-eyebrow { direction: ltr !important; }
-html.lang-en .rotd-body::before { right: auto; left: 1.1rem; }
+html.lang-en .rotd-body::before { right: auto; left: .85rem; }
 html.lang-en .rotd-img-wrap::after {
   background: linear-gradient(to right, rgba(28,15,8,.0) 70%, rgba(28,15,8,.35) 100%);
 }
