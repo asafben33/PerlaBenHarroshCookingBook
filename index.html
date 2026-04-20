@@ -1205,8 +1205,8 @@ html.light .book3d-stage {
   cursor: pointer;
 }
 .book3d.is-closed:hover { transform: rotateX(12deg) rotateY(-5deg) translateY(-8px); }
-/* v8.22: when book is open, let the .book-flip-container determine size.
-   StPageFlip needs a parent that doesn't constrain it inappropriately. */
+/* v8.23: when book is open, the book3d should be auto-sized to fit the flip container,
+   centered in the stage with the dark radial background showing around it */
 .book3d.is-open {
   width: auto;
   height: auto;
@@ -1214,6 +1214,9 @@ html.light .book3d-stage {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Lifted slightly off the background for depth */
+  padding: 0;
+  margin: 0 auto;
 }
 
 /* ─── COVER ─────────────────────────────────────────────────────────── */
@@ -1308,16 +1311,19 @@ html.light .book3d-stage {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* StPageFlip host container (replaces .book3d-pages) */
-/* v8.22: explicit dimensions required for StPageFlip to compute layout */
+/* v8.23: Right-sized container - matches the actual book, not too wide.
+   This prevents StPageFlip from defaulting to portrait mode on desktop. */
 .book-flip-container {
-  width: min(1200px, 95vw);
-  height: min(780px, 78vh);
+  width: min(1100px, 94vw);
+  height: min(760px, 75vh);
   margin: 0 auto;
   display: none;  /* hidden until book is opened */
   position: relative;
   z-index: 5;
-  /* Ensure StPageFlip can measure parent */
   box-sizing: border-box;
+  /* v8.23: atmospheric background - dark shadow under the book */
+  box-shadow: 0 40px 80px rgba(0,0,0,.7), 0 20px 40px rgba(0,0,0,.5);
+  border-radius: 4px;
 }
 .book3d.is-open .book-flip-container,
 .book3d-stage.is-open-state .book-flip-container { display: block; }
@@ -14326,7 +14332,7 @@ if(typeof BOOK_HTML!=='undefined'){
     });
   }
 
-  /* v8.22: Separated init for clarity + better dimension calculation */
+  /* v8.23: Fixed-size book with forced landscape on desktop, portrait on mobile */
   function initializePageFlip() {
     var container = document.getElementById('book-flip-container');
     if (!container) return;
@@ -14336,47 +14342,51 @@ if(typeof BOOK_HTML!=='undefined'){
       var rect = container.getBoundingClientRect();
       console.log('[BookReader] Container rect:', rect.width + 'x' + rect.height);
 
-      // Compute book size based on container's available space.
-      // StPageFlip with size='stretch' will stretch to parent, but it needs
-      // sane initial values that respect aspect ratio (book pages are taller than wide).
       var availableWidth = rect.width || (window.innerWidth - 60);
       var availableHeight = rect.height || (window.innerHeight * 0.75);
       var w, h;
 
-      if (isMobile || availableWidth < 800) {
-        // Single page mode (portrait): use full width, height matches aspect 4:5
-        w = Math.min(availableWidth - 20, 420);
-        h = Math.min(availableHeight - 20, w * 1.35);
+      /* v8.23: Size calculation with correct aspect ratio
+         - Desktop (width >= 900): two-page spread, each page ~450px
+         - Mobile: single page, bigger */
+      if (isMobile || availableWidth < 900) {
+        // Portrait: single page taking most of the container
+        w = Math.min(availableWidth - 40, 460);
+        h = Math.min(availableHeight - 40, w * 1.35);
       } else {
-        // Two-page spread: each page is half the available width
-        w = Math.min((availableWidth - 40) / 2, 540);
-        h = Math.min(availableHeight - 20, w * 1.4);
+        // Landscape: two pages. Container has 2 pages + spine. Each page = (width - 20) / 2
+        w = Math.floor(Math.min((availableWidth - 40) / 2, 500));
+        h = Math.floor(Math.min(availableHeight - 40, w * 1.4));
       }
 
-      console.log('[BookReader] Computed page size: ' + w + 'x' + h);
+      console.log('[BookReader] Computed page size: ' + w + 'x' + h + ' (mode: ' + (isMobile || availableWidth < 900 ? 'portrait' : 'landscape') + ')');
 
-      // Respect prefers-reduced-motion
       var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* v8.23: CRITICAL changes to make landscape work on desktop:
+         - size: 'fixed' instead of 'stretch' (stretch was defaulting to portrait)
+         - usePortrait based on actual screen size
+         - flippingTime: 1000ms (library default, smooth)
+         - maxShadowOpacity: 0.7 (more visible shadows)
+         - autoSize: false because we provide explicit dimensions */
+      var isLandscape = !isMobile && availableWidth >= 900;
 
       pageFlipInstance = new St.PageFlip(container, {
         width: w,
         height: h,
-        size: 'stretch',
-        minWidth: 280,
-        maxWidth: 700,
-        minHeight: 380,
-        maxHeight: 900,
-        maxShadowOpacity: 0.55,
+        size: 'fixed',
+        maxShadowOpacity: reduceMotion ? 0 : 0.7,
         showCover: true,
         mobileScrollSupport: false,
-        flippingTime: reduceMotion ? 200 : 1200,
-        usePortrait: true,
+        flippingTime: reduceMotion ? 150 : 1000,
+        usePortrait: !isLandscape,
         startPage: 0,
         drawShadow: !reduceMotion,
         useMouseEvents: true,
         swipeDistance: 30,
         showPageCorners: true,
-        disableFlipByClick: false
+        disableFlipByClick: false,
+        autoSize: false
       });
 
       console.log('[BookReader] PageFlip instance created, loading pages...');
@@ -14386,7 +14396,6 @@ if(typeof BOOK_HTML!=='undefined'){
       pageFlipInstance.loadFromHTML(pageElements);
 
       pageFlipInstance.on('flip', function(e) {
-        console.log('[BookReader] Flipped to page: ' + e.data);
         updateInfo(e.data);
       });
       pageFlipInstance.on('init', function(e) {
