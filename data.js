@@ -18924,13 +18924,14 @@ const MENU_STRUCTURE = [
   ]},
 
 
-        /* 4. עדות ישראל (communities — 270 recipes across 9 ethnicities)
+        /* 4. מתכונים טעימים מעוד עדות (communities — 270 recipes across 9 ethnicities)
+        v8.15: renamed from 'עדות ישראל' to be more inviting and descriptive.
         v7.4: each community has 3 sub-items:
           - "כל המתכונים" (all 30)
           - "מאכלים מסורתיים לעדה" (non-holiday daily/seasonal recipes)
           - "מאכלי חגים" (folder with 9 holidays — mimouna removed; Moroccan-only)
         Mimouna removed from communities — it stays only under Morocco's חגים. */
-  {lbl:'עדות ישראל', key:'communities', items:[
+  {lbl:'מתכונים טעימים מעוד עדות', key:'communities', items:[
     {lbl:'עיראק', items:[
       {id:'iraq', lbl:'כל המתכונים'},
       {lbl:'מאכלים מסורתיים לעדה', ids:['iq7','iq16','iq23']},
