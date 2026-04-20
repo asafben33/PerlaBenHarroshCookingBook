@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Primary site URL -->
+  <url>
+    <loc>https://perlabenharrosh-cookingbook.netlify.app/</loc>
+    <lastmod>2026-04-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="he" href="https://perlabenharrosh-cookingbook.netlify.app/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://perlabenharrosh-cookingbook.netlify.app/?lang=en"/>
+  </url>
+
+  <!-- Mirror on GitHub Pages -->
+  <url>
+    <loc>https://asafben33.github.io/PerlaBenHarroshCookingBook/</loc>
+    <lastmod>2026-04-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Anchor links to main sections (single-page app) -->
+  <url>
+    <loc>https://perlabenharrosh-cookingbook.netlify.app/#main</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://perlabenharrosh-cookingbook.netlify.app/#bio</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://perlabenharrosh-cookingbook.netlify.app/#book-wrapper</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://perlabenharrosh-cookingbook.netlify.app/#about-redesigned</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+</urlset>
