@@ -858,9 +858,12 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
   font-style: italic; color: var(--c-ink-m); font-size: .88rem; line-height: 1.7;
 }
 .m-sec-h { direction: rtl; text-align: right; font-size: .78rem; font-weight: 700; color: var(--c-gold-d); text-transform: uppercase; letter-spacing: .06em; margin: .8rem 0 .4rem; }
-.m-ingr-item { direction: rtl; display: flex; justify-content: space-between; align-items: baseline; padding: .3rem 0; border-bottom: 1px solid var(--c-bg3); }
-.m-ingr-q { direction: rtl; text-align: right; font-weight: 600; min-width: 80px; color: var(--c-ink); font-size: .88rem; }
-.m-ingr-i { direction: rtl; text-align: right; color: var(--c-ink-m); font-size: .88rem; }
+/* v8.5: ingredient row — quantity + name flow together right-aligned (RTL).
+   Was: justify-content: space-between (pushed name to far left, quantity to far right).
+   Now: justify-content: flex-start with gap — name appears immediately after quantity. */
+.m-ingr-item { direction: rtl; display: flex; justify-content: flex-start; align-items: baseline; gap: .6rem; padding: .3rem 0; border-bottom: 1px solid var(--c-bg3); }
+.m-ingr-q { direction: rtl; text-align: right; font-weight: 600; min-width: 80px; flex-shrink: 0; color: var(--c-ink); font-size: .88rem; }
+.m-ingr-i { direction: rtl; text-align: right; color: var(--c-ink-m); font-size: .88rem; flex: 1; }
 .m-steps { padding-right: 1.3rem; margin: .5rem 0; }
 .m-step { direction: rtl; text-align: right; padding: .4rem 0; border-bottom: 1px solid var(--c-bg3); line-height: 1.7; font-size: .88rem; color: var(--c-ink-m); }
 .m-step-t { color: var(--c-gold); font-weight: 700; }
