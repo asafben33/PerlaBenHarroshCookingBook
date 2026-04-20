@@ -91,7 +91,12 @@ python download_images.py --no-proxy
 שימושי אם אתה מריץ מהבית או מ-hotspot.
 ---
 ## שילובים מומלצים
-
+# 1. דרי ראן
+python download_images.py --dry-run --strict --provenance
+# 2. ריצה אמיתית
+python download_images.py --strict --provenance
+# 3. אם יוצא נמוך מדי — הרץ עם סף יותר נמוך
+python download_images.py --min-score 50 --provenance
 **פעם ראשונה, אחרי שההורדה הקודמת הביאה תמונות לא רלוונטיות:**
 ```bash
 python download_images.py --aggressive-clean --inline-alias

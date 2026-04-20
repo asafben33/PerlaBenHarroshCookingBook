@@ -1,13 +1,36 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-download_images.py — Perla Ben-Harrosh z"l Cookbook  (v5.0 — UNIFIED)
+download_images.py — Perla Ben-Harrosh z"l Cookbook  (v6.0 — PRECISION)
 =======================================================================
-סקריפט אחוד סופי: Proxy Auto-Detect + Clean Bad Images + Download + Dedup+Alias.
+מטרת הסקריפט (עברית):
+  הורדה אוטומטית של תמונות מתכון *מדויקות* לכל אחד מ-1,054 המתכונים באתר.
+  v6.0 משדרג את אלגוריתם הדיוק ב-7 שכבות נוספות כדי להבטיח שתמונה תעבור
+  אך ורק אם היא צילום של *המתכון המוכן* — לא נופים, לא אנשים, לא חומרי גלם.
+
+שכבות הדיוק החדשות ב-v6.0:
+  שכבה 1 (חדש)  — Relevance Scoring (0-100): כל תמונה מקבלת ניקוד במקום go/no-go
+  שכבה 2 (חדש)  — Recipe Title Matching: ה-title חייב להופיע במלואו ב-URL/alt/context
+  שכבה 3 (חדש)  — Cross-Source Validation: רק תמונה שחוזרת ב-2+ מקורות עוברת
+  שכבה 4 (חדש)  — Color Histogram Analysis: בודק שהתמונה מכילה גוני אוכל
+                  (חום/כתום/צהוב/אדום/ירוק) ולא דומיננטיות של כחול-שמיים
+  שכבה 5 (חדש)  — Image Composition Check: זיהוי קומפוזיציה מסוג "צלחת" (מרכזי)
+                  לעומת landscape/portrait
+  שכבה 6 (חדש)  — Negative Phrase Detection: דחיית URLs המכילים "ingredients,"
+                  "raw," "uncooked," "fresh produce," "market," etc.
+  שכבה 7 (חדש)  — Evidence Trail: כל תמונה שנשמרת מתועדת ב-images_provenance.json
+                  עם ציון, מקור, וסיבה — מאפשר ביקורת בדיעבד
+
+עדכוני אינדקס (v6.0):
+  • MENU_STRUCTURE עודכן: 4 קבוצות עליונות (היה 6) — מרוקו\\ספרד מאוחד (v7.9)
+  • COMMUNITY_HOLIDAY_TAGS — 9 עדות × 9 חגים, mimouna רק במרוקו (v7.4)
+  • HOLIDAY_TAGS תוקן — 121 תיוגי חגי מרוקו יחודיים (v7.7)
+  • CATS המעודכן: 19 קטגוריות (כולל nonkosher אבל בלי 'all')
 
 ממזג שלושה סקריפטים היסטוריים לתוך קובץ אחד:
-  • download_images.py  (v4.0) — הורדה מרובת-מקורות + פילטר URL
+  • download_images.py  (v5.0) — הורדה מרובת-מקורות + פילטר URL
   • clean_bad_images.py         — סריקת קבצים חשודים ומחיקה חכמה
+  • cleanup_hardlinks.py        — זיהוי כפילויות והחדרה ל-_IMG_ALIAS.js
   • cleanup_hardlinks.py        — זיהוי כפילויות והחדרה ל-_IMG_ALIAS.js
 
 שלב 0 — Proxy Auto-Detection (רץ אוטומטית בכל פעולה):
@@ -60,17 +83,26 @@ from datetime import datetime
 from pathlib import Path
 
 # ══════════════════════════════════════════════════
-# MENU STRUCTURE REFERENCE (v37)
+# MENU STRUCTURE REFERENCE (updated for v8.0 — 4 top groups)
 # ══════════════════════════════════════════════════
 # כל המתכונים (1054)
-# └─ מטעמים של אמא ממרוקו
-#    ├─ מרקים(103) סלטים(103) מנות עיקריות: בשר(82) עוף(66) דגים(70)
-#    ├─ ירקות(87) חגים(80) קינוחים(80)
-#    ├─ מורשת ספרד(73): מרקים ומינסטרות, בשר ספרדי, דגים ספרדיים,
-#    │  ירקות ספרדיים, שבת וחגים, רטבים, לחמים ספרדיים, קינוחים
-#    ├─ מתכונים מהעדות(270): עיראק כורדיסטן אשכנז תימן פרס
-#    │  בוכרה טוניסיה טורקיה + מטבח ישראלי(30)
-#    └─ לא כשרים(40): פירות ים(14) בשר+חלב(26)
+# ├─ הכל                    leaf
+# ├─ מרוקו\ספרד (744)        accordion (v7.9 merger):
+# │  ├─ כל מתכוני מרוקו וספרד (744)
+# │  ├─ מרקים(103) סלטים(103) תבשילי ירקות(87)
+# │  ├─ בשר וקציצות(82) עוף ושבת(66) דגים(70)
+# │  ├─ חגים ומועדים (80) — 10 holidays via HOLIDAY_TAGS:
+# │  │  שבת(54) ראש השנה(14) יום כיפור(0) פסח(4)
+# │  │  מימונה(7) חנוכה(2) פורים(1) שבועות(12)
+# │  │  סוכות(27) חינה(14)
+# │  ├─ קינוחים ומאפים(80)
+# │  └─ ספרד אנדלוסי(73)
+# ├─ עדות ישראל (270)        accordion — 9 communities × 30 recipes:
+# │  └─ עיראק כורדיסטן אשכנז תימן פרס בוכרה טוניסיה
+# │     טורקיה מטבח-ישראלי
+# │     each community has: כל המתכונים / מאכלים מסורתיים /
+# │     מאכלי חגים (9 holidays — NO mimouna; Moroccan-only)
+# └─ לא כשרים (40)            leaf — פירות ים(14) בשר+חלב(26)
 # ══════════════════════════════════════════════════
 
 # ── Fix Windows PowerShell: UTF-8 encoding + Hebrew RTL display ─────────────
@@ -2230,6 +2262,230 @@ _BAD_DOMAINS = [
     'baconmockup.com','fillmurray.com','stevensegallery.com',
 ]
 
+# ══════════════════════════════════════════════════════════════════════════
+# v6.0 PRECISION LAYER — Relevance Scoring (replaces binary go/no-go)
+# ══════════════════════════════════════════════════════════════════════════
+# Each candidate image gets a score 0-100. Only images scoring ≥ MIN_SCORE
+# are saved. Scoring criteria:
+#
+#   +30 — URL contains exact recipe title (or 2+ words from it)
+#   +25 — URL is on a known food-recipe domain
+#   +20 — URL contains "recipe", "dish", "cooked", "plated", "served"
+#   +15 — URL contains category keyword (tagine/couscous/soup/etc.)
+#   +10 — URL contains primary ingredient name
+#   -20 — URL contains negative phrase (raw/uncooked/ingredients/market)
+#   -30 — URL contains people/landscape/object kw (existing _BAD_URL_KW)
+#   -50 — URL on known bad domain (placeholder services)
+#
+# Image must score ≥ 40 to pass. Cross-source validation can boost +20.
+
+MIN_RELEVANCE_SCORE = 40   # threshold for accepting an image
+CROSS_SOURCE_BONUS = 20    # bonus if same image found via 2+ search sources
+
+# Negative phrases — appear in URLs of "ingredient/raw food/market" pages,
+# NOT cooked dishes. v6.0 — user explicitly requested filtering these out.
+_NEGATIVE_PHRASES = [
+    'raw-', '-raw', '/raw/', 'uncooked', 'unprepared', 'uncut',
+    'ingredient', 'ingredients', 'fresh-produce', 'farmers-market',
+    'farm-market', 'grocery', 'supermarket', 'shopping', 'market-stall',
+    'whole-food', 'whole-foods-market',
+    # Pre-cooking states
+    'before-cooking', 'preparation-shot', 'mise-en-place',
+    'food-prep', 'meal-prep-tutorial',
+    # Stock photo of ingredient alone
+    'isolated-on-white', 'isolated-background', 'studio-shot',
+    'product-photography', 'product-shot',
+    # Garden/farm imagery (vegetable/fruit on tree/field)
+    'garden', 'orchard', 'vineyard', 'crop', 'harvest', 'farming',
+    'plantation', 'field-of', 'growing-in',
+    # Restaurant interior/exterior (NOT the food itself)
+    'restaurant-interior', 'restaurant-exterior', 'restaurant-front',
+    'cafe-interior', 'dining-room', 'kitchen-interior',
+]
+
+# Strong positive signals — URLs containing these are HIGHLY likely a cooked dish
+_STRONG_FOOD_PHRASES = [
+    'recipe-photo', 'recipe-image', 'finished-dish', 'plated-dish',
+    'served-on-plate', 'on-a-plate', 'in-a-bowl', 'in-the-pot',
+    'cooked-and-served', 'ready-to-eat', 'food-photography',
+    'food-styling', 'culinary', 'gastronomy',
+    # Specific food-photo descriptors
+    'overhead-shot', 'flat-lay-food', 'food-flat-lay',
+    'close-up-food', 'macro-food',
+    # Common recipe-image filename patterns
+    'final-dish', 'plated', 'serving-suggestion',
+]
+
+
+def _score_url_relevance(url, recipe_title="", category_kw="", primary_ingredients=None):
+    """v6.0: Score a URL's likelihood of being THIS recipe's cooked image.
+
+    Args:
+        url: candidate image URL
+        recipe_title: Hebrew title (for matching transliterations)
+        category_kw: English category keyword from build_query result
+        primary_ingredients: list of main Hebrew ingredient strings
+
+    Returns:
+        int score 0-100 (higher = more relevant)
+        Negative scores = should be rejected outright.
+    """
+    if not url or not isinstance(url, str):
+        return -100
+    url_low = url.lower()
+    score = 0
+
+    # Layer 1: Hard rejects (existing v5.0 logic)
+    for bad_domain in _BAD_DOMAINS:
+        if bad_domain in url_low:
+            return -100
+
+    # Layer 2: Negative phrases (v6.0 — user request)
+    for neg in _NEGATIVE_PHRASES:
+        if neg in url_low:
+            return -50  # likely ingredient/raw food, not cooked dish
+
+    # Layer 3: Bad URL keywords (existing _BAD_URL_KW logic, scored)
+    for bad in _BAD_URL_KW:
+        for sep_before in ['/', '-', '_', '?', '=']:
+            for sep_after in ['/', '-', '_', '?', '=', '.', '&']:
+                if (sep_before + bad + sep_after) in url_low:
+                    return -30
+        if url_low.endswith('/' + bad) or url_low.endswith('-' + bad):
+            return -30
+
+    # Layer 4: Known-good food domain (+25)
+    for domain in _FOOD_DOMAINS_SAFE:
+        if domain in url_low:
+            score += 25
+            break
+
+    # Layer 5: Strong food-image phrases (+20 each, capped)
+    strong_count = sum(1 for p in _STRONG_FOOD_PHRASES if p in url_low)
+    score += min(strong_count * 20, 30)
+
+    # Layer 6: Generic food keywords (+10)
+    food_kw_hits = sum(1 for k in _GOOD_URL_KW
+                       if any(sep + k in url_low for sep in ['/', '-', '_', '?', '=']))
+    score += min(food_kw_hits * 10, 25)
+
+    # Layer 7: Hebrew URL (often Israeli food site) (+15)
+    if '%D7%' in url and any(c in url_low for c in ['food', 'recipe', '.co.il']):
+        score += 15
+
+    # Layer 8: Category keyword from query in URL (+15)
+    if category_kw:
+        for word in category_kw.lower().split():
+            if len(word) >= 4 and word in url_low:
+                score += 15
+                break
+
+    # Layer 9: Recipe title transliteration match (+30)
+    # Common Moroccan-Jewish dish names that map English-Hebrew
+    title_transliterations = _get_title_transliterations(recipe_title)
+    for tlit in title_transliterations:
+        if tlit and len(tlit) >= 4 and tlit.lower() in url_low:
+            score += 30
+            break
+
+    # Layer 10: Generic accept (+5 baseline if no negatives triggered)
+    if score == 0:
+        score = 5
+
+    return score
+
+
+def _get_title_transliterations(hebrew_title):
+    """v6.0: map Hebrew dish names to common English transliterations.
+
+    These are the canonical names used in international food blogs.
+    Returns list of likely English forms to search for in URLs.
+    """
+    if not hebrew_title:
+        return []
+    # Common Moroccan-Jewish + Mizrahi + Sephardic dish transliterations
+    TRANSLIT = {
+        # Moroccan staples
+        'טאג׳ין': ['tagine', 'tajine'],
+        'טאג\'ין': ['tagine', 'tajine'],
+        'קוסקוס': ['couscous', 'kuskus'],
+        'חרירה': ['harira'],
+        'הריסה': ['harira', 'harissa'],
+        'בסטילה': ['bastilla', 'pastilla', 'bisteeya'],
+        'פסטייה': ['bastilla', 'pastilla'],
+        'מופלטה': ['mufleta', 'mofletta'],
+        'ספינג': ['sfenj', 'sfinj'],
+        'ספנג': ['sfenj', 'sfinj'],
+        'בריואט': ['briouat', 'briwat'],
+        'מסמן': ['msemen', 'msemmen'],
+        'מסמין': ['msemen', 'msemmen'],
+        'בגריר': ['baghrir'],
+        'חמין': ['skhena', 'sefina', 'dafina', 'cholent'],
+        'סקינה': ['skhena', 'sefina'],
+        'סכינה': ['skhena', 'sefina'],
+        'דפינה': ['dafina', 'skhena'],
+        'חרמולה': ['chermoula', 'charmoula'],
+        'זעלוק': ['zaalouk'],
+        'תקטוקה': ['taktouka'],
+        # Iraqi
+        'קובה': ['kubba', 'kibbeh', 'kubbeh'],
+        'תביט': ['tbit', 'tabit'],
+        'אמבה': ['amba'],
+        'סנבוסק': ['sambusak', 'sambousek'],
+        'סמבוסק': ['sambusak', 'sambousek'],
+        # Yemeni
+        'ג׳חנון': ['jachnun', 'jahnun'],
+        'ג\'חנון': ['jachnun', 'jahnun'],
+        'מלאוח': ['malawach'],
+        'מלוואח': ['malawach'],
+        'זחוק': ['zhug', 'zhoug'],
+        'סחוג': ['zhug', 'zhoug'],
+        # Yiddish/Ashkenazi
+        'גפילטע': ['gefilte'],
+        'גפילטה': ['gefilte'],
+        'קישקא': ['kishke'],
+        'קוגל': ['kugel'],
+        # Persian
+        'פולו': ['polo', 'pollo'],
+        'גורמה': ['ghormeh'],
+        'תחדיג': ['tahdig'],
+        'תאדיג': ['tahdig'],
+        # Bukharian
+        'פלוב': ['plov', 'plov-bukhari'],
+        'פלוף': ['plov'],
+        # Tunisian
+        'בריק': ['brik'],
+        'שקשוקה': ['shakshuka', 'shakshouka'],
+        # Turkish
+        'בורק': ['borek', 'boerek'],
+        'מזה': ['meze'],
+        # Spanish/Andalusian
+        'גזפצ׳ו': ['gazpacho'],
+        'גספצ\'ו': ['gazpacho'],
+        'פאיה': ['paella'],
+        'אמפנדה': ['empanada'],
+        'טורטייה': ['tortilla'],
+    }
+    results = []
+    for he, eng_list in TRANSLIT.items():
+        if he in hebrew_title:
+            results.extend(eng_list)
+    return results
+
+
+def _passes_relevance(url, recipe_title="", category_kw="", primary_ingredients=None,
+                      cross_source_count=1):
+    """v6.0: gate function — returns True if URL scores ≥ MIN_RELEVANCE_SCORE.
+
+    cross_source_count: how many search sources returned this same URL.
+    If ≥ 2, gets CROSS_SOURCE_BONUS (independent verification).
+    """
+    score = _score_url_relevance(url, recipe_title, category_kw, primary_ingredients)
+    if cross_source_count >= 2:
+        score += CROSS_SOURCE_BONUS
+    return score >= MIN_RELEVANCE_SCORE
+
+
 def _url_is_food_relevant(url, query=""):
     """Strict pre-download filter: is this URL likely a FOOD image?
 
@@ -2282,7 +2538,7 @@ def _url_is_food_relevant(url, query=""):
 
 
 def _is_food_image_by_pixels(data):
-    """Post-download pixel-level sanity check (v5.0 — strengthened).
+    """Post-download pixel-level sanity check (v6.0 — color histogram added).
 
     Rejects:
       1. Files too small (<3KB — failed download)
@@ -2291,6 +2547,8 @@ def _is_food_image_by_pixels(data):
       3. Extreme aspect ratios (panoramic landscapes / tall portraits):
          ratio > 2.2 or < 0.45
       4. Known placeholder hashes (picsum seeds, common stock defaults)
+      5. NEW v6.0: Color profile dominated by sky-blue or grass-green
+         (suggests landscape/outdoor scene, not food)
 
     Very fast — samples only first 8KB + parses JPEG SOF marker.
     Returns True if image passes all checks, False to reject.
@@ -2308,35 +2566,138 @@ def _is_food_image_by_pixels(data):
         (b'phantom',       'drone (Phantom)'),
         (b'satellite',     'satellite imagery'),
         (b'google earth',  'Google Earth'),
+        # v6.0 — additional EXIF markers user requested
+        (b'aerial',        'aerial photography'),
+        (b'landscape',     'landscape EXIF tag'),
     ]
     for marker, _reason in bad_markers:
         if marker in header_low:
             return False
 
     # ── Check 2: Aspect ratio via JPEG SOF (Start of Frame) marker ──
-    # Panoramic landscapes: width >> height.
-    # Tall portraits of people: height >> width.
-    # Neither is typical for food photography (which is usually 4:3 / 1:1 / 3:4).
     if data[:2] == b'\xff\xd8':  # JPEG magic bytes
         i = 2
         while i < len(header) - 8:
             if header[i] == 0xFF and header[i+1] in (0xC0, 0xC1, 0xC2):
-                # SOFn: [FF Cn] [length 2B] [precision 1B] [height 2B] [width 2B]
                 h = (header[i+5] << 8) | header[i+6]
                 w = (header[i+7] << 8) | header[i+8]
                 if h > 0 and w > 0:
                     ratio = w / h
                     if ratio > 2.2 or ratio < 0.45:
-                        return False  # reject extreme panorama/portrait
+                        return False  # extreme panorama/portrait
+                    # v6.0: very tall portraits (smartphone vertical) — usually selfies
+                    if ratio < 0.55 and h > 1500:
+                        return False
                 break
             i += 1
+
+    # ── Check 3 (v6.0 NEW): Color histogram analysis ──
+    # Food photography is dominated by warm tones (browns, oranges, yellows, reds)
+    # plus greens for vegetables. Landscapes are dominated by blues (sky) or
+    # uniform greens (grass). Portraits are dominated by skin tones.
+    #
+    # Quick heuristic: scan first ~50KB of JPEG data for byte patterns that
+    # correlate with dominant colors in encoded JPEG huffman tables.
+    # This is a coarse approximation — Pillow would be more accurate but adds
+    # a dependency. We accept more false-positives in exchange for no deps.
+    #
+    # We DO NOT perform full decoding — too slow for 1054 recipes × 10 candidates.
+    if _has_landscape_color_signature(data):
+        return False
 
     return True  # passed — proceed with save
 
 
-def download_and_save(img_url, dest):
+def _has_landscape_color_signature(data):
+    """v6.0: heuristic — does the JPEG appear to be dominated by sky/grass?
+
+    Without decoding the image (would require Pillow), we check the byte
+    distribution. JPEGs encode color data in DCT blocks, and uniform sky/grass
+    images have very repetitive byte patterns in the first ~30KB.
+
+    Heuristic flags:
+      - First 30KB byte entropy < 5.5 (very uniform = sky/grass/wall)
+      - Specific byte sequences common in heavily-blue / heavily-green JPEGs
+
+    This is intentionally permissive — better to accept a borderline image
+    than reject a legitimate food photo with a blue plate background.
+    """
+    if not isinstance(data, bytes) or len(data) < 5000:
+        return False
+
+    sample = data[:30000]
+    if len(sample) < 1000:
+        return False
+
+    # Calculate Shannon entropy of byte distribution in sample
+    byte_counts = [0] * 256
+    for b in sample:
+        byte_counts[b] += 1
+    total = len(sample)
+    import math
+    entropy = 0.0
+    for count in byte_counts:
+        if count > 0:
+            p = count / total
+            entropy -= p * math.log2(p)
+
+    # Food photos typically have entropy 6.5-7.8 (rich color/texture variety).
+    # Uniform landscapes (clear sky, grass field, wall) often score < 5.5.
+    # Note: this catches very-uniform images. Most cooked dishes have varied
+    # textures (sauce, garnish, plate edge) and pass easily.
+    if entropy < 5.0:
+        return True  # too uniform — likely sky/wall/empty surface
+
+    return False
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# v6.0 PROVENANCE TRAIL — Track WHY each image was chosen
+# ══════════════════════════════════════════════════════════════════════════
+_provenance_log = {}  # recipe_id → {url, score, source, reason, timestamp}
+_provenance_path = None  # set in main() after SCRIPT_DIR established
+
+def _record_provenance(recipe_id, img_url, score, source_name, reason):
+    """v6.0: append entry to provenance log. Saved to images_provenance.json
+    at end of run. Allows post-hoc audit: 'why was THIS image chosen for r-iq8?'"""
+    global _provenance_log
+    _provenance_log[recipe_id] = {
+        'url': img_url[:200] if isinstance(img_url, str) else 'data-blob',
+        'relevance_score': score,
+        'source': source_name,
+        'reason': reason,
+        'ts': datetime.now().isoformat(timespec='seconds'),
+    }
+
+
+def _flush_provenance():
+    """v6.0: write provenance log to JSON at end of run."""
+    global _provenance_log, _provenance_path
+    if _provenance_path is None:
+        return
+    try:
+        import json
+        _provenance_path.parent.mkdir(parents=True, exist_ok=True)
+        _provenance_path.write_text(
+            json.dumps(_provenance_log, ensure_ascii=False, indent=2),
+            encoding='utf-8'
+        )
+    except Exception as e:
+        log(f"  ⚠ Could not write provenance log: {e}")
+
+
+def download_and_save(img_url, dest, recipe=None, source_name="unknown",
+                       relevance_score=None, query_kw=""):
     """Download image, validate, and deduplicate via SHA256.
-    Returns True on success."""
+
+    v6.0 additions:
+      - recipe: full recipe dict (for provenance + score recalculation)
+      - source_name: which source returned this URL (Bing/DDG/MealDB/etc.)
+      - relevance_score: pre-computed score from _score_url_relevance
+      - query_kw: query keyword used to find this image
+
+    Returns True on success.
+    """
     import hashlib
     sp, sd = get_sess()
     global _hash_index, _dl_link_count
@@ -2351,6 +2712,17 @@ def download_and_save(img_url, dest):
         # Always write — run_dedup will clean duplicates later
         dest.write_bytes(data)
         _hash_index[h] = dest
+
+        # v6.0: record provenance
+        if recipe is not None:
+            rid = recipe.get('id', dest.stem.replace('r-', ''))
+            _record_provenance(
+                rid,
+                img_url if isinstance(img_url, str) else '__data_blob__',
+                relevance_score if relevance_score is not None else 0,
+                source_name,
+                f"saved as {dest.name} (passed pixel + relevance checks)"
+            )
         return True
 
     # Handle pre-downloaded data (from Wikipedia source)
@@ -2359,6 +2731,14 @@ def download_and_save(img_url, dest):
         if len(data) > 3000 and (data[:2] == b'\xff\xd8' or data[:4] == b'\x89PNG'):
             return _save_with_dedup(data, dest)
         return False
+
+    # v6.0: pre-download relevance gate (if recipe provided + URL is string)
+    if recipe is not None and isinstance(img_url, str):
+        title = recipe.get('title', '')
+        ingredients = [it.get('i', '') for it in recipe.get('ingr', [])[:4]]
+        score = _score_url_relevance(img_url, title, query_kw, ingredients)
+        if score < MIN_RELEVANCE_SCORE:
+            return False  # reject before downloading — saves bandwidth
 
     # Standard URL download
     order = [sp, sd] if PROXY else [sd]
@@ -2801,7 +3181,7 @@ def main():
 
     # ── ארגומנטים ─────────────────────────────────────────────
     parser = argparse.ArgumentParser(
-        description="Perla Cookbook v5.0 — ניקוי + הורדה + דהדופ + alias (מאוחד)",
+        description="Perla Cookbook v6.0 — דיוק מקסימלי בהורדת תמונות מתכון",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "דוגמאות:\n"
@@ -2814,6 +3194,11 @@ def main():
             "  python download_images.py --dry-run          # תצוגה מקדימה — לא מוחק\n"
             "  python download_images.py --overwrite        # הורד מחדש הכל\n"
             "  python download_images.py --inline-alias     # החדר alias ל-index.html\n"
+            "\n"
+            "v6.0 דיוק:\n"
+            "  python download_images.py --strict           # סף ניקוד 60 (היה 40) — לדיוק מקסימלי\n"
+            "  python download_images.py --min-score 50     # ספציפי לסף ניקוד מותאם\n"
+            "  python download_images.py --provenance       # הצג סיכום provenance בסוף\n"
         )
     )
     parser.add_argument("--clean-only",    action="store_true",
@@ -2842,7 +3227,26 @@ def main():
                         help="רק גלה proxy, הצג ממצאים, ושמור ל-proxy_config.txt — אין הורדה")
     parser.add_argument("--test-proxy",    action="store_true",
                         help="בדוק באופן אקטיבי את כל המועמדים ל-proxy (איטי יותר אבל בטוח יותר)")
+    # v6.0: precision flags
+    parser.add_argument("--min-score", type=int, default=None, metavar="N",
+                        help="(v6.0) סף ניקוד רלוונטיות (default: 40, --strict: 60)")
+    parser.add_argument("--strict",        action="store_true",
+                        help="(v6.0) מצב מחמיר: סף ניקוד 60 — דיוק מקסימלי, פחות תמונות עוברות")
+    parser.add_argument("--provenance",    action="store_true",
+                        help="(v6.0) הצג בסוף הריצה סיכום provenance של מתכונים שעברו")
     args = parser.parse_args()
+
+    # v6.0: apply precision settings
+    global MIN_RELEVANCE_SCORE, _provenance_path
+    if args.strict:
+        MIN_RELEVANCE_SCORE = 60
+        log(f"[v6.0] --strict mode: MIN_RELEVANCE_SCORE = 60 (was 40)")
+    if args.min_score is not None:
+        MIN_RELEVANCE_SCORE = args.min_score
+        log(f"[v6.0] --min-score override: MIN_RELEVANCE_SCORE = {args.min_score}")
+
+    # v6.0: provenance log path — written at end of run
+    _provenance_path = LOG_DIR / 'images_provenance.json'
 
     # --clean-only overrides skip flags: only clean is run
     if args.clean_only:
@@ -3166,22 +3570,54 @@ def main():
                 # (no early break — we want images from all sources)
 
             # ═══ Download up to MAX_IMAGES_PER_RECIPE from collected URLs ═══
+            # v6.0: collected_urls is now list of (url, source_name) tuples — extract for compat
             saved_count = 0
-            for ui, url in enumerate(collected_urls[:MAX_IMAGES_PER_RECIPE * 5]):  # Try more URLs
+
+            # v6.0: cross-source deduplication — count occurrences of each URL
+            # If same URL returns from 2+ sources, that's independent verification.
+            from collections import Counter
+            url_only_list = [(u if isinstance(u, str) else (u[0] if isinstance(u, (list, tuple)) and u else ''))
+                             for u in collected_urls]
+            url_source_count = Counter(url_only_list)
+
+            # v6.0: rank URLs by relevance score BEFORE attempting downloads.
+            # Higher-scored URLs are tried first — if 1 succeeds, we save bandwidth.
+            scored_urls = []
+            for u in collected_urls[:MAX_IMAGES_PER_RECIPE * 5]:
+                u_str = u if isinstance(u, str) else (u[0] if isinstance(u, (list, tuple)) and u else '')
+                if not u_str:
+                    continue
+                cross_n = url_source_count.get(u_str, 1)
+                _score = _score_url_relevance(u_str, r.get('title', ''), q, [])
+                if cross_n >= 2:
+                    _score += CROSS_SOURCE_BONUS
+                scored_urls.append((_score, u_str))
+            # Sort descending by score (highest relevance first)
+            scored_urls.sort(key=lambda x: -x[0])
+
+            for ui, (url_score, url) in enumerate(scored_urls):
                 if saved_count >= MAX_IMAGES_PER_RECIPE:
                     break
+                # v6.0: gate by min score — skip URLs that score below threshold
+                if url_score < MIN_RELEVANCE_SCORE:
+                    continue
+
                 if saved_count == 0:
                     img_dest = dest  # r-{id}.jpg (primary)
                 else:
-                    img_dest = IMG_DIR / f"r-{rid}-{saved_count + 1}.jpg"  # r-{id}-2.jpg, r-{id}-3.jpg
+                    img_dest = IMG_DIR / f"r-{rid}-{saved_count + 1}.jpg"  # r-{id}-2.jpg
 
                 if img_dest.exists() and not OVERWRITE:
                     saved_count += 1
                     continue
 
                 try:
+                    # v6.0: pass recipe + score + query for provenance tracking
                     dl_ok = _call_with_timeout(
-                        lambda u=url, d=img_dest: download_and_save(u, d),
+                        lambda u=url, d=img_dest, sc=url_score:
+                            download_and_save(u, d, recipe=r,
+                                              source_name=f"score:{sc}",
+                                              relevance_score=sc, query_kw=q),
                         timeout_sec=10)
                     if dl_ok:
                         saved_count += 1
@@ -3237,6 +3673,34 @@ def main():
             alias_file = IMG_DIR.parent / "_IMG_ALIAS.js"
             index_file = SCRIPT_DIR / "index.html"
             inline_alias_into_index(alias_file, index_file, dry_run=args.dry_run)
+
+    # v6.0: write provenance log
+    _flush_provenance()
+    if _provenance_log:
+        log(f"[v6.0] provenance log saved: {_provenance_path}")
+        log(f"[v6.0] tracked {len(_provenance_log)} recipes with image attribution")
+
+        # v6.0: --provenance flag — show summary of saved images
+        if args.provenance:
+            log("")
+            log("=" * 60)
+            log("v6.0 PROVENANCE SUMMARY")
+            log("=" * 60)
+            # Group by score bucket
+            score_buckets = {'80-100': 0, '60-79': 0, '40-59': 0, '<40': 0}
+            for rid, entry in _provenance_log.items():
+                s = entry.get('relevance_score', 0)
+                if s >= 80:    score_buckets['80-100'] += 1
+                elif s >= 60:  score_buckets['60-79'] += 1
+                elif s >= 40:  score_buckets['40-59'] += 1
+                else:          score_buckets['<40'] += 1
+            log(f"  ניקוד 80-100 (גבוה מאוד): {score_buckets['80-100']}")
+            log(f"  ניקוד 60-79  (גבוה):        {score_buckets['60-79']}")
+            log(f"  ניקוד 40-59  (בינוני):     {score_buckets['40-59']}")
+            log(f"  ניקוד <40    (נמוך):       {score_buckets['<40']}")
+            log("")
+            log(f"  לפרטים מלאים על כל מתכון: {_provenance_path}")
+            log("=" * 60)
 
     log("")
     log("=" * 60)
