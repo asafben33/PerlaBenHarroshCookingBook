@@ -1159,7 +1159,7 @@ html.light .book-mode-btn.active { background: rgba(184,66,35,.18); color: #2a10
 .book3d-stage {
   position: relative;
   width: 100%;
-  min-height: 720px;
+  min-height: 980px;
   margin: 0 auto;
   perspective: 2400px;
   perspective-origin: 50% 50%;
@@ -1169,7 +1169,7 @@ html.light .book-mode-btn.active { background: rgba(184,66,35,.18); color: #2a10
     radial-gradient(ellipse at top, rgba(196,147,10,.08) 0%, transparent 50%);
   border-radius: 16px;
   overflow: hidden;
-  padding: 2rem 1rem;
+  padding: 2rem 1rem 5rem;
 }
 html.light .book3d-stage {
   background:
@@ -1200,13 +1200,14 @@ html.light .book3d-stage {
   z-index: 5;
 }
 .book3d.is-closed {
-  width: 360px; height: 520px;
+  width: 380px; height: 540px;
   transform: rotateX(15deg) rotateY(-8deg);
   cursor: pointer;
 }
 .book3d.is-closed:hover { transform: rotateX(12deg) rotateY(-5deg) translateY(-8px); }
 .book3d.is-open {
-  width: min(1100px, 95vw); height: min(700px, 85vh);
+  width: min(1280px, 96vw);
+  height: min(880px, 82vh);
   transform: rotateX(0deg);
 }
 
@@ -1339,7 +1340,7 @@ html.light .book3d-stage {
 }
 .book3d-page {
   position: relative;
-  padding: 2.5rem 2.2rem;
+  padding: 3rem 2.5rem 3.5rem;
   overflow: hidden;
   font-family: 'Frank Ruhl Libre', 'Frank Ruhl Libre Hebrew', Georgia, serif;
   color: #2a1407;
@@ -1443,8 +1444,9 @@ html.light .book3d-stage {
   right: 50%;  /* sits on the right half of the book */
   transform-origin: left center;  /* hinges at the spine (left edge in this position) */
   -webkit-transform-origin: left center;
-  animation: book3d-flip-forward 1.2s cubic-bezier(.45,.05,.55,.95) forwards;
-  -webkit-animation: book3d-flip-forward 1.2s cubic-bezier(.45,.05,.55,.95) forwards;
+  /* v8.20: 2.4s slow flip with multi-keyframe realistic motion */
+  animation: book3d-flip-forward 2.4s cubic-bezier(.55,.05,.45,.95) forwards;
+  -webkit-animation: book3d-flip-forward 2.4s cubic-bezier(.55,.05,.45,.95) forwards;
 }
 /* RTL: backward (prev page) - the left page flips to the right */
 .book3d-flipping.flip-backward {
@@ -1452,26 +1454,132 @@ html.light .book3d-stage {
   left: 50%;  /* sits on the left half */
   transform-origin: right center;  /* hinges at the spine (right edge) */
   -webkit-transform-origin: right center;
-  animation: book3d-flip-backward 1.2s cubic-bezier(.45,.05,.55,.95) forwards;
-  -webkit-animation: book3d-flip-backward 1.2s cubic-bezier(.45,.05,.55,.95) forwards;
+  animation: book3d-flip-backward 2.4s cubic-bezier(.55,.05,.45,.95) forwards;
+  -webkit-animation: book3d-flip-backward 2.4s cubic-bezier(.55,.05,.45,.95) forwards;
 }
-/* Forward animation: rotates from 0° to +180° around left axis (going from right side to left side) */
+/* v8.20: REALISTIC PAGE FLIP — 8 keyframes with rotation + skew + lift + shadow.
+   Mimics the physical motion of paper: lifts, curls, falls, settles.
+   - rotateY: the spine-axis rotation (main motion)
+   - skewY: subtle vertical curl (paper bends as it lifts)
+   - translateZ: small lift off the surface (z-depth)
+   - filter brightness: light catches the page mid-flip
+   - box-shadow: deepens at apex, fades at edges */
 @keyframes book3d-flip-forward {
-  0%   { transform: rotateY(0deg); }
-  100% { transform: rotateY(180deg); }
+  0%   {
+    transform: rotateY(0deg) skewY(0deg) translateZ(0px);
+    box-shadow: 0 2px 6px rgba(0,0,0,.2), inset 0 0 30px rgba(120,80,40,.1);
+    filter: brightness(1);
+  }
+  10%  {
+    transform: rotateY(-15deg) skewY(.5deg) translateZ(8px);
+    box-shadow: -4px 6px 14px rgba(0,0,0,.3), inset 0 0 30px rgba(120,80,40,.1);
+    filter: brightness(1.05);
+  }
+  25%  {
+    transform: rotateY(-45deg) skewY(1.5deg) translateZ(20px);
+    box-shadow: -10px 12px 22px rgba(0,0,0,.4), inset 0 0 35px rgba(120,80,40,.13);
+    filter: brightness(1.12);
+  }
+  40%  {
+    transform: rotateY(-75deg) skewY(2deg) translateZ(30px);
+    box-shadow: -16px 18px 32px rgba(0,0,0,.5), inset 0 0 40px rgba(120,80,40,.15);
+    filter: brightness(1.18);
+  }
+  50%  {
+    transform: rotateY(90deg) skewY(0deg) translateZ(35px);
+    box-shadow: 0 22px 40px rgba(0,0,0,.55), inset 0 0 50px rgba(120,80,40,.2);
+    filter: brightness(1.2);
+  }
+  60%  {
+    transform: rotateY(105deg) skewY(-2deg) translateZ(30px);
+    box-shadow: 16px 18px 32px rgba(0,0,0,.5), inset 0 0 40px rgba(120,80,40,.15);
+    filter: brightness(1.18);
+  }
+  75%  {
+    transform: rotateY(135deg) skewY(-1.5deg) translateZ(20px);
+    box-shadow: 10px 12px 22px rgba(0,0,0,.4), inset 0 0 35px rgba(120,80,40,.13);
+    filter: brightness(1.12);
+  }
+  90%  {
+    transform: rotateY(165deg) skewY(-.5deg) translateZ(8px);
+    box-shadow: 4px 6px 14px rgba(0,0,0,.3), inset 0 0 30px rgba(120,80,40,.1);
+    filter: brightness(1.05);
+  }
+  100% {
+    transform: rotateY(180deg) skewY(0deg) translateZ(0px);
+    box-shadow: 0 2px 6px rgba(0,0,0,.2), inset 0 0 30px rgba(120,80,40,.1);
+    filter: brightness(1);
+  }
 }
 @-webkit-keyframes book3d-flip-forward {
-  0%   { -webkit-transform: rotateY(0deg); }
-  100% { -webkit-transform: rotateY(180deg); }
+  0%   { -webkit-transform: rotateY(0deg) skewY(0deg) translateZ(0px); filter: brightness(1); }
+  10%  { -webkit-transform: rotateY(-15deg) skewY(.5deg) translateZ(8px); filter: brightness(1.05); }
+  25%  { -webkit-transform: rotateY(-45deg) skewY(1.5deg) translateZ(20px); filter: brightness(1.12); }
+  40%  { -webkit-transform: rotateY(-75deg) skewY(2deg) translateZ(30px); filter: brightness(1.18); }
+  50%  { -webkit-transform: rotateY(90deg) skewY(0deg) translateZ(35px); filter: brightness(1.2); }
+  60%  { -webkit-transform: rotateY(105deg) skewY(-2deg) translateZ(30px); filter: brightness(1.18); }
+  75%  { -webkit-transform: rotateY(135deg) skewY(-1.5deg) translateZ(20px); filter: brightness(1.12); }
+  90%  { -webkit-transform: rotateY(165deg) skewY(-.5deg) translateZ(8px); filter: brightness(1.05); }
+  100% { -webkit-transform: rotateY(180deg) skewY(0deg) translateZ(0px); filter: brightness(1); }
 }
-/* Backward animation: rotates from 0° to -180° around right axis */
+/* Backward animation: same motion but mirrored */
 @keyframes book3d-flip-backward {
-  0%   { transform: rotateY(0deg); }
-  100% { transform: rotateY(-180deg); }
+  0%   {
+    transform: rotateY(0deg) skewY(0deg) translateZ(0px);
+    box-shadow: 0 2px 6px rgba(0,0,0,.2), inset 0 0 30px rgba(120,80,40,.1);
+    filter: brightness(1);
+  }
+  10%  {
+    transform: rotateY(15deg) skewY(-.5deg) translateZ(8px);
+    box-shadow: 4px 6px 14px rgba(0,0,0,.3), inset 0 0 30px rgba(120,80,40,.1);
+    filter: brightness(1.05);
+  }
+  25%  {
+    transform: rotateY(45deg) skewY(-1.5deg) translateZ(20px);
+    box-shadow: 10px 12px 22px rgba(0,0,0,.4), inset 0 0 35px rgba(120,80,40,.13);
+    filter: brightness(1.12);
+  }
+  40%  {
+    transform: rotateY(75deg) skewY(-2deg) translateZ(30px);
+    box-shadow: 16px 18px 32px rgba(0,0,0,.5), inset 0 0 40px rgba(120,80,40,.15);
+    filter: brightness(1.18);
+  }
+  50%  {
+    transform: rotateY(-90deg) skewY(0deg) translateZ(35px);
+    box-shadow: 0 22px 40px rgba(0,0,0,.55), inset 0 0 50px rgba(120,80,40,.2);
+    filter: brightness(1.2);
+  }
+  60%  {
+    transform: rotateY(-105deg) skewY(2deg) translateZ(30px);
+    box-shadow: -16px 18px 32px rgba(0,0,0,.5), inset 0 0 40px rgba(120,80,40,.15);
+    filter: brightness(1.18);
+  }
+  75%  {
+    transform: rotateY(-135deg) skewY(1.5deg) translateZ(20px);
+    box-shadow: -10px 12px 22px rgba(0,0,0,.4), inset 0 0 35px rgba(120,80,40,.13);
+    filter: brightness(1.12);
+  }
+  90%  {
+    transform: rotateY(-165deg) skewY(.5deg) translateZ(8px);
+    box-shadow: -4px 6px 14px rgba(0,0,0,.3), inset 0 0 30px rgba(120,80,40,.1);
+    filter: brightness(1.05);
+  }
+  100% {
+    transform: rotateY(-180deg) skewY(0deg) translateZ(0px);
+    box-shadow: 0 2px 6px rgba(0,0,0,.2), inset 0 0 30px rgba(120,80,40,.1);
+    filter: brightness(1);
+  }
 }
 @-webkit-keyframes book3d-flip-backward {
-  0%   { -webkit-transform: rotateY(0deg); }
-  100% { -webkit-transform: rotateY(-180deg); }
+  0%   { -webkit-transform: rotateY(0deg) skewY(0deg) translateZ(0px); filter: brightness(1); }
+  10%  { -webkit-transform: rotateY(15deg) skewY(-.5deg) translateZ(8px); filter: brightness(1.05); }
+  25%  { -webkit-transform: rotateY(45deg) skewY(-1.5deg) translateZ(20px); filter: brightness(1.12); }
+  40%  { -webkit-transform: rotateY(75deg) skewY(-2deg) translateZ(30px); filter: brightness(1.18); }
+  50%  { -webkit-transform: rotateY(-90deg) skewY(0deg) translateZ(35px); filter: brightness(1.2); }
+  60%  { -webkit-transform: rotateY(-105deg) skewY(2deg) translateZ(30px); filter: brightness(1.18); }
+  75%  { -webkit-transform: rotateY(-135deg) skewY(1.5deg) translateZ(20px); filter: brightness(1.12); }
+  90%  { -webkit-transform: rotateY(-165deg) skewY(.5deg) translateZ(8px); filter: brightness(1.05); }
+  100% { -webkit-transform: rotateY(-180deg) skewY(0deg) translateZ(0px); filter: brightness(1); }
 }
 
 /* The two faces of the flipping page */
@@ -1481,7 +1589,7 @@ html.light .book3d-stage {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   background: linear-gradient(180deg, #faf3e0 0%, #f5ecd0 100%);
-  padding: 2.5rem 2.2rem;
+  padding: 3rem 2.5rem 3.5rem;
   overflow: hidden;
   font-family: 'Frank Ruhl Libre', 'Frank Ruhl Libre Hebrew', Georgia, serif;
   direction: rtl;
@@ -1533,24 +1641,57 @@ html.light .book3d-stage {
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
 }
-/* v8.18: Dynamic shadow gradient over flipping page — gives "curl" feel */
+/* v8.20: Dynamic shadow gradient that "sweeps" across the page during flip — gives "curl" feel */
 .book3d-flip-shadow {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, rgba(0,0,0,.5) 0%, rgba(0,0,0,0) 35%);
+  background: linear-gradient(to right, rgba(0,0,0,.65) 0%, rgba(0,0,0,.2) 30%, rgba(0,0,0,0) 60%);
   pointer-events: none;
   opacity: 0;
   z-index: 5;
-  animation: book3d-shadow-sweep 1.2s ease-in-out forwards;
+  animation: book3d-shadow-sweep 2.4s ease-in-out forwards;
+  -webkit-animation: book3d-shadow-sweep 2.4s ease-in-out forwards;
+  mix-blend-mode: multiply;
 }
 .book3d-flipping.flip-backward .book3d-flip-shadow {
-  background: linear-gradient(to left, rgba(0,0,0,.5) 0%, rgba(0,0,0,0) 35%);
+  background: linear-gradient(to left, rgba(0,0,0,.65) 0%, rgba(0,0,0,.2) 30%, rgba(0,0,0,0) 60%);
 }
 @keyframes book3d-shadow-sweep {
   0%   { opacity: 0; }
-  20%  { opacity: 1; }
-  80%  { opacity: 1; }
+  10%  { opacity: .4; }
+  25%  { opacity: .85; }
+  40%  { opacity: 1; }
+  50%  { opacity: 1; }
+  60%  { opacity: 1; }
+  75%  { opacity: .85; }
+  90%  { opacity: .4; }
   100% { opacity: 0; }
+}
+@-webkit-keyframes book3d-shadow-sweep {
+  0%   { opacity: 0; }
+  10%  { opacity: .4; }
+  25%  { opacity: .85; }
+  40%  { opacity: 1; }
+  50%  { opacity: 1; }
+  60%  { opacity: 1; }
+  75%  { opacity: .85; }
+  90%  { opacity: .4; }
+  100% { opacity: 0; }
+}
+/* v8.20: Add a "page underneath" shadow on the destination side during flip */
+.book3d.is-flipping.flipping-forward .book3d-pages::before,
+.book3d.is-flipping.flipping-backward .book3d-pages::before {
+  width: 80px;
+  background:
+    linear-gradient(to right,
+      transparent 0%,
+      rgba(80,50,20,.25) 25%,
+      rgba(40,20,8,.7) 48%,
+      rgba(20,10,4,.85) 50%,
+      rgba(40,20,8,.7) 52%,
+      rgba(80,50,20,.25) 75%,
+      transparent 100%);
+  transition: width .4s ease, background .4s ease;
 }
 /* v8.18: Hide the underlying page that's being flipped on top of, during animation */
 .book3d.is-flipping .book3d-page-right .book3d-page-content,
@@ -1560,9 +1701,9 @@ html.light .book3d-stage {
 
 /* ─── NAVIGATION CONTROLS ───────────────────────────────────────────── */
 .book3d-nav {
-  position: absolute; bottom: 1.5rem; left: 50%;
+  position: absolute; bottom: 1.8rem; left: 50%;
   transform: translateX(-50%);
-  display: flex; gap: 1rem; align-items: center;
+  display: flex; gap: 1.2rem; align-items: center;
   z-index: 50;
   pointer-events: none; opacity: 0;
   transition: opacity .4s ease 1s;
@@ -14163,9 +14304,9 @@ if(typeof BOOK_HTML!=='undefined'){
     chapters = [];
 
     // Per-page word budget (rough heuristic; refined by char count)
-    // Desktop: ~280-340 words per page (smaller pages because 2 pages side-by-side)
-    // Mobile: ~220-280 words per page (single full-width page)
-    var WORD_BUDGET = isMobile ? 250 : 320;
+    // v8.19: REDUCED budget — better to have more pages than truncated text.
+    // The book got bigger (h:880px) but we still want safety margin so text never gets cut off.
+    var WORD_BUDGET = isMobile ? 200 : 260;
     var CHAR_BUDGET = WORD_BUDGET * 5;  // approx 5 chars/word for Hebrew
 
     allChapters.forEach(function(chap) {
@@ -14502,13 +14643,21 @@ if(typeof BOOK_HTML!=='undefined'){
       '<div class="book3d-flip-shadow"></div>';
     pagesEl.appendChild(flipper);
 
-    if (book) book.classList.add('is-flipping');
+    if (book) {
+      book.classList.add('is-flipping');
+      book.classList.add(direction === 'forward' ? 'flipping-forward' : 'flipping-backward');
+    }
 
+    /* v8.20: Match new 2.4s animation duration */
     setTimeout(function() {
       if (flipper && flipper.parentNode) flipper.parentNode.removeChild(flipper);
-      if (book) book.classList.remove('is-flipping');
+      if (book) {
+        book.classList.remove('is-flipping');
+        book.classList.remove('flipping-forward');
+        book.classList.remove('flipping-backward');
+      }
       if (callback) callback();
-    }, 1200);
+    }, 2400);
   }
 
   function goToPage(targetPage) {
