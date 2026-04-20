@@ -1332,10 +1332,10 @@ html.light .book3d-stage {
 .book3d.is-open .book3d-cover,
 .book3d.is-open .book3d-back { display: none; }
 
-/* Each page (visible by StPageFlip) — parchment styling */
+/* v8.24: REDUCED padding so more text fits per page without overflow */
 .book-page {
   background: linear-gradient(180deg, #faf3e0 0%, #f5ecd0 100%);
-  padding: 3rem 2.5rem 3.5rem;
+  padding: 1.8rem 1.6rem 2.5rem;
   overflow: hidden;
   font-family: 'Frank Ruhl Libre', 'Frank Ruhl Libre Hebrew', Georgia, serif;
   direction: rtl;
@@ -1348,93 +1348,102 @@ html.light .book3d-stage {
 }
 .book-page * { color: inherit !important; }
 
-/* Page content text styling — same readability as v8.18+ */
+/* v8.24: REDUCED font sizes - was 1.08rem/1.85, now 0.85rem/1.55
+   Critical for fitting text without overflow + more pages overall */
 .book-page-content {
-  font-size: 1.08rem !important;
-  line-height: 1.85 !important;
+  font-size: .85rem !important;
+  line-height: 1.55 !important;
   text-align: justify !important;
   color: #1a0a04 !important;
   font-weight: 500 !important;
   text-shadow: 0 1px 0 rgba(255,255,255,.5) !important;
   letter-spacing: .003em !important;
-  height: 100%;
+  height: calc(100% - 2rem);  /* leave space for page number */
   overflow: hidden;
+  word-wrap: break-word;
+  hyphens: auto;
 }
 .book-page-content h3 {
   text-align: center !important;
-  font-size: 1.55rem !important;
+  font-size: 1.15rem !important;
   font-weight: 800 !important;
   color: #6a2812 !important;
-  margin: 0 0 .4rem !important;
+  margin: 0 0 .35rem !important;
   font-family: 'Frank Ruhl Libre', serif !important;
+  line-height: 1.2 !important;
 }
 .book-page-content h4 {
-  font-size: 1.15rem !important;
+  font-size: .95rem !important;
   font-weight: 700 !important;
   color: #6a2812 !important;
-  margin: 1.2rem 0 .5rem !important;
+  margin: .8rem 0 .35rem !important;
   text-align: right !important;
   border-bottom: 1px dotted rgba(184,66,35,.3) !important;
-  padding-bottom: .25rem !important;
+  padding-bottom: .2rem !important;
+  line-height: 1.3 !important;
 }
 .book-page-content .book-ch-page-num {
   text-align: center !important;
-  font-size: .8rem !important;
+  font-size: .7rem !important;
   color: #6a4828 !important;
   font-style: italic !important;
-  margin: 0 0 1.2rem !important;
+  margin: 0 0 .9rem !important;
   position: relative;
-  padding-bottom: .8rem !important;
+  padding-bottom: .6rem !important;
 }
 .book-page-content .book-ch-page-num::after {
   content: '';
   position: absolute; bottom: 0; left: 50%;
   transform: translateX(-50%);
-  width: 60px; height: 2px;
+  width: 50px; height: 1.5px;
   background: linear-gradient(to left, transparent, rgba(184,66,35,.4), transparent);
 }
 .book-page-content p {
-  margin: 0 0 .9rem !important;
-  text-indent: 1.4em !important;
+  margin: 0 0 .55rem !important;
+  text-indent: 1.2em !important;
   color: #1a0a04 !important;
   font-weight: 500 !important;
-  line-height: 1.85 !important;
+  line-height: 1.55 !important;
   text-shadow: 0 1px 0 rgba(255,255,255,.5) !important;
+  font-size: .85rem !important;
 }
 .book-page-content p:first-of-type { text-indent: 0 !important; }
 .book-page-content > p:first-of-type::first-letter,
 .book-page-content .has-dropcap::first-letter {
-  font-size: 3.6em !important;
+  font-size: 2.6em !important;
   font-weight: 900 !important;
   color: #b84223 !important;
   float: right !important;
   line-height: .85 !important;
-  margin: .08em .12em 0 0 !important;
+  margin: .05em .1em 0 0 !important;
   text-shadow: 0 2px 6px rgba(184,66,35,.3) !important;
   font-family: 'Frank Ruhl Libre', serif !important;
 }
 .book-page-content figure.book-inline-photo {
-  margin: 1rem auto !important; max-width: 80% !important; text-align: center !important;
+  margin: .6rem auto !important; max-width: 70% !important; text-align: center !important;
 }
 .book-page-content figure.book-inline-photo img {
-  width: 100%; height: auto; border-radius: 4px;
-  box-shadow: 0 4px 14px rgba(0,0,0,.25), 0 0 0 1px rgba(196,147,10,.4),
-              0 0 0 5px #faf3e0, 0 0 0 6px rgba(196,147,10,.5);
+  width: 100%; height: auto; border-radius: 3px;
+  max-height: 200px;
+  object-fit: cover;
+  box-shadow: 0 3px 10px rgba(0,0,0,.2), 0 0 0 1px rgba(196,147,10,.4),
+              0 0 0 4px #faf3e0, 0 0 0 5px rgba(196,147,10,.5);
 }
 .book-page-content figure.book-inline-photo figcaption {
-  font-size: .82rem !important; color: #5a3a18 !important;
-  font-style: italic !important; margin-top: .5rem !important; font-weight: 500 !important;
+  font-size: .7rem !important; color: #5a3a18 !important;
+  font-style: italic !important; margin-top: .35rem !important; font-weight: 500 !important;
+  line-height: 1.3 !important;
 }
 
 /* Page number footer (handled by JS, lives at bottom of each page) */
 .book-page-num {
   position: absolute;
-  bottom: 1rem; left: 50%;
+  bottom: .6rem; left: 50%;
   transform: translateX(-50%);
-  font-size: .78rem !important;
+  font-size: .7rem !important;
   color: #8a5a30 !important;
   font-style: italic !important;
-  letter-spacing: .1em !important;
+  letter-spacing: .08em !important;
   font-family: 'Frank Ruhl Libre', serif !important;
   z-index: 6;
 }
@@ -1585,12 +1594,15 @@ html.light .book3d-quicknav-btn:hover { background: #b84223; color: #fff; }
   .book3d-cover-ornament { font-size: 2.4rem; }
   .book3d-cover-byline { font-size: .75rem; margin-top: 1.5rem; }
   .book3d-cover-cta { font-size: .72rem; }
-  .book-page { padding: 2rem 1.4rem 3rem; }
-  .book-page-content { font-size: 1.05rem !important; line-height: 1.8 !important; }
-  .book-page-content h3 { font-size: 1.3rem !important; }
-  .book-page-content h4 { font-size: 1.05rem !important; }
+  /* v8.24: even smaller on mobile - reduces overflow chance */
+  .book-page { padding: 1.4rem 1.1rem 2rem; }
+  .book-page-content { font-size: .8rem !important; line-height: 1.5 !important; }
+  .book-page-content p { font-size: .8rem !important; line-height: 1.5 !important; }
+  .book-page-content h3 { font-size: 1.05rem !important; }
+  .book-page-content h4 { font-size: .9rem !important; }
   .book-page-content > p:first-of-type::first-letter,
-  .book-page-content .has-dropcap::first-letter { font-size: 3em !important; }
+  .book-page-content .has-dropcap::first-letter { font-size: 2.3em !important; }
+  .book-page-content figure.book-inline-photo img { max-height: 140px; }
   .book3d-nav { bottom: 1rem; gap: .6rem; }
   .book3d-nav-btn { width: 42px; height: 42px; font-size: 1.15rem; }
   .book3d-nav-info { padding: .45rem .9rem; font-size: .82rem; min-width: 110px; }
@@ -14092,7 +14104,10 @@ if(typeof BOOK_HTML!=='undefined'){
     var allChapters = tmp.querySelectorAll('.book-chapter');
     pages = [];
     chapters = [];
-    var WORD_BUDGET = isMobile ? 200 : 240;  // slightly less than v8.19 since StPageFlip pages have less padding room
+    /* v8.24: DRASTICALLY reduced budget — book has ~30,000 words of memoir,
+       must produce 100+ pages so each page has breathing room.
+       Also matches smaller fonts (0.9rem in v8.24 vs 1.08rem in v8.23). */
+    var WORD_BUDGET = isMobile ? 70 : 95;
     var CHAR_BUDGET = WORD_BUDGET * 5;
     allChapters.forEach(function(chap) {
       var chapTitle = chap.querySelector('.book-ch-title');
@@ -14369,16 +14384,20 @@ if(typeof BOOK_HTML!=='undefined'){
          - flippingTime: 1000ms (library default, smooth)
          - maxShadowOpacity: 0.7 (more visible shadows)
          - autoSize: false because we provide explicit dimensions */
+      /* v8.24: Slower 1.8s flip for cinematic effect.
+         StPageFlip will smoothly interpolate the curl/shadow with more frames
+         since it has more total time to render. Combined with maxShadowOpacity
+         of 0.7 and showPageCorners enabled, this creates the "real book" feel. */
       var isLandscape = !isMobile && availableWidth >= 900;
 
       pageFlipInstance = new St.PageFlip(container, {
         width: w,
         height: h,
         size: 'fixed',
-        maxShadowOpacity: reduceMotion ? 0 : 0.7,
+        maxShadowOpacity: reduceMotion ? 0 : 0.85,
         showCover: true,
         mobileScrollSupport: false,
-        flippingTime: reduceMotion ? 150 : 1000,
+        flippingTime: reduceMotion ? 200 : 1800,
         usePortrait: !isLandscape,
         startPage: 0,
         drawShadow: !reduceMotion,
