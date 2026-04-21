@@ -323,17 +323,20 @@ html.light .bg-light-layer { display: block; }
   flex-direction: column;
   gap: .8rem;
 }
-.panel-row { display: flex; direction: rtl; text-align: right; flex-wrap: wrap; gap: .5rem; align-items: flex-start; }
+/* v8.34: nav-panel chips/accordions shrunk ~30% so communities with many
+   sub-folders (e.g. עיראק → 3 sub-items + 9 holidays) fit without
+   dominating the viewport. */
+.panel-row { display: flex; direction: rtl; text-align: right; flex-wrap: wrap; gap: .35rem; align-items: flex-start; }
 .pc {
   display: inline-flex;
   direction: rtl;
   align-items: center;
-  gap: .55rem;
+  gap: .4rem;
   background: rgba(255,255,255,.05);
   border: 1px solid rgba(196,147,10,.2);
   border-radius: 100px;
-  padding: .72rem 1.5rem;
-  font-size: 1.08rem;
+  padding: .42rem 1rem;
+  font-size: .88rem;
   font-weight: 600;
   color: rgba(245,236,215,.8);
   cursor: pointer;
@@ -342,17 +345,17 @@ html.light .bg-light-layer { display: block; }
 }
 .pc:hover { background: rgba(196,147,10,.18); color: var(--c-gold-l); border-color: rgba(196,147,10,.45); }
 .pc.active { background: rgba(196,147,10,.25); border-color: rgba(196,147,10,.6); color: var(--c-gold-l); }
-.pc-cnt { font-size: .92rem; opacity: .75; font-weight: 600; }
+.pc-cnt { font-size: .78rem; opacity: .75; font-weight: 600; }
 .acc-hdr {
   display: inline-flex;
   direction: rtl;
   align-items: center;
-  gap: .6rem;
+  gap: .45rem;
   background: rgba(255,255,255,.05);
   border: 1px solid rgba(196,147,10,.35);
   border-radius: 100px;
-  padding: .8rem 1.7rem;
-  font-size: 1.18rem;
+  padding: .48rem 1.15rem;
+  font-size: .95rem;
   font-weight: 700;
   color: var(--c-gold-l);
   cursor: pointer;
@@ -360,21 +363,21 @@ html.light .bg-light-layer { display: block; }
   transition: background var(--t-fast), color var(--t-fast);
 }
 .acc-hdr:hover, .acc-hdr.open { background: rgba(196,147,10,.15); color: var(--c-gold-l); }
-.acc-a { font-size: .6rem; opacity: .6; transition: transform var(--t-med); }
+.acc-a { font-size: .55rem; opacity: .6; transition: transform var(--t-med); }
 .acc-hdr.open .acc-a { transform: rotate(180deg); }
 .acc-body {
   display: none;
   direction: rtl; text-align: right;
   width: 100%;
   flex-wrap: wrap;
-  gap: .7rem;
+  gap: .45rem;
   background: rgba(0,0,0,.2);
   border-radius: var(--r-md);
-  padding: 1rem 1.3rem;
-  margin-top: .55rem;
+  padding: .65rem .9rem;
+  margin-top: .35rem;
 }
 .acc-body.open { display: flex; }
-.acc-sep { width: 100%; height: 1px; background: rgba(196,147,10,.12); margin: .2rem 0; }
+.acc-sep { width: 100%; height: 1px; background: rgba(196,147,10,.12); margin: .15rem 0; }
 
 /* ── Hero ─────────────────────────────────────────────────── */
 .hero {
