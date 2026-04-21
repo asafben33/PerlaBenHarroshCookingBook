@@ -1,9 +1,11 @@
 /* ═══════════════════════════════════════════════
-   Service Worker — Perla Ben-Harrosh Cookbook v10
+   Service Worker — Perla Ben-Harrosh Cookbook v11
    Network-first for HTML/JS (always fresh code)
    Cache-first for images (fast loading)
+   v11: ignore non-GET, require basic response type,
+        reject status 0/206, centralised _shouldCache()
 ═══════════════════════════════════════════════ */
-const CACHE_NAME = 'perla-cookbook-v10';
+const CACHE_NAME = 'perla-cookbook-v11';
 const SHELL = [
   './',
   './index.html',
@@ -41,10 +43,32 @@ self.addEventListener('activate', function(e) {
   );
 });
 
+/**
+ * Central cache-eligibility check.
+ * @param {Request} request
+ * @param {Response} response
+ * @returns {boolean} true if safe to cache
+ */
+function _shouldCache(request, response) {
+  // Only cache GET requests (never cache POST e.g. Web3Forms)
+  if (request.method !== 'GET') return false;
+  // Only cache same-origin (basic) responses — never opaque (type 'opaque')
+  if (response.type !== 'basic') return false;
+  // Reject error/partial responses
+  if (response.status === 0 || response.status === 206) return false;
+  // Must be a successful response
+  if (response.status !== 200) return false;
+  return true;
+}
+
 /* Fetch strategy:
+   - Non-GET requests: passthrough (never cache POSTs)
    - Images: cache-first (fast, images rarely change)
    - Everything else: network-first (always get fresh HTML/JS/CSS) */
 self.addEventListener('fetch', function(e) {
+  // Ignore non-GET requests entirely (e.g. POST to Web3Forms)
+  if (e.request.method !== 'GET') return;
+
   var url = new URL(e.request.url);
 
   // Images: cache-first, network fallback
@@ -53,7 +77,7 @@ self.addEventListener('fetch', function(e) {
       caches.match(e.request).then(function(cached) {
         if (cached) return cached;
         return fetch(e.request).then(function(resp) {
-          if (resp && resp.status === 200) {
+          if (_shouldCache(e.request, resp)) {
             var clone = resp.clone();
             caches.open(CACHE_NAME).then(function(c) { c.put(e.request, clone); });
           }
@@ -67,7 +91,7 @@ self.addEventListener('fetch', function(e) {
   // HTML, JS, CSS, fonts: network-first, cache fallback
   e.respondWith(
     fetch(e.request).then(function(resp) {
-      if (resp && resp.status === 200 && url.origin === self.location.origin) {
+      if (_shouldCache(e.request, resp)) {
         var clone = resp.clone();
         caches.open(CACHE_NAME).then(function(c) { c.put(e.request, clone); });
       }
