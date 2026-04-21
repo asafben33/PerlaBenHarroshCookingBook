@@ -1708,6 +1708,134 @@ html.light .book3d-quicknav-btn {
 }
 html.light .book3d-quicknav-btn:hover { background: #b84223; color: #fff; }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   v8.31: BOOK MODAL OVERLAY
+   Full-viewport overlay that hosts the 3D book reader. Gives the reader
+   ~88vh of canvas (instead of competing with page flow), removes the
+   clipped-text problem, and keeps the nav bar on-screen regardless of
+   window size.
+═══════════════════════════════════════════════════════════════════════ */
+.book-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  direction: rtl;
+}
+.book-modal-overlay:not([hidden]) { display: block; }
+
+.book-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 2, 1, .88);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: book-modal-fade-in .35s ease-out both;
+}
+.book-modal-content {
+  position: absolute;
+  inset: 3vh 2vw;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  pointer-events: none;  /* let backdrop handle outside clicks; children re-enable */
+  animation: book-modal-slide-in .45s cubic-bezier(.2,.7,.3,1) both;
+}
+.book-modal-content > * { pointer-events: auto; }
+
+.book-modal-close {
+  position: absolute;
+  top: 1rem;
+  /* In RTL the visual "top-right" corner is the logical top-left */
+  left: 1rem;
+  z-index: 5;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(28,15,8,.9);
+  border: 1px solid rgba(196,147,10,.55);
+  color: var(--c-gold-l);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  transition: transform .2s ease, background .2s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,.5);
+}
+.book-modal-close:hover {
+  background: rgba(184,66,35,.95);
+  color: #fff;
+  transform: scale(1.08);
+}
+.book-modal-close:focus-visible {
+  outline: 2px solid var(--c-gold-l);
+  outline-offset: 3px;
+}
+
+/* Host for the existing .book3d-stage — fills the modal */
+.book-modal-stage-host {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Stage + container sized for the modal (override the page-flow defaults
+   so the book uses the modal's canvas). */
+.book-modal-overlay .book3d-stage {
+  min-height: 0;
+  height: 100%;
+  max-height: none;
+  width: 100%;
+  padding: 1.5rem 1rem 5rem;
+  border-radius: 12px;
+}
+.book-modal-overlay .book-flip-container {
+  width: min(1180px, 96%);
+  height: min(820px, 78vh);
+  box-shadow:
+    0 40px 80px rgba(0,0,0,.85),
+    0 20px 40px rgba(0,0,0,.6),
+    inset 0 -2px 0 rgba(30,14,6,.45),
+    inset 0 -5px 10px rgba(30,14,6,.18);
+}
+/* The pre-open .book3d (cover on a stand) is small by default — tune for
+   the modal so it feels substantial. */
+.book-modal-overlay .book3d.is-closed {
+  width: 420px; height: 600px;
+}
+.book-modal-overlay .book3d-nav { bottom: 1.2rem; }
+
+@keyframes book-modal-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes book-modal-slide-in {
+  from { opacity: 0; transform: scale(.96) translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-width: 720px) {
+  .book-modal-content { inset: 1vh 1vw; }
+  .book-modal-close { width: 40px; height: 40px; font-size: 1.2rem; top: .6rem; left: .6rem; }
+  .book-modal-overlay .book-flip-container { height: min(640px, 76vh); }
+  .book-modal-overlay .book3d.is-closed { width: 280px; height: 400px; }
+}
+
+/* Reduced motion: kill the modal slide/fade animations */
+@media (prefers-reduced-motion: reduce) {
+  .book-modal-backdrop, .book-modal-content { animation: none !important; }
+}
+
+/* When the modal is open, lock the page below to prevent background scroll.
+   We set this via JS on <body>. */
+body.book-modal-open { overflow: hidden; }
+
 /* ─── MOBILE: smaller book + nav adjustments ─────────────────────────── */
 @media (max-width: 720px) {
   .book3d-stage { min-height: 680px; padding: 1rem .5rem 4rem; }
@@ -3115,10 +3243,31 @@ html.light .footer-sub { color: #4e1f0a; font-weight: 500; }
     <div class="book-mode-scroll-content">
       <div id="book-content"></div>
     </div>
-    <!-- 3D book mode content (v8.17, populated by JS) -->
-    <div class="book-mode-3d-content" id="book3d-host"></div>
+    <!-- v8.31: 3D book host moved into the modal overlay below. This empty
+         placeholder exists so legacy CSS selectors that targeted the 3D
+         content area inside the collapsible don't throw layout errors — it's
+         never populated. -->
+    <div class="book-mode-3d-content" aria-hidden="true"></div>
   </div>
 </section>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     v8.31: Book reader MODAL overlay.
+     Opening "מצב ספר" slides this overlay over the site (dim backdrop +
+     blur) and mounts the 3D book reader into #book3d-host, giving the book
+     ~88vh of canvas instead of competing with the page flow.
+     Closed via: ✕ button, ESC, or backdrop click.
+════════════════════════════════════════════════════════════════════ -->
+<div id="book-modal-overlay" class="book-modal-overlay" hidden
+     role="dialog" aria-modal="true" aria-labelledby="book-modal-title" aria-hidden="true" dir="rtl">
+  <div class="book-modal-backdrop" data-book-modal-dismiss></div>
+  <div class="book-modal-content">
+    <button type="button" class="book-modal-close" id="book-modal-close"
+            aria-label="סגור את הספר" data-book-modal-dismiss>✕</button>
+    <h2 id="book-modal-title" class="sr-only">ספר: על שביל האהבה ממרוקו לירושלים</h2>
+    <div id="book3d-host" class="book-modal-stage-host"></div>
+  </div>
+</div>
 
 <!--
 ═══════════════════════════════════════════════════════════════════════
@@ -14404,33 +14553,97 @@ if(typeof BOOK_HTML!=='undefined'){
 
   function checkMobile() { isMobile = window.innerWidth <= 720; }
 
-  /* ─── Mode Toggle (📄 scroll vs 📖 3D book) ─── */
+  /* ─── Mode Toggle (📄 scroll vs 📖 3D book in modal) ───
+     v8.31: "מצב ספר" no longer swaps inline content — it opens the full-
+     viewport book modal overlay. "מצב טקסט" closes the modal if open. */
+  var _lastFocusedBeforeModal = null;
+
+  function isModalOpen() {
+    var modal = document.getElementById('book-modal-overlay');
+    return !!modal && !modal.hidden;
+  }
+
+  function openBookModal() {
+    var modal = document.getElementById('book-modal-overlay');
+    if (!modal) return;
+    _lastFocusedBeforeModal = document.activeElement;
+    modal.hidden = false;
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('book-modal-open');
+    if (!initialized) buildBookShell();
+    // Focus the close button for keyboard users
+    var closeBtn = document.getElementById('book-modal-close');
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function closeBookModal() {
+    var modal = document.getElementById('book-modal-overlay');
+    if (!modal) return;
+    modal.hidden = true;
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('book-modal-open');
+    // Tear down the StPageFlip instance so reopening re-initializes cleanly
+    if (pageFlipInstance) {
+      try { pageFlipInstance.destroy(); } catch(e) {}
+      pageFlipInstance = null;
+    }
+    isOpen = false;
+    // Reset the book3d shell so the next openBookModal() rebuilds it
+    initialized = false;
+    var host = document.getElementById('book3d-host');
+    if (host) host.innerHTML = '';
+    // Return focus to the button that opened the modal
+    if (_lastFocusedBeforeModal && typeof _lastFocusedBeforeModal.focus === 'function') {
+      try { _lastFocusedBeforeModal.focus(); } catch(e) {}
+    }
+    // Sync the tab state so "מצב טקסט" is visually selected
+    var btnScroll = document.getElementById('book-mode-scroll-btn');
+    var btn3d = document.getElementById('book-mode-3d-btn');
+    if (btnScroll && btn3d) {
+      btnScroll.classList.add('active'); btnScroll.setAttribute('aria-selected', 'true');
+      btn3d.classList.remove('active'); btn3d.setAttribute('aria-selected', 'false');
+    }
+    try { localStorage.setItem('perla_book_mode', 'scroll'); } catch(e) {}
+  }
+
   function setupModeToggle() {
     var wrap = document.getElementById('book-content-wrap');
     var btnScroll = document.getElementById('book-mode-scroll-btn');
     var btn3d = document.getElementById('book-mode-3d-btn');
-    if (!wrap || !btnScroll || !btn3d) return;
+    var modal = document.getElementById('book-modal-overlay');
+    if (!wrap || !btnScroll || !btn3d || !modal) return;
 
     function setMode(mode) {
       if (mode === '3d') {
-        wrap.classList.add('book-mode-3d-active');
         btnScroll.classList.remove('active'); btnScroll.setAttribute('aria-selected', 'false');
         btn3d.classList.add('active'); btn3d.setAttribute('aria-selected', 'true');
-        if (!initialized) buildBookShell();
+        openBookModal();
       } else {
-        wrap.classList.remove('book-mode-3d-active');
         btn3d.classList.remove('active'); btn3d.setAttribute('aria-selected', 'false');
         btnScroll.classList.add('active'); btnScroll.setAttribute('aria-selected', 'true');
+        if (isModalOpen()) closeBookModal();
       }
       try { localStorage.setItem('perla_book_mode', mode); } catch(e) {}
     }
     btnScroll.addEventListener('click', function(){ setMode('scroll'); });
     btn3d.addEventListener('click', function(){ setMode('3d'); });
 
-    try {
-      var saved = localStorage.getItem('perla_book_mode');
-      if (saved === '3d') setMode('3d');
-    } catch(e) {}
+    // Modal dismissals: ✕ button, backdrop click, ESC key
+    modal.addEventListener('click', function(e) {
+      if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-book-modal-dismiss')) {
+        closeBookModal();
+      }
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && isModalOpen()) {
+        e.preventDefault();
+        closeBookModal();
+      }
+    });
+
+    // v8.31: Do NOT auto-open the modal on page load even if the last saved
+    // mode was '3d' — users expect to explicitly click to enter the reader.
+    // The saved preference is still used by the tab-state sync above.
   }
 
   /* ─── Pagination Engine (unchanged from v8.17) ─── */
@@ -14443,11 +14656,10 @@ if(typeof BOOK_HTML!=='undefined'){
     var allChapters = tmp.querySelectorAll('.book-chapter');
     pages = [];
     chapters = [];
-    /* v8.27: Backed off from v8.26's 260 — the last line was getting clipped
-       by .book-page-content { overflow:hidden } because headings/drop-caps/
-       line-wrap ate more space than raw char count implied. 200 desktop /
-       130 mobile leaves ~15% safety margin under typical section layouts. */
-    var WORD_BUDGET = isMobile ? 130 : 200;
+    /* v8.31: Modal gives the book ~23% more canvas area (78vh × 1180px vs
+       the old 68vh × 1100px), so the per-page budget rises proportionally
+       to take advantage of it. Same ~15% safety margin preserved. */
+    var WORD_BUDGET = isMobile ? 155 : 240;
     var CHAR_BUDGET = WORD_BUDGET * 5;
     allChapters.forEach(function(chap) {
       var chapTitle = chap.querySelector('.book-ch-title');
@@ -14575,18 +14787,17 @@ if(typeof BOOK_HTML!=='undefined'){
       if (pageFlipInstance) pageFlipInstance.flipNext();
     });
 
-    // Keyboard nav
+    // Keyboard nav — only active while the modal is open and a page is loaded
     document.addEventListener('keydown', function(e) {
-      var wrap = document.getElementById('book-content-wrap');
-      if (!wrap || !wrap.classList.contains('book-mode-3d-active')) return;
-      if (wrap.getAttribute('aria-hidden') === 'true') return;
-      if (!isOpen) return;
+      var modal = document.getElementById('book-modal-overlay');
+      if (!modal || modal.hidden) return;
+      if (!isOpen || !pageFlipInstance) return;
       if (e.key === 'ArrowRight' || e.key === 'PageUp') {
         e.preventDefault();
-        if (pageFlipInstance) pageFlipInstance.flipPrev();
+        pageFlipInstance.flipPrev();
       } else if (e.key === 'ArrowLeft' || e.key === 'PageDown' || e.key === ' ') {
         e.preventDefault();
-        if (pageFlipInstance) pageFlipInstance.flipNext();
+        pageFlipInstance.flipNext();
       }
     });
   }
@@ -14740,18 +14951,20 @@ if(typeof BOOK_HTML!=='undefined'){
         width: w,
         height: h,
         size: 'fixed',
-        /* v8.30: smoother flip tuning —
-            - maxShadowOpacity dropped 0.92 → 0.72 (0.92 was dense enough to
-              flash visibly mid-rotation, which read as the page stuttering)
-            - showPageCorners off so the resting view has no dog-eared hint
-              jittering when the page is static
-            - flippingTime raised 2800 → 3000ms for an extra beat of smoothness
-            - showCover off: the closed-book .book3d-cover is the only cover;
-              opening the book now goes straight to the first content page */
-        maxShadowOpacity: reduceMotion ? 0 : 0.72,
+        /* v8.31: "real book" feel inside the modal —
+            - flippingTime 3000 → 4500ms. At 4.5s the library gives a much
+              more deliberate arc: the page lifts, curls, and settles slowly
+              like a hand-turn. The extra time also helps the shadow
+              interpolation look continuous rather than snapping.
+            - maxShadowOpacity 0.72 → 0.88: more weight to the curl so the
+              page reads as thick paper, not card stock. With the longer
+              duration, 0.88 no longer "flashes" — it ramps in and out.
+            - showPageCorners stays off: no resting dog-ear jitter.
+            - showCover stays false (cover is the pre-open overlay only). */
+        maxShadowOpacity: reduceMotion ? 0 : 0.88,
         showCover: false,
         mobileScrollSupport: false,
-        flippingTime: reduceMotion ? 200 : 3000,
+        flippingTime: reduceMotion ? 200 : 4500,
         usePortrait: !isLandscape,
         startPage: 0,
         drawShadow: !reduceMotion,
