@@ -5,6 +5,8 @@
 !docs/**
 !images/
 !images/**
+!js/
+!js/**
 !scripts/
 !scripts/**
 !.gitignore
