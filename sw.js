@@ -1,11 +1,12 @@
 /* ═══════════════════════════════════════════════
-   Service Worker — Perla Ben-Harrosh Cookbook v11
+   Service Worker — Perla Ben-Harrosh Cookbook v12
    Network-first for HTML/JS (always fresh code)
    Cache-first for images (fast loading)
-   v11: ignore non-GET, require basic response type,
-        reject status 0/206, centralised _shouldCache()
+   v12: bump to invalidate cache for book pagination
+        fix (v8.26 in index.html — WORD_BUDGET + orphan
+        heading carry-over)
 ═══════════════════════════════════════════════ */
-const CACHE_NAME = 'perla-cookbook-v11';
+const CACHE_NAME = 'perla-cookbook-v12';
 const SHELL = [
   './',
   './index.html',
