@@ -1,17 +1,31 @@
 # ══════════════════════════════════════════════════════════════════
-#  Netlify HTTP Headers — Perla Cookbook v6.4
+#  Netlify HTTP Headers — Perla Cookbook v7.0
 #  Sets security headers (including frame-ancestors which can't be
 #  set via <meta>). Place at site root.
 #
-#  v6.4 (19/04/2026): Updated for hidden-iframe form approach
-#    - frame-src includes formsubmit.co (iframe navigates there)
-#    - form-action includes formsubmit.co (form submits there)
-#    - connect-src removed formsubmit.co (no longer using fetch)
+#  v7.0 (21/04/2026): Full security hardening
+#    - HSTS 1 year with preload
+#    - COOP, CORP, X-Permitted-Cross-Domain-Policies
+#    - Extended Permissions-Policy
+#    - upgrade-insecure-requests in CSP
+#    - frame-ancestors 'none' in CSP
+#    - Removed formsubmit.co (v6.6 migrated to Web3Forms)
+#    - Added per-path cache rules for sw.js and images
 # ══════════════════════════════════════════════════════════════════
 
 /*
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: geolocation=(), microphone=(), camera=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com; media-src 'self' blob:; connect-src 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://formsubmit.co; object-src 'none'; base-uri 'self'; form-action 'self' https://formsubmit.co; frame-ancestors 'none';
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-site
+  X-Permitted-Cross-Domain-Policies: none
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), ambient-light-sensor=(), autoplay=(self), fullscreen=(self), interest-cohort=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com; media-src 'self' blob:; connect-src 'self' https://api.web3forms.com https://cdn.jsdelivr.net; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;
+
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
