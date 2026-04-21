@@ -2727,11 +2727,7 @@ html.light .footer-sub { color: #4e1f0a; font-weight: 500; }
      mode lazily initializes only when the user clicks "📖 מצב ספר",
      so this script's absence doesn't affect the rest of the site.
      ════════════════════════════════════════════════════════════════════════ -->
-<!-- SRI: to compute sha384 for future pinning, run:
-     bash:       curl -s https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js | openssl dgst -sha384 -binary | openssl base64 -A
-     PowerShell: (Invoke-WebRequest -Uri 'https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js').Content | ForEach-Object { [Convert]::ToBase64String([System.Security.Cryptography.SHA384]::Create().ComputeHash([System.Text.Encoding]::UTF8.GetBytes($_))) }
-     Then add integrity="sha384-HASH_HERE" to the script tag below. -->
-<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js" defer crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js" integrity="sha384-L4eWrYFdqQ+LoGA0MMuqLqzV13x7SKkQaqacy4MED8e815dS37tTKlO/6xBEUpZW" defer crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head><body>
 
 <!-- ── Casablanca Background (fixed, behind all content) ──── -->
