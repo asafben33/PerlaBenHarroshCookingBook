@@ -1324,6 +1324,13 @@ html.light .book3d-stage {
   /* v8.23: atmospheric background - dark shadow under the book */
   box-shadow: 0 40px 80px rgba(0,0,0,.7), 0 20px 40px rgba(0,0,0,.5);
   border-radius: 4px;
+  /* v8.27: Hebrew RTL — mirror the whole container so the cover opens
+     leftward and pages flow right→left. Each .book-page is counter-mirrored
+     below so Hebrew text still reads normally. */
+  transform: scaleX(-1);
+}
+.book-flip-container .book-page {
+  transform: scaleX(-1);
 }
 .book3d.is-open .book-flip-container,
 .book3d-stage.is-open-state .book-flip-container { display: block; }
@@ -2055,6 +2062,11 @@ main { background: rgba(1,3,8,.30); min-height: 60vh; }
 .m-vid-link { flex: 1; color: var(--c-gold); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .m-vid-del { flex-shrink: 0; background: transparent; border: 1px solid rgba(220,50,50,.3); border-radius: 100px; width: 24px; height: 24px; color: #f99; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: .8rem; }
 .m-vid-del:hover { background: rgba(220,50,50,.2); }
+/* v8.27: Inline YouTube embed inside the recipe modal */
+.m-vid-iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: var(--r-sm); background: #000; }
+.m-vid-embed-wrap { margin-top: .5rem; position: relative; }
+.m-vid-embed-close { position: absolute; top: .35rem; left: .35rem; width: 28px; height: 28px; background: rgba(0,0,0,.6); color: #fff; border: 1px solid rgba(255,255,255,.25); border-radius: 100px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; line-height: 1; z-index: 2; }
+.m-vid-embed-close:hover { background: rgba(0,0,0,.85); }
 .m-vid-add { display: inline-flex; align-items: center; gap: .35rem; background: rgba(196,147,10,.1); border: 1.5px dashed rgba(196,147,10,.4); border-radius: var(--r-md); padding: .42rem 1.1rem; color: var(--c-gold-d); font-size: .8rem; cursor: pointer; margin-top: .35rem; width: 100%; justify-content: center; transition: all var(--t-fast); font-family: inherit; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -9248,6 +9260,52 @@ function buildNav() {
     return 0;
   }
 
+  /* v8.27: Aggregate count for a MENU_STRUCTURE folder — walks the subtree,
+     collects unique cat-ids and recipe-ids, then counts R once. Resolves
+     holiday filters ({id:'hol', h:'x'}) via HOLIDAY_TAGS and community-holiday
+     combos via COMMUNITY_HOLIDAY_TAGS. Works for any depth. */
+  function panelCnt(item) {
+    if (!item) return 0;
+    var catSet = {};
+    var ridSet = {};
+    function walk(items) {
+      if (!items) return;
+      items.forEach(function(sub) {
+        if (sub.placeholder) return;
+        if (sub.items) walk(sub.items);
+        if (sub.sub)   walk(sub.sub);
+        // Holiday filter (Morocco): {id:'hol', h:'shabbat', ...}
+        if (sub.h && typeof HOLIDAY_TAGS !== 'undefined') {
+          (HOLIDAY_TAGS[sub.h] || []).forEach(function(x) { ridSet[x] = true; });
+          return;
+        }
+        // Community-holiday combo (e.g., עיראק × פסח)
+        if (sub.communityHoliday && sub.holidayKey && typeof COMMUNITY_HOLIDAY_TAGS !== 'undefined') {
+          var ch = COMMUNITY_HOLIDAY_TAGS[sub.communityHoliday];
+          (ch && ch[sub.holidayKey] || []).forEach(function(x) { ridSet[x] = true; });
+          return;
+        }
+        if (Array.isArray(sub.ids)) {
+          sub.ids.forEach(function(x) {
+            if (/[0-9]/.test(x)) ridSet[x] = true; else catSet[x] = true;
+          });
+        } else if (typeof sub.id === 'string' && !/[0-9]/.test(sub.id)) {
+          catSet[sub.id] = true;
+        }
+      });
+    }
+    walk([item]);
+    var cats = Object.keys(catSet);
+    var rids = Object.keys(ridSet);
+    if (!cats.length && !rids.length) return 0;
+    return R.filter(function(r) {
+      if (!r) return false;
+      if (cats.indexOf(r.cat) >= 0) return true;
+      if (rids.indexOf(r.id)  >= 0) return true;
+      return false;
+    }).length;
+  }
+
   function isActiveLeaf(catId, hol, ids) {
     if (ids) {
       if (ACT_IDS) return ids.every(function(id) { return ACT_IDS.has(id); }) && ids.length === ACT_IDS.size;
@@ -9419,7 +9477,7 @@ function buildNav() {
       // Accordion group (has sub-items)
       if (item.items || item.sub) {
         var subItems = item.items || item.sub || [];
-        var ic = item.ids ? catCnt(item.ids) : catCnt(item.id);
+        var ic = panelCnt(item);
         var accWrap = document.createElement('div');
         accWrap.style.cssText = 'display:contents';
 
@@ -9479,7 +9537,7 @@ function buildNav() {
           // ── Nested accordion (e.g. מתכונים מהעדות inside מטעמים, מטבח ישראלי inside עדות) ──
           if (s.items || s.sub) {
             var nestedItems = s.items || s.sub || [];
-            var nic = s.ids ? catCnt(s.ids) : (s.id ? catCnt(s.id) : 0);
+            var nic = panelCnt(s);
             var nhdr = document.createElement('button');
             nhdr.className = 'acc-hdr';
             nhdr.setAttribute('aria-expanded', 'false');
@@ -9547,7 +9605,7 @@ function buildNav() {
               if (ns.items || ns.sub) {
                 // 3rd level: render as expandable too
                 var deep = ns.items || ns.sub || [];
-                var dic = ns.ids ? catCnt(ns.ids) : (ns.id ? catCnt(ns.id) : 0);
+                var dic = panelCnt(ns);
                 var dhdr = document.createElement('button');
                 dhdr.className = 'acc-hdr';
                 dhdr.setAttribute('aria-expanded', 'false');
@@ -9849,13 +9907,29 @@ function openM(id) {
   if (tipWrap) tipWrap.hidden = !r.tip;
   if (r.tip) setText('m-tip-txt', getEnTip(r));
 
-  // Source
+  // Source / video link
   var srcBox = document.getElementById('m-src-box');
   if (srcBox) {
+    // Remove any previously embedded iframe from a prior recipe view
+    var oldEmbed = srcBox.querySelector('.m-vid-embed-wrap');
+    if (oldEmbed) oldEmbed.remove();
     srcBox.hidden = !r.src;
     if (r.src) {
       var srcLink = document.getElementById('m-src-link');
-      if (srcLink) srcLink.href = r.src;
+      if (srcLink) {
+        srcLink.href = r.src;
+        // v8.27: embed YouTube inline instead of opening externally
+        srcLink.onclick = function(e) {
+          var ytId = parseYoutubeId(r.src);
+          if (!ytId) return true;  // non-YouTube URL → keep default external open
+          e.preventDefault();
+          // Toggle: if already embedded, remove; else embed
+          var existing = srcBox.querySelector('.m-vid-embed-wrap');
+          if (existing) { existing.remove(); return false; }
+          embedYoutubeInline(srcBox, ytId, r.title);
+          return false;
+        };
+      }
     }
   }
 
@@ -10098,6 +10172,50 @@ function shareRecipe() {
 ═══════════════════════════════════════════════ */
 
 // ── helpers ──────────────────────────────────────────────────────
+
+/* v8.27: Extract YouTube video ID from common URL shapes. Returns null for
+   non-YouTube URLs so the caller can fall back to opening them externally. */
+function parseYoutubeId(url) {
+  if (!url || typeof url !== 'string') return null;
+  var m = url.match(/(?:youtube\.com\/watch\?(?:.*&)?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/|youtube-nocookie\.com\/embed\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+/* v8.27: Swap `hostEl` contents for an inline YouTube iframe (nocookie domain
+   for privacy) with a close button. CSP already whitelists youtube(-nocookie).com
+   under frame-src. Non-YouTube URLs should not reach this function. */
+function embedYoutubeInline(hostEl, ytId, title, onClose) {
+  if (!hostEl || !ytId) return;
+  var wrap = document.createElement('div');
+  wrap.className = 'm-vid-embed-wrap';
+
+  var iframe = document.createElement('iframe');
+  iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(ytId) + '?autoplay=1&rel=0';
+  iframe.className = 'm-vid-iframe';
+  iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+  iframe.setAttribute('allowfullscreen', '');
+  iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+  iframe.title = title || 'נגן וידאו';
+  iframe.loading = 'lazy';
+
+  var closeBtn = document.createElement('button');
+  closeBtn.type = 'button';
+  closeBtn.className = 'm-vid-embed-close';
+  closeBtn.setAttribute('aria-label', 'סגור סרטון');
+  closeBtn.textContent = '✕';
+  closeBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    wrap.remove();
+    if (typeof onClose === 'function') onClose();
+  });
+
+  wrap.appendChild(closeBtn);
+  wrap.appendChild(iframe);
+
+  // Keep the original row (link + delete) intact — insert embed AFTER it.
+  hostEl.appendChild(wrap);
+}
+
 function getMedia(rid) {
   try {
     var raw = localStorage.getItem('perla_media_' + rid);
@@ -10328,27 +10446,47 @@ function refreshModalMedia(r) {
 
   vidList.innerHTML = '';
   allVids.forEach(function(v) {
+    // v8.27: wrap each video row in a slot so the inline embed can sit below it
+    var slot = document.createElement('div');
+    slot.className = 'm-vid-slot';
+
     var item = document.createElement('div');
     item.className = 'm-vid-item';
+
+    var ytId = parseYoutubeId(v.url);
 
     var link = document.createElement('a');
     link.className = 'm-vid-link';
     link.href = v.url;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.setAttribute('aria-label', 'פתח סרטון בחלון חדש');
+    // Only open in new tab for non-YouTube URLs (YouTube embeds inline)
+    if (!ytId) {
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.setAttribute('aria-label', 'פתח סרטון בחלון חדש');
+    } else {
+      link.setAttribute('aria-label', 'נגן סרטון במקום');
+    }
 
     var ytSvg = document.createElement('span');
     ytSvg.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="16" aria-hidden="true"><path d="M21.543 6.498C22 8.28 22 12 22 12s0 3.72-.457 5.502c-.254.985-.997 1.76-1.938 2.022C17.896 20 12 20 12 20s-5.893 0-7.605-.476c-.945-.266-1.687-1.04-1.938-2.022C2 15.72 2 12 2 12s0-3.72.457-5.502c.254-.985.997-1.76 1.938-2.022C6.107 4 12 4 12 4s5.896 0 7.605.476c.945.266 1.687 1.04 1.938 2.022zM10 15.5l6-3.5-6-3.5v7z"/></svg>';
     var span = document.createElement('span');
-    // Show domain or shortened URL
+    // Show domain (with a play hint if it's YouTube) or shortened URL
     try {
       var domain = new URL(v.url).hostname.replace('www.','');
-      span.textContent = domain + ' ↗';
+      span.textContent = ytId ? ('▶ ' + domain) : (domain + ' ↗');
     } catch(_) { span.textContent = v.url.slice(0, 40) + '…'; }
 
     link.appendChild(ytSvg);
     link.appendChild(span);
+
+    if (ytId) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        var existing = slot.querySelector('.m-vid-embed-wrap');
+        if (existing) { existing.remove(); return; }
+        embedYoutubeInline(slot, ytId, r.title);
+      });
+    }
     item.appendChild(link);
 
     var delBtn2 = document.createElement('button');
@@ -10370,7 +10508,8 @@ function refreshModalMedia(r) {
       })(r.id);
     }
     item.appendChild(delBtn2);
-    vidList.appendChild(item);
+    slot.appendChild(item);
+    vidList.appendChild(slot);
   });
 
   // Always show section with "add" button
@@ -14203,10 +14342,11 @@ if(typeof BOOK_HTML!=='undefined'){
     var allChapters = tmp.querySelectorAll('.book-chapter');
     pages = [];
     chapters = [];
-    /* v8.26: Budget calibrated to actual page size (~520x700px at 0.85rem).
-       Prior v8.24 setting (95) produced near-empty pages with huge gaps.
-       260 words ≈ ~1500 chars, fills a page without overflow clipping. */
-    var WORD_BUDGET = isMobile ? 160 : 260;
+    /* v8.27: Backed off from v8.26's 260 — the last line was getting clipped
+       by .book-page-content { overflow:hidden } because headings/drop-caps/
+       line-wrap ate more space than raw char count implied. 200 desktop /
+       130 mobile leaves ~15% safety margin under typical section layouts. */
+    var WORD_BUDGET = isMobile ? 130 : 200;
     var CHAR_BUDGET = WORD_BUDGET * 5;
     allChapters.forEach(function(chap) {
       var chapTitle = chap.querySelector('.book-ch-title');
