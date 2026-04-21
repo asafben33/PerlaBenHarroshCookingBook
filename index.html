@@ -9683,30 +9683,40 @@ function buildNav() {
     }
 
     // Group with dropdown
-    // Compute correct group total — use the 'הכל' item to avoid double-counting
+    // v8.26: Compute group total by collecting unique cat/recipe IDs from the
+    // entire subtree, then counting R once. Prior logic relied on detecting an
+    // 'הכל' aggregate by exact label match and double-counted when the label
+    // differed (e.g. 'כל מתכוני מרוקו וספרד' produced 1408 instead of 744).
     var total = (function() {
       if (node.key === 'all_group' || node.key === 'all_master') return R.length;
-      // Find the 'הכל' aggregate item
-      var allItem = (node.items || []).find(function(it) { return it.lbl === 'הכל' && it.ids; });
-      if (allItem) {
-        var isRecipeArr = allItem.ids.length > 0 && /[0-9]/.test(allItem.ids[0]);
-        if (isRecipeArr) {
-          // Recipe-ID array (span_group, nonkosher_group) → count by cat directly
-          // Use Set to get unique cats, then sum
-          var uniqueCats = {};
-          allItem.ids.forEach(function(rid) {
-            var rec = R.find(function(r) { return r && r.id === rid; });
-            if (rec) uniqueCats[rec.cat] = (uniqueCats[rec.cat] || 0) + 1;
-          });
-          return Object.keys(uniqueCats).reduce(function(s, c) { return s + uniqueCats[c]; }, 0);
-        }
-        return catCnt(allItem.ids);  // cat-ID array (moroccan, katamon)
+      var catSet = {};
+      var ridSet = {};
+      function walk(items) {
+        if (!items) return;
+        items.forEach(function(it) {
+          if (it.items) walk(it.items);
+          if (it.sub)   walk(it.sub);
+          // Skip filter-only entries (holiday tag, community-holiday, placeholders)
+          if (it.h || it.holidayKey || it.communityHoliday || it.placeholder) return;
+          if (Array.isArray(it.ids)) {
+            it.ids.forEach(function(x) {
+              if (/[0-9]/.test(x)) ridSet[x] = true; else catSet[x] = true;
+            });
+          } else if (typeof it.id === 'string' && !/[0-9]/.test(it.id)) {
+            catSet[it.id] = true;
+          }
+        });
       }
-      // No 'הכל' item: sum non-duplicate leaf items
-      return (node.items || []).reduce(function(a, it) {
-        if (it.items || it.sub || it.lbl === 'הכל') return a;
-        return a + (it.ids ? catCnt(it.ids) : it.id ? catCnt(it.id) : 0);
-      }, 0);
+      walk(node.items);
+      var cats = Object.keys(catSet);
+      var rids = Object.keys(ridSet);
+      if (!cats.length && !rids.length) return 0;
+      return R.filter(function(r) {
+        if (!r) return false;
+        if (cats.indexOf(r.cat) >= 0) return true;
+        if (rids.indexOf(r.id)  >= 0) return true;
+        return false;
+      }).length;
     })();
 
     var grpActive = (node.key && node.key === ACT_NAV_KEY);
