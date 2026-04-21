@@ -18969,8 +18969,8 @@ const MENU_STRUCTURE = [
         {communityHoliday:'ashk',holidayKey:'hanukkah',lbl:'חנוכה'},
         {communityHoliday:'ashk',holidayKey:'purim',lbl:'פורים'},
         {communityHoliday:'ashk',holidayKey:'shavuot',lbl:'שבועות'},
-        {communityHoliday:'ashk',holidayKey:'sukkot',lbl:'סוכות'},
-        {communityHoliday:'ashk',holidayKey:'henna',lbl:'חינה'}
+        {communityHoliday:'ashk',holidayKey:'sukkot',lbl:'סוכות'}
+        /* v8.28: no חינה — not an Ashkenazi pre-wedding tradition */
       ]}
     ]},
     {lbl:'תימן', items:[
@@ -19059,8 +19059,8 @@ const MENU_STRUCTURE = [
         {communityHoliday:'isr',holidayKey:'hanukkah',lbl:'חנוכה'},
         {communityHoliday:'isr',holidayKey:'purim',lbl:'פורים'},
         {communityHoliday:'isr',holidayKey:'shavuot',lbl:'שבועות'},
-        {communityHoliday:'isr',holidayKey:'sukkot',lbl:'סוכות'},
-        {communityHoliday:'isr',holidayKey:'henna',lbl:'חינה'}
+        {communityHoliday:'isr',holidayKey:'sukkot',lbl:'סוכות'}
+        /* v8.28: no חינה — not a mainstream practice in generic Israeli cuisine */
       ]}
     ]}
   ]},
