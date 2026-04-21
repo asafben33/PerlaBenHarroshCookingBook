@@ -1,14 +1,14 @@
 /* ═══════════════════════════════════════════════
-   Service Worker — Perla Ben-Harrosh Cookbook v15
+   Service Worker — Perla Ben-Harrosh Cookbook v16
    Network-first for HTML/JS (always fresh code)
    Cache-first for images (fast loading)
-   v15: v8.29 — book reader visual polish:
-        slower flip (2.8s), animated cover-to-pages
-        opening, leather SVG cover, paper grain, binding
-        shadow, gold-foil title, prefers-reduced-motion
-        respected throughout.
+   v16: v8.30 — book reader corrections:
+        removed duplicate front cover (showCover:false),
+        tuned flip for smoothness (shadow 0.72, corners off,
+        3000ms), shrunk stage/container so the nav bar
+        stays inside the viewport on desktop.
 ═══════════════════════════════════════════════ */
-const CACHE_NAME = 'perla-cookbook-v15';
+const CACHE_NAME = 'perla-cookbook-v16';
 const SHELL = [
   './',
   './index.html',

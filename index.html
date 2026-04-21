@@ -1165,7 +1165,10 @@ html.light .book-mode-btn.active { background: rgba(184,66,35,.18); color: #2a10
 .book3d-stage {
   position: relative;
   width: 100%;
-  min-height: 980px;
+  /* v8.30: cap stage to the viewport so the nav buttons pinned at the bottom
+     stay on-screen instead of being pushed below the fold. 88vh leaves room
+     for the top category bar (~220px) and the page header above. */
+  min-height: min(820px, 88vh);
   margin: 0 auto;
   perspective: 2400px;
   perspective-origin: 50% 50%;
@@ -1342,7 +1345,9 @@ html.light .book3d-stage {
    This prevents StPageFlip from defaulting to portrait mode on desktop. */
 .book-flip-container {
   width: min(1100px, 94vw);
-  height: min(760px, 75vh);
+  /* v8.30: trimmed from 75vh → 68vh so the nav has breathing room beneath
+     the book inside the stage (stage is now 88vh). */
+  height: min(680px, 68vh);
   margin: 0 auto;
   display: none;  /* hidden until book is opened */
   position: relative;
@@ -14633,16 +14638,11 @@ if(typeof BOOK_HTML!=='undefined'){
     // Build pages HTML
     container.innerHTML = '';
 
-    // Front cover (hard page)
-    var frontCover = document.createElement('div');
-    frontCover.className = 'book-page book-page-hard';
-    frontCover.setAttribute('data-density', 'hard');
-    frontCover.innerHTML =
-      '<div class="hard-cover-title">על שביל האהבה<br>ממרוקו לירושלים</div>' +
-      '<div class="hard-cover-subtitle">פרלה ופנחס בן-הראש ז״ל</div>' +
-      '<div class="hard-cover-ornament">✦</div>' +
-      '<div class="hard-cover-byline">— זיכרונות משפחתיים —</div>';
-    container.appendChild(frontCover);
+    /* v8.30: The pre-open .book3d-cover overlay IS the book's cover. Previously
+       we also rendered a duplicate hard-cover page as the first StPageFlip page,
+       which meant the user saw the cover twice — once on the stand before
+       clicking, then again inside the opened book. Now StPageFlip starts
+       directly with content pages. */
 
     // Inner content pages (soft)
     pages.forEach(function(html, idx) {
@@ -14653,7 +14653,7 @@ if(typeof BOOK_HTML!=='undefined'){
       container.appendChild(page);
     });
 
-    // Back cover (hard page)
+    // Back cover (hard page) — natural closing page, no visual duplication
     var backCover = document.createElement('div');
     backCover.className = 'book-page book-page-hard';
     backCover.setAttribute('data-density', 'hard');
@@ -14676,8 +14676,8 @@ if(typeof BOOK_HTML!=='undefined'){
         b.title = ch.title;
         b.addEventListener('click', function(e){
           e.stopPropagation();
-          // +1 because of front cover at index 0
-          if (pageFlipInstance) pageFlipInstance.flip(ch.startPage + 1);
+          /* v8.30: no more front cover at index 0 — jump straight to startPage */
+          if (pageFlipInstance) pageFlipInstance.flip(ch.startPage);
         });
         quicknav.appendChild(b);
       });
@@ -14740,17 +14740,24 @@ if(typeof BOOK_HTML!=='undefined'){
         width: w,
         height: h,
         size: 'fixed',
-        /* v8.29: heavier curl shadow + slower flip for a real-book feel */
-        maxShadowOpacity: reduceMotion ? 0 : 0.92,
-        showCover: true,
+        /* v8.30: smoother flip tuning —
+            - maxShadowOpacity dropped 0.92 → 0.72 (0.92 was dense enough to
+              flash visibly mid-rotation, which read as the page stuttering)
+            - showPageCorners off so the resting view has no dog-eared hint
+              jittering when the page is static
+            - flippingTime raised 2800 → 3000ms for an extra beat of smoothness
+            - showCover off: the closed-book .book3d-cover is the only cover;
+              opening the book now goes straight to the first content page */
+        maxShadowOpacity: reduceMotion ? 0 : 0.72,
+        showCover: false,
         mobileScrollSupport: false,
-        flippingTime: reduceMotion ? 200 : 2800,
+        flippingTime: reduceMotion ? 200 : 3000,
         usePortrait: !isLandscape,
         startPage: 0,
         drawShadow: !reduceMotion,
         useMouseEvents: true,
         swipeDistance: 30,
-        showPageCorners: true,
+        showPageCorners: false,
         disableFlipByClick: false,
         autoSize: false
       });
