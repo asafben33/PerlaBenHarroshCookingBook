@@ -1,14 +1,14 @@
 /* ═══════════════════════════════════════════════
-   Service Worker — Perla Ben-Harrosh Cookbook v14
+   Service Worker — Perla Ben-Harrosh Cookbook v15
    Network-first for HTML/JS (always fresh code)
    Cache-first for images (fast loading)
-   v14: v8.28 — reverted RTL book CSS (text was mirrored),
-        removed the duplicate m-src-link "צפה בסרטון" that
-        opened external recipe sources, renamed vid-list
-        label, scrollable nav panel, henna pruned from
-        Ashkenazi and Israeli communities.
+   v15: v8.29 — book reader visual polish:
+        slower flip (2.8s), animated cover-to-pages
+        opening, leather SVG cover, paper grain, binding
+        shadow, gold-foil title, prefers-reduced-motion
+        respected throughout.
 ═══════════════════════════════════════════════ */
-const CACHE_NAME = 'perla-cookbook-v14';
+const CACHE_NAME = 'perla-cookbook-v15';
 const SHELL = [
   './',
   './index.html',

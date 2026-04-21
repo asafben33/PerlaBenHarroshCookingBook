@@ -1228,9 +1228,15 @@ html.light .book3d-stage {
 /* ─── COVER ─────────────────────────────────────────────────────────── */
 .book3d-cover {
   position: absolute; inset: 0;
+  /* v8.29: leather texture SVG layered over the warm-brown gradient base.
+     The asset (book-cover-leather.svg) bakes in fine grain, pore specks,
+     a diagonal light sheen and an edge vignette. */
   background:
+    url("images/site_images/book-cover-leather.svg"),
     linear-gradient(135deg, #4a2818 0%, #2e1808 50%, #4a2818 100%),
     radial-gradient(circle at 30% 30%, rgba(120,60,30,.3) 0%, transparent 60%);
+  background-size: cover, auto, auto;
+  background-position: center, 0 0, 0 0;
   border-radius: 4px 12px 12px 4px;
   box-shadow:
     inset 0 0 50px rgba(0,0,0,.6),
@@ -1241,8 +1247,14 @@ html.light .book3d-stage {
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   padding: 3rem 2rem; text-align: center;
-  border-right: 8px solid #1a0c06;
-  transition: transform 1.4s cubic-bezier(.4,0,.2,1);
+  /* v8.29: spine seam upgraded from flat line to a gradient that reads as
+     rounded leather binding. */
+  border-right: 8px solid transparent;
+  border-image: linear-gradient(to bottom, #0a0503 0%, #1a0c06 50%, #0a0503 100%) 1;
+  /* v8.29: delay the visibility flip so the cover stays visible through the
+     full 1.4s rotation, instead of being display:none'd instantly. */
+  transition: transform 1.4s cubic-bezier(.4,0,.2,1),
+              visibility 0s linear 1.4s;
   transform-origin: right center;
   backface-visibility: hidden;
 }
@@ -1262,8 +1274,17 @@ html.light .book3d-stage {
 }
 .book3d-cover-title {
   font-family: 'Frank Ruhl Libre', serif;
-  font-size: 1.75rem; font-weight: 900; color: #d4a020;
-  text-shadow: 0 0 12px rgba(229,176,32,.6), 0 2px 0 #1a0c06, 1px 1px 0 rgba(229,176,32,.4);
+  font-size: 1.75rem; font-weight: 900;
+  /* v8.29: gold-foil sheen (see .hard-cover-title for full explanation) */
+  color: #d4a020;
+  background: linear-gradient(135deg, #f4cd52 0%, #c4930a 45%, #f4cd52 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.35),
+    0 -1px 0 rgba(0,0,0,.55),
+    0 0 14px rgba(229,176,32,.45);
   line-height: 1.25; margin: 0 0 1rem; letter-spacing: .015em;
   position: relative; z-index: 2; direction: rtl;
 }
@@ -1327,8 +1348,14 @@ html.light .book3d-stage {
   position: relative;
   z-index: 5;
   box-sizing: border-box;
-  /* v8.23: atmospheric background - dark shadow under the book */
-  box-shadow: 0 40px 80px rgba(0,0,0,.7), 0 20px 40px rgba(0,0,0,.5);
+  /* v8.23: atmospheric background - dark shadow under the book
+     v8.29: added bottom inset shadow so the open spread suggests a physical
+     stack of page edges rather than a flat sheet. */
+  box-shadow:
+    0 40px 80px rgba(0,0,0,.7),
+    0 20px 40px rgba(0,0,0,.5),
+    inset 0 -2px 0 rgba(30,14,6,.45),
+    inset 0 -5px 10px rgba(30,14,6,.18);
   border-radius: 4px;
   /* v8.28: Reverted the v8.27 scaleX(-1) RTL hack — StPageFlip v2.0.7
      applies its own transforms to .book-page (rotateY for flip, plus
@@ -1340,13 +1367,48 @@ html.light .book3d-stage {
 .book3d.is-open .book-flip-container,
 .book3d-stage.is-open-state .book-flip-container { display: block; }
 
-/* When book is open, hide the cover element since StPageFlip takes over */
-.book3d.is-open .book3d-cover,
-.book3d.is-open .book3d-back { display: none; }
+/* v8.29: Fade + lift the inner page container as the cover swings away, so
+   the opening feels continuous instead of popping from closed → open.
+   Delay 600ms so pages are revealed as the cover crosses ~45° of its 1.4s
+   arc; settle just after the cover finishes.  */
+.book3d.is-open .book-flip-container,
+.book3d-stage.is-open-state .book-flip-container {
+  animation: book3d-container-reveal .9s cubic-bezier(.2,.7,.3,1) .6s both;
+}
+.book-flip-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.book3d.is-open .book-flip-container::before,
+.book3d-stage.is-open-state .book-flip-container::before {
+  animation: book3d-spine-glow 1.4s ease-out .4s both;
+}
+@keyframes book3d-container-reveal {
+  0%   { opacity: 0; transform: scale(.94) translateY(14px); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes book3d-spine-glow {
+  0%   { box-shadow: inset 0 0 30px rgba(229,176,32,.35); }
+  100% { box-shadow: inset 0 0 0 rgba(229,176,32,0); }
+}
 
-/* v8.24: REDUCED padding so more text fits per page without overflow */
+/* v8.29: Let the cover visibly rotate away during the 1.4s transition rather
+   than disappearing instantly. visibility flips to hidden *after* the
+   transition ends, so no flicker on the back-cover side afterwards. */
+.book3d.is-open .book3d-cover,
+.book3d.is-open .book3d-back { visibility: hidden; }
+
+/* v8.24: REDUCED padding so more text fits per page without overflow
+   v8.29: Inline SVG fiber-grain (fractalNoise) layered over the cream gradient
+   with multiply blend — adds a subtle paper texture without any external asset. */
 .book-page {
-  background: linear-gradient(180deg, #faf3e0 0%, #f5ecd0 100%);
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.32 0 0 0 0 0.18 0 0 0 0 0.08 0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"),
+    linear-gradient(180deg, #faf3e0 0%, #f5ecd0 100%);
+  background-blend-mode: multiply, normal;
   padding: 1.8rem 1.6rem 2.5rem;
   overflow: hidden;
   font-family: 'Frank Ruhl Libre', 'Frank Ruhl Libre Hebrew', Georgia, serif;
@@ -1359,6 +1421,35 @@ html.light .book3d-stage {
   box-sizing: border-box;
 }
 .book-page * { color: inherit !important; }
+
+/* v8.29: Binding shadow — each page gets a soft darkening at its spine-
+   adjacent edge, simulating the way real paper curls into a bound spine.
+   StPageFlip marks pages with --left / --right on their .stf__item wrapper;
+   use those so the shadow lands on the correct edge of each spread. */
+.stf__item.--left  .book-page::before,
+.stf__item.--right .book-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 34px;
+  pointer-events: none;
+  z-index: 1;
+}
+.stf__item.--left .book-page::before {
+  /* Left page of spread → spine is on its RIGHT edge */
+  right: 0;
+  background: linear-gradient(to left, rgba(40,18,6,.38), rgba(40,18,6,.12) 40%, transparent);
+}
+.stf__item.--right .book-page::before {
+  /* Right page of spread → spine is on its LEFT edge */
+  left: 0;
+  background: linear-gradient(to right, rgba(40,18,6,.38), rgba(40,18,6,.12) 40%, transparent);
+}
+/* Don't double the shadow on the hard covers (they already have their own
+   inset shadow and the cover leather texture). */
+.stf__item.--left  .book-page.book-page-hard::before,
+.stf__item.--right .book-page.book-page-hard::before { display: none; }
 
 /* v8.24: REDUCED font sizes - was 1.08rem/1.85, now 0.85rem/1.55
    Critical for fitting text without overflow + more pages overall */
@@ -1460,11 +1551,16 @@ html.light .book3d-stage {
   z-index: 6;
 }
 
-/* Hard cover page (StPageFlip uses data-density="hard" for these) */
+/* Hard cover page (StPageFlip uses data-density="hard" for these)
+   v8.29: same leather SVG as the closed-book cover, so the in-spread hard
+   page matches the closed look. */
 .book-page.book-page-hard {
   background:
+    url("images/site_images/book-cover-leather.svg"),
     linear-gradient(135deg, #4a2818 0%, #2e1808 50%, #4a2818 100%),
     radial-gradient(circle at 30% 30%, rgba(120,60,30,.3) 0%, transparent 60%);
+  background-size: cover, auto, auto;
+  background-position: center, 0 0, 0 0;
   color: #d4a020 !important;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
@@ -1489,8 +1585,19 @@ html.light .book3d-stage {
   font-family: 'Frank Ruhl Libre', serif !important;
   font-size: 1.85rem !important;
   font-weight: 900 !important;
+  /* v8.29: gold-foil effect — clipped gradient over text with a 3-layer
+     text-shadow stack (top highlight + bottom debossed shadow + soft halo).
+     The solid color stays as the fallback for older browsers that don't
+     support background-clip: text. */
   color: #d4a020 !important;
-  text-shadow: 0 0 12px rgba(229,176,32,.6), 0 2px 0 #1a0c06 !important;
+  background: linear-gradient(135deg, #f4cd52 0%, #c4930a 45%, #f4cd52 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.35),
+    0 -1px 0 rgba(0,0,0,.55),
+    0 0 14px rgba(229,176,32,.45) !important;
   line-height: 1.25 !important;
   margin: 0 0 1rem !important;
   position: relative; z-index: 2;
@@ -1627,14 +1734,18 @@ html.light .book3d-quicknav-btn:hover { background: #b84223; color: #fff; }
 
 /* ─── REDUCED MOTION ────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .book3d, .book3d-cover {
+  .book3d, .book3d-cover, .book-flip-container, .book-flip-container::before {
     transition: none !important;
     animation: none !important;
   }
   .book3d-particle { display: none; }
   .book3d-cover-cta { animation: none; opacity: .8; }
-  /* Note: StPageFlip animation can be reduced via JS by setting flippingTime: 0
-     if user has prefers-reduced-motion - this is handled when initializing pageFlip */
+  /* v8.29: cover disappears instantly (no rotation) when the user opts out
+     of motion, so override the 1.4s visibility delay too. */
+  .book3d.is-open .book3d-cover,
+  .book3d.is-open .book3d-back { visibility: hidden !important; }
+  /* Note: StPageFlip animation is reduced via JS (flippingTime: 200) when
+     prefers-reduced-motion is set — see initializePageFlip(). */
 }
 
 /* MOBILE: scaled-down but still beautiful */
@@ -14629,10 +14740,11 @@ if(typeof BOOK_HTML!=='undefined'){
         width: w,
         height: h,
         size: 'fixed',
-        maxShadowOpacity: reduceMotion ? 0 : 0.85,
+        /* v8.29: heavier curl shadow + slower flip for a real-book feel */
+        maxShadowOpacity: reduceMotion ? 0 : 0.92,
         showCover: true,
         mobileScrollSupport: false,
-        flippingTime: reduceMotion ? 200 : 1800,
+        flippingTime: reduceMotion ? 200 : 2800,
         usePortrait: !isLandscape,
         startPage: 0,
         drawShadow: !reduceMotion,
