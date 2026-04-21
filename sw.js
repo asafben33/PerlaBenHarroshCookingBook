@@ -1,12 +1,13 @@
 /* ═══════════════════════════════════════════════
-   Service Worker — Perla Ben-Harrosh Cookbook v12
+   Service Worker — Perla Ben-Harrosh Cookbook v13
    Network-first for HTML/JS (always fresh code)
    Cache-first for images (fast loading)
-   v12: bump to invalidate cache for book pagination
-        fix (v8.26 in index.html — WORD_BUDGET + orphan
-        heading carry-over)
+   v13: v8.27 bundle — RTL book direction, folder counts
+        on all panel headers, inline YouTube embeds in
+        recipe modal, pagination budget trimmed to avoid
+        last-line clipping.
 ═══════════════════════════════════════════════ */
-const CACHE_NAME = 'perla-cookbook-v12';
+const CACHE_NAME = 'perla-cookbook-v13';
 const SHELL = [
   './',
   './index.html',
