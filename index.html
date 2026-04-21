@@ -14193,10 +14193,10 @@ if(typeof BOOK_HTML!=='undefined'){
     var allChapters = tmp.querySelectorAll('.book-chapter');
     pages = [];
     chapters = [];
-    /* v8.24: DRASTICALLY reduced budget — book has ~30,000 words of memoir,
-       must produce 100+ pages so each page has breathing room.
-       Also matches smaller fonts (0.9rem in v8.24 vs 1.08rem in v8.23). */
-    var WORD_BUDGET = isMobile ? 70 : 95;
+    /* v8.26: Budget calibrated to actual page size (~520x700px at 0.85rem).
+       Prior v8.24 setting (95) produced near-empty pages with huge gaps.
+       260 words ≈ ~1500 chars, fills a page without overflow clipping. */
+    var WORD_BUDGET = isMobile ? 160 : 260;
     var CHAR_BUDGET = WORD_BUDGET * 5;
     allChapters.forEach(function(chap) {
       var chapTitle = chap.querySelector('.book-ch-title');
@@ -14219,10 +14219,21 @@ if(typeof BOOK_HTML!=='undefined'){
         nodes.forEach(function(n) {
           var html = n.outerHTML || '';
           var text = (n.textContent || '').length;
+          var tagName = n.tagName ? n.tagName.toLowerCase() : '';
           if (charCount + text > CHAR_BUDGET && pageBuf.trim().length > 100) {
+            /* v8.26: prevent orphan heading — if current page ends with an
+               <h4> and the next node is content, carry the h4 to the next page. */
+            var carryOver = '';
+            if (tagName !== 'h3' && tagName !== 'h4') {
+              var orphanMatch = pageBuf.match(/(<h4\b[^>]*>[\s\S]*?<\/h4>\s*)$/i);
+              if (orphanMatch) {
+                carryOver = orphanMatch[1];
+                pageBuf = pageBuf.slice(0, pageBuf.length - carryOver.length);
+              }
+            }
             pages.push(pageBuf);
-            pageBuf = '';
-            charCount = 0;
+            pageBuf = carryOver;
+            charCount = carryOver ? carryOver.replace(/<[^>]+>/g, '').length : 0;
           }
           pageBuf += html;
           charCount += text;
