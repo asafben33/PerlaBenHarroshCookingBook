@@ -1,14 +1,14 @@
 /* ═══════════════════════════════════════════════
-   Service Worker — Perla Ben-Harrosh Cookbook v17
+   Service Worker — Perla Ben-Harrosh Cookbook v18
    Network-first for HTML/JS (always fresh code)
    Cache-first for images (fast loading)
-   v17: v8.31 — book reader now opens in a full-viewport
-        modal overlay (88vh canvas, dimmed backdrop, ESC
-        to close). Flip slowed to 4500ms with heavier
-        shadow (0.88) for a real-book feel. Word budget
-        raised to match the larger canvas (240/155).
+   v18: v8.32 — StPageFlip served from a local patched
+        copy (js/page-flip-2.0.7-patched.js) that honours
+        flippingTime for click and arrow flips, not just
+        drag. Upstream capped click flips at ~225 ms; the
+        patch makes them respect the full 4500 ms.
 ═══════════════════════════════════════════════ */
-const CACHE_NAME = 'perla-cookbook-v17';
+const CACHE_NAME = 'perla-cookbook-v18';
 const SHELL = [
   './',
   './index.html',
@@ -16,7 +16,8 @@ const SHELL = [
   './pre_en.js',
   './manifest.json',
   './images/book_images/wedding.jpg',
-  './book_data.js'
+  './book_data.js',
+  './js/page-flip-2.0.7-patched.js'
 ];
 
 /* Install — cache shell individually (resilient to 404s) */

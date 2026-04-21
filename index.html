@@ -2983,12 +2983,13 @@ html.light .footer-sub { color: #4e1f0a; font-weight: 500; }
 
 <!-- ════════════════════════════════════════════════════════════════════════
      v8.21: StPageFlip library — realistic 3D page-flip with paper curl.
-     CDN: cdn.jsdelivr.net (npm package: page-flip @ 2.0.7, MIT license).
-     Loaded async/defer so it doesn't block initial render. The 3D book
-     mode lazily initializes only when the user clicks "📖 מצב ספר",
-     so this script's absence doesn't affect the rest of the site.
+     v8.32: Served from a LOCAL PATCHED copy (MIT, see banner in the file).
+     The upstream library computes animation duration as (steps/1000) *
+     flippingTime, so click and arrow-button flips complete in ~225 ms
+     regardless of flippingTime. The local patch makes every flip honour
+     flippingTime, matching the smooth drag animation.
      ════════════════════════════════════════════════════════════════════════ -->
-<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js" integrity="sha384-L4eWrYFdqQ+LoGA0MMuqLqzV13x7SKkQaqacy4MED8e815dS37tTKlO/6xBEUpZW" defer crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="js/page-flip-2.0.7-patched.js" integrity="sha384-CVayu3URm4kKCDNJAjUNn7muXktK0Z3eiiULHWBeAfqTnrPdaC8l5aNWnbh6Je5I" defer></script>
 </head><body>
 
 <!-- ── Casablanca Background (fixed, behind all content) ──── -->
