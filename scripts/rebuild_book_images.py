@@ -51,15 +51,20 @@ import os
 import sys
 import argparse
 from datetime import datetime
+from pathlib import Path
+
+# ─── Absolute path anchoring ─────────────────────────────────────────────
+PROJECT_ROOT    = Path(__file__).resolve().parent.parent
+DEFAULT_LOG_DIR = PROJECT_ROOT / 'logs'
 
 # ─── הגדרות לוג בעברית עם חותמת זמן בפורמט DD-MM-YYYY_HH.MM ─────────────
 LOG_PREFIX_FORMAT = "%d-%m-%Y_%H.%M"
 PROGRESS_MILESTONES = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
 # ─── ברירות מחדל ─────────────────────────────────────────────────────────
-DEFAULT_MAPPING = "IMAGE_MAPPING_v8_25.json"
-DEFAULT_INPUT = "book_data.js"
-DEFAULT_OUTPUT = "book_data.js.new"
+DEFAULT_MAPPING = str(PROJECT_ROOT / "IMAGE_MAPPING_v8_25.json")
+DEFAULT_INPUT = str(PROJECT_ROOT / "book_data.js")
+DEFAULT_OUTPUT = str(PROJECT_ROOT / "book_data.js.new")
 
 # ─── הגדרות פרקים ────────────────────────────────────────────────────────
 CHAPTER_ORDER = ['prologue', 'ch1', 'ch2', 'ch3', 'ch4', 'ch5', 'ch6', 'ch7', 'ch8', 'ch9', 'ch10']
@@ -79,10 +84,10 @@ def log(msg):
 
 def setup_log_file():
     """Create log file with DD-MM-YYYY_HH.MM format."""
-    os.makedirs("logs", exist_ok=True)
+    DEFAULT_LOG_DIR.mkdir(exist_ok=True)
     timestamp = datetime.now().strftime(LOG_PREFIX_FORMAT)
-    log_path = os.path.join("logs", f"rebuild_book_images_{timestamp}.log")
-    return log_path
+    log_path = DEFAULT_LOG_DIR / f"rebuild_book_images_{timestamp}.log"
+    return str(log_path)
 
 
 def report_progress(current, total, milestone_set):

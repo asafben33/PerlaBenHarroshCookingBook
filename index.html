@@ -12,7 +12,7 @@
 <!-- Security headers via meta -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="Content-Security-Policy"
-  content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com; media-src 'self' blob:; connect-src 'self' https://api.web3forms.com https://cdn.jsdelivr.net; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self';">
+  content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com; media-src 'self' blob:; connect-src 'self' https://api.web3forms.com https://cdn.jsdelivr.net; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta name="referrer" content="no-referrer">
 
@@ -2727,7 +2727,7 @@ html.light .footer-sub { color: #4e1f0a; font-weight: 500; }
      mode lazily initializes only when the user clicks "📖 מצב ספר",
      so this script's absence doesn't affect the rest of the site.
      ════════════════════════════════════════════════════════════════════════ -->
-<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js" integrity="sha384-L4eWrYFdqQ+LoGA0MMuqLqzV13x7SKkQaqacy4MED8e815dS37tTKlO/6xBEUpZW" defer crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head><body>
 
 <!-- ── Casablanca Background (fixed, behind all content) ──── -->
@@ -8957,12 +8957,16 @@ function renderGrid() {
         fcard.className='card family-photo-card';
         fcard.style.animationDelay=(Math.min(i*20,300)+10)+'ms';
         var fcap=(_LANG==='en'?fp.cap_en:fp.cap_he);
-        fcard.innerHTML='<div class="c-img"><img src="'+fp.img+'" alt="'+fcap+'" loading="lazy" style="object-fit:cover;height:100%"></div>'
-          +'<div class="c-body" style="background:linear-gradient(135deg,rgba(196,147,10,.15),rgba(196,147,10,.05));padding:.6rem;text-align:center;direction:rtl">'
-          +'<div style="color:var(--c-gold);font-size:.75rem;font-weight:700;margin-bottom:.2rem">'+(_LANG==='en'?'From the Family Album':'מאלבום המשפחה')+'</div>'
-          +'<div style="color:var(--c-txt);font-size:.8rem;line-height:1.4">'+fcap+'</div>'
-          +'<a href="#book-'+fp.chapter+'" onclick="(function(){var s=document.getElementById(\'about\');var b=document.getElementById(\'about-toggle\');if(b&&s&&!s.classList.contains(\'open\'))b.click();})();setTimeout(function(){document.getElementById(\'book-'+fp.chapter+'\').scrollIntoView({behavior:\'smooth\'})},400);return false" style="color:var(--c-gold-l);font-size:.7rem;margin-top:.3rem;display:inline-block">'+(_LANG==='en'?'Read in the book':'קראו בספר')+'</a>'
-          +'</div>';
+        var fImgWrap=document.createElement('div');fImgWrap.className='c-img';
+        var fImg=document.createElement('img');fImg.src=fp.img;fImg.alt=fcap;fImg.loading='lazy';fImg.style.cssText='object-fit:cover;height:100%';
+        fImgWrap.appendChild(fImg);
+        var fBody=document.createElement('div');fBody.className='c-body';fBody.style.cssText='background:linear-gradient(135deg,rgba(196,147,10,.15),rgba(196,147,10,.05));padding:.6rem;text-align:center;direction:rtl';
+        var fLabel=document.createElement('div');fLabel.style.cssText='color:var(--c-gold);font-size:.75rem;font-weight:700;margin-bottom:.2rem';fLabel.textContent=(_LANG==='en'?'From the Family Album':'מאלבום המשפחה');
+        var fCapDiv=document.createElement('div');fCapDiv.style.cssText='color:var(--c-txt);font-size:.8rem;line-height:1.4';fCapDiv.textContent=fcap;
+        var fLink=document.createElement('a');fLink.href='#book-'+fp.chapter;fLink.style.cssText='color:var(--c-gold-l);font-size:.7rem;margin-top:.3rem;display:inline-block';fLink.textContent=(_LANG==='en'?'Read in the book':'קראו בספר');
+        fLink.addEventListener('click',function(ev){ev.preventDefault();var s=document.getElementById('about');var b=document.getElementById('about-toggle');if(b&&s&&!s.classList.contains('open'))b.click();var ch=fp.chapter;setTimeout(function(){var el=document.getElementById('book-'+ch);if(el)el.scrollIntoView({behavior:'smooth'});},400);});
+        fBody.appendChild(fLabel);fBody.appendChild(fCapDiv);fBody.appendChild(fLink);
+        fcard.appendChild(fImgWrap);fcard.appendChild(fBody);
         fragment.appendChild(fcard);
       }
     }
@@ -14027,8 +14031,9 @@ function exportFullCookbook() {
         setStatus('תודה! ההודעה נשלחה בהצלחה.', 'success');
         setTimeout(closeFeedbackModal, 2500);
       } else {
-        var detail = (res.json && res.json.message) ? res.json.message : ('HTTP ' + res.status);
-        try { console.warn('[Feedback] Web3Forms error:', detail, res.json); } catch(e) {}
+        var rawDetail = (res.json && res.json.message) ? String(res.json.message).slice(0, 200) : ('HTTP ' + res.status);
+        var detail = rawDetail.replace(/[<>&"']/g, function(c) { return '&#' + c.charCodeAt(0) + ';'; });
+        try { console.warn('[Feedback] Web3Forms error:', rawDetail, res.json); } catch(e) {}
         showMailtoFallback('שליחה נכשלה (' + detail + ').');
       }
     })

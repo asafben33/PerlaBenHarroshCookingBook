@@ -22,6 +22,13 @@ import builtins
 from pathlib import Path
 
 # -----------------------------------------------------------
+# Absolute project root — all scripts resolve paths from here
+# -----------------------------------------------------------
+PROJECT_ROOT    = Path(__file__).resolve().parent.parent
+DEFAULT_DATA_JS = PROJECT_ROOT / 'data.js'
+DEFAULT_LOG_DIR = PROJECT_ROOT / 'logs'
+
+# -----------------------------------------------------------
 # Windows terminal UTF-8 fix (for Hebrew rendering in cmd/PS)
 # -----------------------------------------------------------
 if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':

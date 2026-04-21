@@ -51,9 +51,10 @@ if sys.platform == 'win32':
         sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
     os.system('chcp 65001 >nul 2>&1')
 
-SCRIPT_DIR = Path(__file__).parent
-DATA_FILE  = SCRIPT_DIR / 'data.js'
-LOG_DIR    = Path(r"C:\Users\isasaf\Assi-ProjectsWorkFolder\PerlaBenHarroshCookingBook\logs") if sys.platform == 'win32' else SCRIPT_DIR / 'logs'
+SCRIPT_DIR    = Path(__file__).resolve().parent
+PROJECT_ROOT  = SCRIPT_DIR.parent
+DATA_FILE     = PROJECT_ROOT / 'data.js'
+LOG_DIR       = PROJECT_ROOT / 'logs'
 
 _STOP = False
 
@@ -102,7 +103,7 @@ def _setup_proxy(args):
             log(f"[proxy] from env {var}: {PROXY}")
             return
     # Try proxy_config.txt (left by download_images.py auto-detection)
-    cfg = SCRIPT_DIR / 'proxy_config.txt'
+    cfg = PROJECT_ROOT / 'proxy_config.txt'
     if cfg.exists():
         try:
             txt = cfg.read_text(encoding='utf-8').strip()

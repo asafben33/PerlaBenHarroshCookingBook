@@ -196,9 +196,10 @@ except ImportError:
 # ══════════════════════════════════════════════════
 # CONFIG
 # ══════════════════════════════════════════════════
-SCRIPT_DIR  = Path(__file__).parent
-IMG_DIR     = SCRIPT_DIR / "images" / "recipes_images"   # output directory for recipe photos
-LOG_DIR     = Path(r"C:\Users\isasaf\Assi-ProjectsWorkFolder\PerlaBenHarroshCookingBook\logs") if sys.platform == 'win32' else SCRIPT_DIR / "logs"
+SCRIPT_DIR    = Path(__file__).resolve().parent
+PROJECT_ROOT  = SCRIPT_DIR.parent
+IMG_DIR       = PROJECT_ROOT / "images" / "recipes_images"   # output directory for recipe photos
+LOG_DIR       = PROJECT_ROOT / "logs"
 _ts         = datetime.now().strftime("%Y-%m-%d_%H.%M")
 LOG_FILE    = LOG_DIR / f"download_images_{_ts}.log"
 
@@ -217,7 +218,7 @@ LOG_FILE    = LOG_DIR / f"download_images_{_ts}.log"
 
 PROXY       = None       # populated at module load by _detect_proxy_full()
 PROXY_CANDIDATES: list[str] = []   # ranked list of candidates (for --test-proxy)
-PROXY_CFG    = Path(__file__).parent / "proxy_config.txt"
+PROXY_CFG    = PROJECT_ROOT / "proxy_config.txt"
 
 
 def _read_windows_proxy_registry() -> dict:
@@ -611,11 +612,11 @@ def _call_with_timeout(fn, timeout_sec=12):
 # ══════════════════════════════════════════════════
 def parse_recipes():
     src_path = next(
-        (SCRIPT_DIR / f for f in ("data.js", "index.html")
-         if (SCRIPT_DIR / f).exists()), None
+        (d / f for d in (PROJECT_ROOT, SCRIPT_DIR) for f in ("data.js", "index.html")
+         if (d / f).exists()), None
     )
     if not src_path:
-        log("ERROR: data.js or index.html not found in script directory")
+        log("ERROR: data.js or index.html not found in project root or script directory")
         sys.exit(1)
     src = src_path.read_text(encoding="utf-8")
     out = []
@@ -3716,7 +3717,7 @@ def main():
             log("שלב 3b — החדרת _IMG_ALIAS ל-index.html")
             log("-" * 60)
             alias_file = IMG_DIR.parent / "_IMG_ALIAS.js"
-            index_file = SCRIPT_DIR / "index.html"
+            index_file = PROJECT_ROOT / "index.html"
             inline_alias_into_index(alias_file, index_file, dry_run=args.dry_run)
 
     # v6.0: write provenance log
