@@ -31,6 +31,7 @@ from recipe_utils import (
     print_recipe_summary,
     hdr, ok, warn, err, dim,
     configure_rtl_fix,
+    DEFAULT_DATA_JS,
 )
 
 # -----------------------------------------------------------
@@ -40,8 +41,8 @@ def parse_args():
     p = argparse.ArgumentParser(
         description='עריכת/מחיקת מתכון קיים ב-data.js (אשף אינטראקטיבי).'
     )
-    p.add_argument('--data', default='data.js',
-                   help='Path to data.js (default: ./data.js)')
+    p.add_argument('--data', default=str(DEFAULT_DATA_JS),
+                   help='Path to data.js (default: PROJECT_ROOT/data.js)')
     p.add_argument('-n', '--dry-run', action='store_true',
                    help='Preview only; write to data.js.dryrun instead of overwriting.')
     p.add_argument('--no-rtl-fix', action='store_true',

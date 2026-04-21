@@ -47,6 +47,7 @@ from recipe_utils import (
     find_recipe_bounds,
     hdr, ok, warn, err, dim,
     configure_rtl_fix,
+    PROJECT_ROOT, DEFAULT_DATA_JS,
 )
 
 # ============================================================
@@ -672,12 +673,12 @@ def parse_args():
     p = argparse.ArgumentParser(
         description='סקריפט ביקורת אוטומטי למתכונים ב-data.js.'
     )
-    p.add_argument('--data', default='data.js',
-                   help='נתיב ל-data.js (ברירת מחדל: ./data.js)')
+    p.add_argument('--data', default=str(DEFAULT_DATA_JS),
+                   help='נתיב ל-data.js (ברירת מחדל: PROJECT_ROOT/data.js)')
     p.add_argument('-n', '--dry-run', action='store_true',
                    help='הרצה ללא כתיבת קבצים — רק סיכום ל-stdout')
-    p.add_argument('--out-dir', default='audit_reports',
-                   help='תיקיית פלט לדוחות (ברירת מחדל: ./audit_reports/)')
+    p.add_argument('--out-dir', default=str(PROJECT_ROOT / 'audit_reports'),
+                   help='תיקיית פלט לדוחות (ברירת מחדל: PROJECT_ROOT/audit_reports/)')
     p.add_argument('--only-category',
                    help='סריקה של קטגוריה יחידה בלבד (למשל: soups)')
     p.add_argument('--severity', choices=['high', 'medium', 'low', 'all'], default='all',

@@ -162,6 +162,10 @@ from pathlib import Path
 import fnmatch
 import logging
 
+# ========== PATH ANCHORING ==========
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+os.chdir(PROJECT_ROOT)
+
 # ========== GLOBAL CONFIGURATION ==========
 
 # Verbose mode (can be set via --verbose flag)
@@ -199,7 +203,7 @@ def cleanup_old_logs(logs_dir, keep_count=3):
 def setup_logging():
     """Setup logging to file and console"""
     # Create logs directory if it doesn't exist
-    logs_dir = Path("logs")
+    logs_dir = PROJECT_ROOT / "logs"
     logs_dir.mkdir(exist_ok=True)
 
     # Clean up old log files (keep only 3 most recent)

@@ -59,6 +59,10 @@ import logging
 import time
 import re
 
+# ========== PATH ANCHORING ==========
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+os.chdir(PROJECT_ROOT)
+
 # ============================================================================
 # DRY-RUN Configuration (Rule 0.3)
 # ============================================================================
@@ -72,9 +76,9 @@ DRY_RUN = False
 
 class Config:
     """Configuration constants"""
-    BACKUP_DIR = Path(".git-auto-sync-backups")
+    BACKUP_DIR = PROJECT_ROOT / ".git-auto-sync-backups"
     BACKUP_RETENTION_DAYS = 7
-    LOG_DIR = Path("logs")
+    LOG_DIR = PROJECT_ROOT / "logs"
     MAX_RETRIES = 4
     RETRY_DELAYS = [2, 4, 8, 16]  # Exponential backoff in seconds
     MAIN_BRANCH = "main"
