@@ -1,13 +1,14 @@
 /* ═══════════════════════════════════════════════
-   Service Worker — Perla Ben-Harrosh Cookbook v13
+   Service Worker — Perla Ben-Harrosh Cookbook v14
    Network-first for HTML/JS (always fresh code)
    Cache-first for images (fast loading)
-   v13: v8.27 bundle — RTL book direction, folder counts
-        on all panel headers, inline YouTube embeds in
-        recipe modal, pagination budget trimmed to avoid
-        last-line clipping.
+   v14: v8.28 — reverted RTL book CSS (text was mirrored),
+        removed the duplicate m-src-link "צפה בסרטון" that
+        opened external recipe sources, renamed vid-list
+        label, scrollable nav panel, henna pruned from
+        Ashkenazi and Israeli communities.
 ═══════════════════════════════════════════════ */
-const CACHE_NAME = 'perla-cookbook-v13';
+const CACHE_NAME = 'perla-cookbook-v14';
 const SHELL = [
   './',
   './index.html',

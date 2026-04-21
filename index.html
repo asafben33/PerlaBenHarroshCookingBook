@@ -307,6 +307,12 @@ html.light .bg-light-layer { display: block; }
   border-bottom: 2px solid rgba(196,147,10,.2);
   box-shadow: var(--sh-lg);
   display: none;
+  /* v8.28: cap height and allow internal scrolling so communities like
+     עיראק/כורדיסטן with many holiday sub-folders stay reachable without
+     the bottom being clipped by the viewport. */
+  max-height: calc(100vh - var(--hdr-h) - var(--nav-h) - 1rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .nav-panel.open { display: block; }
 .nav-panel-inner {
@@ -1324,13 +1330,12 @@ html.light .book3d-stage {
   /* v8.23: atmospheric background - dark shadow under the book */
   box-shadow: 0 40px 80px rgba(0,0,0,.7), 0 20px 40px rgba(0,0,0,.5);
   border-radius: 4px;
-  /* v8.27: Hebrew RTL — mirror the whole container so the cover opens
-     leftward and pages flow right→left. Each .book-page is counter-mirrored
-     below so Hebrew text still reads normally. */
-  transform: scaleX(-1);
-}
-.book-flip-container .book-page {
-  transform: scaleX(-1);
+  /* v8.28: Reverted the v8.27 scaleX(-1) RTL hack — StPageFlip v2.0.7
+     applies its own transforms to .book-page (rotateY for flip, plus
+     internal positioning) that fight the counter-scale, resulting in
+     mirrored text on the cover and all pages. Book now opens LTR again
+     (cover on the left, pages flip left→right). The nav buttons and
+     keyboard remain RTL-correct (ArrowLeft → next, ArrowRight → prev). */
 }
 .book3d.is-open .book-flip-container,
 .book3d-stage.is-open-state .book-flip-container { display: block; }
@@ -3470,10 +3475,9 @@ Requires:
         <p id="m-tip-txt"></p>
       </div>
 
-      <!-- Source / video link -->
-      <div id="m-src-box" class="m-src-box" hidden>
-        <a id="m-src-link" href="#" target="_blank" rel="noopener noreferrer">צפה בסרטון</a>
-      </div>
+      <!-- v8.28: m-src-box/m-src-link removed — r.src URLs were duplicating
+           the video link and opening externally (blocked by our proxy).
+           The m-vid-list below handles all video playback inline. -->
 
       <!-- Video list -->
       <div id="m-vid-wrap" class="m-vid-wrap" hidden>
@@ -9907,33 +9911,10 @@ function openM(id) {
   if (tipWrap) tipWrap.hidden = !r.tip;
   if (r.tip) setText('m-tip-txt', getEnTip(r));
 
-  // Source / video link
-  var srcBox = document.getElementById('m-src-box');
-  if (srcBox) {
-    // Remove any previously embedded iframe from a prior recipe view
-    var oldEmbed = srcBox.querySelector('.m-vid-embed-wrap');
-    if (oldEmbed) oldEmbed.remove();
-    srcBox.hidden = !r.src;
-    if (r.src) {
-      var srcLink = document.getElementById('m-src-link');
-      if (srcLink) {
-        srcLink.href = r.src;
-        // v8.27: embed YouTube inline instead of opening externally
-        srcLink.onclick = function(e) {
-          var ytId = parseYoutubeId(r.src);
-          if (!ytId) return true;  // non-YouTube URL → keep default external open
-          e.preventDefault();
-          // Toggle: if already embedded, remove; else embed
-          var existing = srcBox.querySelector('.m-vid-embed-wrap');
-          if (existing) { existing.remove(); return false; }
-          embedYoutubeInline(srcBox, ytId, r.title);
-          return false;
-        };
-      }
-    }
-  }
-
-  // Video section handled in refreshModalMedia
+  // v8.28: removed the r.src "צפה בסרטון" wiring — r.src is the external
+  // recipe-source URL (blog / website), not a video, and our proxy blocks
+  // those links anyway. Video playback is handled entirely by refreshModalMedia
+  // via r.vid + per-user custom vids, which embed YouTube inline.
 
   // Nav buttons
   var prev = document.getElementById('m-prev');
@@ -10470,11 +10451,16 @@ function refreshModalMedia(r) {
     var ytSvg = document.createElement('span');
     ytSvg.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="16" aria-hidden="true"><path d="M21.543 6.498C22 8.28 22 12 22 12s0 3.72-.457 5.502c-.254.985-.997 1.76-1.938 2.022C17.896 20 12 20 12 20s-5.893 0-7.605-.476c-.945-.266-1.687-1.04-1.938-2.022C2 15.72 2 12 2 12s0-3.72.457-5.502c.254-.985.997-1.76 1.938-2.022C6.107 4 12 4 12 4s5.896 0 7.605.476c.945.266 1.687 1.04 1.938 2.022zM10 15.5l6-3.5-6-3.5v7z"/></svg>';
     var span = document.createElement('span');
-    // Show domain (with a play hint if it's YouTube) or shortened URL
-    try {
-      var domain = new URL(v.url).hostname.replace('www.','');
-      span.textContent = ytId ? ('▶ ' + domain) : (domain + ' ↗');
-    } catch(_) { span.textContent = v.url.slice(0, 40) + '…'; }
+    // v8.28: YouTube URLs show the "צפה בסרטון" label (embed opens inline).
+    // Non-YouTube URLs fall back to showing the domain with an external icon.
+    if (ytId) {
+      span.textContent = '▶ ' + (typeof t === 'function' ? t('watch_video') : 'צפה בסרטון');
+    } else {
+      try {
+        var domain = new URL(v.url).hostname.replace('www.','');
+        span.textContent = domain + ' ↗';
+      } catch(_) { span.textContent = v.url.slice(0, 40) + '…'; }
+    }
 
     link.appendChild(ytSvg);
     link.appendChild(span);
@@ -13752,8 +13738,7 @@ function applyLang(lang) {
   var mpdf = document.getElementById('m-pdf'); if (mpdf) mpdf.textContent = t('pdf_btn');
   var ms = document.getElementById('m-share'); if (ms) ms.textContent = t('share_btn');
   var mu = document.getElementById('m-upload-act'); if (mu) mu.textContent = t('photo_btn');
-  var mSrcLink = document.getElementById('m-src-link');
-  if (mSrcLink) mSrcLink.textContent = t('watch_video');
+  // m-src-link removed in v8.28 (was external recipe-source URL, not a video)
   var mVidAdd = document.getElementById('m-vid-add');
   if (mVidAdd) mVidAdd.textContent = t('add_video');
   var mImgDel = document.getElementById('m-img-del-act');
