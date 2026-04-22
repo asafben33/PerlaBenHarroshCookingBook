@@ -84,12 +84,10 @@
 
 **עומק קינון מקסימלי בכל התפריט: 2 רמות** (היה 4 ב-v6.x).
 
-**Option C — חגי העדה:** תחת "עדות ישראל" יש placeholder מיוחד:
-```javascript
-{placeholder:'communityHolidays', lbl:'חגי העדות (בקרוב)',
-  emptyMsg:'מתכונים לחגי העדות יתווספו בעתיד...'}
-```
-לחיצה מציגה `showToast()`. עתיד: תיוג ידני של מתכוני עדות לחגים.
+**חגי עדות — יושם בפועל ב-v7.4:** ה-placeholder "חגי העדות (בקרוב)" מ-v7.0
+הוחלף בתיוג אמיתי ב-`COMMUNITY_HOLIDAY_TAGS` (221 מיפויי עדה×חג). כל עדה
+כוללת accordion "מאכלי חגים" עם chips לשבת, ראש השנה, פסח וכו'. ה-render
+של ה-placeholder הוסר מ-`buildPanel` ב-v8.39.
 
 ## לוגיקת תמונות ב-index.html
 - `getRecipeImg(r)` תמיד מחזירה `images/recipes_images/r-{id}.jpg` (לא `r.img`)
