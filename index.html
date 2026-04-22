@@ -393,6 +393,19 @@ html.light .bg-light-layer { display: block; }
   background: rgba(196,147,10,.1);
 }
 
+/* v8.38: "focused view" — when any direct-child accordion is open inside a
+   panel-row or acc-body, hide the OTHER sibling accordion folders (and
+   their collapsed bodies). Free-standing .pc chips at the same level stay
+   visible, so a morocco-style panel (mostly category chips, one accordion)
+   keeps its chips when the accordion expands, but a communities-style
+   panel (all accordion siblings) collapses to just the open community.
+   Combined with v8.37's click-time sibling-close, this gives a clean
+   single-branch view without cognitive noise from unrelated siblings. */
+:is(.panel-row, .acc-body):has(> .acc-hdr.open) > .acc-hdr:not(.open),
+:is(.panel-row, .acc-body):has(> .acc-hdr.open) > .acc-body:not(.open) {
+  display: none !important;
+}
+
 /* v8.36: make the panel's internal scrollbar visible and on-brand so users
    know the panel is scrollable when a large community is expanded. */
 .nav-panel::-webkit-scrollbar { width: 10px; }
