@@ -1,6 +1,15 @@
 # ספר הבישול של פרלה בן הראש ז"ל
 
-**גרסה: 8.0 | 19/04/2026**
+**גרסה: 8.38 | 22/04/2026**
+
+## מה השתנה מאז v8.0 (תקציר)
+
+- **v8.1–v8.4:** רענון תיעוד + הרחבת מתכונים (+2 → 1,056), audit נקי
+- **v8.5–v8.16:** יישור טיפוגרפיה, ליטוש theme בהיר, קומפקטיות ROTD, שינוי שם תפריט "עדות" → "מתכונים טעימים מעוד עדות", עיצוב-מחדש של קורא הספר
+- **v8.17–v8.32:** קורא ספר תלת-ממד (StPageFlip) על כל גלגוליו — הוסר בסופו של דבר ב-v8.33
+- **v8.26–v8.28:** חיזוק אבטחה (CSP/HSTS/COOP/CORP/SRI), path anchoring בסקריפטים, הסרת חינה מעדות שלא עושות
+- **v8.33:** קורא הספר נשאר רק במצב טקסט (long-form scroll). מחקתי ~1,380 שורות CSS/JS + 2 נכסים
+- **v8.34–v8.38:** שיפוצי UX בתפריט הניווט — chips קטנים יותר, auto-expand של branch פעיל, עומק ויזואלי, scrollbar בזהב, mutual exclusion של accordions אחים, הסתרת אחים סגורים (focused view)
 
 ## זהות הפרויקט
 - אתר (Netlify): https://perlabenharrosh-cookingbook.netlify.app/
@@ -11,7 +20,7 @@
 
 ## מבנה הקבצים
 - `index.html` — HTML ראשי + JS inline (כל הלוגיקה) — v7.1: ~515 KB
-- `data.js` — 1,054 מתכונים (CATS, MENU_STRUCTURE, HOLIDAY_TAGS, const R=[...])
+- `data.js` — 1,056 מתכונים (CATS, MENU_STRUCTURE, HOLIDAY_TAGS, const R=[...])
 - `book_data.js` — תוכן הספר הביוגרפי (BOOK_HTML, BOOK_HTML_EN)
 - `pre_en.js` — תרגומים לאנגלית (pre-rendered)
 - `about_redesigned.{html,css,js}` — דף "אודות" מעוצב מחדש
@@ -54,7 +63,7 @@
 ## קטגוריות (20 ב-CATS, כולל all)
 `all, soups, salads, veg, meat, chick, fish, hol, des, span, iraq, kurd, ashk, yem, pers, buk, tun, isr, turk, nonkosher`
 
-### ספירת מתכונים לפי קטגוריה (ל-1,054 סה"כ)
+### ספירת מתכונים לפי קטגוריה (ל-1,056 סה"כ)
 - **מרוקו (671):** soups=103, salads=103, veg=87, meat=82, hol=80, des=80, fish=70, chick=66
 - **עדות ישראל (270):** iraq/kurd/ashk/yem/pers/buk/tun/isr/turk = 30 × 9
 - **ספרד (73):** span
@@ -66,7 +75,7 @@
 
 | `key` | תווית | `ids` (group aggregate) | מתכונים | עומק מקסימלי |
 |---|---|---|---|---|
-| `all` | הכל | (leaf, `id:'all'`) | 1,054 | 0 |
+| `all` | הכל | (leaf, `id:'all'`) | 1,056 | 0 |
 | `morocco` | מרוקו | 8 cat-IDs | 671 | 2 (מנות עיקריות → בשר/עוף/דגים) |
 | `spain` | ספרד | 73 recipe-IDs | 73 | 1 |
 | `communities` | עדות ישראל | 9 cat-IDs | 270 | 2 (מטבח ישראלי → 4 תתי) |
@@ -85,7 +94,7 @@
 ## לוגיקת תמונות ב-index.html
 - `getRecipeImg(r)` תמיד מחזירה `images/recipes_images/r-{id}.jpg` (לא `r.img`)
 - **v6.5:** `_heroGalleryInit` מנסה וריאנטים `-2`/`-3` רק אם התמונה הראשית נטענת — הפחתה משמעותית של רעש 404 בקונסול
-- `r.img` הוסר מ-fallback ב-v6.1 (מונע 1054 CSP violations)
+- `r.img` הוסר מ-fallback ב-v6.1 (מונע 1056 CSP violations)
 - fallback chain: `CAT_IMG[r.cat] → CAT_IMG._def`
 - `_IMG_ALIAS` ממופה על ידי `download_images.py` v5.1 (`--inline-alias`)
 - `CAT_IMG` כל הנתיבים מקומיים (`images/site_images/cat-*.jpg`)
@@ -133,7 +142,7 @@
 ```html
 <div class="hdr-brand-v7">
   <span class="hdr-brand-title">ספר הבישול של פרלה</span>
-  <span class="hdr-brand-count"><span id="hdr-count">1,054</span> מתכונים</span>
+  <span class="hdr-brand-count"><span id="hdr-count">1,056</span> מתכונים</span>
 </div>
 ```
 Responsive: במובייל (≤640px) ה-count מוסתר.
@@ -159,7 +168,7 @@ Header → Hero → Bio → Main (רשת מתכונים) → Book-wrapper → Ab
 
 ## v7.1 — הסתרת רשת מתכונים בטעינה (19/04/2026)
 
-**UX fix לבקשת המשתמש:** הדף הראשי הציג מייד את כל 1,054 המתכונים מתחת ל-Bio. זה הסיח את הדעת מהמידע המכונן (ספר, אודות). ב-v7.1:
+**UX fix לבקשת המשתמש:** הדף הראשי הציג מייד את כל 1,056 המתכונים מתחת ל-Bio. זה הסיח את הדעת מהמידע המכונן (ספר, אודות). ב-v7.1:
 
 - **ברירת מחדל:** `<main class="main-hidden">` — הרשת לא נראית
 - **CSS:** `.main-hidden { display: none !important; }`
@@ -296,7 +305,7 @@ const HOLIDAY_TAGS = {
 ### תפריט — 4 קבוצות עליונות
 | # | תווית | מספר | סוג |
 |---|---|---|---|
-| 1 | הכל | 1,054 | leaf |
+| 1 | הכל | 1,056 | leaf |
 | 2 | מרוקו\\ספרד | 744 | accordion (11 sub-items) |
 | 3 | עדות ישראל | 270 | accordion (9 communities × 3 items) |
 | 4 | לא כשר | 40 | leaf |
@@ -304,7 +313,7 @@ const HOLIDAY_TAGS = {
 ### קבועי data בקובץ data.js
 | קבוע | תוכן | גרסה אחרונה |
 |---|---|---|
-| `R` | 1,054 מתכונים | קיים |
+| `R` | 1,056 מתכונים | קיים |
 | `CATS` | 20 קטגוריות | קיים |
 | `MENU_STRUCTURE` | 4 קבוצות עליונות | v7.9 |
 | `HOLIDAY_TAGS` | 10 חגים → 121 IDs יחודיים | v7.7 (תוקן) |
