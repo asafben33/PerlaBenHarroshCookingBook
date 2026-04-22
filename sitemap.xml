@@ -4,7 +4,7 @@
 
   <!-- ════════════════════════════════════════════════════════
   Generated: 2026-04-20
-  Recipes: 1054 | Categories: 20 | Total URLs: ~1079
+  Recipes: 1056 | Categories: 20 | Total URLs: ~1079
   ════════════════════════════════════════════════════════ -->
 
   <!-- ── Primary site URL (Netlify) ── -->
@@ -190,7 +190,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://perlabenharrosh-cookingbook.netlify.app/?lang=en#cat=nonkosher"/>
   </url>
 
-  <!-- ── Individual recipes (1054) — deep links to recipe modals ── -->
+  <!-- ── Individual recipes (1056) — deep links to recipe modals ── -->
   <url>
     <loc>https://perlabenharrosh-cookingbook.netlify.app/#r=s1</loc>
     <changefreq>monthly</changefreq>
