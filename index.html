@@ -8730,6 +8730,28 @@ function buildNav() {
   if (!bar) return;
   bar.innerHTML = '';
 
+  /* v8.37: accordion sibling-close — when the user clicks an accordion
+     header to OPEN it, close every other open accordion at the same DOM
+     depth. Prevents the "everything stays open" stack the user reported.
+     Closing a header from click is unchanged (no siblings touched). */
+  function _closeSiblingAccordions(hdr) {
+    var parent = hdr.parentElement;
+    if (!parent) return;
+    // Walk the direct children only (scope to this nesting level).
+    Array.prototype.forEach.call(parent.children, function(child) {
+      if (child === hdr) return;
+      if (child.classList && child.classList.contains('acc-hdr') && child.classList.contains('open')) {
+        child.classList.remove('open');
+        child.setAttribute('aria-expanded', 'false');
+      }
+      if (child.classList && child.classList.contains('acc-body') && child.classList.contains('open')) {
+        // Each body follows its own hdr — only close if that hdr isn't the one we just clicked.
+        var prev = child.previousElementSibling;
+        if (prev !== hdr) child.classList.remove('open');
+      }
+    });
+  }
+
   function catCnt(id) {
     if (!id) return 0;
     if (typeof id === 'string') return id === 'all' ? R.length : R.filter(function(r) { return r && r.cat === id; }).length;
@@ -9120,9 +9142,11 @@ function buildNav() {
                 }
                 dhdr.addEventListener('click', function(e) {
                   e.stopPropagation();
-                  var o = dbody.classList.toggle('open');
-                  dhdr.classList.toggle('open', o);
-                  dhdr.setAttribute('aria-expanded', o);
+                  var willOpen = !dbody.classList.contains('open');
+                  if (willOpen) _closeSiblingAccordions(dhdr);
+                  dbody.classList.toggle('open', willOpen);
+                  dhdr.classList.toggle('open', willOpen);
+                  dhdr.setAttribute('aria-expanded', willOpen);
                 });
                 nbody.appendChild(dhdr);
                 nbody.appendChild(dbody);
@@ -9144,9 +9168,11 @@ function buildNav() {
             }
             nhdr.addEventListener('click', function(e) {
               e.stopPropagation();
-              var o = nbody.classList.toggle('open');
-              nhdr.classList.toggle('open', o);
-              nhdr.setAttribute('aria-expanded', o);
+              var willOpen = !nbody.classList.contains('open');
+              if (willOpen) _closeSiblingAccordions(nhdr);
+              nbody.classList.toggle('open', willOpen);
+              nhdr.classList.toggle('open', willOpen);
+              nhdr.setAttribute('aria-expanded', willOpen);
             });
             body.appendChild(nhdr);
             body.appendChild(nbody);
@@ -9195,9 +9221,11 @@ function buildNav() {
 
         hdr.addEventListener('click', function(e) {
           e.stopPropagation();
-          var open = body.classList.toggle('open');
-          hdr.classList.toggle('open', open);
-          hdr.setAttribute('aria-expanded', open);
+          var willOpen = !body.classList.contains('open');
+          if (willOpen) _closeSiblingAccordions(hdr);
+          body.classList.toggle('open', willOpen);
+          hdr.classList.toggle('open', willOpen);
+          hdr.setAttribute('aria-expanded', willOpen);
         });
 
         row.appendChild(hdr);
