@@ -8783,7 +8783,6 @@ function buildNav() {
     function walk(items) {
       if (!items) return;
       items.forEach(function(sub) {
-        if (sub.placeholder) return;
         if (sub.items) walk(sub.items);
         if (sub.sub)   walk(sub.sub);
         // Holiday filter (Morocco): {id:'hol', h:'shabbat', ...}
@@ -8934,23 +8933,11 @@ function buildNav() {
         return;
       }
 
-      // v7.0: Placeholder (Option C — חגי העדות "בקרוב")
-      if (item.placeholder) {
-        var phBtn = document.createElement('button');
-        phBtn.className = 'pc';
-        phBtn.style.opacity = '.55';
-        phBtn.style.cursor = 'help';
-        phBtn.setAttribute('role', 'menuitem');
-        phBtn.innerHTML = esc(item.lbl);
-        phBtn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          if (typeof showToast === 'function') {
-            showToast('חגי העדות יתווספו בעתיד');
-          }
-        });
-        row.appendChild(phBtn);
-        return;
-      }
+      // v8.39: v7.0 "חגי העדות — בקרוב" placeholder rendering removed.
+      // COMMUNITY_HOLIDAY_TAGS was populated in v7.4 (221 mappings) and
+      // each community now ships "מאכלי חגים" with real holiday chips,
+      // so `placeholder:'communityHolidays'` was dropped from data.js and
+      // this render path became unreachable dead code.
 
       // v7.2: Community-holiday combo (e.g., עיראק × פסח)
       if (item.communityHoliday && item.holidayKey) {
@@ -9308,8 +9295,8 @@ function buildNav() {
         items.forEach(function(it) {
           if (it.items) walk(it.items);
           if (it.sub)   walk(it.sub);
-          // Skip filter-only entries (holiday tag, community-holiday, placeholders)
-          if (it.h || it.holidayKey || it.communityHoliday || it.placeholder) return;
+          // Skip filter-only entries (holiday tag, community-holiday)
+          if (it.h || it.holidayKey || it.communityHoliday) return;
           if (Array.isArray(it.ids)) {
             it.ids.forEach(function(x) {
               if (/[0-9]/.test(x)) ridSet[x] = true; else catSet[x] = true;
