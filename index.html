@@ -2092,15 +2092,27 @@ html.light .footer-sub { color: #4e1f0a; font-weight: 500; }
   box-shadow: var(--sh-lg);
 }
 .fb-fab svg { width: 18px; height: 18px; flex-shrink: 0; }
+/* v8.35: "הערה / תיקון" styled like the floating .fb-fab so it clearly
+   signals the feedback action, but keeps the .m-act-media size (padding /
+   font-size) of the neighbouring הדפס / PDF / שתף / תמונה buttons. */
 .m-act-media.fb-recipe-btn {
-  background: rgba(184,66,35,.12);
-  border-color: rgba(184,66,35,.35);
-  color: var(--c-spice-d);
+  background: var(--c-spice);
+  border-color: var(--c-gold);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: var(--sh-sm);
 }
 .m-act-media.fb-recipe-btn:hover {
-  background: rgba(184,66,35,.25);
-  color: var(--c-spice);
+  background: var(--c-spice-d);
+  border-color: var(--c-gold-l);
+  color: #fff;
+  box-shadow: var(--sh-md);
 }
+.m-act-media.fb-recipe-btn:focus-visible {
+  outline: 2px solid var(--c-gold-l);
+  outline-offset: 2px;
+}
+.m-act-media.fb-recipe-btn svg { stroke: currentColor; }
 @media (max-width: 480px) {
   .fb-ovl { padding: 0; align-items: flex-end; }
   .fb-box { max-height: 95vh; border-radius: var(--r-lg) var(--r-lg) 0 0; }
