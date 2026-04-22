@@ -379,6 +379,32 @@ html.light .bg-light-layer { display: block; }
 .acc-body.open { display: flex; }
 .acc-sep { width: 100%; height: 1px; background: rgba(196,147,10,.12); margin: .15rem 0; }
 
+/* v8.36: accordion UX polish —
+   1. Nested accordions get a slightly darker background and a right-side
+      border stripe so the user can see tree depth at a glance (RTL).
+   2. An accordion header whose subtree contains the active selection
+      gets a muted gold ring so the user finds it quickly when reopening. */
+.acc-body .acc-hdr { font-size: .88rem; padding: .4rem 1rem; }
+.acc-body .acc-body { background: rgba(0,0,0,.3); padding: .5rem .75rem; border-right: 2px solid rgba(196,147,10,.18); }
+.acc-body .acc-body .acc-hdr { font-size: .82rem; padding: .36rem .9rem; }
+.acc-hdr.has-active-child {
+  border-color: rgba(196,147,10,.7);
+  box-shadow: inset 0 0 0 1px rgba(196,147,10,.35);
+  background: rgba(196,147,10,.1);
+}
+
+/* v8.36: make the panel's internal scrollbar visible and on-brand so users
+   know the panel is scrollable when a large community is expanded. */
+.nav-panel::-webkit-scrollbar { width: 10px; }
+.nav-panel::-webkit-scrollbar-track { background: rgba(0,0,0,.25); }
+.nav-panel::-webkit-scrollbar-thumb {
+  background: rgba(196,147,10,.35);
+  border-radius: 10px;
+  border: 2px solid rgba(0,0,0,.25);
+}
+.nav-panel::-webkit-scrollbar-thumb:hover { background: rgba(196,147,10,.55); }
+.nav-panel { scrollbar-color: rgba(196,147,10,.35) rgba(0,0,0,.25); scrollbar-width: thin; }
+
 /* ── Hero ─────────────────────────────────────────────────── */
 .hero {
   direction: rtl;
@@ -9068,15 +9094,30 @@ function buildNav() {
                   if (ds.ids) {
                     var isdr = ds.ids.length > 0 && /[0-9]/.test(ds.ids[0]);
                     var _dr = ds.ids, _dl = ds.lbl;
+                    // v8.36: replace hardcoded `false` active — compute the
+                    // real active state so a selection inside a 3rd-level
+                    // accordion highlights the chip (and, via the parent
+                    // has-active-child rule above, the enclosing accordion).
+                    var _dActive = isdr
+                      ? (ACT_IDS && _dr.every(function(r){ return ACT_IDS.has(r); }) && _dr.length === ACT_IDS.size)
+                      : isActiveLeaf(null, null, _dr);
                     dbody.appendChild(makeChip(ds.lbl, isdr ? ds.ids.length : catCnt(ds.ids),
                       function() { if (isdr) selectByIds(_dr, _dl, node.key); else selectMulti(_dr, _dl, node.key); },
-                      false));
+                      _dActive));
                   } else if (ds.id) {
                     dbody.appendChild(makeChip(ds.lbl, catCnt(ds.id),
                       function() { selectCat(ds.id, ds.h || null, node.key); },
                       isActiveLeaf(ds.id, ds.h || null, null)));
                   }
                 });
+                // v8.36: auto-expand 3rd-level accordion if its subtree
+                // contains the active selection.
+                if (typeof _itemHasActive === 'function' && _itemHasActive(ns)) {
+                  dbody.classList.add('open');
+                  dhdr.classList.add('open');
+                  dhdr.classList.add('has-active-child');
+                  dhdr.setAttribute('aria-expanded', 'true');
+                }
                 dhdr.addEventListener('click', function(e) {
                   e.stopPropagation();
                   var o = dbody.classList.toggle('open');
@@ -9093,6 +9134,14 @@ function buildNav() {
                 isActiveLeaf(ns.id, ns.h || null, null)));
             });
 
+            // v8.36: auto-expand nested accordion if it contains the active
+            // selection, and highlight its header via .has-active-child.
+            if (typeof _itemHasActive === 'function' && _itemHasActive(s)) {
+              nbody.classList.add('open');
+              nhdr.classList.add('open');
+              nhdr.classList.add('has-active-child');
+              nhdr.setAttribute('aria-expanded', 'true');
+            }
             nhdr.addEventListener('click', function(e) {
               e.stopPropagation();
               var o = nbody.classList.toggle('open');
@@ -9126,10 +9175,23 @@ function buildNav() {
             isActiveLeaf(s.id, s.h || null, null)));
         });
 
-        // Auto-open if child active
-        var childActive = (item.id && ACT_CAT === item.id)
-          || (item.sub && item.sub.some(function(s) { return s.h && ACT_HOLIDAY === s.h; }));
-        if (childActive) { body.classList.add('open'); hdr.classList.add('open'); hdr.setAttribute('aria-expanded', 'true'); }
+        // Auto-open if any child is the active selection.
+        // v8.36 fixes: MENU_STRUCTURE uses `.items` everywhere — the original
+        // check on `.sub` never matched, so the panel never auto-expanded to
+        // reveal an active holiday or community-holiday chip when reopened.
+        function _itemHasActive(it) {
+          if (!it) return false;
+          if (it.id && ACT_CAT === it.id && !ACT_HOLIDAY) return true;
+          if (it.h && ACT_HOLIDAY === it.h && ACT_CAT === it.id) return true;
+          if (it.communityHoliday && it.holidayKey
+              && ACT_CAT === it.communityHoliday && ACT_HOLIDAY === it.holidayKey) return true;
+          if (Array.isArray(it.ids) && ACT_IDS && it.ids.length === ACT_IDS.size
+              && it.ids.every(function(x) { return ACT_IDS.has(x); })) return true;
+          var kids = it.items || it.sub;
+          return Array.isArray(kids) && kids.some(_itemHasActive);
+        }
+        var childActive = (item.id && ACT_CAT === item.id) || _itemHasActive(item);
+        if (childActive) { body.classList.add('open'); hdr.classList.add('open'); hdr.setAttribute('aria-expanded', 'true'); hdr.classList.add('has-active-child'); }
 
         hdr.addEventListener('click', function(e) {
           e.stopPropagation();
