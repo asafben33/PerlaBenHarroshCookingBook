@@ -2,7 +2,7 @@
 
 ## HLD — High Level Design
 
-**גרסה 7.1 | 19 אפריל 2026**
+**גרסה 8.38 | 22 אפריל 2026**
 
 *לזכרם של פרלה ופנחס בן הראש ז״ל שזכרונם יהיה לברכה וגאווה הלאה לדורי דורות*
 *דרך הטעם המעלה זכרונות שכמעט שכחנו...*
@@ -14,15 +14,32 @@
 | GitHub Pages | https://asafben33.github.io/PerlaBenHarroshCookingBook/ |
 | Branch | main |
 | Deployment | push ידני (ללא CI/CD) |
-| גרסה נוכחית | 7.1 (19/04/2026) |
-| גרסה קודמת | 7.0 (19/04/2026) — שיפוץ דף ראשי, MENU_STRUCTURE flat 6-group |
+| גרסה נוכחית | 8.38 (22/04/2026) |
+| גרסת מסמך קודמת | 7.1 (19/04/2026) — תוכן הליבה של המסמך נכתב סביב v7.1 |
 | גרסת בסיס | 5.0 (אפריל 2026) |
+
+---
+
+## 0. ציון דרך — v7.1 → v8.38 (רענון currency)
+
+תוכן ה-HLD שלהלן נכתב בעיקר סביב v7.1. מ-v7.2 ואילך בוצעו שינויים רבים שמתועדים **סמכותית ב-`docs/CLAUDE.md`** (וב-CHANGELOGs פר-גרסה). תקציר ההבדלים העיקריים מול ה-HLD שלהלן:
+
+- **ספירת מתכונים:** 1,054 → **1,056** (v8.3 הרחיב +2).
+- **קבועי data.js חדשים:**
+  - `COMMUNITY_HOLIDAY_TAGS` (v7.2) — 221 מיפויי עדה×חג.
+  - `HOLIDAY_TAGS` תוקן ל-121 מיפויים יחודיים (v7.7 — היה bug של 80×10 חזרות זהות).
+- **MENU_STRUCTURE:** מ-6 קבוצות (v7.0) → **4 קבוצות** (v7.9 — איחוד מרוקו+ספרד). חגי העדה יושמו בפועל ב-v7.4 (ה-placeholder "בקרוב" מוסר סופית ב-v8.39).
+- **אבטחה (v8.26–v8.28):** חיזוק CSP/HSTS/COOP/CORP, SRI על CDN scripts, path anchoring.
+- **קורא ספר 3D (v8.17–v8.32):** גלגולים רבים של StPageFlip — **הוסר סופית ב-v8.33**. נשאר רק "מצב טקסט" (long-form scroll) inline ב-`#book-wrapper`.
+- **UX תפריט (v8.34–v8.38):** chips קטנים יותר, auto-expand של branch פעיל, depth cues, scrollbar בזהב, mutual exclusion של accordions אחים, focused-view (הסתרת אחים סגורים ב-CSS `:has()`).
+
+לפני שתסתמך על פרט טכני ב-HLD הזה לצורך קוד — **אמת מול המצב בפועל ב-`index.html` / `data.js`** או מול CLAUDE.md המעודכן.
 
 ---
 
 ## 1. מבוא ומטרת המערכת
 
-ספר הבישול של משפחת בן הראש הוא אתר ווב סטטי המתעד 1,054 מתכונים אותנטיים מהמטבח המרוקאי, הספרדי-יהודי, ומטבחי יהדות המזרח — כולל 40 מתכונים לא כשרים בקטגוריה ייעודית. האתר נבנה כמסמך דיגיטלי חי, המשמר מורשת קולינרית של יהדות קזבלנקה ומרקש, תוך שילוב השפעות ספרדיות ממשפחת קארו — צאצאי מגורשי ספרד 1492 — ומתכונים שנלמדו מהשכנים והחברים שעטפו את המשפחה באהבה בשכונת הקטמון בירושלים.
+ספר הבישול של משפחת בן הראש הוא אתר ווב סטטי המתעד 1,056 מתכונים אותנטיים מהמטבח המרוקאי, הספרדי-יהודי, ומטבחי יהדות המזרח — כולל 40 מתכונים לא כשרים בקטגוריה ייעודית. האתר נבנה כמסמך דיגיטלי חי, המשמר מורשת קולינרית של יהדות קזבלנקה ומרקש, תוך שילוב השפעות ספרדיות ממשפחת קארו — צאצאי מגורשי ספרד 1492 — ומתכונים שנלמדו מהשכנים והחברים שעטפו את המשפחה באהבה בשכונת הקטמון בירושלים.
 
 ### 1.1 מטרות עיקריות
 
@@ -51,8 +68,8 @@
 | מאפיין | ערך | תיאור |
 |---|---|---|
 | `index.html` | 359 KB | SPA — UI, CSS, JS, מילון, כותרות EN, HTML של הספר, מערכת פידבק |
-| `data.js` | 1,389 KB | 1,054 מתכונים, CATS, MENU_STRUCTURE, HOLIDAY_TAGS |
-| `pre_en.js` | 782 KB | תרגום EN מוכן: 1,054 × 5 שדות, 0 עברית |
+| `data.js` | 1,389 KB | 1,056 מתכונים, CATS, MENU_STRUCTURE, HOLIDAY_TAGS, COMMUNITY_HOLIDAY_TAGS (v7.2+) |
+| `pre_en.js` | 782 KB | תרגום EN מוכן: 1,056 × 5 שדות, 0 עברית |
 | `book_data.js` | ~80 KB | תוכן הספר "על שביל האהבה ממרוקו לירושלים" (HE + EN) |
 | `about_redesigned.css` | ~20 KB | עיצוב סקציית "אודות" החדשה |
 | `about_redesigned.html` | ~15 KB | HTML של סקציית אודות |
@@ -61,7 +78,7 @@
 | `manifest.json` | 575 B | PWA manifest |
 | `download_images.py` | ~152 KB | Unified v5.1 — Clean + Download + Dedup + Alias |
 | **סה"כ נתונים** |  |  |
-| מתכונים | 1,054 | כולל 40 לא כשרים (`nk_*`) |
+| מתכונים | 1,056 | כולל 40 לא כשרים (`nk_*`) |
 | קטגוריות | 19 | כולל `nonkosher` |
 | חגים | 10 | HOLIDAY_TAGS — רשימות ID |
 | תלויות JS runtime | 0 | Vanilla JS — ללא React/Vue/Node |
@@ -74,7 +91,7 @@
 |---|---|---|
 | **Presentation** | HTML5 + CSS3 | HTML semantic, Grid/Flex, RTL, 34 Custom Properties, Frank Ruhl Libre + Heebo fonts |
 | **Application** | JavaScript ES6+ | 60+ פונקציות: ניווט, סינון, מדיה, מודאל, חיפוש, תרגום, feedback system |
-| **Data** | `data.js` + `pre_en.js` + `book_data.js` | 1,054 מתכונים + CATS + MENU + HOLIDAYS + translations + book content |
+| **Data** | `data.js` + `pre_en.js` + `book_data.js` | 1,056 מתכונים + CATS + MENU + HOLIDAY_TAGS + COMMUNITY_HOLIDAY_TAGS + translations + book content |
 | **Storage (client)** | `localStorage` | העדפות: שפה, נושא, מדיה אישית, מועדפים, ביטול סרטונים |
 | **Cache** | `sw.js` | Service Worker — network-first HTML, cache-first images |
 | **Forms/Feedback** | Netlify Forms | טופס פידבק — אימייל מוסתר ב-Dashboard בלבד |
@@ -124,27 +141,28 @@
 
 | קבוצה | `key` | סוג | מתכונים | עומק |
 |---|---|---|---|---|
-| **הכל** | `all` | leaf | 1,054 | 0 |
+| **הכל** | `all` | leaf | 1,056 | 0 |
 | **מרוקו** | `morocco` | 8 cat-IDs + 7 items (אחד nested) | 671 | 2 (מנות עיקריות → בשר/עוף/דגים) |
 | **ספרד** | `spain` | 73 recipe-IDs + 9 items | 73 | 1 |
 | **עדות ישראל** | `communities` | 9 cat-IDs + 10 items + placeholder | 270 | 2 (מטבח ישראלי → 4 תתי) |
 | **חגים** | `holidays` | `['hol']` + 11 items | 80 | 1 |
 | **לא כשר** | `nonkosher` | 40 recipe-IDs + 3 items | 40 | 1 |
-| **סה"כ** | | | **1,054** | max 2 |
+| **סה"כ** | | | **1,056** | max 2 |
 
-### Option C — חגי העדה (v7.0)
+### Option C — חגי העדה (**יושם ב-v7.4**, ה-placeholder הוסר ב-v8.39)
 
-תחת "עדות ישראל" יש item מיוחד עם `placeholder:'communityHolidays'`. בעת לחיצה — במקום סינון רגיל — נקרא `showToast()` עם הודעה: *"מתכונים לחגי העדות יתווספו בעתיד. כרגע רק מתכוני מרוקו מתויגים לחגים."* זאת כיוון שתיוג חגים של 270 מתכוני עדות דורש ידע משפחתי אמיתי שיסופק בעתיד.
+תיוג חגי-עדה הועבר מ-placeholder (`placeholder:'communityHolidays'`) ליישום מלא:
+`COMMUNITY_HOLIDAY_TAGS` (v7.2) — **221 מיפויי עדה×חג** (9 עדות × עד 9 חגים, ללא מימונה — היא מרוקאית בלעדית). כל accordion של עדה כולל תיקייה "מאכלי חגים" עם chips לשבת/ראש השנה/פסח וכו'. `selectCommunityHoliday()` מבצע את הסינון. ה-render של ה-placeholder הוסר ב-v8.39 (PR #17).
 
 ### 4.1 תרשים ניווט מלא (v7.0)
 
 ```
 ┌──────────┬──────────┬──────────┬──────────────┬──────────┬──────────┐
 │  הכל     │  מרוקו   │  ספרד    │  עדות ישראל  │  חגים    │  לא כשר  │
-│  1,054   │   671    │   73     │     270      │    80    │    40    │
+│  1,056   │   671    │   73     │     270      │    80    │    40    │
 └──────────┴──────────┴──────────┴──────────────┴──────────┴──────────┘
 
-[הכל] → leaf (1,054 מתכונים, id:'all')
+[הכל] → leaf (1,056 מתכונים, id:'all')
 
 [מרוקו ▼] — 671 (ids: 8 cat-IDs)
 ├── הכל (671)
@@ -244,32 +262,36 @@
 
 ---
 
-## 6. חגים ומועדים — HOLIDAY_TAGS
+## 6. חגים ומועדים — HOLIDAY_TAGS (תוקן ב-v7.7)
 
-מתכון יכול להופיע במספר חגים בו-זמנית. `HOLIDAY_TAGS` הם מפה של `{holiday_id: [recipe_ids]}`:
+מתכון יכול להופיע במספר חגים בו-זמנית. `HOLIDAY_TAGS` הם מפה של `{holiday_id: [recipe_ids]}`.
 
-| `id` | שם (HE) | שם (EN) | מתכונים |
+**הערה היסטורית:** עד v7.6 כל החגים הכילו את אותם 80 המתכונים (bug — regex זהה לכל החגים). ב-v7.7 בוצע תיוג אמיתי מבוסס regex על כותרות 671 מתכוני מרוקו + מסורת יהודית-מרוקאית מתועדת:
+
+| `id` | שם (HE) | שם (EN) | מתכונים (v7.7+) |
 |---|---|---|---|
-| `shabbat` | שבת | Shabbat | 80 |
-| `rosh` | ראש השנה | Rosh Hashanah | 80 |
-| `kippur` | יום כיפור | Yom Kippur | 80 |
-| `pesach` | פסח | Passover | 80 |
-| `mimouna` | מימונה | Mimouna | 80 |
-| `hanukkah` | חנוכה | Hanukkah | 80 |
-| `purim` | פורים | Purim | 80 |
-| `shavuot` | שבועות | Shavuot | 80 |
-| `sukkot` | סוכות | Sukkot | 80 |
-| `henna` | חינה | Henna | 80 |
+| `shabbat` | שבת | Shabbat | 54 |
+| `rosh` | ראש השנה | Rosh Hashanah | 14 |
+| `kippur` | יום כיפור | Yom Kippur | 0 |
+| `pesach` | פסח | Passover | 4 |
+| `mimouna` | מימונה | Mimouna | 7 |
+| `hanukkah` | חנוכה | Hanukkah | 2 |
+| `purim` | פורים | Purim | 1 |
+| `shavuot` | שבועות | Shavuot | 12 |
+| `sukkot` | סוכות | Sukkot | 27 |
+| `henna` | חינה | Henna | 14 |
+
+**סה"כ: 121 תיוגים יחודיים / 671 מתכוני מרוקו (18%).** חגי-עדה (לא-מרוקאיים) מתויגים ב-`COMMUNITY_HOLIDAY_TAGS` (ראה סעיף 0 למעלה).
 
 ---
 
 ## 7. מנגנון תרגום לאנגלית — 3 שכבות
 
 ### שכבה 1: `_TITLE_EN`
-1,054 כותרות אנגליות. 367 תוקנו לשמות מאכלים מקוריים: Zaalouk, Matbucha, Taktouka, Mofletta, Albondigas, Gazpacho, Sfenj, Kubbeh, Shakshuka, Falafel, Jachnun, Malawach, Sabich.
+1,056 כותרות אנגליות. 367 תוקנו לשמות מאכלים מקוריים: Zaalouk, Matbucha, Taktouka, Mofletta, Albondigas, Gazpacho, Sfenj, Kubbeh, Shakshuka, Falafel, Jachnun, Malawach, Sabich.
 
 ### שכבה 2: `_PRE_EN` (pre_en.js)
-1,054 מתכונים × 5 שדות: `d` (desc), `m` (mem), `t` (tip), `st` (steps), `ig` (ingr). אפס תווי עברית. נבנה אוטומטית מ-`_FOOD_DICT`.
+1,056 מתכונים × 5 שדות: `d` (desc), `m` (mem), `t` (tip), `st` (steps), `ig` (ingr). אפס תווי עברית. נבנה אוטומטית מ-`_FOOD_DICT`.
 
 ### שכבה 3: `_FOOD_DICT`
 2,853 ערכי מילון עברית-אנגלית עם מנוע morphological matching:

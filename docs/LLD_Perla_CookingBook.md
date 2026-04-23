@@ -2,17 +2,19 @@
 
 ## LLD — Low Level Design
 
-**גרסה 7.1 | 19 אפריל 2026**
+**גרסה 8.38 | 22 אפריל 2026**
 
 *מפרט טכני מלא ומפורט — כל שכבות הקוד, כל פונקציה, כל קומפוננטה*
 
 | פרט | ערך |
 |---|---|
 | Repository | github.com/asafben33/PerlaBenHarroshCookingBook |
-| גרסה נוכחית | 7.1 (19/04/2026) |
-| גרסה קודמת | 7.0 (19/04/2026) — שיפוץ דף ראשי, MENU_STRUCTURE flat |
-| גרסת `index.html` | ~375 KB |
+| גרסה נוכחית | 8.38 (22/04/2026) |
+| גרסת מסמך קודמת | 7.1 (19/04/2026) — תוכן הליבה נכתב סביב v7.1; יש נספח v8.0 בסוף + נספח v8.1→v8.38 מעודכן |
+| גרסת `index.html` | ~515 KB (אחרי הסרת קורא ספר 3D ב-v8.33) |
 | גרסת `download_images.py` | 5.1 (152 KB) |
+
+> **Currency:** תוכן הסעיפים הבאים משקף את המצב ב-v7.1. מסמך הסמכות ל-v7.2→v8.38 הוא `docs/CLAUDE.md` + ה-CHANGELOGs. ראה גם נספח v8.1→v8.38 בסוף מסמך זה. **לפני שינוי קוד על סמך סעיף במסמך זה — אמת מול הקוד ב-`index.html` / `data.js`.**
 
 ---
 
@@ -942,7 +944,7 @@ _PRE_EN = {
       { q: "3 cloves", i: "garlic" }
     ]
   },
-  // ... 1,054 entries
+  // ... 1,056 entries
 }
 ```
 
@@ -1305,7 +1307,7 @@ form-action 'self' https://formsubmit.co;  /* v6.4: added formsubmit (form targe
   "@type": "WebSite",
   "name": "ספר הבישול של משפחת בן הראש",
   "url": "https://perlabenharrosh-cookingbook.netlify.app/",
-  "description": "1,054 מתכונים מרוקאיים, ספרדיים ויהודיים אותנטיים",
+  "description": "1,056 מתכונים מרוקאיים, ספרדיים ויהודיים אותנטיים",
   "image": "https://perlabenharrosh-cookingbook.netlify.app/images/site_images/og-image.jpg",
   "inLanguage": "he-IL",
   "potentialAction": {
@@ -2046,7 +2048,7 @@ python3 -c "raw=open('index.html','rb').read(); print('CRLF',raw.count(b'\r\n'),
 ```bash
 node -c data.js                                    # data.js syntax
 python3 -c "[extract main JS, run node -c on it]"  # index.html JS syntax
-grep -c "מתכונים שיש" data.js | head -1            # recipes count = 1054
+grep -c "מתכונים שיש" data.js | head -1            # recipes count = 1056
 grep -c "705d4207-c4a6-43a2-8fdc-d8e202bc6c9c" index.html  # Web3Forms key intact
 grep -c "morocco_span" data.js                     # v7.9 merged
 grep -c "nav_morocco_span:" index.html             # v8.0 i18n wired
@@ -2055,7 +2057,65 @@ grep -c "html.light .hdr-brand-v7" index.html      # v8.0 light theme
 
 ---
 
+## נספח — מחזור v8.1 → v8.38 (רענון currency, 22/04/2026)
+
+הסעיפים הקודמים (v7.1 + נספח v8.0) מתארים את ה-LLD של הבסיס. מ-v8.1 בוצעו שינויים שמתועדים סמכותית ב-`docs/CLAUDE.md`. תקציר פערים שחשוב לדעת לפני עריכת קוד:
+
+### שינויים ב-data.js
+
+- **ספירת מתכונים: 1,054 → 1,056** (v8.3 הרחיב +2 מתכונים, audit נקי ב-v8.4).
+- `HOLIDAY_TAGS` תוקן ב-v7.7 (בוצע לפני v8 אבל נזכר כאן לשלמות): מ-80×10 מתכונים זהים (bug) ל-121 תיוגים יחודיים.
+- `COMMUNITY_HOLIDAY_TAGS` (v7.2): 221 מיפויי עדה×חג (9 עדות, ללא מימונה).
+- **חינה הוסרה** מעדות שלא עושות (`ashk`, `isr`) ב-v8.28.
+
+### שינויים ב-index.html
+
+- **גודל:** ~515 KB (אחרי הסרת ~1,380 שורות CSS/JS של קורא ספר 3D ב-v8.33).
+- **קורא ספר 3D (StPageFlip) הוסר סופית ב-v8.33.** הנכסים `js/page-flip-2.0.7-patched.js` ו-`images/site_images/book-cover-leather.svg` נמחקו. הספר נשאר במצב "טקסט" בלבד (long-form scroll) inline ב-`#book-wrapper`.
+- **אבטחה (v8.26–v8.28):** CSP מחוזק עם frame-ancestors ב-`_headers`; HSTS עם preload; COOP/CORP; SRI על CDN scripts; YouTube → `youtube-nocookie.com`.
+
+### ניווט — 5 תיקוני UX (v8.34 → v8.38)
+
+ראה `docs/CLAUDE.md` — "מה השתנה מאז v8.0" לפירוט מלא. תקציר:
+
+| גרסה | שינוי | מיקום |
+|---|---|---|
+| v8.34 | `.pc-row` / `.acc-hdr` chips קטנים ~30% | CSS ~שורות 326-380 |
+| v8.35 | כפתור "הערה/תיקון" במודאל מתכון בצבעוניות FAB (זהב/תבלינים) | recipe modal CSS |
+| v8.36 | `_itemHasActive()` רקורסיבי — auto-expand של branch פעיל + depth cues + scrollbar בזהב | `buildPanel` |
+| v8.37 | `_closeSiblingAccordions()` — פתיחת accordion סוגרת אחים | `buildPanel` event handler |
+| v8.38 | Focused-view — CSS `:has()` מסתיר אחים סגורים כשאחד פתוח | CSS `:is(.panel-row, .acc-body):has(> .acc-hdr.open) > ...:not(.open) { display:none }` |
+| v8.39 | הסרת render path של placeholder `communityHolidays` (dead code — הוחלף ב-v7.4) | `buildPanel` + `panelCnt` + `_itemHasActive` |
+
+### Service Worker
+
+- `CACHE_NAME` התקדם דרך v10 → v19 (v19 לאחר הסרת הספר ב-v8.33).
+- `SHELL` מכיל את הקבצים הבסיסיים בלבד; תמונות נטענות cache-first.
+
+### פונקציות חדשות ב-index.html (v8.3x)
+
+| פונקציה | תפקיד |
+|---|---|
+| `_itemHasActive(it)` | walker רקורסיבי — בודק אם פריט MENU (או צאצא שלו) תואם state נוכחי (`ACT_CAT`/`ACT_HOLIDAY`/`ACT_IDS`) כדי לפתוח אוטומטית accordion |
+| `_closeSiblingAccordions(hdr)` | סוגר אחים בתוך `.panel-row` או `.acc-body` — mutual exclusion |
+| `panelCnt(item)` | (קיים) walker רקורסיבי לספירת מתכונים בתת-עץ של MENU |
+
+### הודות דחויות / לא בוצעו
+
+- **SEO verification codes** (Google Search Console, Bing, Yandex) ב-`index.html:31-33` עדיין `REPLACE-WITH-...`. דורש התחברות של המשתמש לכל קונסולה.
+- **RTL לספר** — StPageFlip v2.0.7 לא תומך native. נזנח ב-v8.33 עם הסרת הספר.
+
+### מי מכניס שינוי חדש — checklist
+
+1. אם משנים `MENU_STRUCTURE`: לעדכן גם `_NAV_I18N` ב-`index.html` וגם `DICT`.
+2. אם מוסיפים פריט נבחר-אוטומטית: לוודא ש-`_itemHasActive` מטפל בסוג החדש (id/h/communityHoliday+holidayKey/ids).
+3. אם משנים chips של ניווט: ודא שה-focused-view (v8.38) עדיין עובד — CSS `:has()` מתבסס על `.acc-hdr` / `.acc-body` / `.panel-row`.
+4. אחרי שינוי ב-CSS/JS: הגדל `CACHE_NAME` ב-`sw.js`.
+5. אחרי שינוי ב-`data.js`: `node -c data.js` לפני commit.
+
+---
+
 *לזכר משפחת בן הראש — קזבלנקה, מרקש, ירושלים*
 *"האוכל שלה — הסיפור שלנו"*
 
-**סוף LLD v7.1 + נספח v8.0**
+**סוף LLD v7.1 + נספח v8.0 + נספח v8.1→v8.38**
