@@ -50,7 +50,7 @@
 
 | קטע | תיאור | שורות משוערות |
 |---|---|---|
-| `<head>` | meta tags (CSP, OG, Twitter, JSON-LD, icons, SEO verification, manifest) | 1-80 |
+| `<head>` | meta tags (CSP, OG, Twitter, JSON-LD, icons, manifest, sitemap link) | 1-80 |
 | `<style>` inline | CSS מלא — tokens, layout, components, print, dark/light theme, @media queries | 80-~3000 |
 | `<body>` | Skip link + Header + Hero + Bio + Main + Book + About | ~3000-3080 |
 | Global state | `let ACT_CAT`, `ACT_HOLIDAY`, `ACT_IDS`, ... | ~3083 |

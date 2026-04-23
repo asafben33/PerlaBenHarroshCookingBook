@@ -514,13 +514,11 @@ GitHub Pages: action → deploy ל-asafben33.github.io
 | GitHub Pages (mirror) | `https://asafben33.github.io/PerlaBenHarroshCookingBook/` |
 | Branch | `main` |
 | Deployment | push אוטומטי (ללא CI/CD חיצוני) |
-| SEO verification | Google Search Console (active), Bing/Yandex (pending) |
 
 ### 11.3 פעולות הפעלה חד-פעמיות
 
 - **Web3Forms:** כבר הופעל — הודעות מגיעות ישירות.
-- **Google Search Console:** אומת ב-v8.38 (meta tag `google-site-verification`).
-- **Sitemap:** `sitemap.xml` מכיל 6 URLs + hreflang he/en; יש להגיש ל-Search Console ידנית.
+- **Sitemap:** `sitemap.xml` קיים אם יהיה רצון להגיש למנועי חיפוש בעתיד (לא בפוקוס הנוכחי).
 
 ---
 
@@ -549,7 +547,6 @@ GitHub Pages: action → deploy ל-asafben33.github.io
 - Twitter Card: `summary_large_image`.
 - JSON-LD (Schema.org): `WebSite` + `description` + author = "אסף בן הראש".
 - `sitemap.xml` (6 URLs, hreflang he/en) + `robots.txt`.
-- `<meta name="google-site-verification">` + slot ל-Bing/Yandex.
 - Lazy loading: `loading="lazy"`, `decoding="async"`, `fetchPriority="low"`.
 
 ---
