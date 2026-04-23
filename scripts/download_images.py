@@ -1,12 +1,30 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-download_images.py — Perla Ben-Harrosh z"l Cookbook  (v6.0 — PRECISION)
+download_images.py — Perla Ben-Harrosh z"l Cookbook  (v6.1 — TIGHTENED FILTERS)
 =======================================================================
 מטרת הסקריפט (עברית):
   הורדה אוטומטית של תמונות מתכון *מדויקות* לכל אחד מ-1,054 המתכונים באתר.
   v6.0 משדרג את אלגוריתם הדיוק ב-7 שכבות נוספות כדי להבטיח שתמונה תעבור
   אך ורק אם היא צילום של *המתכון המוכן* — לא נופים, לא אנשים, לא חומרי גלם.
+
+עדכוני v6.1 (תגובה ל-26 תמונות לא-רלוונטיות שעברו את הפילטר ב-v6.0):
+  • _BAD_URL_KW הורחבה ב-~40 ביטויים: author/contributor/staff-photo/byline/avatar
+    (דיוקנאות כותבים), whisk/spatula/thermometer/mixing-bowl (כלי מטבח לבד),
+    screenshot/screengrab (צילומי מסך), packaging/product-page (אריזות),
+    clipart/silhouette/flat-icon (איורים שטוחים), empty-pan/empty-bowl (שלבי הכנה).
+  • _is_food_image_by_pixels: מינימום גודל 3KB → 8KB (מסנן אייקונים קטנים).
+  • _has_landscape_color_signature: סף אנטרופיה 5.0 → 5.5 (מסנן איורים שטוחים).
+
+עדכוני v6.1.1 — חיזוק סינון תמונות אנשים (המשך תגובה לתמונות שעברו):
+  • _BAD_URL_KW הורחבה ב-~25 ביטויי אנשים נוספים: chef-photo, food-blogger,
+    kitchen-staff, grandma/grandfather, waiter/waitress, hand-holding, eating,
+    beard, makeup, wearing-apron.
+  • _score_url_relevance — שכבה 3b חדשה: דחייה מבוססת-נתיב (-40 ניקוד)
+    ל-/people/, /team/, /staff/, /author/, /about-us/, /headshots/ וכו'.
+    פותר פער שבו `/author/jane.jpg` לא נתפס כי שם הקובץ ללא מילת-מפתח.
+  • _is_food_image_by_pixels — יחס ממדי פורטרט מוחמר:
+    אם ratio בין 0.55-0.75 ו-גובה > 900px → דחייה (דיוקן מקצועי קלאסי).
 
 שכבות הדיוק החדשות ב-v6.0:
   שכבה 1 (חדש)  — Relevance Scoring (0-100): כל תמונה מקבלת ניקוד במקום go/no-go
@@ -2204,6 +2222,13 @@ _BAD_URL_KW = [
     'smile','smiling','laughing','pose','posing','portrait-photography',
     'businesswoman','businessman','entrepreneur','engineer','doctor','nurse',
     'actor','actress','celebrity','influencer','blogger','youtuber',
+    # v6.1 — additional people-image signals that slipped through
+    'portraits','faces','hands','hand-holding','eating','drinking',
+    'chef-photo','chef-photos','chef-at-work','chef-cooking','chef-smiling',
+    'kitchen-staff','food-blogger','food-critic','food-writer','food-photographer',
+    'baker-portrait','mom','grandma','grandmother','grandfather','grandpa',
+    'customer','diner','guest','waiter','waitress','hostess',
+    'beard','haircut','makeup','glasses-face','wearing-apron',
     # Events / ceremonies (NOT food-focused)
     'party-people','birthday-party','graduation','ceremony','concert',
     'speech','award','trophy','prize','congress','conference','meeting',
@@ -2223,6 +2248,23 @@ _BAD_URL_KW = [
     'placehold.co','placeholder.com',
     # Generic random ID patterns often used by stock-photo sites (v5.0)
     'random-photo','photo-of-the-day','daily-photo','wallpaper-hd',
+    # v6.1 — author/byline/staff portraits slipping through the /author/x.jpg gap
+    'author','authors','contributor','contributors','writer','team-member',
+    'staff-photo','staff-portrait','about-us','bio-photo','byline','avatar',
+    'profile-pic','profile-picture','chef-portrait','user-photo',
+    # v6.1 — kitchen utensils photographed alone (no dish)
+    'whisk','spatula','tong','tongs','ladle','peeler','grater','rolling-pin',
+    'pizza-stone','pizza-peel','dutch-oven','cast-iron-skillet','mixing-bowl',
+    'thermometer','kitchen-timer','kitchen-scale','utensil','utensils',
+    # v6.1 — screenshots & UI captures
+    'screenshot','screengrab','screen-capture','app-screenshot','browser-window',
+    # v6.1 — product packaging / catalog shots
+    'packaging','package-shot','product-page','product-photo','catalog',
+    # v6.1 — illustrations / clip-art / silhouettes
+    'clipart','clip-art','line-art','silhouette','flat-icon','infographic',
+    # v6.1 — empty/prep stages (not the finished dish)
+    'empty-pan','empty-bowl','empty-plate','step-by-step','tutorial-step',
+    'raw-ingredients','prep-shot',
 ]
 
 # URL keywords that STRONGLY indicate a food image
@@ -2346,7 +2388,7 @@ def _score_url_relevance(url, recipe_title="", category_kw="", primary_ingredien
         if neg in url_low:
             return -50  # likely ingredient/raw food, not cooked dish
 
-    # Layer 3: Bad URL keywords (existing _BAD_URL_KW logic, scored)
+    # Layer 3: Bad URL keywords (existing v5.0 logic, scored)
     for bad in _BAD_URL_KW:
         for sep_before in ['/', '-', '_', '?', '=']:
             for sep_after in ['/', '-', '_', '?', '=', '.', '&']:
@@ -2354,6 +2396,21 @@ def _score_url_relevance(url, recipe_title="", category_kw="", primary_ingredien
                     return -30
         if url_low.endswith('/' + bad) or url_low.endswith('-' + bad):
             return -30
+
+    # Layer 3b (v6.1): Path-segment rejection for people/staff URLs.
+    # Catches patterns like /people/jane.jpg, /team/photos/chef.jpg,
+    # /about-us/staff.jpg — which the keyword+separator check above misses
+    # because the filename itself (jane.jpg) contains no bad keyword.
+    _PEOPLE_PATH_SEGMENTS = [
+        '/people/', '/team/', '/staff/', '/authors/', '/author/',
+        '/contributors/', '/contributor/', '/bio/', '/bios/',
+        '/profile/', '/profiles/', '/about/', '/about-us/',
+        '/our-team/', '/meet-the-team/', '/meet-our-chef/',
+        '/testimonials/', '/faces-of/', '/headshots/',
+    ]
+    for seg in _PEOPLE_PATH_SEGMENTS:
+        if seg in url_low:
+            return -40  # stronger reject than generic bad-keyword
 
     # Layer 4: Known-good food domain (+35 — boosted in v6.0.2 from +25)
     # Rationale: empirical testing showed even allrecipes/foodnetwork URLs
@@ -2576,7 +2633,9 @@ def _is_food_image_by_pixels(data):
     Very fast — samples only first 8KB + parses JPEG SOF marker.
     Returns True if image passes all checks, False to reject.
     """
-    if not data or len(data) < 3000:
+    # v6.1 — tightened min size from 3000 → 8000 bytes. Flat illustrations /
+    # tiny icons compress to 4–7KB and were passing the old threshold.
+    if not data or len(data) < 8000:
         return False
 
     # ── Check 1: EXIF markers indicating non-food source ──
@@ -2610,6 +2669,13 @@ def _is_food_image_by_pixels(data):
                         return False  # extreme panorama/portrait
                     # v6.0: very tall portraits (smartphone vertical) — usually selfies
                     if ratio < 0.55 and h > 1500:
+                        return False
+                    # v6.1 — tightened: any vertical image with portrait aspect
+                    # ratio (3:4 to 2:3) AND mid-to-large size is almost always
+                    # a person photo. Food close-ups are either square, slight
+                    # landscape, or very short (overhead shot). Reject 0.55–0.75
+                    # when h > 900 to catch professional author portraits.
+                    if 0.55 <= ratio < 0.75 and h > 900:
                         return False
                 break
             i += 1
@@ -2668,8 +2734,10 @@ def _has_landscape_color_signature(data):
     # Uniform landscapes (clear sky, grass field, wall) often score < 5.5.
     # Note: this catches very-uniform images. Most cooked dishes have varied
     # textures (sauce, garnish, plate edge) and pass easily.
-    if entropy < 5.0:
-        return True  # too uniform — likely sky/wall/empty surface
+    # v6.1 — bumped threshold 5.0 → 5.5. Flat illustrations on solid background
+    # were scoring 5.1–5.4 and slipping through.
+    if entropy < 5.5:
+        return True  # too uniform — likely sky/wall/empty surface/illustration
 
     return False
 
