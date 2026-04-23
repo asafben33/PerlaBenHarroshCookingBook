@@ -62,7 +62,7 @@ LOG_PREFIX_FORMAT = "%d-%m-%Y_%H.%M"
 PROGRESS_MILESTONES = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
 # ─── ברירות מחדל ─────────────────────────────────────────────────────────
-DEFAULT_MAPPING = str(PROJECT_ROOT / "IMAGE_MAPPING_v8_25.json")
+DEFAULT_MAPPING = str(PROJECT_ROOT / "docs" / "IMAGE_MAPPING_v8_25.json")
 DEFAULT_INPUT = str(PROJECT_ROOT / "book_data.js")
 DEFAULT_OUTPUT = str(PROJECT_ROOT / "book_data.js.new")
 
