@@ -132,7 +132,7 @@ def collect_recipe(text, log):
             break
         i = ask('    פריט (למשל "קמח לבן" או "בצל גדול, קצוץ דק")', required=True)
         ingr.append((q, i))
-        print(ok(f'    ✓ נוסף: {q} — {i}'))
+        print(ok(f'    [OK] נוסף: {q} -- {i}'))
 
     log.info(f"Collected {len(ingr)} ingredients")
 
@@ -154,7 +154,7 @@ def collect_recipe(text, log):
             break
         s = ask('    הוראות השלב (משפט או שניים מלאים)', required=True)
         steps.append((t, s))
-        print(ok(f'    ✓ נוסף שלב {idx}'))
+        print(ok(f'    [OK] נוסף שלב {idx}'))
 
     log.info(f"Collected {len(steps)} steps")
 
@@ -237,11 +237,11 @@ def main():
         log.progress(100, 'הסתיים בהצלחה.')
         print()
         if args.dry_run:
-            print(ok(f'✓ DRY-RUN הסתיים. הפלט נכתב אל: {result_path}'))
+            print(ok(f'[OK] DRY-RUN הסתיים. הפלט נכתב אל: {result_path}'))
             print(dim(f'  ההפעלה לא שינתה את {args.data}. עיין בקובץ ה-dryrun ואם הכל בסדר,'
                       f' הרץ שוב בלי --dry-run.'))
         else:
-            print(ok(f'✓ המתכון נוסף בהצלחה ל-{args.data}'))
+            print(ok(f'[OK] המתכון נוסף בהצלחה ל-{args.data}'))
             print(dim(f'  גיבוי: {result_path}'))
             print()
             print(hdr('הצעדים הבאים:'))

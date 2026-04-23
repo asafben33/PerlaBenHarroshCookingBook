@@ -241,8 +241,8 @@ class Logger:
         self._fh.flush()
 
     def info(self, msg):  self._write('INFO',  msg)
-    def warn(self, msg):  self._write('WARN',  msg); print(warn('⚠ ' + msg))
-    def error(self, msg): self._write('ERROR', msg); print(err('✗ ' + msg))
+    def warn(self, msg):  self._write('WARN',  msg); print(warn('[WARN] ' + msg))
+    def error(self, msg): self._write('ERROR', msg); print(err('[FAIL] ' + msg))
     def step(self, msg):  self._write('STEP',  msg)
 
     def progress(self, pct, label):

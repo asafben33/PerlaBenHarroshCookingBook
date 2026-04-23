@@ -8,23 +8,27 @@ download_images.py — Perla Ben-Harrosh z"l Cookbook  (v6.1 — TIGHTENED FILTE
   v6.0 משדרג את אלגוריתם הדיוק ב-7 שכבות נוספות כדי להבטיח שתמונה תעבור
   אך ורק אם היא צילום של *המתכון המוכן* — לא נופים, לא אנשים, לא חומרי גלם.
 
-עדכוני v6.1 (תגובה ל-26 תמונות לא-רלוונטיות שעברו את הפילטר ב-v6.0):
-  • _BAD_URL_KW הורחבה ב-~40 ביטויים: author/contributor/staff-photo/byline/avatar
-    (דיוקנאות כותבים), whisk/spatula/thermometer/mixing-bowl (כלי מטבח לבד),
-    screenshot/screengrab (צילומי מסך), packaging/product-page (אריזות),
-    clipart/silhouette/flat-icon (איורים שטוחים), empty-pan/empty-bowl (שלבי הכנה).
-  • _is_food_image_by_pixels: מינימום גודל 3KB → 8KB (מסנן אייקונים קטנים).
-  • _has_landscape_color_signature: סף אנטרופיה 5.0 → 5.5 (מסנן איורים שטוחים).
+v6.1 updates (response to 26 off-topic images that slipped through v6.0):
+  * _BAD_URL_KW expanded by ~40 terms: author/contributor/staff-photo/byline/
+    avatar (author portraits), whisk/spatula/thermometer/mixing-bowl (standalone
+    utensils), screenshot/screengrab (screen captures), packaging/product-page
+    (packaging shots), clipart/silhouette/flat-icon (flat illustrations),
+    empty-pan/empty-bowl (prep stages).
+  * _is_food_image_by_pixels: minimum size 3KB -> 8KB (filters tiny icons).
+  * _has_landscape_color_signature: entropy threshold 5.0 -> 5.5 (filters flat
+    illustrations on uniform backgrounds).
 
-עדכוני v6.1.1 — חיזוק סינון תמונות אנשים (המשך תגובה לתמונות שעברו):
-  • _BAD_URL_KW הורחבה ב-~25 ביטויי אנשים נוספים: chef-photo, food-blogger,
-    kitchen-staff, grandma/grandfather, waiter/waitress, hand-holding, eating,
-    beard, makeup, wearing-apron.
-  • _score_url_relevance — שכבה 3b חדשה: דחייה מבוססת-נתיב (-40 ניקוד)
-    ל-/people/, /team/, /staff/, /author/, /about-us/, /headshots/ וכו'.
-    פותר פער שבו `/author/jane.jpg` לא נתפס כי שם הקובץ ללא מילת-מפתח.
-  • _is_food_image_by_pixels — יחס ממדי פורטרט מוחמר:
-    אם ratio בין 0.55-0.75 ו-גובה > 900px → דחייה (דיוקן מקצועי קלאסי).
+v6.1.1 updates - tightened people-image filtering (further response to leaks):
+  * _BAD_URL_KW expanded by ~25 additional people-related terms: chef-photo,
+    food-blogger, kitchen-staff, grandma/grandfather, waiter/waitress,
+    hand-holding, eating, beard, makeup, wearing-apron.
+  * _score_url_relevance - new layer 3b: path-based rejection (-40 score) for
+    /people/, /team/, /staff/, /author/, /about-us/, /headshots/, etc.
+    Closes the gap where `/author/jane.jpg` was not caught because the filename
+    itself contains no bad keyword.
+  * _is_food_image_by_pixels - tightened portrait aspect-ratio rule:
+    ratio in [0.55, 0.75) AND height > 900px -> reject (classic professional
+    portrait crop).
 
 שכבות הדיוק החדשות ב-v6.0:
   שכבה 1 (חדש)  — Relevance Scoring (0-100): כל תמונה מקבלת ניקוד במקום go/no-go
@@ -434,8 +438,8 @@ def _detect_proxy_full(test: bool = False, verbose: bool = False) -> str | None:
     vprint("[proxy] Testing each candidate...")
     for candidate in PROXY_CANDIDATES:
         ok, msg = _test_proxy(candidate)
-        symbol = "✓" if ok else "✗"
-        vprint(f"  {symbol} {candidate:<40} — {msg}")
+        symbol = "[OK]" if ok else "[FAIL]"
+        vprint(f"  {symbol} {candidate:<40} -- {msg}")
         if ok:
             print(f"[proxy] Using: {candidate}  (tested working)")
             return candidate
@@ -2774,7 +2778,7 @@ def _flush_provenance():
             encoding='utf-8'
         )
     except Exception as e:
-        log(f"  ⚠ Could not write provenance log: {e}")
+        log(f"  [WARN] Could not write provenance log: {e}")
 
 
 def download_and_save(img_url, dest, recipe=None, source_name="unknown",
@@ -3138,7 +3142,7 @@ def inline_alias_into_index(alias_file: Path, index_file: Path, dry_run: bool = 
     try:
         # Write back preserving original newline convention
         index_file.write_bytes(new_html.encode('utf-8'))
-        log(f"[inline-alias] ✓ index.html updated ({len(new_html)-len(html):+d} chars)")
+        log(f"[inline-alias] [OK] index.html updated ({len(new_html)-len(html):+d} chars)")
         return True
     except OSError as e:
         log(f"[inline-alias] write failed: {e}")
@@ -3502,18 +3506,18 @@ def main():
 
         if not _test_ok:
             log("")
-            log("  ════════════════════════════════════════════════════════")
-            log("  ✗ חיבור לרשת חסום לחלוטין — הסקריפט יעצור כדי לא לבזבז זמן.")
-            log("  ════════════════════════════════════════════════════════")
+            log("  " + "=" * 56)
+            log("  [FAIL] Network is completely blocked -- exiting to avoid wasting time.")
+            log("  " + "=" * 56)
             log("")
-            log("  פתרונות (בסדר העדפה):")
-            log("  1. הרץ ללא proxy:           python download_images.py --no-proxy")
-            log("  2. חבר את המחשב ל-HOTSPOT של הטלפון (עוקף gov.il firewall)")
-            log("  3. הרץ מרשת ביתית פרטית")
-            log("  4. (לא מומלץ) VPN לרשת אחרת")
+            log("  Suggested remedies (in order of preference):")
+            log("  1. Run without proxy:    python download_images.py --no-proxy")
+            log("  2. Tether through a phone hotspot (bypasses gov.il firewall)")
+            log("  3. Run from a private home network")
+            log("  4. (Not recommended) VPN to another network")
             log("")
-            return  # EXIT main — don't run the useless 27-hour loop
-        log("  ✓ חיבור לרשת תקין")
+            return  # EXIT main -- don't run the useless 27-hour loop
+        log("  [OK] Network connectivity verified")
         log("")
 
         ok_count = skip_count = fail_count = 0
@@ -3742,19 +3746,19 @@ def main():
                 # don't bail, just keep going.
                 if _consec_fails >= 20 and len(collected_urls) == 0:
                     log("")
-                    log("     ════════════════════════════════════════════════════════")
-                    log(f"     ✗ 20 מתכונים רצופים ללא אף URL — כנראה רשת חסומה.")
-                    log(f"     ✗ מפסיק למנוע בזבוז זמן. נסה שוב מרשת אחרת.")
-                    log("     ════════════════════════════════════════════════════════")
+                    log("     " + "=" * 56)
+                    log(f"     [FAIL] 20 consecutive recipes returned no URL -- network likely blocked.")
+                    log(f"     [FAIL] Stopping to avoid wasting time. Try again from another network.")
+                    log("     " + "=" * 56)
                     break
                 elif _consec_fails == 30:
-                    # If we have URLs but all fail scoring for 30 recipes — warn but don't bail
+                    # If we have URLs but all fail scoring for 30 recipes -- warn but don't bail
                     log("")
-                    log("     ════════════════════════════════════════════════════════")
-                    log(f"     ⚠ 30 מתכונים רצופים — URLs מתקבלים אך לא עוברים סף ניקוד.")
-                    log(f"     ⚠ הסף הנוכחי: {MIN_RELEVANCE_SCORE}. נסה להוריד עם --min-score 30 או 25.")
-                    log(f"     ⚠ ממשיך לרוץ — אולי מתכונים מאוחרים יצליחו.")
-                    log("     ════════════════════════════════════════════════════════")
+                    log("     " + "=" * 56)
+                    log(f"     [WARN] 30 consecutive recipes -- URLs arrive but none pass the score threshold.")
+                    log(f"     [WARN] Current threshold: {MIN_RELEVANCE_SCORE}. Try --min-score 30 or 25.")
+                    log(f"     [WARN] Continuing -- later recipes may still succeed.")
+                    log("     " + "=" * 56)
 
             # ── Live progress bar (updates in-place) ──
             progress_bar(i + 1, total, ok=ok_count, fail=fail_count,

@@ -564,7 +564,7 @@ def write_json_report(issues, stats, out_path, logger):
     }
     with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    logger.info(f'[✓] דו"ח JSON נכתב: {out_path}')
+    logger.info(f'[OK] דו"ח JSON נכתב: {out_path}')
 
 
 def write_csv_report(issues, out_path, logger):
@@ -574,7 +574,7 @@ def write_csv_report(issues, out_path, logger):
         writer.writerow(['id', 'category', 'title', 'severity', 'code', 'field', 'detail'])
         for iss in issues:
             writer.writerow(iss.to_csv_row())
-    logger.info(f'[✓] דו"ח CSV נכתב: {out_path}')
+    logger.info(f'[OK] דו"ח CSV נכתב: {out_path}')
 
 
 def write_markdown_report(issues, stats, out_path, cfg, logger):
@@ -598,9 +598,9 @@ def write_markdown_report(issues, stats, out_path, cfg, logger):
     lines.append('')
     lines.append('| חומרה | מספר בעיות | תיאור |')
     lines.append('|---|---|---|')
-    lines.append(f'| 🔴 HIGH   | {stats["issues_by_sev"][SEVERITY_HIGH]} | שדות חובה חסרים, כפילויות — שובר ממשק |')
-    lines.append(f'| 🟡 MEDIUM | {stats["issues_by_sev"][SEVERITY_MEDIUM]} | בעיות תוכן — מפחית איכות |')
-    lines.append(f'| 🟢 LOW    | {stats["issues_by_sev"][SEVERITY_LOW]} | זוטות — נחמד לתקן |')
+    lines.append(f'| HIGH   | {stats["issues_by_sev"][SEVERITY_HIGH]} | שדות חובה חסרים, כפילויות -- שובר ממשק |')
+    lines.append(f'| MEDIUM | {stats["issues_by_sev"][SEVERITY_MEDIUM]} | בעיות תוכן -- מפחית איכות |')
+    lines.append(f'| LOW    | {stats["issues_by_sev"][SEVERITY_LOW]} | זוטות -- נחמד לתקן |')
     lines.append('')
 
     # Issues by code
@@ -610,8 +610,7 @@ def write_markdown_report(issues, stats, out_path, cfg, logger):
     lines.append('|---|---|---|')
     for code, count in stats['issues_by_code'].most_common():
         sev = CODE_SEVERITY.get(code, SEVERITY_LOW)
-        emoji = {'high': '🔴', 'medium': '🟡', 'low': '🟢'}.get(sev, '')
-        lines.append(f'| `{code}` | {emoji} {sev} | {count} |')
+        lines.append(f'| `{code}` | {sev} | {count} |')
     lines.append('')
 
     # Issues by category
@@ -629,15 +628,15 @@ def write_markdown_report(issues, stats, out_path, cfg, logger):
     for iss in issues:
         by_sev[iss.severity].append(iss)
 
-    for sev, label, emoji in [
-        (SEVERITY_HIGH,   'בעיות דחופות — HIGH',   '🔴'),
-        (SEVERITY_MEDIUM, 'בעיות תוכן — MEDIUM',   '🟡'),
-        (SEVERITY_LOW,    'זוטות — LOW',           '🟢'),
+    for sev, label in [
+        (SEVERITY_HIGH,   'בעיות דחופות -- HIGH'),
+        (SEVERITY_MEDIUM, 'בעיות תוכן -- MEDIUM'),
+        (SEVERITY_LOW,    'זוטות -- LOW'),
     ]:
         sev_issues = by_sev[sev]
         if not sev_issues:
             continue
-        lines.append(f'## {emoji} {label} ({len(sev_issues)} בעיות)')
+        lines.append(f'## {label} ({len(sev_issues)} בעיות)')
         lines.append('')
         # Show up to 50 per severity (full list is in CSV/JSON)
         shown = sev_issues[:50]
@@ -662,7 +661,7 @@ def write_markdown_report(issues, stats, out_path, cfg, logger):
 
     with open(out_path, 'w', encoding='utf-8') as f:
         f.write('\n'.join(lines))
-    logger.info(f'[✓] דו"ח Markdown נכתב: {out_path}')
+    logger.info(f'[OK] דו"ח Markdown נכתב: {out_path}')
 
 
 # ============================================================
@@ -789,7 +788,7 @@ def main():
     # Run audit
     log_head('  מתחיל ביקורת...')
     issues, stats = audit_all_recipes(recipes_meta, data_text, cfg, logger_proxy)
-    log_info(ok('  ✓ הביקורת הושלמה.'))
+    log_info(ok('  [OK] הביקורת הושלמה.'))
     log_info('')
 
     # Filter by severity if requested
@@ -804,9 +803,9 @@ def main():
     log_info(f'  מתכונים עם בעיות:       {stats["with_issues"]}')
     log_info(f'  סה"כ בעיות סומנו:       {len(issues)}')
     log_info('')
-    log_info(f'  🔴 HIGH   (חובה לתקן): {stats["issues_by_sev"][SEVERITY_HIGH]:>5}')
-    log_info(f'  🟡 MEDIUM (תוכן):       {stats["issues_by_sev"][SEVERITY_MEDIUM]:>5}')
-    log_info(f'  🟢 LOW    (זוטות):      {stats["issues_by_sev"][SEVERITY_LOW]:>5}')
+    log_info(f'  HIGH   (חובה לתקן): {stats["issues_by_sev"][SEVERITY_HIGH]:>5}')
+    log_info(f'  MEDIUM (תוכן):       {stats["issues_by_sev"][SEVERITY_MEDIUM]:>5}')
+    log_info(f'  LOW    (זוטות):      {stats["issues_by_sev"][SEVERITY_LOW]:>5}')
     log_info('')
 
     top_codes = stats['issues_by_code'].most_common(10)
@@ -835,7 +834,7 @@ def main():
 
     log_info('')
     log_head('═══════════════════════════════════════════════════════════')
-    log_info(ok(f'[✓] הביקורת הסתיימה. לוג: {logger.path}'))
+    log_info(ok(f'[OK] הביקורת הסתיימה. לוג: {logger.path}'))
     log_head('═══════════════════════════════════════════════════════════')
     logger.close()
     return 0

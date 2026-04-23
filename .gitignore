@@ -9,7 +9,10 @@
 !js/**
 !scripts/
 !scripts/**
+!audit_reports/
+!audit_reports/**
 !.gitignore
+!_headers
 !about_redesigned.css
 !about_redesigned.html
 !about_redesigned.js
@@ -23,6 +26,8 @@
 !audit_report_v8_4_zero_issues.json
 !book_data.js
 !data.js
+!IMAGE_MAPPING_v8_25.csv
+!IMAGE_MAPPING_v8_25.json
 !index.html
 !manifest.json
 !pre_en.js
@@ -30,6 +35,3 @@
 !robots.txt
 !sitemap.xml
 !sw.js
-!_headers
-!IMAGE_MAPPING_v8_25.csv
-!IMAGE_MAPPING_v8_25.json

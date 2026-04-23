@@ -331,9 +331,9 @@ def plan_repairs(
         
         if VERBOSE:
             if replacement:
-                logger.debug(f"  {target} → {replacement} ✓")
+                logger.debug(f"  {target} -> {replacement} [OK]")
             else:
-                logger.debug(f"  {target} → NO REPLACEMENT FOUND ✗")
+                logger.debug(f"  {target} -> NO REPLACEMENT FOUND [FAIL]")
         
         show_progress(logger, i, total, "plan_repairs")
     
@@ -407,13 +407,13 @@ def apply_repairs_to_alias_file(
     
     if not DRY_RUN:
         IMG_ALIAS_JS.write_text(new_content, encoding="utf-8")
-        logger.info(f"  ✓ Wrote new _IMG_ALIAS.js ({len(new_aliases):,} aliases)")
-        
+        logger.info(f"  [OK] Wrote new _IMG_ALIAS.js ({len(new_aliases):,} aliases)")
+
         # Validate
         if validate_js(IMG_ALIAS_JS, logger):
-            logger.info(f"  ✓ JavaScript validation passed")
+            logger.info(f"  [OK] JavaScript validation passed")
         else:
-            logger.error(f"  ✗ JavaScript validation FAILED — check backup!")
+            logger.error(f"  [FAIL] JavaScript validation FAILED -- check backup!")
             return 0
     else:
         logger.info(f"  [DRY-RUN] Would write {len(new_aliases):,} aliases to _IMG_ALIAS.js")
@@ -534,7 +534,7 @@ def update_index_html(
     
     if not DRY_RUN:
         INDEX_HTML.write_text(new_content, encoding="utf-8")
-        logger.info(f"  ✓ Updated _IMG_ALIAS block in index.html")
+        logger.info(f"  [OK] Updated _IMG_ALIAS block in index.html")
     else:
         logger.info(f"  [DRY-RUN] Would update {len(new_aliases):,} embedded aliases")
     
@@ -614,7 +614,7 @@ def generate_reports(
     ]
     
     for i, (target, count) in enumerate(broken_targets.most_common(20), 1):
-        replacement = repair_plan.get(target) or "❌ אין — ייפול ל-fallback"
+        replacement = repair_plan.get(target) or "[NONE] אין — ייפול ל-fallback"
         md_lines.append(f"| {i} | `{target}` | {count} | `{replacement}` |")
     
     md_lines.extend([
@@ -677,7 +677,7 @@ def generate_reports(
         ])
     else:
         md_lines.extend([
-            "1. ✅ השינויים בוצעו.",
+            "1. [DONE] השינויים בוצעו.",
             "2. **רענן את הדפדפן ב-Ctrl+Shift+R** וודא שהשגיאות 404 נעלמו.",
             "3. **Commit + Push** לשרת:",
             "   ```powershell",
@@ -783,7 +783,7 @@ def main():
     
     if APPLY:
         print()
-        print("⚠  You are about to APPLY changes to:")
+        print("[WARN] You are about to APPLY changes to:")
         print(f"   - {IMG_ALIAS_JS}")
         print(f"   - {INDEX_HTML}")
         print(f"   (Backups will be created in {BACKUPS_DIR})")
@@ -809,7 +809,7 @@ def main():
         logger.info("")
         
         if not broken_aliases:
-            logger.info("✓ No broken aliases found — nothing to repair!")
+            logger.info("[OK] No broken aliases found -- nothing to repair!")
             return
         
         # STEP 4
@@ -836,7 +836,7 @@ def main():
             logger.info("")
         
         logger.info("=" * 80)
-        logger.info("✓ DONE")
+        logger.info("[OK] DONE")
         logger.info("=" * 80)
         logger.info(f"  Mode: {'APPLY (changes written)' if APPLY else 'DRY-RUN (no changes)'}")
         logger.info(f"  Reports: reports/alias_healing_report_*.{{json,md}}")

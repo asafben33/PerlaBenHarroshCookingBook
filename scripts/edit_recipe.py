@@ -194,7 +194,7 @@ def edit_list_of_pairs(label, current_pairs, key_a_name, key_b_name, log):
                 continue
             removed = pairs.pop(idx)
             log.info(f"Deleted pair #{idx+1} from {label}: {removed}")
-            print(ok(f'  ✓ נמחק.'))
+            print(ok(f'  [OK] נמחק.'))
             continue
 
         print(err('  פעולה לא ברורה. ה=הוסף, ע=ערוך, מ=מחק, ס=סיום.'))
@@ -306,7 +306,7 @@ def main():
         if action == 'delete':
             log.progress(60, 'אישור מחיקה...')
             print()
-            print(err(f'⚠  עומד למחוק את המתכון: {recipe["title"]} (ID: {recipe["id"]})'))
+            print(err(f'[WARN] עומד למחוק את המתכון: {recipe["title"]} (ID: {recipe["id"]})'))
             if not ask_yes_no('פעולה זו לא הפיכה. למחוק בכל זאת?', default='n'):
                 print(warn('המחיקה בוטלה.'))
                 log.info('Delete cancelled')
@@ -344,11 +344,11 @@ def main():
         log.progress(100, 'הסתיים בהצלחה.')
         print()
         if args.dry_run:
-            print(ok(f'✓ DRY-RUN הסתיים. הפלט נכתב אל: {result_path}'))
+            print(ok(f'[OK] DRY-RUN הסתיים. הפלט נכתב אל: {result_path}'))
             print(dim(f'  ההפעלה לא שינתה את {args.data}.'))
         else:
             verb = 'נמחק' if action == 'delete' else 'עודכן'
-            print(ok(f'✓ המתכון {verb} בהצלחה ב-{args.data}'))
+            print(ok(f'[OK] המתכון {verb} בהצלחה ב-{args.data}'))
             print(dim(f'  גיבוי: {result_path}'))
             print()
             print(hdr('הצעדים הבאים:'))
