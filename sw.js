@@ -1,14 +1,20 @@
 /* ═══════════════════════════════════════════════
-   Service Worker — Perla Ben-Harrosh Cookbook v18
+   Service Worker — Perla Ben-Harrosh Cookbook v19
    Network-first for HTML/JS (always fresh code)
    Cache-first for images (fast loading)
+   v19: aftermath of a download_images clean+inline-alias
+        cycle. index.html shrank by ~100KB (4,980 -> 502
+        inline _IMG_ALIAS entries) and 514 variant images
+        were removed. Cache bumped so existing clients
+        pick up the smaller shell immediately instead of
+        waiting for natural SW rotation.
    v18: v8.32 — StPageFlip served from a local patched
         copy (js/page-flip-2.0.7-patched.js) that honours
         flippingTime for click and arrow flips, not just
         drag. Upstream capped click flips at ~225 ms; the
         patch makes them respect the full 4500 ms.
 ═══════════════════════════════════════════════ */
-const CACHE_NAME = 'perla-cookbook-v18';
+const CACHE_NAME = 'perla-cookbook-v19';
 const SHELL = [
   './',
   './index.html',
