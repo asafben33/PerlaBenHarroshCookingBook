@@ -12,50 +12,53 @@
 | Repository | github.com/asafben33/PerlaBenHarroshCookingBook |
 | Netlify | https://perlabenharrosh-cookingbook.netlify.app/ |
 | GitHub Pages | https://asafben33.github.io/PerlaBenHarroshCookingBook/ |
-| Branch | main |
-| Deployment | push ידני (ללא CI/CD) |
+| Branch | `main` (deploy אוטומטי בשני היעדים) |
 | גרסה נוכחית | 8.38 (22/04/2026) |
-| גרסת מסמך קודמת | 7.1 (19/04/2026) — תוכן הליבה של המסמך נכתב סביב v7.1 |
-| גרסת בסיס | 5.0 (אפריל 2026) |
+| היסטוריה | CLAUDE.md + docs/CHANGELOG_*.md |
+| בעלים | Asaf Yaakov Ben-Harrosh — בן הזקונים של פרלה ופנחס ז״ל |
+
+> **מקור סמכות לשינויים נוכחיים:** `docs/CLAUDE.md`. מסמך זה מציג תמונה ארכיטקטונית רחבה; לפרטי גרסאות וריצ'נג'לוג ראה CHANGELOGs.
 
 ---
 
-## 0. ציון דרך — v7.1 → v8.38 (רענון currency)
+## תוכן עניינים
 
-תוכן ה-HLD שלהלן נכתב בעיקר סביב v7.1. מ-v7.2 ואילך בוצעו שינויים רבים שמתועדים **סמכותית ב-`docs/CLAUDE.md`** (וב-CHANGELOGs פר-גרסה). תקציר ההבדלים העיקריים מול ה-HLD שלהלן:
-
-- **ספירת מתכונים:** 1,054 → **1,056** (v8.3 הרחיב +2).
-- **קבועי data.js חדשים:**
-  - `COMMUNITY_HOLIDAY_TAGS` (v7.2) — 221 מיפויי עדה×חג.
-  - `HOLIDAY_TAGS` תוקן ל-121 מיפויים יחודיים (v7.7 — היה bug של 80×10 חזרות זהות).
-- **MENU_STRUCTURE:** מ-6 קבוצות (v7.0) → **4 קבוצות** (v7.9 — איחוד מרוקו+ספרד). חגי העדה יושמו בפועל ב-v7.4 (ה-placeholder "בקרוב" מוסר סופית ב-v8.39).
-- **אבטחה (v8.26–v8.28):** חיזוק CSP/HSTS/COOP/CORP, SRI על CDN scripts, path anchoring.
-- **קורא ספר 3D (v8.17–v8.32):** גלגולים רבים של StPageFlip — **הוסר סופית ב-v8.33**. נשאר רק "מצב טקסט" (long-form scroll) inline ב-`#book-wrapper`.
-- **UX תפריט (v8.34–v8.38):** chips קטנים יותר, auto-expand של branch פעיל, depth cues, scrollbar בזהב, mutual exclusion של accordions אחים, focused-view (הסתרת אחים סגורים ב-CSS `:has()`).
-
-לפני שתסתמך על פרט טכני ב-HLD הזה לצורך קוד — **אמת מול המצב בפועל ב-`index.html` / `data.js`** או מול CLAUDE.md המעודכן.
+1. [מטרת המערכת וקהל היעד](#1-מטרת-המערכת-וקהל-היעד)
+2. [סקירת הפתרון הטכני](#2-סקירת-הפתרון-הטכני)
+3. [מודל הנתונים](#3-מודל-הנתונים)
+4. [ארכיטקטורת ניווט](#4-ארכיטקטורת-ניווט)
+5. [קטגוריות מתכונים](#5-קטגוריות-מתכונים)
+6. [חגים — HOLIDAY_TAGS + COMMUNITY_HOLIDAY_TAGS](#6-חגים--holiday_tags--community_holiday_tags)
+7. [בינלאומיות — 3 שכבות תרגום](#7-בינלאומיות--3-שכבות-תרגום)
+8. [מערכת תמונות — download_images.py v5.1](#8-מערכת-תמונות--download_imagespy-v51)
+9. [מערכת פידבק — Web3Forms](#9-מערכת-פידבק--web3forms)
+10. [אבטחה — CSP, HSTS, COOP/CORP, SRI](#10-אבטחה--csp-hsts-coopcorp-sri)
+11. [פריסה ו-GitHub](#11-פריסה-ו-github)
+12. [Responsive & Accessibility & SEO](#12-responsive--accessibility--seo)
+13. [PWA ו-Service Worker](#13-pwa-ו-service-worker)
+14. [אבולוציה — ציון דרך עיקרי](#14-אבולוציה--ציון-דרך-עיקרי)
+15. [מפת התיעוד](#15-מפת-התיעוד)
 
 ---
 
-## 1. מבוא ומטרת המערכת
+## 1. מטרת המערכת וקהל היעד
 
-ספר הבישול של משפחת בן הראש הוא אתר ווב סטטי המתעד 1,056 מתכונים אותנטיים מהמטבח המרוקאי, הספרדי-יהודי, ומטבחי יהדות המזרח — כולל 40 מתכונים לא כשרים בקטגוריה ייעודית. האתר נבנה כמסמך דיגיטלי חי, המשמר מורשת קולינרית של יהדות קזבלנקה ומרקש, תוך שילוב השפעות ספרדיות ממשפחת קארו — צאצאי מגורשי ספרד 1492 — ומתכונים שנלמדו מהשכנים והחברים שעטפו את המשפחה באהבה בשכונת הקטמון בירושלים.
+ספר הבישול של משפחת בן הראש הוא אתר אינטרנט סטטי המתעד **1,056 מתכונים אותנטיים** מהמטבח המרוקאי-ספרדי-יהודי-מזרחי, כולל 40 מתכונים לא כשרים. האתר נבנה כמסמך דיגיטלי חי שמנציח את מורשת יהדות קזבלנקה ומרקש של פרלה ופנחס בן הראש ז״ל, משלב השפעות ספרדיות ממשפחת קארו (מגורשי ספרד 1492), ומתכונים שנלמדו מהשכנים בקטמון בירושלים.
 
 ### 1.1 מטרות עיקריות
 
-- **שימור מורשת קולינרית לדורות הבאים** — מניעת אובדן מתכונים מסורתיים שסבתות העבירו בעל פה.
-- **שמירת כשרות** — הפרדה ברורה בין מתכונים כשרים ולא כשרים, עם הצעות לתחליפי פרווה.
-- **נגישות** — כל אחד יכול לבשל, גם מי שמעולם לא בישל; כמויות מדויקות, שלבים ברורים, טיפים.
-- **ריספונסיביות מלאה** — עובד על טלפון, טאבלט ומחשב בכל גודל מסך.
-- **ביצועים** — אפס תלות בשרת חיצוני דינמי, multi-file SPA סטטי.
-- **ניווט אינטואיטיבי** — תפריט dropdown רב-רמתי עם 19 קטגוריות.
-- **דו-לשוניות** — עברית RTL ואנגלית מלאה עם 3 שכבות תרגום.
-- **פרטיות ואבטחה** — CSP מחוזק, הסתרת אימייל של המתחזק, ללא איסוף נתוני משתמשים.
+- **שימור מורשת** — מניעת אובדן מתכונים שהועברו בעל-פה בין דורות.
+- **שמירת כשרות** — הפרדה ברורה בין כשר ללא-כשר, עם הצעות לתחליפי פרווה.
+- **נגישות קולינרית** — כמויות מדויקות, שלבים ברורים, טיפים; כל אחד יכול לבשל.
+- **ריספונסיביות מלאה** — טלפון, טאבלט, דסקטופ.
+- **ביצועים** — static-first, ללא שרת דינמי; Service Worker לחוויה offline.
+- **דו-לשוניות** — עברית (RTL, ברירת מחדל) + אנגלית מלאה עם 3 שכבות תרגום.
+- **פרטיות ואבטחה** — CSP מחוזק, HSTS preload, COOP/CORP, SRI, ללא tracking.
 
 ### 1.2 קהל יעד
 
-- בני המשפחה המורחבת (5 דורות) המעוניינים לבשל את מאכלי הסבתא.
-- חברים ואורחים שרוצים להכיר את המטבח המרוקאי-ספרדי-ישראלי.
+- בני המשפחה המורחבת (5 דורות).
+- חברים ואורחים שמכירים את מורשת פרלה.
 - חוקרי קולינריה יהודית-ספרדית.
 - הציבור הרחב המחפש מתכונים אותנטיים.
 
@@ -63,190 +66,183 @@
 
 ## 2. סקירת הפתרון הטכני
 
-### 2.1 ארכיטקטורת Multi-File SPA
+### 2.1 ארכיטקטורה — Multi-File Static SPA
 
-| מאפיין | ערך | תיאור |
+| קובץ | גודל | תוכן |
 |---|---|---|
-| `index.html` | 359 KB | SPA — UI, CSS, JS, מילון, כותרות EN, HTML של הספר, מערכת פידבק |
-| `data.js` | 1,389 KB | 1,056 מתכונים, CATS, MENU_STRUCTURE, HOLIDAY_TAGS, COMMUNITY_HOLIDAY_TAGS (v7.2+) |
-| `pre_en.js` | 782 KB | תרגום EN מוכן: 1,056 × 5 שדות, 0 עברית |
-| `book_data.js` | ~80 KB | תוכן הספר "על שביל האהבה ממרוקו לירושלים" (HE + EN) |
-| `about_redesigned.css` | ~20 KB | עיצוב סקציית "אודות" החדשה |
-| `about_redesigned.html` | ~15 KB | HTML של סקציית אודות |
-| `about_redesigned.js` | ~5 KB | אינטראקציות של סקציית אודות |
-| `sw.js` | 2.3 KB | Service Worker v10 — cache strategy |
-| `manifest.json` | 575 B | PWA manifest |
-| `download_images.py` | ~152 KB | Unified v5.1 — Clean + Download + Dedup + Alias |
-| **סה"כ נתונים** |  |  |
-| מתכונים | 1,056 | כולל 40 לא כשרים (`nk_*`) |
-| קטגוריות | 19 | כולל `nonkosher` |
-| חגים | 10 | HOLIDAY_TAGS — רשימות ID |
-| תלויות JS runtime | 0 | Vanilla JS — ללא React/Vue/Node |
-| שפה | עברית RTL + אנגלית | `dir="rtl" lang="he"`, מנגנון תרגום 3 שכבות |
-| Lazy Loading | `img.loading="lazy"` | `decoding="async"`, `fetchPriority="low"` |
+| `index.html` | ~520 KB | HTML + CSS + JS inline; כל הלוגיקה (ניווט, חיפוש, מודאל, פידבק, i18n, PWA, book reader בגלילה) |
+| `data.js` | ~1,500 KB | `R` (1,056 מתכונים), `CATS`, `MENU_STRUCTURE`, `HOLIDAY_TAGS`, `COMMUNITY_HOLIDAY_TAGS` |
+| `pre_en.js` | ~800 KB | `_PRE_EN` — תרגום EN מוכן: 1,056 × 5 שדות (desc, mem, tip, steps, ingr) |
+| `book_data.js` | ~228 KB | `BOOK_HTML` / `BOOK_HTML_EN` — תוכן הספר "על שביל האהבה ממרוקו לירושלים" |
+| `about_redesigned.{html,css,js}` | ~40 KB | סקציית "אודות" בעיצוב נפרד |
+| `sw.js` | 3.8 KB | Service Worker v19 — network-first להקוד, cache-first לתמונות |
+| `manifest.json` | 1.2 KB | PWA manifest (dir=rtl, standalone, icons 192/512/180) |
+| `_headers` | 2.2 KB | Netlify security headers (CSP, HSTS, COOP/CORP, cache rules) |
+| `sitemap.xml` | 1.5 KB | 6 URLs + hreflang he/en |
+| `robots.txt` | ~0.2 KB | מפנה crawlers ל-sitemap |
+| `download_images.py` | ~152 KB | Unified image pipeline v5.1 |
+
+**תלויות runtime חיצוניות:** **אפס** חבילות npm. Vanilla JS/HTML/CSS בלבד. פונטים מ-Google Fonts ו-MathJax-style polyfills בצד הלקוח בלבד.
 
 ### 2.2 שכבות הארכיטקטורה
 
-| שכבה | טכנולוגיה | תיאור |
+| שכבה | טכנולוגיה | תפקיד |
 |---|---|---|
-| **Presentation** | HTML5 + CSS3 | HTML semantic, Grid/Flex, RTL, 34 Custom Properties, Frank Ruhl Libre + Heebo fonts |
-| **Application** | JavaScript ES6+ | 60+ פונקציות: ניווט, סינון, מדיה, מודאל, חיפוש, תרגום, feedback system |
-| **Data** | `data.js` + `pre_en.js` + `book_data.js` | 1,056 מתכונים + CATS + MENU + HOLIDAY_TAGS + COMMUNITY_HOLIDAY_TAGS + translations + book content |
-| **Storage (client)** | `localStorage` | העדפות: שפה, נושא, מדיה אישית, מועדפים, ביטול סרטונים |
-| **Cache** | `sw.js` | Service Worker — network-first HTML, cache-first images |
-| **Forms/Feedback** | Netlify Forms | טופס פידבק — אימייל מוסתר ב-Dashboard בלבד |
-| **Image Pipeline** | `download_images.py` v5.1 | Clean → Download (200 מקורות) → Dedup → Auto-inline |
+| **Presentation** | HTML5 + CSS3 | Semantic HTML, Grid/Flex, RTL, design tokens (34 custom properties), Frank Ruhl Libre + Heebo |
+| **Application** | Vanilla JS (ES6+) | 60+ פונקציות — ניווט, סינון, מודאל, חיפוש, תרגום, feedback, PWA install |
+| **Data** | `data.js` + `pre_en.js` + `book_data.js` | 1,056 מתכונים + CATS + MENU_STRUCTURE + HOLIDAY_TAGS + COMMUNITY_HOLIDAY_TAGS + תרגומים + תוכן ספר |
+| **Client Storage** | `localStorage` | העדפות: שפה, theme, מועדפים, ביטול videos, PWA seen flag |
+| **Cache** | Service Worker (`sw.js`) | Network-first לקוד; cache-first לתמונות; shell + `images/book_images/wedding.jpg` נטענים מראש |
+| **Forms/Feedback** | Web3Forms + mailto fallback | `https://api.web3forms.com/submit` — הקוד של Web3Forms הוא ציבורי בכוונה |
+| **Image Pipeline** | `download_images.py` v5.1 | Clean + Download (200 מקורות) + Dedup + Auto-inline alias map |
 
 ### 2.3 עקרונות תכנון
 
-- **Static-first** — ללא שרת אפליקציה; HTML/CSS/JS בלבד + Service Worker.
-- **Zero external dependencies at runtime** — כל הקוד nativ לדפדפן.
+- **Static-first** — אין שרת אפליקציה. HTML/CSS/JS + Service Worker בלבד.
+- **Zero external runtime dependencies** — הכל native לדפדפן.
 - **Progressive enhancement** — גם ללא JS, HTML בסיסי נקרא.
-- **Defense in depth** — CSP, HTTPS, honeypot, base64 obfuscation למיילים.
+- **Defense in depth** — CSP מחוזק (frame-ancestors, upgrade-insecure-requests), HSTS preload, COOP/CORP, SRI על CDN scripts, base64 obfuscation של email, honeypot בטפסים.
 - **Accessibility by default** — ARIA מלא, focus management, keyboard navigation, `prefers-reduced-motion`.
 - **Mobile-first responsive** — breakpoints: 480px, 768px, 1200px.
 
 ---
 
-## 3. מבנה הנתונים
+## 3. מודל הנתונים
 
-### 3.1 Recipe Object Schema
+### 3.1 Recipe Object Schema (`data.js::R[i]`)
 
 | שדה | סוג | חובה | תיאור |
 |---|---|---|---|
-| `id` | string | כן | מזהה ייחודי: `s1`, `sa2`, `nk_fn3`, `nm_001`... |
-| `cat` | string | כן | קטגוריה: `soups`, `meat`, `span`, `nonkosher`... |
-| `badge` | string | כן | תג תצוגה: `מרוקאי`, `ספרדי`, `חגיגי`, `מטעמי אמא`... |
+| `id` | string | כן | מזהה ייחודי: `s1`, `sa2`, `nk_fn3`, `iq7`, `pe12`, `nm_001`... |
+| `cat` | string | כן | קטגוריה: `soups`, `meat`, `span`, `isr`, `nonkosher`, ... |
+| `badge` | string | כן | תג תצוגה: `מרוקאי`, `ספרדי`, `חגיגי`, `מטעמי אמא`, ... |
 | `title` | string | כן | שם המתכון בעברית |
 | `desc` | string | כן | תיאור קצר |
 | `time` | string | כן | זמן הכנה (`30 דקות`) |
 | `serv` | string | כן | מנות (`4 מנות`) |
 | `diff` | string | כן | קושי: `קל` / `בינוני` / `מתקדם` |
-| `img` | string | כן | URL תמונה ברירת מחדל |
+| `img` | string | כן | URL תמונה (שימור היסטורי — לא בשימוש ב-fallback, ראה 8.4) |
 | `mem` | string | לא | זיכרון ממרוקו — טקסט רגשי |
 | `ingr` | `Array<{q,i}>` | כן | מרכיבים: `q`=כמות, `i`=מרכיב |
-| `steps` | `Array<{t,s}>` | כן | שלבים: `t`=זמן (minutes, אופציונלי), `s`=הוראה |
+| `steps` | `Array<{t,s}>` | כן | שלבים: `t`=דקות (אופציונלי), `s`=הוראה |
 | `tip` | string | לא | טיפ של פרלה |
-| `src` | string | לא | קישור למקור |
-| `vid` | string | לא | קישור לסרטון YouTube |
-| `tags` | `Array<string>` | לא | תגיות חיפוש מהירות |
+| `src` | string | לא | קישור מקור |
+| `vid` | string | לא | YouTube video id |
+| `tags` | `Array<string>` | לא | תגיות חיפוש |
+
+### 3.2 ספירות נתונים (v8.38)
+
+| קבוצה | סה"כ | פירוט |
+|---|---|---|
+| **מתכונים** | **1,056** | +2 מ-v8.3; 1,056 כותרות EN + 1,056×5 שדות EN |
+| **קטגוריות (`CATS`)** | 20 | כולל `all` ו-`nonkosher` |
+| **עדות (`iraq..isr`)** | 9 | 30 מתכונים כל עדה = 270 |
+| **מרוקו core (8 cats)** | 671 | soups 103, salads 103, veg 87, meat 82, chick 66, fish 70, hol 80, des 80 |
+| **ספרד (`span`)** | 73 | אוחד עם מרוקו ב-`morocco_span` ב-v7.9 |
+| **לא כשר (`nonkosher`)** | 40 | 14 פירות ים + 26 בשר+חלב |
+| **תיוגי חג — מרוקו (`HOLIDAY_TAGS`)** | 121 | על 671 מתכוני מרוקו = 18% (תוקן ב-v7.7) |
+| **תיוגי חג — עדות (`COMMUNITY_HOLIDAY_TAGS`)** | 221 | 9 עדות × עד 9 חגים (ללא מימונה) |
 
 ---
 
-## 4. ארכיטקטורת ניווט — MENU_STRUCTURE (v7.0 Flat 6-Group)
+## 4. ארכיטקטורת ניווט
 
-**החל מ-v7.0:** התפריט בנוי מ-**6 קבוצות עליונות מקבילות**, עומק קינון מקסימלי 2 רמות. הוחלף את ה-wrapper הבודד "כל המתכונים" (`key: all_master`) של v6.x שהיה מקונן עד 4 רמות.
+התפריט בנוי מ-**4 קבוצות עליונות שטוחות** (`MENU_STRUCTURE` ב-`data.js`). זה פלט של מסע ארוך: v6.x (wrapper יחיד עמוק 4 רמות) → v7.0 (6 קבוצות שטוחות) → v7.8 (הסרת `hol` הכפול) → v7.9 (איחוד מרוקו+ספרד).
 
-### טבלה מסכמת
+### 4.1 טבלה מסכמת
 
-| קבוצה | `key` | סוג | מתכונים | עומק |
-|---|---|---|---|---|
-| **הכל** | `all` | leaf | 1,056 | 0 |
-| **מרוקו** | `morocco` | 8 cat-IDs + 7 items (אחד nested) | 671 | 2 (מנות עיקריות → בשר/עוף/דגים) |
-| **ספרד** | `spain` | 73 recipe-IDs + 9 items | 73 | 1 |
-| **עדות ישראל** | `communities` | 9 cat-IDs + 10 items + placeholder | 270 | 2 (מטבח ישראלי → 4 תתי) |
-| **חגים** | `holidays` | `['hol']` + 11 items | 80 | 1 |
-| **לא כשר** | `nonkosher` | 40 recipe-IDs + 3 items | 40 | 1 |
-| **סה"כ** | | | **1,056** | max 2 |
+| # | `key` / `id` | תווית | סוג | מתכונים | עומק מירבי |
+|---|---|---|---|---|---|
+| 1 | `all` | הכל | leaf | 1,056 | 0 |
+| 2 | `morocco_span` | מרוקו\ספרד | accordion (11 sub-items) | 744 | 2 (חגים) |
+| 3 | `communities` | מתכונים טעימים מעוד עדות | accordion (9 עדות × 3 items) | 270 | 3 (עדה→חגים→חג) |
+| 4 | `nonkosher` | לא כשר | leaf | 40 | 0 |
 
-### Option C — חגי העדה (**יושם ב-v7.4**, ה-placeholder הוסר ב-v8.39)
+> **שים לב:** ה-label "מתכונים טעימים מעוד עדות" (ולא "עדות ישראל") נבחר ב-v8.15 ליצירת טון מזמין יותר. ב-data.js זה הכותרת הרשמית.
 
-תיוג חגי-עדה הועבר מ-placeholder (`placeholder:'communityHolidays'`) ליישום מלא:
-`COMMUNITY_HOLIDAY_TAGS` (v7.2) — **221 מיפויי עדה×חג** (9 עדות × עד 9 חגים, ללא מימונה — היא מרוקאית בלעדית). כל accordion של עדה כולל תיקייה "מאכלי חגים" עם chips לשבת/ראש השנה/פסח וכו'. `selectCommunityHoliday()` מבצע את הסינון. ה-render של ה-placeholder הוסר ב-v8.39 (PR #17).
-
-### 4.1 תרשים ניווט מלא (v7.0)
+### 4.2 תרשים הניווט (v8.38)
 
 ```
-┌──────────┬──────────┬──────────┬──────────────┬──────────┬──────────┐
-│  הכל     │  מרוקו   │  ספרד    │  עדות ישראל  │  חגים    │  לא כשר  │
-│  1,056   │   671    │   73     │     270      │    80    │    40    │
-└──────────┴──────────┴──────────┴──────────────┴──────────┴──────────┘
+[הכל] (1,056) — leaf
 
-[הכל] → leaf (1,056 מתכונים, id:'all')
-
-[מרוקו ▼] — 671 (ids: 8 cat-IDs)
-├── הכל (671)
+[מרוקו\ספרד ▼] — 744
+├── כל מתכוני מרוקו וספרד
 ├── מרקים (103)
 ├── סלטים (103)
-├── מנות עיקריות ▼ (218)
-│   ├── בשר וקציצות (82)
-│   ├── עוף ושבת (66)
-│   └── דגים (70)
-├── ירקות ותוספות (87)
-├── חגים ומועדים (80)
-└── קינוחים ומאפים (80)
+├── תבשילי ירקות (87)
+├── בשר וקציצות (82)
+├── עוף ושבת (66)
+├── דגים (70)
+├── חגים ומועדים ▼ (80, 121 תיוגים)       ← v7.8 (unified with morocco)
+│   ├── כל מתכוני החגים
+│   ├── שבת (54), ראש השנה (14), יום כיפור (0)
+│   ├── פסח (4), מימונה (7), חנוכה (2), פורים (1)
+│   └── שבועות (12), סוכות (27), חינה (14)
+├── קינוחים ומאפים (80)
+└── ספרד (אנדלוסי) (73)                    ← span sub-only (v7.9)
 
-[ספרד ▼] — 73 (ids: 73 recipe-IDs)
-├── הכל (73)
-├── מרקים ומינסטרות (3)
-├── בשר וקציצות (8)
-├── דגים (3)
-├── ירקות ותוספות (28)
-├── שבת וחגים (4)
-├── רטבים ותבלינים (4)
-├── לחמים ומאפים (9)
-└── קינוחים ומתוקים (13)
+[מתכונים טעימים מעוד עדות ▼] — 270
+├── עיראק ▼ (30)
+│   ├── כל המתכונים
+│   ├── מאכלים מסורתיים לעדה (IDs specific)
+│   └── מאכלי חגים ▼ (9 חגים — v7.4)       ← communityHoliday + holidayKey
+├── כורדיסטן ▼ (30) — same 3-item pattern
+├── אשכנז ▼ (30, ללא חינה)                ← v8.28
+├── תימן ▼ (30)
+├── פרס ▼ (30)
+├── בוכרה ▼ (30)
+├── טוניסיה ▼ (30)
+├── יהדות טורקיה ▼ (30)
+└── מטבח ישראלי ▼ (30, ללא חינה)          ← v8.28
 
-[עדות ישראל ▼] — 270 (ids: 9 cat-IDs)
-├── הכל (270)
-├── עיראק (30)
-├── כורדיסטן (30)
-├── אשכנז (30)
-├── תימן (30)
-├── פרס (30)
-├── בוכרה (30)
-├── טוניסיה (30)
-├── יהדות טורקיה (30)
-├── מטבח ישראלי ▼ (30)
-│   ├── הכל (30)
-│   ├── מאכלי רחוב ישראליים (10)
-│   ├── מנות עיקריות (9)
-│   ├── לחמים ומאפים (4)
-│   └── קינוחים ועוגות (7)
-├── ────────────
-└── חגי העדות (בקרוב) ← placeholder v7.0 Option C
-
-[חגים ▼] — 80 (מתכוני hol מתויגים ל-10 חגים)
-├── כל החגים (80)
-├── ────────────
-├── שבת, ראש השנה, יום כיפור, פסח
-└── מימונה, חנוכה, פורים, שבועות, סוכות, חינה
-
-[לא כשר ▼] — 40 (ids: 40 recipe-IDs)
-├── הכל (40)
-├── פירות ים (14)
-└── בשר וחלב (26)
+[לא כשר ▼] — 40 — leaf with ids (14 פירות ים + 26 בשר+חלב)
 ```
 
-### 4.2 buildNav() v7.0 — פונקציה יחידה
+**מימונה** מופיעה רק תחת מרוקו (מסורת מרוקאית בלעדית). **חינה** הוסרה מאשכנז ומטבח ישראלי ב-v8.28 (לא מסורת קדם-חתונה בעדות האלה).
 
-ב-v7.0 הפונקציה `buildNav()` נכתבה מחדש — מ-14,205 תווים ל-8,162 תווים (הפחתה של 42%). הפונקציה `renderItem()` (רקורסיבית) מטפלת בכל סוגי ה-items: leaf, holiday, accordion, multi-cat, recipe-IDs, placeholder. ראה LLD לפירוט מלא של המנגנון.
+### 4.3 רינדור ואינטראקציה
 
-### 4.3 הסתרת רשת בטעינה (v7.1)
+- `buildNav()` (index.html:7021) — בונה את ה-4 כפתורים העליונים.
+- `buildPanel(node, pi)` (index.html:7203) — רקורסיבי; בונה accordion + chips בתוך ה-dropdown.
+- `panelCnt(item)` — walker רקורסיבי לספירת מתכונים של תת-עץ (עובר על `item.items` + `item.sub`).
+- `_itemHasActive(it)` — walker רקורסיבי שבודק אם ה-state הנוכחי (`ACT_CAT`/`ACT_HOLIDAY`/`ACT_IDS`) תואם לפריט או לצאצא (למטרת auto-expand ב-v8.36).
+- `_closeSiblingAccordions(hdr)` — סוגר accordions אחים ברמה אחת, mutual exclusion (v8.37).
+- **Focused-view** — CSS `:has()` מסתיר לחלוטין accordions סגורים כשאחד פתוח (v8.38):
+  ```css
+  :is(.panel-row, .acc-body):has(> .acc-hdr.open) > .acc-hdr:not(.open),
+  :is(.panel-row, .acc-body):has(> .acc-hdr.open) > .acc-body:not(.open) {
+    display: none !important;
+  }
+  ```
+  דורש Chrome 105+ / Safari 15.4+ / Firefox 121+.
 
-האלמנט `<main>` מתחיל עם `class="main-hidden"` (CSS: `display: none !important`). נגלה רק ב-4 נקודות כניסה:
-1. `selectCat()`/`selectMulti()`/`selectByIds()` — מפעילים `showMainGrid()`
-2. `doSearch()` — מפעיל `showMainGrid()` אם יש טקסט חיפוש
-3. הכפתור "עיון במתכונים" ב-Hero — מדמה קליק על "הכל"
-4. הכפתור "קרא את הספר" — לא מציג רשת, רק פותח ספר
+### 4.4 הסתרת רשת בטעינה (v7.1)
 
-**ב-refresh:** הרשת חוזרת להיות מוסתרת (ברירת מחדל של ה-HTML).
+האלמנט `<main>` מתחיל עם `class="main-hidden"` (`display:none !important`). הרשת נגלה רק ב-4 נקודות כניסה:
+
+1. `selectCat()` / `selectMulti()` / `selectByIds()` / `selectCommunityHoliday()` — כולן קוראות ל-`showMainGrid()`.
+2. `doSearch()` — אם יש טקסט חיפוש.
+3. CTA ב-Hero "עיון במתכונים" — מדמה קליק על "הכל".
+4. רענון → חוזר למוסתר.
 
 ---
 
-## 5. מפרט קטגוריות — 19 קטגוריות
+## 5. קטגוריות מתכונים
 
-| `cat` | שם (HE) | שם (EN) | מתכונים | קבוצה |
+20 קטגוריות ב-`CATS` (כולל `all`):
+
+| `cat` | HE | EN | מתכונים | קבוצה |
 |---|---|---|---|---|
-| `soups` | מרקים | Soups | 103 | מטעמי אמא |
-| `salads` | סלטים | Salads | 103 | מטעמי אמא |
-| `veg` | ירקות ותוספות | Vegetables & Sides | 87 | מטעמי אמא |
-| `meat` | בשר וקציצות | Meat & Meatballs | 82 | מטעמי אמא |
-| `chick` | עוף ושבת | Poultry & Shabbat | 66 | מטעמי אמא |
-| `fish` | דגים | Fish | 70 | מטעמי אמא |
-| `hol` | חגים ומועדים | Holidays | 80 | מטעמי אמא |
-| `des` | קינוחים ומאפים | Desserts & Pastries | 80 | מטעמי אמא |
-| `span` | מורשת ספרד | Sephardic Heritage | 73 | מטעמי אמא |
+| `all` | הכל | All | 1,056 | (שקוף) |
+| `soups` | מרקים | Soups | 103 | מרוקו |
+| `salads` | סלטים | Salads | 103 | מרוקו |
+| `veg` | ירקות ותוספות | Vegetables & Sides | 87 | מרוקו |
+| `meat` | בשר וקציצות | Meat & Meatballs | 82 | מרוקו |
+| `chick` | עוף ושבת | Poultry & Shabbat | 66 | מרוקו |
+| `fish` | דגים | Fish | 70 | מרוקו |
+| `hol` | חגים ומועדים | Holidays | 80 | מרוקו |
+| `des` | קינוחים ומאפים | Desserts & Pastries | 80 | מרוקו |
+| `span` | מורשת ספרד | Sephardic Heritage | 73 | ספרד |
 | `iraq` | עיראק | Iraqi | 30 | עדות |
 | `kurd` | כורדיסטן | Kurdish | 30 | עדות |
 | `ashk` | אשכנז | Ashkenazi | 30 | עדות |
@@ -256,290 +252,241 @@
 | `tun` | טוניסיה | Tunisian | 30 | עדות |
 | `turk` | יהדות טורקיה | Turkish | 30 | עדות |
 | `isr` | מטבח ישראלי | Israeli | 30 | עדות |
-| `nonkosher` | לא כשרים | Non-Kosher | 40 | לא כשרים |
-
-> **עדכון v6.0:** תוויות הקטגוריות יושרו — `hol` "חגים וחינה" → "חגים ומועדים"; `des` "מימונה וקינוחים" → "קינוחים ומאפים".
+| `nonkosher` | לא כשרים | Non-Kosher | 40 | לא כשר |
 
 ---
 
-## 6. חגים ומועדים — HOLIDAY_TAGS (תוקן ב-v7.7)
+## 6. חגים — HOLIDAY_TAGS + COMMUNITY_HOLIDAY_TAGS
 
-מתכון יכול להופיע במספר חגים בו-זמנית. `HOLIDAY_TAGS` הם מפה של `{holiday_id: [recipe_ids]}`.
+### 6.1 HOLIDAY_TAGS — מרוקו בלבד (תוקן ב-v7.7)
 
-**הערה היסטורית:** עד v7.6 כל החגים הכילו את אותם 80 המתכונים (bug — regex זהה לכל החגים). ב-v7.7 בוצע תיוג אמיתי מבוסס regex על כותרות 671 מתכוני מרוקו + מסורת יהודית-מרוקאית מתועדת:
+**הבעיה ההיסטורית:** עד v7.6 כל 10 החגים הכילו את אותם 80 המתכונים של `cat='hol'` — כי ה-regex המקורי היה זהה לכל החגים. ב-v7.7 בוצע תיוג אמיתי מבוסס:
+1. Regex על כותרות 671 מתכוני מרוקו.
+2. מסורת יהודית-מרוקאית מתועדת (מקורות: Claudia Roden, Simy Cohen).
 
-| `id` | שם (HE) | שם (EN) | מתכונים (v7.7+) |
-|---|---|---|---|
-| `shabbat` | שבת | Shabbat | 54 |
-| `rosh` | ראש השנה | Rosh Hashanah | 14 |
-| `kippur` | יום כיפור | Yom Kippur | 0 |
-| `pesach` | פסח | Passover | 4 |
-| `mimouna` | מימונה | Mimouna | 7 |
-| `hanukkah` | חנוכה | Hanukkah | 2 |
-| `purim` | פורים | Purim | 1 |
-| `shavuot` | שבועות | Shavuot | 12 |
-| `sukkot` | סוכות | Sukkot | 27 |
-| `henna` | חינה | Henna | 14 |
+| `id` | שם | Recipes |
+|---|---|---|
+| `shabbat` | שבת | 54 |
+| `rosh` | ראש השנה | 14 |
+| `kippur` | יום כיפור | 0 |
+| `pesach` | פסח | 4 |
+| `mimouna` | מימונה | 7 |
+| `hanukkah` | חנוכה | 2 |
+| `purim` | פורים | 1 |
+| `shavuot` | שבועות | 12 |
+| `sukkot` | סוכות | 27 |
+| `henna` | חינה | 14 |
 
-**סה"כ: 121 תיוגים יחודיים / 671 מתכוני מרוקו (18%).** חגי-עדה (לא-מרוקאיים) מתויגים ב-`COMMUNITY_HOLIDAY_TAGS` (ראה סעיף 0 למעלה).
+**סה"כ:** 121 תיוגים יחודיים (18% מ-671). מתכון יכול להופיע במספר חגים.
+
+### 6.2 COMMUNITY_HOLIDAY_TAGS — 9 עדות × 9 חגים (v7.2)
+
+קבוע שממפה **עדה × חג ← מתכונים**:
+
+```javascript
+const COMMUNITY_HOLIDAY_TAGS = {
+  iraq: { shabbat:[...], rosh:[...], kippur:[...], pesach:[...],
+          hanukkah:[...], purim:[...], shavuot:[...], sukkot:[...], henna:[...] },
+  kurd: { /* ... 9 holidays ... */ },
+  ashk: { /* 8 — ללא חינה (v8.28) */ },
+  yem:  { /* 9 */ },
+  pers: { /* 9 */ },
+  buk:  { /* 9 */ },
+  tun:  { /* 9 */ },
+  turk: { /* 9 */ },
+  isr:  { /* 8 — ללא חינה (v8.28) */ }
+};
+```
+
+**221 תיוגים יחודיים** מתוך 270 מתכוני עדות (82% כיסוי). מבוסס על מקורות מתועדים. **מימונה לא כלולה** — מסורת מרוקאית בלעדית, תחת `HOLIDAY_TAGS` בלבד.
+
+### 6.3 סינון בזמן ריצה
+
+- `selectCat(catId, h?, groupKey?)` — אם `h` סופק, מסנן לפי `HOLIDAY_TAGS[h]`.
+- `selectCommunityHoliday(community, holidayKey, label, groupKey)` — מסנן לפי `COMMUNITY_HOLIDAY_TAGS[community][holidayKey]`.
 
 ---
 
-## 7. מנגנון תרגום לאנגלית — 3 שכבות
+## 7. בינלאומיות — 3 שכבות תרגום
 
-### שכבה 1: `_TITLE_EN`
-1,056 כותרות אנגליות. 367 תוקנו לשמות מאכלים מקוריים: Zaalouk, Matbucha, Taktouka, Mofletta, Albondigas, Gazpacho, Sfenj, Kubbeh, Shakshuka, Falafel, Jachnun, Malawach, Sabich.
+עברית היא שפת ברירת המחדל (RTL). מתג בכותרת (`🌐`) מחליף לאנגלית.
 
-### שכבה 2: `_PRE_EN` (pre_en.js)
+### שכבה 1 — `_TITLE_EN`
+
+1,056 כותרות מתכונים באנגלית. 367 תוקנו לשמות מאכלים מקוריים (Zaalouk, Matbucha, Taktouka, Mofletta, Albondigas, Gazpacho, Sfenj, Kubbeh, Shakshuka, Falafel, Jachnun, Malawach, Sabich).
+
+### שכבה 2 — `_PRE_EN` (pre_en.js)
+
 1,056 מתכונים × 5 שדות: `d` (desc), `m` (mem), `t` (tip), `st` (steps), `ig` (ingr). אפס תווי עברית. נבנה אוטומטית מ-`_FOOD_DICT`.
 
-### שכבה 3: `_FOOD_DICT`
+### שכבה 3 — `_FOOD_DICT`
+
 2,853 ערכי מילון עברית-אנגלית עם מנוע morphological matching:
-- **קידומות** (prefixes): `ב/ו/ל/מ/כ/ה`
-- **סיומות** (suffixes): `ים/ות/ה/ן/ת`
-- **final forms**: `נ→ן`, `מ→ם`, `צ→ץ`
-- **שורשים** (root stems) לזיהוי צורות מוטות
+- **קידומות**: `ב/ו/ל/מ/כ/ה`
+- **סיומות**: `ים/ות/ה/ן/ת`
+- **Final forms**: `נ→ן`, `מ→ם`, `צ→ץ`
+- **שורשים** לזיהוי צורות מוטות
+
+### 7.1 `_NAV_I18N` — תפריט
+
+מיפוי תווית עברית → DICT key. הורחב משמעותית ב-v7.6-v8.0 כדי שכל פריט תפריט של v7.x יתורגם.
+
+### 7.2 DICT ו-`t(key)` / `applyLang(lang)`
+
+DICT מכיל ~155 keys ל-UI labels. `applyLang('en')` סורק את ה-DOM ומחליף טקסטים לפי `_NAV_I18N` + לפי `data-i18n-key` attributes.
 
 ---
 
-## 8. מערכת תמונות — v5.1
+## 8. מערכת תמונות — `download_images.py` v5.1
 
-### 8.1 צינור Download Pipeline
-
-מופעל ע"י `download_images.py` (v5.1 — Unified Pipeline) המאחד 3 סקריפטים היסטוריים:
+### 8.1 Pipeline
 
 ```
-שלב 0:  Proxy Auto-Detection            (תמיד — בטעינת המודול)
-שלב 0b: Reset Images     (אופציונלי)    — מחיקת כל r-*.jpg
-שלב 1:  Clean Bad Images                 — EXIF + aspect ratio + size
-שלב 2:  Download (100 IL + 100 INTL)    — Hebrew-first, English fallback
-שלב 3:  Dedup SHA256 + _IMG_ALIAS.js    — מחיקת כפילויות + alias map
-שלב 3b: Inline Alias     (אופציונלי)    — החדרה ל-index.html
+שלב 0:  Proxy Auto-Detection         (תמיד — בטעינת המודול)
+שלב 0b: Reset Images (אופציונלי)    — מחיקת כל r-*.jpg
+שלב 1:  Clean Bad Images             — EXIF + aspect ratio + size
+שלב 2:  Download (100 IL + 100 INTL) — Hebrew-first, English fallback
+שלב 3:  Dedup SHA256 + _IMG_ALIAS.js — מחיקת כפילויות + alias map
+שלב 3b: Inline Alias (אופציונלי)    — החדרה ל-index.html
 ```
 
-### 8.2 פילטר מחוזק (v5.1)
+### 8.2 מקורות
 
-- **100 דומיינים ישראלים** מדורגים לפי 4 tiers ביטחון (Tier 1 מאומתים, Tier 4 best-guess)
-- **100 דומיינים בינלאומיים** כמעט כולם מאומתים
-- **`_BAD_URL_KW`** — ~100 מילות מפתח דוחות (אנשים, נוף, אירועים, טכנולוגיה)
-- **`_is_food_image_by_pixels`** — בדיקת aspect ratio קיצוני (`>2.2` פנורמה, `<0.45` portrait)
-- **Prefix עקבי**: כל 10 מקורות עבריים → `"מתכון ל" + title`; כל 13 מקורות אנגליים → `"recipe " + query`
+- **100 דומיינים ישראלים** מדורגים ל-4 tiers (Tier 1 מאומתים → Tier 4 best-guess).
+- **100 דומיינים בינלאומיים** כמעט כולם מאומתים.
+- `_BAD_URL_KW` — ~100 מילות מפתח דוחות (אנשים, נוף, אירועים, טכנולוגיה).
+- `_is_food_image_by_pixels` — דוחה aspect ratio קיצוני (`>2.2` פנורמה, `<0.45` portrait).
+- **Prefix עקבי:** `"מתכון ל" + title` לעברית, `"recipe " + query` לאנגלית.
 
-### 8.3 Tiered Israeli Domains
+### 8.3 שם קבצים
 
-| Tier | תיאור | דוגמאות | כמות |
-|---|---|---|---|
-| Tier 1 | מאומתים אישית | ynet, walla, mako, haaretz, foody, hashulchan, mevashlim | ~15 |
-| Tier 2 | אומת ע"י web search | culinartica, pascalpr, fingerfood, pastaeveryday, rotteml, dvarimbealma, pormeleg.kitchen | ~30 |
-| Tier 3 | סבירים (תאגידים/חדשות) | shufersal, tnuva, osem, strauss-group, maariv, nrg, inn, srugim | ~30 |
-| Tier 4 | best-guess | jewishcuisine.co.il, moroccan-food.co.il, sephardi-recipes.co.il | ~25 |
+- `images/recipes_images/r-{id}.jpg` — ראשי.
+- `images/recipes_images/r-{id}-2.jpg`, `-3.jpg`, ... — עד 10 תמונות למתכון.
+- `images/book_images/*.jpeg` — תמונות מהספר (+ `wedding.jpg`).
+- `images/site_images/cat-{cat}.jpg` — fallback לקטגוריה (20 placeholders).
+- `images/site_images/og-image.jpg` (1200×630), favicons, apple-touch-icon.
+- `images/_IMG_ALIAS.js` — מפת כפילויות SHA256 (auto-generated).
 
-### 8.4 שם קבצים
+### 8.4 Fallback chain ב-runtime
 
-- `images/recipes_images/r-{id}.jpg` — תמונה ראשית של מתכון
-- `images/recipes_images/r-{id}-2.jpg`, `r-{id}-3.jpg`... — עד 10 תמונות למתכון
-- `images/book_images/book_g42_*.jpg` — תמונות מהספר
-- `images/site_images/cat-{cat}.jpg` — תמונת fallback לקטגוריה
-- `images/site_images/og-image.jpg` — Open Graph (1200×630)
-- `images/site_images/favicon-{192|512}.png` + `apple-touch-icon.png`
-- `images/_IMG_ALIAS.js` — מפת כפילויות SHA256 (יוצר ע"י v5.1)
+```
+getRecipeImg(r) → images/recipes_images/r-{r.id}.jpg
+               → CAT_IMG[r.cat]           (e.g. cat-soups.jpg)
+               → CAT_IMG._def             (default placeholder)
+```
+
+**`r.img` מוסר מה-fallback ב-v6.1** — 1,056 מתכונים הצביעו ל-`picsum.photos` שנחסם ע"י CSP הצר. כל הנתיבים כעת מקומיים.
 
 ---
 
-## 9. מערכת פידבק — v6.6+ (Web3Forms)
-
-> **הערה:** הסעיף הזה נכתב במקור לגרסה v6.3 (FormSubmit.co). החל מ-v6.6 האתר עבר ל-**Web3Forms** (`https://api.web3forms.com/submit`) כי FormSubmit עבר לחסום את הבקשות עם 403. המפתח `WEB3FORMS_KEY = '705d4207-c4a6-43a2-8fdc-d8e202bc6c9c'` ב-`index.html` שורה 12043. התיעוד ההיסטורי של v6.3-v6.5 נשמר להלן לצורך הבנת המסע.
+## 9. מערכת פידבק — Web3Forms
 
 ### 9.1 רציונל
 
-מטרה: לאפשר למשתמשים לדווח על תיקונים במתכונים, להציע שיפורים, או לדווח על תקלות — **תוך הסתרת כתובת האימייל של המתחזק** ומבלי לדרוש שרת אפליקציה.
+מטרה: לאפשר דיווח תיקונים ושיפורים במתכונים **תוך הסתרת כתובת המתחזק** ומבלי לדרוש שרת אפליקציה.
 
-### 9.2 הסיבה למעבר מ-Netlify Forms (v6.3)
+### 9.2 היסטוריית המסע
 
-**הבעיה שהתגלתה:** האתר מתארח ב-**שני מקומות** — Netlify *וגם* GitHub Pages. Netlify Forms יורט POST-ים רק במקור Netlify שלו. ב-GitHub Pages (שרת סטטי) POST מחזיר **405 Method Not Allowed**.
+| גרסה | Backend | בעיה | פתרון |
+|---|---|---|---|
+| v6.0-v6.2 | Netlify Forms | ✗ 405 ב-GitHub Pages | מעבר ל-FormSubmit AJAX |
+| v6.3 | FormSubmit AJAX (`fetch`+JSON) | ✗ CORS preflight fail | hidden iframe |
+| v6.4 | FormSubmit + hidden iframe | ✗ 403 anti-spam | ניסיון שדה `_url` |
+| v6.5 | FormSubmit + `_url` | ✗ 403 עדיין | החלפת ספק |
+| **v6.6+ (נוכחי)** | **Web3Forms** — `fetch()` + CORS תקין | ✓ עובד | — |
 
-לוג קונסול שהדגים את הבעיה:
-```
-asafben33.github.io/:1 Failed to load resource: the server responded with a status of 405 (Method Not Allowed)
-```
+### 9.3 מימוש נוכחי (v6.6+)
 
-**הפתרון החדש:** FormSubmit.co — שירות form-to-email חיצוני ב-AJAX שעובד **מכל מקור** (GitHub Pages, Netlify, localhost, file://).
-
-### 9.3 ארכיטקטורה — Hidden iframe + form (v6.4)
-
-**ב-v6.3 נוסה גישת fetch+JSON ל-FormSubmit AJAX endpoint, אבל היא נכשלה ב-CORS preflight בכל דפדפן ב-GitHub Pages. ב-v6.4 הוחלפה בגישת hidden-iframe.**
-
-```
-משתמש → FAB (#fb-fab) או כפתור "הערה/תיקון" (#m-feedback-act)
-    ↓
-Modal פידבק (#fb-ovl) עם טופס (#fb-form)
-    ↓
-JS validation: message.length, email regex
-    ↓
-JS מאכלס שדות hidden form (#fb-hidden-form) — כולל subject, name, message...
-    ↓
-JS מגדיר action דינמית: hf.action = 'https://formsubmit.co/' + atob(EMAIL_B64)
-    ↓
-hf.submit() — Form POST classic, target='fb-iframe-target' (iframe מוסתר)
-    ↓
-┌─────────────────────────────────────────────────────────────────┐
-│ הדפדפן שולח POST classic application/x-www-form-urlencoded:    │
-│ • לא מפעיל CORS preflight (form submissions אינן כפופות ל-CORS) │
-│ • התגובה מטוענת ב-iframe המוסתר                                  │
-│ • event 'load' של ה-iframe מציין סיום שליחה                     │
-└─────────────────────────────────────────────────────────────────┘
-    ↓
-FormSubmit.co מקבל את הבקשה, מעביר ל-asafben33@gmail.com
-    (הכתובת מוסתרת כ-base64: YXNhZmJlbjMzQGdtYWlsLmNvbQ==)
-    ↓
-JS תופס iframe.load → "תודה! ההודעה נשלחה בהצלחה."
-    ↓
-timeout 15s למקרה של בעיית רשת → mailto fallback
+```javascript
+// index.html:11795
+var WEB3FORMS_KEY = '705d4207-c4a6-43a2-8fdc-d8e202bc6c9c';
+// נשלח ב-JSON ל-https://api.web3forms.com/submit
+fetch('https://api.web3forms.com/submit', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+  body: JSON.stringify({ access_key: WEB3FORMS_KEY, ...data })
+});
 ```
 
-#### למה לא fetch + JSON (לקח v6.3 → v6.4)
+**המפתח ציבורי בכוונה** — זה alias לאימייל, לא סוד. Web3Forms מזוהה ב-CSP תחת `connect-src`.
 
-ב-v6.3 ניסינו לשלוח `fetch()` עם `Content-Type: application/json` ל-`https://formsubmit.co/ajax/{email}`. הקונסול הציג שגיאה:
-
-```
-Access to fetch at 'https://formsubmit.co/ajax/asafben33@gmail.com'
-from origin 'https://asafben33.github.io' has been blocked by CORS policy:
-Response to preflight request doesn't pass access control check:
-No 'Access-Control-Allow-Origin' header is present on the requested resource.
-```
-
-**הסיבה:** שליחת JSON עם custom headers מפעילה preflight `OPTIONS` request אוטומטי של הדפדפן. השרת של FormSubmit אינו מחזיר `Access-Control-Allow-Origin` בתגובת ה-OPTIONS, ולכן הדפדפן חוסם את הבקשה כולה.
-
-**הפתרון (v6.4):** טפסי HTML מסורתיים (`<form method="POST">`) **אינם כפופים ל-CORS** — זה התנהגות מורשת מ-HTML 4 (predates fetch). שולחים את הטופס לתוך `<iframe>` מוסתר, התגובה נטענת בתוך ה-iframe (לא נקראת על ידי JS), והדפדפן מאשר את הבקשה ללא preflight.
-
-### 9.4 השוואה בין חלופות
-
-| קריטריון | FormSubmit | Netlify Forms | EmailJS | FormSpree |
-|---|---|---|---|---|
-| עובד מ-GitHub Pages | ✓ | ✗ | ✓ | ✓ |
-| עובד מ-Netlify | ✓ | ✓ | ✓ | ✓ |
-| עובד מ-file:// | ✓ | ✗ | ✓ | ✗ |
-| ללא הרשמה | ✓ | — | ✗ | ✗ |
-| חינם ללא מגבלה | ✓ | 100/חודש | 200/חודש | 50/חודש |
-| ללא תלות JS-lib | ✓ | ✓ | ✗ (40KB) | ✓ |
-| AJAX native | ✓ | ✗ (redirect) | ✓ | ✓ |
-
-### 9.5 נקודות כניסה למשתמש (ללא שינוי)
+### 9.4 נקודות כניסה למשתמש
 
 | נקודה | מיקום | סוג הודעה |
 |---|---|---|
-| כפתור "הערה / תיקון" | בתוך `.m-actions` בכל modal מתכון | `type: "recipe"` + recipe_id + recipe_title |
-| FAB צף (#fb-fab) | פינה שמאלית-תחתונה (RTL), תמיד גלוי | `type: "site"` |
+| כפתור "הערה / תיקון" | בתוך `.m-actions` בכל מודאל מתכון | `type: "recipe"` + recipe_id + recipe_title |
+| FAB צף (#fb-fab) | "הצעות ודיווח", פינה שמאלית-תחתונה (RTL), תמיד גלוי | `type: "site"` |
 | פונקציה גלובלית | `window.openFeedbackModal(type, recipe)` | גמיש |
 
-### 9.6 שיטות הסתרת האימייל (v6.3)
+> **v8.35** — כפתור "הערה / תיקון" במודאל קיבל את צבעוניות ה-FAB (זהב/תבלינים) לאחידות ויזואלית.
 
-1. **Base64 obfuscation בקוד** — `FORMSUBMIT_EMAIL_B64 = 'YXNhZmJlbjMzQGdtYWlsLmNvbQ=='` → הכתובת אינה מופיעה plain-text בסקריפט.
-2. **Hashed alias (אופציונלי, מומלץ אחרי אישור)** — FormSubmit מספק אליאס `/el/{hash}` במקום email.
-3. **Honeypot field** — `_honey: ''` (JSON property במקום DOM field).
-4. **FormSubmit rate-limit** — הגנה אוטומטית מובנית (עד 50 submissions/IP/שעה).
+### 9.5 Fallback
 
-### 9.7 שדות הטופס ב-payload
-
-| שדה | חובה | מקור | אורך מקסימלי |
-|---|---|---|---|
-| `_subject` | hidden | JS builds (תלוי type) | — |
-| `_template` | hidden | `"table"` (פורמט המייל) | — |
-| `_captcha` | hidden | `"false"` (AJAX) | — |
-| `_honey` | hidden | `""` (honeypot) | — |
-| `name` | לא | `#fb-name` | 80 תווים |
-| `email` | לא | `#fb-email` | 100 תווים (regex) |
-| `message` | **כן** | `#fb-message` | 2000 תווים |
-| `type` | auto | `"recipe"` / `"site"` | — |
-| `recipe_id` | auto (אם recipe) | `_recipe.id` | — |
-| `recipe_title` | auto (אם recipe) | `_recipe.title` | — |
-| `page_url` | auto | `location.href` | — |
-| `user_agent` | auto | `navigator.userAgent` | 200 תווים |
-
-### 9.8 זרימת Activation חד-פעמית
-
-FormSubmit דורש **אישור חד-פעמי** בשליחה הראשונה לכתובת החדשה:
-
-1. משתמש ראשון שולח הודעה.
-2. FormSubmit מחזיר JSON עם `success: "false"` + הודעת activation.
-3. במקביל, FormSubmit שולח **מייל אישור** ל-asafben33@gmail.com.
-4. על בעל האתר ללחוץ על קישור האישור במייל.
-5. מאותו רגע — כל השליחות הבאות מגיעות רגיל.
-6. ה-UX מטפל ב-`success: false` של פעם ראשונה באלגנטיות: מציג "תודה! ההודעה נקלטה בהצלחה" (כי ההודעה אכן נשמרת, רק מחכה לאישור).
-
-### 9.9 Fallback במקרה כישלון
-
-אם `fetch()` נכשל (רשת, CSP, offline, FormSubmit down):
-- שגיאה מתגלה ב-`.catch()`
-- `setStatus('שליחה ישירה נכשלה. [פתח באימייל במקום]')` — סטטוס עם קישור
-- המשתמש לוחץ → `openMailtoFallback(mailtoData)` → פתיחת לקוח מייל עם subject+body מוכנים
-- `mailtoData` משתמש במפתחות הישנים לתאימות עם `openMailtoFallback()` — לא השתנה
+אם `fetch()` נכשל (רשת, CSP, offline, Web3Forms down):
+- תצוגת "שליחה ישירה נכשלה. [פתח באימייל במקום]".
+- לחיצה → `openMailtoFallback()` → `mailto:` עם subject+body מוכנים + base64-decoded email.
 
 ---
 
-## 10. אבטחה — CSP & Headers (v6.3 — מעודכן)
+## 10. אבטחה — CSP, HSTS, COOP/CORP, SRI
 
-### 10.1 Content Security Policy — `<meta>` (v6.3)
+חיזוק אבטחה מקיף בוצע ב-v8.26-v8.28. התצורה הנוכחית ב-`_headers`:
 
-```
-default-src 'self';
-script-src 'self' 'unsafe-inline';
-style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-font-src 'self' https://fonts.gstatic.com;
-img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com;
-media-src 'self' blob:;
-connect-src 'self' https://formsubmit.co;
-frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;
-object-src 'none';
-base-uri 'self';
-form-action 'self';
-```
-
-שינויים מגרסה 6.0:
-- **`connect-src`**: נוסף `https://formsubmit.co` — נדרש לשליחת פידבק ב-AJAX (v6.3).
-- **`frame-ancestors`**: **הוסר מה-meta** — הדפדפן מתעלם מהערך הזה כשהוא מגיע דרך `<meta>` (רק HTTP header תקף). הוגדר עכשיו רק ב-`_headers` של Netlify. הסרתו מונעת warning בקונסול.
-
-שינויים היסטוריים (5.0 → 6.0):
-- **`img-src`**: `*` → ספציפי (`'self'`, `data:`, `blob:`, YouTube thumbnails).
-- **נוסף**: `media-src`, `form-action`, `frame-ancestors`.
-
-### 10.2 Netlify `_headers` (חדש ב-v6.2)
-
-קובץ `_headers` בשורש הפרויקט מגדיר HTTP headers שאינם ניתנים לקבוע דרך `<meta>`:
+### 10.1 `_headers` (Netlify)
 
 ```
 /*
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: geolocation=(), microphone=(), camera=()
-  Content-Security-Policy: default-src 'self'; ...
-    connect-src 'self' https://formsubmit.co;
-    form-action 'self' https://formsubmit.co;
-    frame-ancestors 'none';
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-site
+  X-Permitted-Cross-Domain-Policies: none
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(),
+                       usb=(), magnetometer=(), gyroscope=(), accelerometer=(),
+                       ambient-light-sensor=(), autoplay=(self), fullscreen=(self),
+                       interest-cohort=()
+  Content-Security-Policy: default-src 'self';
+                            script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+                            style-src  'self' 'unsafe-inline' https://fonts.googleapis.com;
+                            font-src   'self' https://fonts.gstatic.com;
+                            img-src    'self' data: blob: https://i.ytimg.com https://img.youtube.com;
+                            media-src  'self' blob:;
+                            connect-src 'self' https://api.web3forms.com https://cdn.jsdelivr.net;
+                            frame-src  'self' https://www.youtube.com https://www.youtube-nocookie.com;
+                            object-src 'none';
+                            base-uri   'self';
+                            form-action 'self';
+                            frame-ancestors 'none';
+                            upgrade-insecure-requests;
+
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
 ```
 
-- **`frame-ancestors`** — מוגדר כאן (לא ב-meta, כי הדפדפן יעלם ממנו).
-- **`X-Frame-Options: DENY`** — שכבה נוספת למניעת clickjacking.
-- **`form-action`** — מאפשר שליחה של `<form>` ל-formsubmit.co (הדפדפן חוסם form-action אם לא מורשה מפורש).
+### 10.2 הערות מפתח
 
-### 10.3 Meta Headers נוספים ב-`<head>`
+- **`frame-ancestors: 'none'`** — רק ב-`_headers`, לא ב-meta (הדפדפן מתעלם ממנו דרך meta). שכבת חיזוק נוספת על `X-Frame-Options: DENY`.
+- **HSTS preload** — כל הדומיין מכריח HTTPS ל-12 חודשים (כולל subdomains).
+- **COOP (`same-origin`)** — מבודד את Browsing Context מ-popups מאתרים אחרים.
+- **CORP (`same-site`)** — מונע טעינה cross-origin של נכסים שלנו.
+- **`upgrade-insecure-requests`** — מבטיח שכל משאב נטען ב-HTTPS גם אם ההפניה ב-HTTP.
+- **YouTube nocookie** — embeds משתמשים ב-`youtube-nocookie.com` לפרטיות.
 
-```html
-<meta http-equiv="X-Content-Type-Options" content="nosniff">
-<meta name="referrer" content="no-referrer">
-```
+### 10.3 SRI על CDN scripts
 
-### 10.4 הסתרת כתובת אימייל בקוד המקור
+כל `<script>` שמטעין קוד מ-`cdn.jsdelivr.net` מכיל `integrity="sha384-..."` + `crossorigin="anonymous"`. שינוי בקובץ המקור → הדפדפן דוחה.
 
-```javascript
-// בקוד (index.html)
-var FORMSUBMIT_EMAIL_B64 = 'YXNhZmJlbjMzQGdtYWlsLmNvbQ==';  // base64 obfuscation
-// runtime
-var endpoint = 'https://formsubmit.co/ajax/' + atob(FORMSUBMIT_EMAIL_B64);
-```
+### 10.4 פרטיות
 
-זה לא הגנה חזקה (decode טריוויאלי), אבל מונע **scrapers פשוטים** של אימיילים מלזהות את הכתובת ב-plain text.
+- **אימייל מוסתר** — base64 ב-JS (`atob(...)`) + Web3Forms key ציבורי (alias).
+- **אין tracking** — ללא Google Analytics, ללא Meta pixel, ללא cookies פרסומיים.
+- **Honeypot** — שדה `_url` / `botcheck` בטופס; הודעות מבוטים נדחות שקט.
+- **PWA** — `display: standalone`, ללא הרשאות רגישות.
 
 ---
 
@@ -550,15 +497,12 @@ var endpoint = 'https://formsubmit.co/ajax/' + atob(FORMSUBMIT_EMAIL_B64);
 ```
 מפתח:  git add → git commit → git push origin main
            ↓
-GitHub: קובץ index.html מתעדכן ב-repo
+GitHub: main מתעדכן
            ↓
-Netlify: webhook triggers build
+Netlify: webhook → build & deploy (Netlify)
+GitHub Pages: action → deploy ל-asafben33.github.io
            ↓
-Netlify: scans <form data-netlify="true"> — registers form
-           ↓
-Netlify: publishes to perlabenharrosh-cookingbook.netlify.app
-           ↓
-משתמשים: CDN serves latest version
+משתמשים: CDN serves latest
 ```
 
 ### 11.2 מיקומים
@@ -566,287 +510,117 @@ Netlify: publishes to perlabenharrosh-cookingbook.netlify.app
 | מאפיין | ערך |
 |---|---|
 | Repository | `github.com/asafben33/PerlaBenHarroshCookingBook` |
-| Netlify | `https://perlabenharrosh-cookingbook.netlify.app/` |
-| GitHub Pages | `https://asafben33.github.io/PerlaBenHarroshCookingBook/` |
+| Netlify (ראשי) | `https://perlabenharrosh-cookingbook.netlify.app/` |
+| GitHub Pages (mirror) | `https://asafben33.github.io/PerlaBenHarroshCookingBook/` |
 | Branch | `main` |
-| Deployment | push ידני (ללא CI/CD) |
-| Logs | `logs/download_images_YYYY-MM-DD_HH.MM.log` |
+| Deployment | push אוטומטי (ללא CI/CD חיצוני) |
+| SEO verification | Google Search Console (active), Bing/Yandex (pending) |
 
-### 11.3 הגדרת FormSubmit (חד-פעמי ב-v6.3)
+### 11.3 פעולות הפעלה חד-פעמיות
 
-**לאחר הפריסה הראשונה, חובה לבצע פעולה חד-פעמית כדי להפעיל את הטופס:**
-
-1. היכנס לאתר החי (אחרי push ו-deploy).
-2. לחץ על כפתור "הצעות ודיווח" (FAB שמאלי-תחתון).
-3. שלח הודעת בדיקה (כל תוכן קצר).
-4. תקבל **מייל activation** אל `asafben33@gmail.com` מכתובת `contact@formsubmit.co`.
-5. לחץ על קישור האישור במייל.
-6. מאותו רגע והלאה — **כל ההודעות הבאות יגיעו ישירות לתיבת המייל**.
-
-הערות:
-- ההודעה הראשונה **נשמרת** ב-FormSubmit; היא נשלחת אליך מיד אחרי לחיצת האישור.
-- אין צורך ביצירת חשבון ב-FormSubmit.
-- אם תרצה **פרטיות מוגברת** (להחביא את הכתובת לגמרי מהקוד), לאחר האישור FormSubmit יספק אליאס hash:
-  - `https://formsubmit.co/el/{hash}`
-  - תוכל להחליף את `FORMSUBMIT_EMAIL_B64` בקוד עם ה-hash במקום base64.
+- **Web3Forms:** כבר הופעל — הודעות מגיעות ישירות.
+- **Google Search Console:** אומת ב-v8.38 (meta tag `google-site-verification`).
+- **Sitemap:** `sitemap.xml` מכיל 6 URLs + hreflang he/en; יש להגיש ל-Search Console ידנית.
 
 ---
 
-## 12. Responsive Design
+## 12. Responsive & Accessibility & SEO
+
+### 12.1 Responsive
 
 | Breakpoint | שינויים |
 |---|---|
-| Desktop `> 1200px` | Grid 4 עמודות, dropdown מלא, modal side-by-side |
-| Tablet `768–1200px` | Grid 3 עמודות, nav condensed |
-| Mobile `480–768px` | Grid 2 עמודות |
-| Mobile `< 480px` | Grid 1 עמודה, modal full screen, feedback modal כ-bottom sheet, FAB ללא label |
+| Desktop > 1200px | Grid 4 עמודות, dropdown מלא, modal side-by-side |
+| Tablet 768-1200px | Grid 3 עמודות, nav condensed |
+| Mobile 480-768px | Grid 2 עמודות |
+| Mobile < 480px | Grid עמודה 1, modal מלא-מסך, feedback כ-bottom sheet, FAB ללא label |
+
+### 12.2 Accessibility
+
+- `dir="rtl" lang="he"` בשורש.
+- ARIA מלא — `role`, `aria-label`, `aria-expanded`, `aria-haspopup`, `aria-modal`, `aria-live`.
+- Keyboard: Tab, Enter, Escape, Arrow keys — ניווט מלא + focus trap במודאלים.
+- `prefers-reduced-motion` — אנימציות מבוטלות.
+- Font scaling — base `17px` (16px במובייל), kerning מותאם ל-RTL.
+
+### 12.3 SEO
+
+- Open Graph: `og:title`, `og:description`, `og:image` (1200×630).
+- Twitter Card: `summary_large_image`.
+- JSON-LD (Schema.org): `WebSite` + `description` + author = "אסף בן הראש".
+- `sitemap.xml` (6 URLs, hreflang he/en) + `robots.txt`.
+- `<meta name="google-site-verification">` + slot ל-Bing/Yandex.
+- Lazy loading: `loading="lazy"`, `decoding="async"`, `fetchPriority="low"`.
 
 ---
 
-## 13. נגישות ו-SEO
+## 13. PWA ו-Service Worker
 
-| מאפיין | פרטים |
-|---|---|
-| כיוון שפה | `dir="rtl" lang="he"` |
-| Open Graph | `og:title`, `og:description`, `og:image` (1200×630) |
-| JSON-LD | Schema.org `WebSite`, author: "אסף בן הראש" |
-| ARIA | `role`, `aria-label`, `aria-expanded`, `aria-haspopup`, `aria-modal`, `aria-live` |
-| Keyboard | Tab, Enter, Escape, Arrow keys — ניווט מלא + focus trap במודאלים |
-| Lazy loading | `img.loading="lazy"`, `decoding="async"`, `fetchPriority="low"` |
-| PWA | `manifest.json`, Service Worker (`sw.js` v10) |
-| `prefers-reduced-motion` | אנימציות מבוטלות |
+### 13.1 PWA
+
+- `manifest.json`: `display: standalone`, `dir: rtl`, `theme_color: #130c05`, `background_color: #fdf8ee`.
+- Icons: 192, 512, apple-touch-icon 180.
+- Install button `#pwa-install-btn` (v6.9+: תמיד נראה; v6.10: Custom Modal במקום `alert()`).
+- 5 מסלולי התקנה: iOS Safari, Android, Firefox desktop, Safari macOS, Chrome/Edge desktop.
+
+### 13.2 Service Worker (`sw.js` v19)
+
+```javascript
+const CACHE_NAME = 'perla-cookbook-v19';
+const SHELL = ['./', './index.html', './data.js', './pre_en.js',
+               './manifest.json', './images/book_images/wedding.jpg', './book_data.js'];
+```
+
+**Strategy:**
+- **GET images** (regex: `\.(jpg|jpeg|png|webp|gif)$` או `/images/`): **cache-first** + network fallback.
+- **GET other** (HTML, JS, CSS, fonts): **network-first** + cache fallback.
+- **POST**: passthrough — אף פעם לא נשמר ב-cache.
+- Install: caches shell resilient-to-404 (ניסיון אישי לכל קובץ).
+- Activate: ניקוי כל ה-caches הישנים + `clients.claim()`.
+- Eligibility check (`_shouldCache`): GET בלבד, type=basic, status=200.
 
 ---
 
-## 14. סיכום שינויים מגרסה 5.0 → 6.0
+## 14. אבולוציה — ציון דרך עיקרי
 
-### 14.1 אבטחה ו-Metadata (אפריל 2026)
+תקציר; פרטים מלאים ב-`docs/CLAUDE.md`.
 
-- CSP מוחזק (`img-src` מצומצם, הוספת `form-action`, `frame-ancestors`, `media-src`).
-- Favicon: אמוג'י `🍲` → 3 קבצי PNG מקומיים (192, 512, apple-touch-icon).
-- פונטים: נוסף Heebo לצד Frank Ruhl Libre (הן ב-`<link>` והן ב-`@import` בתוך קוד ההדפסה).
-- OG image: Wikimedia → `images/site_images/og-image.jpg` (1200×630).
-- JSON-LD: תיקון שם מחבר ("אסף בן ארוש" → "אסף בן הראש") + תיקון נתיב image.
-
-### 14.2 Data & Content
-
-- 50 מתכונים קיבלו `tip` מותאם אישית (עברית, מזכיר את המשפחה/מרוקו).
-- תוויות קטגוריות יושרו: `hol` → "חגים ומועדים"; `des` → "קינוחים ומאפים".
-- שמות תתי-קטגוריות ב"מורשת ספרד" ו"מטבח ישראלי" יושרו ל-README.
-
-### 14.3 Image Pipeline — `download_images.py` v5.1
-
-- **מיזוג 3 סקריפטים לאחד**: `clean_bad_images.py` + `cleanup_hardlinks.py` + `download_images.py` → `download_images.py` v5.1.
-- **שלב 1 חדש**: `clean_existing_bad_images()` — מוחק תמונות חשודות לפני הורדה.
-- **שלב 3b חדש**: `inline_alias_into_index()` — עדכון אוטומטי של `_IMG_ALIAS` ב-`index.html`.
-- **הרחבה ל-100+100 דומיינים** (לעומת 40+40).
-- **רפקטור**: 15 פונקציות כפולות → 2 פונקציות `batch` גנריות + לולאה דינמית.
-- **חיזוק פילטרים**:
-  - הרחבת `_BAD_URL_KW` ב-~40 מילות מפתח (אנשים, אירועים, אילוסטרציות, נוף נוסף).
-  - `_is_food_image_by_pixels` כולל כעת aspect ratio check.
-- **עקביות prefix**: כל 10 מקורות עבריים → `"מתכון ל"`; כל 13 מקורות אנגליים → `"recipe "`.
-- **שורת לוג משופרת**: מציגה את ה-query האמיתי ששולח (`"מתכון ל" + title`).
-- **6 דגלי CLI חדשים**: `--reset-images`, `--clean-only`, `--skip-clean`, `--aggressive-clean`, `--inline-alias`, `--dry-run`.
-
-### 14.4 Feedback System (v6.0, הוחלף ב-v6.3)
-
-- Modal פידבק עם 3 נקודות כניסה (recipe button, FAB, פונקציה גלובלית).
-- בגרסה זו: Netlify Forms — ראו **14.7** לפרטי ההחלפה.
-- Fallback `mailto:` עם base64 obfuscation.
-- WCAG 2.1 compliant — focus trap, ARIA, keyboard nav, `prefers-reduced-motion`.
-- UI מתבסס על design tokens קיימים (`--c-spice`, `--c-gold`, `--c-ink` וכו').
-
-### 14.5 תיקוני יציבות ואבטחה (v6.1 → v6.2)
-
-- **הסרת `frame-ancestors` מה-meta** — הדפדפן מתעלם ממנו דרך meta; הוגדר רק ב-`_headers`. ביטל warning בקונסול.
-- **הסרת `r.img` מ-`_getImgFallbacks()`** — כל 1,054 המתכונים הצביעו ל-picsum.photos שנחסם על ידי CSP הצר. כעת אפס CSP violations (לפני: 1,054 הפרות לכל טעינת דף).
-- **הסרת `-2.jpg`/`-3.jpg` מ-fallback** — אלה היו tried לכל מתכון גם אם הראשי לא קיים; חסכו ~2,108 404-ים לכל טעינת דף. נשארים רק בגלריית התמונות במודל (`_getAllRecipeImages()`).
-- **תיקון באג `[data-sec=about]`** — selector שלא קיים, החזיר null, וגרם ל-`TypeError: Cannot read properties of null (reading 'click')` בלחיצה על קישור "קראו בספר". הוחלף ב-null-safe `#about-toggle` click.
-- **יצירת 20 תמונות cat-*.jpg** — placeholders אמנותיים (480×360) עם גרדיאנט חם, טקסט עברי בגדלים שונים (64px → 32px adaptive), מסגרת דקורטיבית זהובה עם מעויינים בפינות, וכותרת משנה ("מטעמים של אמא" / "מתכונים מהעדות" / "ספר הבישול"). מונע 20×3 = 60 404-ים לטעינת דף.
-- **הגדלת UI — סיבוב ראשון** (v6.2):
-  - שורת חיפוש: `width: 180px` → `320px`, גופן `.85rem` → `.95rem`.
-  - תפריט: `--nav-h: 44px` → `54px`, `.nb` גופן `.82rem` → `1rem` / weight 700.
-  - צ'יפים: `.pc` גופן `.78rem` → `1rem`, `.acc-hdr` גופן `.78rem` → `1.18rem`.
-
-### 14.6 UI Enlargement — סיבוב שני ויצירת תחושת hierarchy (v6.3)
-
-ההגדלות העיקריות כדי שהאתר יהיה נוח לקריאה ולקליק:
-
-**שורת חיפוש (flexible):**
-- `.hdr-search`: מ-`width: 320px` קבוע → `flex: 1; max-width: 640px; min-width: 220px` — ממלא את כל הרוחב הפנוי (עד 640px).
-- `#srch`: `width: 100%`, font `.95rem` → `1.05rem`, padding גדול יותר.
-
-**תפריט ראשי:**
-- `--nav-h`: `54px` → `60px`.
-- `.nb`: font `1rem` → `1.1rem`, weight `600` → `700`, padding `1.3rem` → `1.5rem`.
-- `.nb-cnt`: `.78rem` → `.9rem`, weight 700, padding גדול יותר.
-- `.nb-arr`: `.75rem` → `.88rem`.
-
-**צ'יפים בתת-התפריט:**
-- `.pc`: `1rem` → `1.08rem`, padding `.55/1.3rem` → `.72/1.5rem`.
-- `.acc-hdr` (כותרות קטגוריה): `1rem` → `1.18rem`, padding `.55/1.3rem` → `.8/1.7rem`, border alpha `.28` → `.35` — הבולטים ביותר.
-- `.pc-cnt`: `.82rem` → `.92rem`, weight 500 → 600.
-- `.acc-body`: gap `.55rem` → `.7rem`, padding `.8/1rem` → `1/1.3rem`.
-- `.nav-panel-inner`: padding `1.1/1.5/1.3rem` → `1.4/1.8/1.6rem`, הוסף `display: flex; flex-direction: column; gap: .8rem`.
-
-### 14.7 מערכת פידבק — מהגרה ל-FormSubmit.co (v6.3)
-
-**בעיה:** Netlify Forms לא עובד ב-GitHub Pages (POST מחזיר 405).
-
-**פתרון:** מעבר ל-FormSubmit.co AJAX endpoint.
-
-**שינויים קודיים:**
-- הוסר `<form name="perla-feedback" data-netlify="true" hidden>` (859 bytes פוחת).
-- נוסף קבוע: `var FORMSUBMIT_EMAIL_B64 = 'YXNhZmJlbjMzQGdtYWlsLmNvbQ==';`.
-- `submitFeedback()` נכתב מחדש — שולח JSON ל-`https://formsubmit.co/ajax/{email}`.
-- תגובות FormSubmit: `success: true` (מסר נשלח) או `success: false` (פעם ראשונה, דורש activation).
-- Fallback ל-mailto נשאר בעינו.
-- CSP: `connect-src 'self' https://formsubmit.co`.
-- `_headers`: `form-action 'self' https://formsubmit.co`.
-
-### 14.8 עדכוני תוכן (v6.3)
-
-**כותרת Hero:**
-- לפני: `המטבח של משפחת בן הראש המורחבת`
-- אחרי: `המטבח של משפחת בן הראש (ארוש\הרוש)` — מדגיש שני תעתיקי שם המשפחה.
-
-**שורת תיאור Hero:**
-- לפני: `לזכרם של פרלה ופנחס בן הראש — טעמים שמעלים זכרונות שחשבנו שכבר שכחנו...`
-- אחרי: `לזכרם של פרלה ופנחס בן הראש ז״ל — טעמים שמעלים זכרונות שכמעט שכחנו...`
-- שימוש ב-Hebrew gershayim U+05F4 (לא `"` רגיל) לעקביות עם 13 מופעים קיימים באתר.
-
-**פסקת Memorial ב-BIO:**
-- לפני: `...שזכרונם יהיה לברכה וגאווה לדורי דורות דרך הטעם המעלה זכרונות שחשבנו שכבר שכחנו...`
-- אחרי: `...שזכרונם יהיה לברכה וגאווה הלאה לדורי דורות דרך הטעם המעלה זכרונות שכמעט שכחנו...`
-- עודכן ב-3 מקומות: HTML, i18n, וגם **JSON-LD description** (מטא-תיאור לגוגל/שיתופים).
-
-**כותרת BIO (H2):**
-- לפני: `פרלה ופנחס בן הראש ז״ל — המשפחה שיצבה מטבח`
-- אחרי: `פרלה ופנחס בן הראש ז״ל — המשפחה שעיצבה מטבח שלם שיזכר ויתבשל הלאה לדורי דורות`
-- תיקון שורש: `שיצבה` → `שעיצבה` (שורש ע+צ+ב).
-- אנגלית: `The family that shaped an entire kitchen, to be remembered and cooked onward for generations to come`.
-
-### 14.10 תיקון CORS — מעבר מ-fetch ל-hidden iframe (v6.4)
-
-**הבעיה שהתגלתה אחרי הפריסה של v6.3:**
-```
-Access to fetch at 'https://formsubmit.co/ajax/asafben33@gmail.com'
-from origin 'https://asafben33.github.io' has been blocked by CORS policy:
-Response to preflight request doesn't pass access control check:
-No 'Access-Control-Allow-Origin' header is present on the requested resource.
-```
-
-**ניתוח:** הדפדפן שולח `OPTIONS` (preflight) לפני `POST` כי שלחנו `Content-Type: application/json` (לא "simple request"). FormSubmit אינו מחזיר `Access-Control-Allow-Origin` ב-OPTIONS — ולכן הדפדפן חוסם את ה-POST.
-
-**הפתרון:** מעבר מ-`fetch()` ל-`<form>` רגיל עם `target="hidden-iframe"`. שליחת טופס ל-iframe **לא מפעילה CORS preflight** (זו התנהגות מורשת של HTML שלפני קיומו של fetch).
-
-**שינויים ב-v6.4:**
-1. **HTML חדש** לפני `</body>`: `<iframe id="fb-iframe-target" hidden>` + `<form id="fb-hidden-form" hidden>` עם 12 שדות hidden.
-2. **JS חדש** ב-`submitFeedback()`: מאכלס שדות hidden form, קורא ל-`hf.submit()`, מאזין ל-`iframe.load`.
-3. **CSP עודכן:**
-   - `connect-src 'self'` (הוסר formsubmit.co — לא מתבצע fetch)
-   - `frame-src` כולל formsubmit.co (iframe מנווט אליו)
-   - `form-action` כולל formsubmit.co (form נשלח אליו)
-4. **15s timeout** למקרה שה-iframe לא מטען מסיבה כלשהי → mailto fallback.
-
-### 14.9 שחזור כפתור PWA Install (v6.3)
-
-הכפתור נעלם מהאתר ברגע כלשהו קודם לסשן זה ולכן שוחזר במלואו:
-
-- **HTML**: `<button id="pwa-install-btn" class="hdr-btn hdr-btn-install">` עם SVG של חץ הורדה + span "התקן", hidden by default.
-- **CSS**: רקע זהב, `animation: pwa-pulse 3s ease-in-out infinite` (pulse מושך תשומת לב), עם `@media (prefers-reduced-motion: reduce)` מכבה.
-- **JavaScript** (IIFE):
-  - `addEventListener('beforeinstallprompt')` — שומר את ה-event ומציג את הכפתור.
-  - `addEventListener('appinstalled')` — מסתיר את הכפתור ושומר `localStorage['perla_pwa_dismissed'] = 'yes'`.
-  - Click handler: מפעיל `prompt.prompt()` ב-Chromium; ב-iOS מציג `alert()` עם הוראות ידניות.
-  - בדיקת `display-mode: standalone` — אם האתר כבר מותקן, הכפתור מוסתר.
-- **i18n**: 3 מפתחות חדשים — `pwa_label` / `pwa_title` / `pwa_aria` (HE + EN).
+| גרסה | תאריך | מה נוסף/השתנה |
+|---|---|---|
+| v5.0 | אפריל 2026 | בסיס — `index.html` + `data.js` |
+| v6.0-v6.3 | 18-19/04 | Netlify → FormSubmit, PWA, חיזוק UI |
+| v6.4-v6.6 | 19/04 | CORS fix (iframe), Web3Forms migration |
+| v6.7-v6.10 | 19/04 | PWA custom modal, Python CLI scripts, UI scaling |
+| **v7.0-v7.1** | 19/04 | **שיפוץ דף ראשי** — flat 6-group MENU, Hero CTAs, Main אחרי Bio, main-hidden |
+| v7.2-v7.4 | 19/04 | **COMMUNITY_HOLIDAY_TAGS (221 תיוגים), תיקיית חגים לכל עדה** |
+| v7.7-v7.9 | 19/04 | **HOLIDAY_TAGS תוקן** (80×10→121 יחודיים), איחוד מרוקו+ספרד |
+| **v8.0** | 19/04 | i18n wiring מלא, light theme overrides, sitemap, robots.txt |
+| v8.1-v8.4 | 19-20/04 | +2 מתכונים (1,054→1,056), audit נקי |
+| v8.5-v8.16 | 20/04 | טיפוגרפיה, ROTD קומפקטי, book reader (v1) |
+| v8.17-v8.32 | 20-21/04 | **קורא ספר 3D (StPageFlip)** — על כל גלגוליו |
+| **v8.26-v8.28** | 21/04 | **חיזוק אבטחה מקיף** — HSTS, COOP/CORP, SRI, path anchoring; חינה הוסרה מאשכנז+isr |
+| **v8.33** | 22/04 | **הסרת קורא ספר 3D** — נשאר רק מצב גלילה (-1,380 שורות) |
+| v8.34-v8.38 | 22/04 | **שיפוצי UX תפריט** — chips קטנים, auto-expand, sibling close, focused-view |
+| v8.39 | 22/04 | הסרת dead code (`placeholder:'communityHolidays'`) |
 
 ---
 
 ## 15. מפת התיעוד
 
-| מסמך | גרסה | תיאור |
+| מסמך | תפקיד | גרסה |
 |---|---|---|
-| `README.md` | 6.3 | סקירה כללית, התקנה, מבנה תפריט, קבצי נתונים |
-| `CLAUDE.md` | 6.3 | הנחיות למפתחים/AI agents לעבודה על הפרויקט |
-| `HLD_Perla_CookingBook.md` | **6.4** | המסמך הנוכחי — High Level Design |
-| `LLD_Perla_CookingBook.md` | **6.4** | Low Level Design — פונקציות, CSS, DOM |
-| `INTEGRATION_GUIDE.md` | 3.0 | מדריך אינטגרציה (FormSubmit עם hidden iframe) |
-| `CHANGELOG_19-04-2026_v6.3.md` | — | שינויי 19/04 חלק ראשון (UI + FormSubmit AJAX + PWA + תוכן) |
-| `CHANGELOG_19-04-2026_v6.4.md` | — | תיקון CORS — מעבר ל-hidden iframe approach |
-| `CHANGELOG_18-04-2026_v2.md` | — | שינויי אבטחה ו-meta של 18/04 |
-| `CHANGELOG_download_images_v5.md` | — | שינויי v5.1 של `download_images.py` |
-
----
-
-## נספח — מחזור v7.0 → v8.0 (19/04/2026)
-
-מחזור עיצוב מחדש מקיף שבוצע ביום אחד, ב-11 פריסות. **המסמך הזה (HLD v6.4) משקף את הבסיס הארכיטקטוני; פירוט מלא של השינויים נמצא ב-`PLAN_v7_0_HEBREW.md`, `PLAN_v7_0_ENGLISH.md`, ובסדרת CHANGELOGs יחודית לכל גרסה.**
-
-### שינויים ארכיטקטוניים מרכזיים
-
-| היבט | v6.4 (מסמך זה) | v8.0 (נוכחי) |
-|---|---|---|
-| **MENU_STRUCTURE** | nested wrapper "כל המתכונים" עם 4 רמות | 4 קבוצות שטוחות עליונות (הכל / מרוקו\\ספרד / עדות ישראל / לא כשר) |
-| **רשת מתכונים** | מוצגת בטעינה | מוסתרת עד פעולת משתמש (`main-hidden` + `showMainGrid()`) |
-| **חגים — מרוקו** | קטגוריה אחת `hol` (80 מתכונים) | 10 חגים נפרדים תחת מרוקו, 121 תיוגים יחודיים (`HOLIDAY_TAGS` תוקן ב-v7.7) |
-| **חגים — עדות** | לא קיים | 9 עדות × 9 חגים = 221 תיוגים יחודיים (`COMMUNITY_HOLIDAY_TAGS`, ללא מימונה) |
-| **מרוקו + ספרד** | 2 כפתורים נפרדים | אוחדו ל-"מרוקו\\ספרד" (744 מתכונים, מורשת קארו 1492) |
-| **i18n nav** | חלקי | מלא — כל פריט תפריט מתורגם לאנגלית |
-| **Header** | brand נפרד מחיפוש, max-width 1440 | brand+חיפוש+כלים מאוזנים, max-width 1100 (v7.5) |
-| **Hero** | `text-align: right` | ממורכז (`text-align: center`, max-width 760) |
-| **Hero CTAs** | לא קיים | 2 כפתורים: "עיון במתכונים" + "קרא את הספר" |
-| **DOM order** | Hero → Bio → Book → About → Main | Hero → Bio → **Main** → Book → About (v7.6) |
-| **SEO** | אין sitemap.xml | sitemap.xml + robots.txt + hreflang (v8.0) |
-| **Light theme** | חלקי | overrides ל-7 classes חדשים של v7.x (v8.0) |
-| **Print stylesheet** | מסתיר אלמנטים של v6.x | הורחב לכל classes של v7.x (v8.0) |
-
-### קבועי data חדשים (data.js)
-
-| קבוע | תוכן | גרסה |
-|---|---|---|
-| `MENU_STRUCTURE` | 4 קבוצות עליונות (במקום nested wrapper) | v7.9 |
-| `HOLIDAY_TAGS` | 10 חגי מרוקו → 121 IDs יחודיים | v7.7 (תוקן) |
-| `COMMUNITY_HOLIDAY_TAGS` | 9 עדות × 9 חגים → IDs | v7.4 (חדש) |
-
-### קבועי i18n חדשים (index.html)
-
-| קבוע | מטרה | גרסה |
-|---|---|---|
-| `_NAV_I18N` | מיפוי תוויות עברית → DICT keys | הורחב v8.0 |
-| `t(key)` | פונקציית lookup | קיים |
-| `applyLang(lang)` | סורק DOM, מתרגם תוויות לפי `_NAV_I18N` | קיים |
-
-DICT הורחב מ-~130 ל-~155 מפתחות (21 ב-v7.6 + 5 ב-v8.0).
-
-### קבצים חדשים בפרויקט
-
-- **`sitemap.xml`** (1.5 KB) — SEO sitemap עם 6 URLs + hreflang tags he/en (v8.0)
-- **`robots.txt`** (158 B) — מפנה crawlers ל-sitemap (v8.0)
-- **`audit_recipes.py`** — סקריפט ביקורת אוטומטי לאיכות מתכונים (לא מתקן)
-- **`CLAUDE_md_v7_update.md`** + **`CLAUDE_md_v8_update.md`** — תוספות תיעוד שטרם הוטמעו ב-CLAUDE.md המקורי
-
-### סדרת CHANGELOGs (v7.0 → v8.0 — 10 קבצים)
-
-```
-CHANGELOG_19-04-2026_v7_centered_hero.md          (v7.0 + v7.1)
-CHANGELOG_19-04-2026_v7_2_community_holidays.md   (v7.2)
-CHANGELOG_19-04-2026_v7_3_holidays_in_community.md (v7.3)
-CHANGELOG_19-04-2026_v7_4_holiday_folder.md       (v7.4)
-CHANGELOG_19-04-2026_v7_5_centered_header_strip.md (v7.5)
-CHANGELOG_19-04-2026_v7_6_final.md                (v7.6)
-CHANGELOG_19-04-2026_v7_7_holiday_tags_fix.md     (v7.7)
-CHANGELOG_19-04-2026_v7_8_remove_duplicate_holidays.md (v7.8)
-CHANGELOG_19-04-2026_v7_9_morocco_spain_merge.md  (v7.9)
-CHANGELOG_19-04-2026_v8_0_i18n_theme_seo.md       (v8.0)
-```
-
-**הערה למתחזק:** בעת רענון HLD מ-v6.4 ל-v8.x, חובה לקרוא את `PLAN_v7_0_HEBREW.md` ו-`PLAN_v7_0_ENGLISH.md` המעודכנים שמכילים את ה-handoff המקיף לכל הארכיטקטורה החדשה.
+| `CLAUDE.md` | **מקור סמכות** לשינויים — Hebrew brief לפיתוח בעזרת AI | 8.38 |
+| `HLD_Perla_CookingBook.md` | המסמך הנוכחי — ארכיטקטורה רחבה | 8.38 |
+| `LLD_Perla_CookingBook.md` | Low Level Design — פונקציות, CSS, DOM, CSP מפורט | 8.38 |
+| `INTEGRATION_GUIDE.md` | מדריך אינטגרציה (Web3Forms) | 6.6 |
+| `README.md` | סקירה כללית + התקנה | 7.x |
+| `README_Recipe_CLI.md` | מדריך לסקריפטי Python (add/edit_recipe, recipe_utils) | 6.7 |
+| `PLAN_v7_0_HEBREW.md` + `PLAN_v7_0_ENGLISH.md` | תוכנית v7.0 (מוגשמת) | 7.0 |
+| `CHANGELOG_*.md` | שינויים פר-גרסה (v6.3 → v8.x, ~30 קבצים) | per-version |
 
 ---
 
 *לזכר משפחת בן הראש — קזבלנקה, מרקש, ירושלים*
 *"האוכל שלה — הסיפור שלנו"*
 
-**סוף HLD v6.4 + נספח v8.0**
+**סוף HLD v8.38**

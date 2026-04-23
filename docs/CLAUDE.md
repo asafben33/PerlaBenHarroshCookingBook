@@ -38,8 +38,8 @@
 - פרטים ב-`README_Recipe_CLI.md`
 
 ## מסמכי תיעוד
-- `HLD_Perla_CookingBook.md` — High-Level Design (עודכן ל-v7.1)
-- `LLD_Perla_CookingBook.md` — Low-Level Design (עודכן ל-v7.1)
+- `HLD_Perla_CookingBook.md` — High-Level Design (עודכן ל-v8.38, רענון מלא 22/04/2026)
+- `LLD_Perla_CookingBook.md` — Low-Level Design (עודכן ל-v8.38, רענון מלא 22/04/2026)
 - `INTEGRATION_GUIDE.md` — מדריך אינטגרציה (Web3Forms מ-v6.6)
 - `README.md` — סקירה כללית (עודכן ל-v7.1)
 - `README_Recipe_CLI.md` — מדריך לסקריפטי Python
