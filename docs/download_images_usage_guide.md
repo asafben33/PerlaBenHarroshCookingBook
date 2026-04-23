@@ -74,13 +74,13 @@ python download_images.py --no-proxy
 ---
 ## שילובים מומלצים
 # שלב 1 — סבב strict (סף 60): רוב המתכונים הקלאסיים
-python download_images.py --skip-clean --skip-dedup --strict --provenance
+python ./scripts/download_images.py --skip-clean --skip-dedup --strict --provenance
 # שלב 2 — סבב בינוני (סף 45): מתכונים אזוטריים יותר
-python download_images.py --skip-clean --skip-dedup --min-score 45 --provenance
+python ./scripts/download_images.py --skip-clean --skip-dedup --min-score 45 --provenance
 # שלב 3 — סבב ברירת מחדל (סף 30): השלמת חסרים
 python ./scripts/download_images.py --skip-clean --skip-dedup --min-score 30 --provenance
 # שלב 4 — ניקוי אגרסיבי + dedup + alias מאוחד
-python download_images.py --skip-download --aggressive-clean --inline-alias
+python ./scripts/download_images.py --skip-download --aggressive-clean --inline-alias
 ## 1. דרי ראן
 python download_images.py --dry-run --strict --provenance
 # 2. ריצה אמיתית

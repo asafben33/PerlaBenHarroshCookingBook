@@ -9,6 +9,8 @@
 !js/**
 !scripts/
 !scripts/**
+# But re-exclude Python bytecode cache inside scripts/
+scripts/__pycache__/
 !audit_reports/
 !audit_reports/**
 !.gitignore
