@@ -1,14 +1,14 @@
 /* ═══════════════════════════════════════════════
-   Service Worker — Perla Ben-Harrosh Cookbook v19
+   Service Worker — Perla Ben-Harrosh Cookbook v18
    Network-first for HTML/JS (always fresh code)
    Cache-first for images (fast loading)
-   v19: v8.33 — 3D animated book reader removed. The
-        book is now rendered only in scroll (text) mode
-        inline inside #book-wrapper. StPageFlip library
-        file, cover SVG, modal overlay, and all related
-        CSS/JS are deleted.
+   v18: v8.32 — StPageFlip served from a local patched
+        copy (js/page-flip-2.0.7-patched.js) that honours
+        flippingTime for click and arrow flips, not just
+        drag. Upstream capped click flips at ~225 ms; the
+        patch makes them respect the full 4500 ms.
 ═══════════════════════════════════════════════ */
-const CACHE_NAME = 'perla-cookbook-v19';
+const CACHE_NAME = 'perla-cookbook-v18';
 const SHELL = [
   './',
   './index.html',
@@ -16,7 +16,8 @@ const SHELL = [
   './pre_en.js',
   './manifest.json',
   './images/book_images/wedding.jpg',
-  './book_data.js'
+  './book_data.js',
+  './js/page-flip-2.0.7-patched.js'
 ];
 
 /* Install — cache shell individually (resilient to 404s) */
